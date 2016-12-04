@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<jnlp spec="1.0+" codebase="http://${ipAddress}:${port}" href="dayon.jnlp">
+    <information>
+        <title>Dayon!</title>
+        <vendor>Marc Polizzi</vendor>
+        <description>Dayon! Assisted</description>
+        <homepage href="http://dayonhome.sourceforge.net"/>
+    </information>
+
+    <resources>
+        <property name="jnlp.dayon.log" value="file"/>
+        <property name="jnlp.dayon.assistant.ipAddress" value="${ipAddress}"/>
+        <property name="jnlp.dayon.assistant.portNumber" value="${port}"/>
+
+        <jar href="${jarname}"/>
+
+        <java version="1.6+"
+              href="http://java.sun.com/products/autodl/j2se"
+              initial-heap-size="32m"
+              max-heap-size="192m"/>
+    </resources>
+
+    <security>
+        <all-permissions/>
+    </security>
+
+    <update check="always"/>
+
+    <application-desc main-class="mpo.dayon.assisted.AssistedRunner"/>
+
+</jnlp>
