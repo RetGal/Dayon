@@ -330,9 +330,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onReady();
         }
     }
@@ -346,9 +344,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onHttpStarting(port);
         }
     }
@@ -362,9 +358,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onStarting(port);
         }
     }
@@ -378,9 +372,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onAccepting(port);
         }
     }
@@ -396,11 +388,8 @@ public class NetworkAssistantEngine
 
         boolean ok = true;
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
-            if (!xlistener.onAccepted(connection))
-            {
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            if (!xlistener.onAccepted(connection)) {
                 ok = false;
             }
         }
@@ -417,9 +406,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onConnected(connection);
         }
     }
@@ -433,9 +420,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onByteReceived(count);
         }
     }
@@ -449,9 +434,7 @@ public class NetworkAssistantEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final NetworkAssistantEngineListener xlistener = xlisteners[idx];
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onIOError(error);
         }
     }

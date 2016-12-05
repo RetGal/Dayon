@@ -96,11 +96,8 @@ public class Capture
     {
         int count = 0;
 
-        for (int idx = 0; idx < dirty.length; idx++)
-        {
-            final CaptureTile tile = dirty[idx];
-            if (tile != null)
-            {
+        for (final CaptureTile tile : dirty) {
+            if (tile != null) {
                 count += tile.getCapture().size();
             }
         }
@@ -132,12 +129,8 @@ public class Capture
     {
         int count = 0;
 
-        for (int idx = 0; idx < dirty.length; idx++)
-        {
-            final CaptureTile tile = dirty[idx];
-
-            if (tile != null)
-            {
+        for (final CaptureTile tile : dirty) {
+            if (tile != null) {
                 ++count;
             }
         }
@@ -155,10 +148,7 @@ public class Capture
         int xskipped = 0;
         int xmerged = 0;
 
-        for (int idx = 0; idx < olders.length; idx++)
-        {
-            final Capture older = olders[idx];
-
+        for (final Capture older : olders) {
             doMergeDirtyTiles(older);
 
             xskipped += older.skipped;
@@ -213,12 +203,8 @@ public class Capture
             System.arraycopy(prevBuffer, 0, buffer, 0, buffer.length);
         }
 
-        for (int idx = 0; idx < dirty.length; idx++)
-        {
-            final CaptureTile tile = dirty[idx];
-
-            if (tile != null)
-            {
+        for (final CaptureTile tile : dirty) {
+            if (tile != null) {
                 final MemByteBuffer src = tile.getCapture();
                 final int srcSize = src.size();
 
@@ -227,8 +213,7 @@ public class Capture
                 int srcPos = 0;
                 int destPos = tile.getY() * width + tile.getX();
 
-                while (srcPos < srcSize)
-                {
+                while (srcPos < srcSize) {
                     System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tw);
 
                     srcPos += tw;

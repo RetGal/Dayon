@@ -35,10 +35,6 @@ public class NetworkAssistedEngine
 
     private final Thread receiver;
 
-    private Socket connection;
-
-    private DataOutputStream out;
-
     private DataInputStream in;
 
     private NetworkSender sender;
@@ -69,9 +65,9 @@ public class NetworkAssistedEngine
     {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
-        connection = new Socket(configuration.getServerName(), configuration.getServerPort());
+        Socket connection = new Socket(configuration.getServerName(), configuration.getServerPort());
 
-        out = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+        DataOutputStream out = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
         in = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
 
         sender = new NetworkSender(out); // the active part (!)
@@ -154,12 +150,7 @@ public class NetworkAssistedEngine
     /**
      * May block (!)
      */
-    public boolean onLocationUpdated(Point location)
-    {
-        if (sender != null)
-        {
-            return sender.sendMouseLocation(location);
-        }
-        return true;
+    public boolean onLocationUpdated(Point location) {
+        return sender == null || sender.sendMouseLocation(location);
     }
 }

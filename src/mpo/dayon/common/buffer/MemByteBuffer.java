@@ -1,5 +1,7 @@
 package mpo.dayon.common.buffer;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -89,12 +91,12 @@ public class MemByteBuffer extends OutputStream
         buffer[count++] = (byte) val2;
     }
 
-    public void write(byte[] buffer)
+    public void write(@NotNull byte[] buffer)
     {
         write(buffer, 0, buffer.length);
     }
 
-    public void write(byte[] buffer, int off, int len)
+    public void write(@NotNull byte[] buffer, int off, int len)
     {
         if (len == 0)
         {

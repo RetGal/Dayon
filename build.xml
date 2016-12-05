@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="build" name="Create Runnable Jar for Project Dayon! with libraries in sub-folder">
+    <property name="dir.buildfile" value="."/>
+    <property name="dir.workspace" value="${dir.buildfile}/.."/>
+    <property name="dir.jarfile" value="${dir.buildfile}/build"/>
+    <target name="build">
+        <jar destfile="${dir.jarfile}/dayon.jar">
+            <manifest>
+            	<attribute name="Implementation-Version" value="1.2 #16"/>
+                <attribute name="Main-Class" value=""/>
+                <attribute name="Class-Path" value=". lib/annotations-7.0.2.jar lib/jetty-6.1.14.jar lib/jetty-util-6.1.14.jar lib/servlet-api-2.5-6.1.14.jar"/>
+            </manifest>
+            <fileset dir="${dir.buildfile}/bin"/>
+        </jar>
+        <delete dir="${dir.jarfile}/lib"/>
+        <mkdir dir="${dir.jarfile}/lib"/>
+        <copy file="${dir.buildfile}/lib/annotations-7.0.2.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.buildfile}/lib/jetty-6.1.14.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.buildfile}/lib/jetty-util-6.1.14.jar" todir="${dir.jarfile}/lib"/>
+        <copy file="${dir.buildfile}/lib/servlet-api-2.5-6.1.14.jar" todir="${dir.jarfile}/lib"/>
+    </target>
+</project>

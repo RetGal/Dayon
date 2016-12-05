@@ -70,7 +70,7 @@ public class Assisted
         final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
         final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
-        if (ip == null || port == null)
+        if (ip == null)
         {
             if (!requestConnectionSettings())
             {
@@ -80,7 +80,7 @@ public class Assisted
         }
         else // JNLP startup (!)
         {
-            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(ip, Integer.valueOf(port));
+            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(ip, port);
             if (!xconfiguration.equals(configuration))
             {
                 configuration = xconfiguration;

@@ -107,9 +107,7 @@ public class DeCompressorEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final DeCompressorEngineListener xlistener = xlisteners[idx];
+        for (final DeCompressorEngineListener xlistener : xlisteners) {
             xlistener.onDeCompressed(capture, cacheHits, compressionRatio);
         }
     }

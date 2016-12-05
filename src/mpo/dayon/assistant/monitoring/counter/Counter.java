@@ -80,9 +80,7 @@ public abstract class Counter<T>
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final CounterListener<T> xlistener = xlisteners[idx];
+        for (final CounterListener<T> xlistener : xlisteners) {
             xlistener.onInstantValueUpdated(this, value);
         }
     }

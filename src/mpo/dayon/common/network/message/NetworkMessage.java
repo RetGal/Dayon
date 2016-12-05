@@ -51,12 +51,8 @@ public abstract class NetworkMessage
 
         final T[] xenums = enumClass.getEnumConstants();
 
-        for (int idx = 0; idx < xenums.length; idx++)
-        {
-            final T xenum = xenums[idx];
-
-            if (xenum.ordinal() == ordinal)
-            {
+        for (final T xenum : xenums) {
+            if (xenum.ordinal() == ordinal) {
                 return xenum;
             }
         }

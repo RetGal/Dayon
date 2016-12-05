@@ -281,9 +281,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final CaptureEngineListener xlistener = xlisteners[idx];
+        for (final CaptureEngineListener xlistener : xlisteners) {
             xlistener.onCaptured(capture);
         }
     }
@@ -297,9 +295,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final CaptureEngineListener xlistener = xlisteners[idx];
+        for (final CaptureEngineListener xlistener : xlisteners) {
             xlistener.onRawCaptured(id, grays);
         }
     }

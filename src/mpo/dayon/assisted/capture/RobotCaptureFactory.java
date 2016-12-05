@@ -31,7 +31,6 @@ public class RobotCaptureFactory extends CaptureFactory
 
     public byte[] captureGray(Gray8Bits quantization)
     {
-        final byte[] pixels = ScreenUtilities.captureGray(quantization);
-        return pixels;
+        return ScreenUtilities.captureGray(quantization);
     }
 }

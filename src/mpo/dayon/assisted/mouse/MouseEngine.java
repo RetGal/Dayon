@@ -106,11 +106,8 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration>
 
         boolean ok = true;
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final MouseEngineListener xlistener = xlisteners[idx];
-            if (!xlistener.onLocationUpdated(location))
-            {
+        for (final MouseEngineListener xlistener : xlisteners) {
+            if (!xlistener.onLocationUpdated(location)) {
                 ok = false;
             }
         }

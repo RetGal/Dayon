@@ -43,7 +43,6 @@ import java.util.List;
 
 public class Assistant implements Configurable<AssistantConfiguration>
 {
-    private final DeCompressorEngine decompressor;
 
     private final NetworkAssistantEngine network;
 
@@ -68,10 +67,6 @@ public class Assistant implements Configurable<AssistantConfiguration>
     private CaptureEngineConfiguration captureEngineConfiguation;
 
     private CompressorEngineConfiguration compressorEngineConfiguation;
-
-    private final ControlEngineConfiguration controlConfiguration;
-
-    private NetworkMouseLocationMessageHandler mouseHandler;
 
     private final Object prevBufferLOCK = new Object();
 
@@ -99,16 +94,14 @@ public class Assistant implements Configurable<AssistantConfiguration>
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", Babylon.translate("captureCompression"));
         captureCompressionCounter.start(1000);
 
-        decompressor = new DeCompressorEngine();
+        DeCompressorEngine decompressor = new DeCompressorEngine();
 
         decompressor.configure(new DeCompressorEngineConfiguration());
         decompressor.addListener(new MyDeCompressorEngineListener());
         decompressor.start(8);
 
-        mouseHandler = new NetworkMouseLocationMessageHandler()
-        {
-            public void handleLocation(NetworkMouseLocationMessage mouse)
-            {
+        NetworkMouseLocationMessageHandler mouseHandler = new NetworkMouseLocationMessageHandler() {
+            public void handleLocation(NetworkMouseLocationMessage mouse) {
                 frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
             }
         };
@@ -119,7 +112,7 @@ public class Assistant implements Configurable<AssistantConfiguration>
         network.addListener(new MyNetworkAssistantEngineListener());
 
         control = new ControlEngine(network);
-        control.configure(controlConfiguration = new ControlEngineConfiguration());
+        control.configure(new ControlEngineConfiguration());
         control.start();
 
         captureEngineConfiguation = new CaptureEngineConfiguration();

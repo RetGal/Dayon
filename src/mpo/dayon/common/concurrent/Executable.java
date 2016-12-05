@@ -22,7 +22,7 @@ public abstract class Executable extends RunnableEx
         this.semaphore = null;
     }
 
-    public Executable(ExecutorService executor, Semaphore semaphore)
+    public Executable(ExecutorService executor, @Nullable Semaphore semaphore)
     {
         this.executor = executor;
         this.semaphore = semaphore;

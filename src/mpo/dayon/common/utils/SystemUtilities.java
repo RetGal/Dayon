@@ -31,22 +31,15 @@ public abstract class SystemUtilities
                 final URLClassLoader ucl = (URLClassLoader) cl;
                 final URL[] urls = ucl.getURLs();
 
-                for (int i = 0; i < urls.length; i++)
-                {
-                    final URL url = urls[i];
-
-                    if ("file".equals(url.getProtocol()))
-                    {
+                for (final URL url : urls) {
+                    if ("file".equals(url.getProtocol())) {
                         final String path = url.toExternalForm();
 
-                        if (path.contains("/out/idea/"))
-                        {
+                        if (path.contains("/out/idea/")) {
                             final int pos = path.indexOf("/out");
                             rootPATH = new File(new URI(path.substring(0, pos)));
                             break;
-                        }
-                        else if (path.contains("/lib/dayon.jar"))
-                        {
+                        } else if (path.contains("/lib/dayon.jar")) {
                             final int pos = path.indexOf("/lib");
                             rootPATH = new File(new URI(path.substring(0, pos)));
                             break;
@@ -95,10 +88,9 @@ public abstract class SystemUtilities
 
         if (rootPATH != null)
         {
-            final URI uri = new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html")).toURI();
             // Anchor not supported : #assistant-setup
 
-            return uri;
+            return new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html")).toURI();
         }
 
         return null;
@@ -276,11 +268,9 @@ public abstract class SystemUtilities
 
         final int ordinal = Integer.valueOf(prop);
 
-        for (int idx = 0; idx < enums.length; idx++)
-        {
-            if (ordinal == enums[idx].ordinal())
-            {
-                return enums[idx];
+        for (T anEnum : enums) {
+            if (ordinal == anEnum.ordinal()) {
+                return anEnum;
             }
         }
 

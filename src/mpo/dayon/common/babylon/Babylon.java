@@ -21,7 +21,7 @@ public abstract class Babylon
         {
             value = bundle.getString(tag);
 
-            if (value == null || value.trim().length() == 0)
+            if (value.trim().length() == 0)
             {
                 value = tag;
             }

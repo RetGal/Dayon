@@ -119,16 +119,12 @@ public abstract class ScreenUtilities
 
         grays = new byte[quantizations.length][];
 
-        for (int qIdx = 0; qIdx < quantizations.length; qIdx++)
-        {
-            final Gray8Bits quantization = quantizations[qIdx];
-
+        for (final Gray8Bits quantization : quantizations) {
             grays[quantization.ordinal()] = new byte[256];
 
             final int factor = 256 / quantization.getLevels();
 
-            for (int idx = 0; idx < 256; idx++)
-            {
+            for (int idx = 0; idx < 256; idx++) {
                 // DOWN (0, 32, 64, 96, ...)
                 // levels[quantization.ordinal()][idx] = (byte) (idx / factor * factor);
 

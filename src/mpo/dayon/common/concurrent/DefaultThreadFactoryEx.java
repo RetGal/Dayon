@@ -1,5 +1,7 @@
 package mpo.dayon.common.concurrent;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,7 +21,7 @@ public class DefaultThreadFactoryEx implements ThreadFactory
         namePrefix = name + "-";
     }
 
-    public Thread newThread(Runnable runnable)
+    public Thread newThread(@NotNull Runnable runnable)
     {
         final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
 

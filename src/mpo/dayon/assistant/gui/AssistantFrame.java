@@ -420,9 +420,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onMouseMove(x, y);
         }
     }
@@ -436,9 +434,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onMousePressed(x, y, button);
         }
     }
@@ -452,9 +448,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onMouseReleased(x, y, button);
         }
     }
@@ -468,9 +462,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onMouseWheeled(x, y, rotations);
         }
     }
@@ -484,9 +476,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onKeyPressed(keycode);
         }
     }
@@ -501,9 +491,7 @@ public class AssistantFrame extends BaseFrame
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final AssistantFrameListener xlistener = xlisteners[idx];
+        for (final AssistantFrameListener xlistener : xlisteners) {
             xlistener.onKeyReleased(keycode);
         }
     }

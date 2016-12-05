@@ -211,9 +211,7 @@ public class CompressorEngine
             return;
         }
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            final CompressorEngineListener xlistener = xlisteners[idx];
+        for (final CompressorEngineListener xlistener : xlisteners) {
             xlistener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
         }
     }
