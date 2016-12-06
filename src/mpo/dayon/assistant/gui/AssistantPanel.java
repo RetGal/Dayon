@@ -10,7 +10,9 @@ import java.awt.image.BufferedImage;
 
 public class AssistantPanel extends JPanel
 {
-    private static final Image MOUSE_CURSOR = ImageUtilities.getOrCreateIcon(ImageNames.MOUSE_YELLOW).getImage();
+	private static final long serialVersionUID = -3038637229690950161L;
+
+	private static final Image MOUSE_CURSOR = ImageUtilities.getOrCreateIcon(ImageNames.MOUSE_YELLOW).getImage();
 
     private static final int MOUSE_CURSOR_WIDTH = 12;
 

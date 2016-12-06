@@ -15,7 +15,8 @@ import java.awt.event.WindowEvent;
 
 public class AssistedFrame extends BaseFrame
 {
-    private AssistedFrameConfiguration configuration;
+	private static final long serialVersionUID = 8933477003881437972L;
+	private AssistedFrameConfiguration configuration;
 
     public AssistedFrame(AssistedFrameConfiguration configuration)
     {

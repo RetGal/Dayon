@@ -22,7 +22,7 @@ public abstract class ImageUtilities
     {
         try
         {
-            final Iterator iter = ImageIO.getImageWritersByFormatName("jpeg");
+            final Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
             final ImageWriter writer = (ImageWriter) iter.next();
 
             final ImageOutputStream ios = ImageIO.createImageOutputStream(new File(where + name + ".jpg"));
@@ -43,7 +43,7 @@ public abstract class ImageUtilities
         }
     }
 
-    private static final Map<String, ImageIcon> cache = new HashMap();
+    private static final Map<String, ImageIcon> cache = new HashMap<>();
 
     public static ImageIcon getOrCreateIcon(String name)
     {

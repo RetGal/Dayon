@@ -16,7 +16,7 @@ public class AssistantRunner
             // ---------------------------------------------------------------------------------------------------------
             // JETTY setup
             //
-            System.setProperty("org.mortbay.log.class", JettyLogger.class.getName());
+            System.setProperty("org.eclipse.jetty.util.log.class", JettyLogger.class.getName());
 
             // System.setProperty("DEBUG", "on");
             // System.setProperty("VERBOSE", "on");

@@ -10,7 +10,8 @@ import java.awt.event.ActionEvent;
 
 public class AssistantStopAction extends AbstractAction
 {
-    private final NetworkAssistantEngine networkEngine;
+	private static final long serialVersionUID = 8396252577114773282L;
+	private final NetworkAssistantEngine networkEngine;
 
     public AssistantStopAction(NetworkAssistantEngine networkEngine)
     {

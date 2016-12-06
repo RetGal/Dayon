@@ -161,7 +161,8 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action ip = new AbstractAction()
         {
-            private String pip;
+			private static final long serialVersionUID = -9171976557462660207L;
+			private String pip;
 
             public void actionPerformed(ActionEvent ev)
             {
@@ -341,7 +342,9 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action exit = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = -84234190591882758L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 // *** HACK ********************************************************************************************
                 Component frame = (Component) ev.getSource();
@@ -413,7 +416,9 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action configure = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = 2038613804711501981L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 // *** HACK ********************************************************************************************
                 Component frame = (Component) ev.getSource();
@@ -507,7 +512,9 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action configure = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = 1552702344410146383L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 // *** HACK ********************************************************************************************
                 Component frame = (Component) ev.getSource();
@@ -664,7 +671,9 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action configure = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = 804748196312905403L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 // Currently making a RESET within the assisted ...
                 sendCaptureConfiguration(captureEngineConfiguation);
@@ -682,7 +691,9 @@ public class Assistant implements Configurable<AssistantConfiguration>
     {
         final Action exit = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = -6715265554806896315L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 final JPopupMenu choices = new JPopupMenu();
 

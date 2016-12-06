@@ -14,7 +14,9 @@ import java.net.URI;
 
 public abstract class BaseFrame extends JFrame
 {
-    protected ToolBar toolBar;
+	private static final long serialVersionUID = 3844044465771664147L;
+
+	protected ToolBar toolBar;
 
     protected StatusBar statusBar;
 
@@ -61,7 +63,9 @@ public abstract class BaseFrame extends JFrame
     {
         final Action exit = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = -6255123500219118167L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 doExit();
             }
@@ -84,7 +88,9 @@ public abstract class BaseFrame extends JFrame
     {
         final Action showSystemInfo = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = 3696155654667295840L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
                 props.setEditable(false);

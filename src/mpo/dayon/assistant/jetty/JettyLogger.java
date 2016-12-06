@@ -1,70 +1,111 @@
 package mpo.dayon.assistant.jetty;
 
 import mpo.dayon.common.log.Log;
-import org.mortbay.log.Logger;
+import org.eclipse.jetty.util.log.Logger;
 
 public class JettyLogger implements Logger
 {
+    @Override
     public Logger getLogger(String name)
     {
         return this;
     }
 
+    @Override
+    public void ignore(Throwable throwable)
+    {
+        //
+    }
+
+    @Override
     public boolean isDebugEnabled()
     {
         return Log.isDebugEnabled();
     }
 
+    @Override
     public void setDebugEnabled(boolean enabled)
     {
+        //
     }
 
-    public void debug(String message, Throwable error)
+    @Override
+    public void debug(String message, Object... objects)
     {
         if (isDebugEnabled())
         {
-            Log.debug("[JETTY] " + message, error);
+            Log.debug("[JETTY] " + format(message, objects));
         }
     }
 
-    public void debug(String message, Object arg0, Object arg1)
+    @Override
+    public void debug(Throwable throwable) 
     {
         if (isDebugEnabled())
         {
-            Log.debug("[JETTY] " + format(message, arg0, arg1));
+            Log.debug("[JETTY] " + throwable);
         }
     }
 
-    public void info(String message, Object arg0, Object arg1)
+    @Override
+    public void debug(String message, Throwable throwable)
     {
-        Log.info("[JETTY] " + format(message, arg0, arg1));
-    }
-
-    public void warn(String message, Object arg0, Object arg1)
-    {
-        Log.warn("[JETTY] " + format(message, arg0, arg1));
-    }
-
-    public void warn(String message, Throwable error)
-    {
-        Log.warn("[JETTY] " + message, error);
-    }
-
-    private String format(String message, Object arg0, Object arg1)
-    {
-        int i0 = message.indexOf("{}");
-        int i1 = i0 < 0 ? -1 : message.indexOf("{}", i0 + 2);
-
-        if (arg1 != null && i1 >= 0)
+        if (isDebugEnabled())
         {
-            message = message.substring(0, i1) + arg1 + message.substring(i1 + 2);
+            Log.debug("[JETTY] " + message, throwable);
         }
-        if (arg0 != null && i0 >= 0)
-        {
-            message = message.substring(0, i0) + arg0 + message.substring(i0 + 2);
-        }
-        return message;
     }
 
+    @Override
+    public String getName()
+    {
+        return "JettyLogger";
+    }
+
+    @Override
+    public void warn(String message, Object... objects)
+    {
+        Log.warn("[JETTY] " + format(message, objects));
+    }
+
+    @Override
+    public void warn(Throwable throwable) 
+    {
+        Log.warn("[JETTY] " + throwable);
+    }
+
+    @Override
+    public void warn(String message, Throwable throwable)
+    {
+        Log.warn("[JETTY] " + message, throwable);
+    }
+
+    @Override
+    public void info(String s, Object... objects)
+    {
+        Log.info("[JETTY] " + format(s, objects));
+    }
+
+    @Override
+    public void info(Throwable throwable)
+    {
+        Log.info("[JETTY] " + throwable);
+    }
+
+    @Override
+    public void info(String message, Throwable throwable)
+    {
+        Log.info("[JETTY] " + message + throwable);
+    }
+
+    private String format(String message, Object...args)
+    {
+        StringBuffer mess = new StringBuffer(message);
+        for (Object arg : args) {
+            mess.append(", ");
+            mess.append(arg);
+        }
+        return mess.toString();
+    }
 
 }

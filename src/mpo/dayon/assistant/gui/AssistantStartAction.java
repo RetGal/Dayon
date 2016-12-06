@@ -10,7 +10,8 @@ import java.awt.event.ActionEvent;
 
 public class AssistantStartAction extends AbstractAction
 {
-    private final NetworkAssistantEngine networkEngine;
+	private static final long serialVersionUID = 7435485409532552494L;
+	private final NetworkAssistantEngine networkEngine;
 
     public AssistantStartAction(NetworkAssistantEngine networkEngine)
     {

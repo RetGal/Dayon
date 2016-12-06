@@ -13,14 +13,17 @@ import java.util.TimerTask;
 
 public class StatusBar extends JPanel
 {
-    private final JLabel message = new JLabel();
+	private static final long serialVersionUID = -1042881354931006761L;
+	private final JLabel message = new JLabel();
 
     public StatusBar()
     {
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
         setBorder(new EtchedBorder()
         {
-            @Override
+			private static final long serialVersionUID = -3642319160243656549L;
+
+			@Override
             public void paintBorder(Component c, Graphics g, int x, int y, int width, int height)
             {
                 g.translate(x, y);

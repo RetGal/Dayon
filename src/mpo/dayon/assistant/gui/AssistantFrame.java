@@ -20,7 +20,9 @@ import java.net.Socket;
 
 public class AssistantFrame extends BaseFrame
 {
-    private final Listeners<AssistantFrameListener> listeners = new Listeners<AssistantFrameListener>(AssistantFrameListener.class);
+	private static final long serialVersionUID = 6211310983963544650L;
+
+	private final Listeners<AssistantFrameListener> listeners = new Listeners<AssistantFrameListener>(AssistantFrameListener.class);
 
     private final JScrollPane assistantPanelWrapper;
 
@@ -263,7 +265,9 @@ public class AssistantFrame extends BaseFrame
     {
         final Action showSystemInfo = new AbstractAction()
         {
-            public void actionPerformed(ActionEvent ev)
+			private static final long serialVersionUID = -789732926764276856L;
+
+			public void actionPerformed(ActionEvent ev)
             {
                 controlActivated = !controlActivated;
             }
@@ -308,7 +312,9 @@ public class AssistantFrame extends BaseFrame
 
         JPanel pane = new JPanel()
         {
-            @Override
+			private static final long serialVersionUID = -5478995801477317651L;
+
+			@Override
             protected void paintComponent(Graphics g)
             {
                 super.paintComponent(g);

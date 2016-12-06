@@ -2,11 +2,12 @@ package mpo.dayon.assistant.network.http;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
-import org.mortbay.jetty.Connector;
-import org.mortbay.jetty.Server;
-import org.mortbay.jetty.bio.SocketConnector;
-import org.mortbay.jetty.handler.HandlerList;
-import org.mortbay.jetty.handler.ResourceHandler;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.bio.SocketConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -174,8 +175,7 @@ public class NetworkAssistantHttpEngine
             setResourceBase(root);
         }
 
-        @Override
-        public void handle(String target, HttpServletRequest request, HttpServletResponse response, int dispatch) throws IOException, ServletException
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
         {
             Log.info("[HTTP] Processing the request \n-----\n" + request + "\n-----");
 
@@ -209,7 +209,7 @@ public class NetworkAssistantHttpEngine
                 Log.info("[HTTP] The handler is replying to the /hello message [404]...");
             }
 
-            super.handle(target, request, response, dispatch);
+            super.handle(target, baseRequest, request, response);
 
             Log.info("[HTTP] Response \n-----\n" + response + "\n-----");
         }
