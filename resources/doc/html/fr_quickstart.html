@@ -1,0 +1,263 @@
+<html>
+
+<head>
+
+    <title>Dayon! - Remote assistance for your family and friends</title>
+
+    <meta name="description" content="Remote assistance for your family and friends."/>
+
+    <meta name="keywords"
+          content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <meta name="author" content="Marc Polizzi"/>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+</head>
+
+<body>
+
+<div id="container">
+
+<div id="top">
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <tr>
+            <td><img src="dayon.png" alt="Dayon!"></td>
+            <td align="right"><a href="quickstart.html"><img src="great_britain.png" border="no" alt="English"></a>
+            </td>
+        </tr>
+    </table>
+
+</div>
+
+<div id="menu">
+
+    <a href="fr_index.html">Accueil</a>
+    <a href="fr_quickstart.html">Premiers Pas</a>
+    <a href="fr_download.html">Télécharger</a>
+    <a href="fr_support.html">Aide</a>
+    <a href="fr_feedback.html">Réactions</a>
+    <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+
+</div>
+
+<div id="content">
+
+    <h2>Premier Pas</h2>
+
+    <p>
+        Typiquement, l'<i>assistant</i> discute avec l'<i>assisté</i> en utilisant Skype, le téléphone,
+        son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser
+        en direct l'écran de l'ordinateur de l'<i>assisté</i>.
+    </p>
+
+    <p>
+        Notez que les images sur cette page correspondent à la version anglaise mais que l'application
+        elle-même est complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre
+        l'essentiel.
+    </p>
+
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <img src="assistant.png" alt="Assistant">
+            </td>
+            <td valign="middle" style="padding-left:1em">
+                <a name="assistant-setup"><b>Mise en Route Coté Assistant</b></a>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assisté</i>
+        va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis
+        l'extérieur. La première chose à faire est de configurer le numéro de <b>port d'écoute</b> comme
+        indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans votre <b>parefeu</b>
+        et sans doute configurer un service <b>NAT</b> sur votre routeur DSL.
+    </p>
+
+    <img style="border: none" src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
+
+    <p>
+        Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assisté</i>
+        pour qu'il se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP
+        <b>publique</b>. Mais pour un test sur votre réseau local (ou sur votre PC en local), vous pouvez
+        utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP publique</b> avec le menu
+        suivant:
+    </p>
+
+    <img style="border: none" src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+
+    <p>
+        Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous
+        permettant de copier dans le clipboard l'<b>URL</b> (généré à partir de l'addresse IP et du numéro
+        de port) requis pour un démarrage avec <b>Java Web Start</b> côté <i>assisté</i>. Il vous sera ainsi
+        facile de coller dans une session Skype (ou autre) cet URL qui permettra alors un demarrage
+        avec un <b>simple click</b>.
+    </p>
+
+    <img style="border: none" src="assistant_network_addresses_ex.jpg"
+         alt="Dayon! Assistant: Network IP Address Actions">
+
+    <p>
+        <i>
+            Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application
+            écoute sur toutes les interfaces réseaux disponibles; elle est utilisée avec le numéro de port
+            pour générer les resources requises pas Java Web Start.
+        </i>
+    </p>
+
+    <p>
+        C'est tout pour la configuration réseau; vous trouverez plus de détails <a
+            href="#assistant-details">ci-desous</a>.
+        Mais voyons tout d'abord comment mettre en place le côté <i>assisté</i>.
+    </p>
+
+
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <img src="assisted.png" alt="Assisted">
+            </td>
+            <td valign="middle" style="padding-left:1em">
+                <a name="assisted-setup"><b>Mise en Route Coté Assisté</b></a>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        Dayon! Assisté se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de
+        configuration réseau à faire. Depuis la version 1.2, vous avez deux options pour démarrer l'<i>assisté</i>:
+        soit comme une application <b>régulière</b> soit en utilisant <b>Java Web Start</b>.
+    </p>
+
+    <p>
+        <b>Java Web Start</b> - La façon la plus simple (i.e., un <b>simple click</b> dans un browser, mise-à-jour
+        automatique, etc...). Pour votre information, Dayon! Assistant se comporte alors comme un serveur HTTP pendant
+        la phase de mise-en-route Dayon! Assisted. Donc pour démarrer, l'application, il vous suffit d'ouvrir
+        dans votre browser Web favori, l'<b>URL</b> communiqué par l'<i>assistant</i> et de suivre les
+        instructions:
+    </p>
+
+    <img style="border: none" src="assisted_jws.jpg" alt="Dayon! Assisted : Java Web Start">
+
+    <p>
+        Ensuite, il faut suivre les instructions donnée par Java Web Start et de <b>truster</b> l'application:
+    </p>
+
+    <img style="border: none" src="jws_warning.jpg" alt="Dayon! Assisted : Java Web Start Warning">
+
+    <p>
+        Ne vous inquiétez pas des avertissements de sécurité; de façon évidente cette application va utiliser
+        le réseau (et aussi des fichiers pour sauver vos préférences). J'ai signé le JAR avec un <b>self-certificate</b>.
+        Le code source complet est disponible et vous pouvez vérifier qu'il ne contient aucun
+        <i>malware</i> de quelque sorte que ce soit. A propos, en parlant de sécurité, Dayon! n'utilise pas
+        encore d'encryption pour la communication réseau.
+    </p>
+
+    <p>
+        <b>Application Régulière</b> - Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et
+        ensuite démarrer l'<i>assisté</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et
+        le numéro de port communiqué par l'<i>assistant</i>:
+    </p>
+
+    <img style="border: none" src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+
+    <p>
+        Vous serez alors promptement connecté à l'<i>assistant</i> qui sera déjà en train de regarder
+        votre écran. Bonne session!
+    </p>
+
+    <table cellpadding="0" cellspacing="0">
+        <tr>
+            <td>
+                <img src="assistant.png" alt="Assistant">
+            </td>
+            <td valign="middle" style="padding-left:1em">
+                <a name="assistant-details"><b>Mise en Route Coté Assistant (La Suite)</b></a>
+            </td>
+        </tr>
+    </table>
+
+    <p>
+        Cette forme vous permet de configurer la façon dont l'écran est <b>capturé</b>; vous pouvez
+        configurer l'interval de temps (en milli-seconde) entre deux captures (aka. tic-tac) ainsi
+        que le nombre de niveau de gris. Moins de niveaux veut dire moins d'information à transmettre
+        sur le réseau (au détriment de la qualité des images).
+    </p>
+
+    <img style="border: none" src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
+
+    <p>
+        Vous pouvez ensuite configuer la méthode de <b>compression</b>; trois méthodes sont disponibles:
+        ZIP, BZIP2 and LZMA. BZIP2 et LZMA devraient donner les meilleurs résultats mais demandent plus
+        de CPU; elles sont bien plus compliquées que ZIP et sont de plus implémentées en JAVA (ZIP étant
+        implémenté en code natif dans le JDK).
+    </p>
+
+    <p>
+        En plus de la compression, un <b>cache</b> est utilisé pour ne pas envoyer plusieurs fois des images
+        identiques comme par exemple, quand on ouvre et ferme un menu (i.e., l'image sous le menu n'a pas
+        besoin d'être renvoyée). Pour cela, l'écran est divisé en carreaux, chacun pouvant être caché. Vous
+        devez définir le nombre maximum de carreaux dans le cache. Noter qu'un carreaux représente 32x32 points
+        de 256 niveaux de gris, ce qui fait 1K.
+    </p>
+
+    <p>
+        <img style="border: none" src="assistant_compression_settings.jpg"
+             alt="Dayon! Assistant : Compression Settings">
+    </p>
+
+
+    <p>
+        Par default, le <b>mode de contrôle</b> à distance n'est pas activé; vous pouvez l'activer avec
+        l'icône suivante:
+    </p>
+
+    <p>
+        <img style="border: none" src="assistant_control.jpg"
+             alt="Dayon! Assistant : Compression Settings">
+    </p>
+
+    <p>
+        C'est à peu près tout. Vous pouvez démarrer une session et demander à l'assisté de se connecter.
+        Vous serez alors promptement requis d'accepter une nouvelle connexion:
+    </p>
+
+    <p>
+        <img style="border: none" src="assistant_incoming_connection.jpg"
+             alt="Dayon! Assistant : Incoming Connection">
+    </p>
+
+    <p>
+        Vous voila connecté visualisant l'ordinateur à distance.
+    </p>
+
+    <p>
+        <img style="border: none" src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+    </p>
+
+    <p>
+        That's all folk! Vous trouverez plus d'information sur la page <a href="support.html">support</a>.
+    </p>
+
+</div>
+
+<div id="footer">
+
+    <a href="http://sourceforge.net">
+        <img style="border: none"
+             src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
+             alt="sf.net">
+    </a>
+
+</div>
+
+</div>
+
+</body>
+
+</html>
