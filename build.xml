@@ -1,32 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="build" name="Create Runnable Jar for Project Dayon! with libraries in same folder">
-    <property name="dir.buildfile" value="."/>
-    <property name="dir.workspace" value="${dir.buildfile}/.."/>
-    <property name="dir.jarfile" value="${dir.buildfile}/build"/>
-    <target name="build">
-        <jar destfile="${dir.jarfile}/dayon.jar">
+    <property name="dir.binfile" value="."/>
+    <property name="dir.src" value="${dir.binfile}/src"/>
+    <property name="dir.lib" value="${dir.binfile}/lib"/>
+    <property name="dir.res" value="${dir.binfile}/resources"/>
+    <property name="dir.bin" value="${dir.binfile}/bin"/>
+    <property name="dir.build" value="${dir.binfile}/build"/>
+    <property name="dir.dist" value="${dir.binfile}/dist"/>
+    <property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
+
+    <path id="project.classpath">
+     <fileset dir="${dir.lib}">
+        <include name="**/*.jar"/>
+      </fileset>
+    </path>
+
+    <target name="clean">
+       <delete dir="${dir.bin}"/>
+       <delete dir="${dir.build}"/>
+       <delete dir="${dir.dist}"/>
+    </target>
+
+    <target name="init">
+       <tstamp/>
+       <mkdir dir="${dir.bin}"/>
+       <mkdir dir="${dir.build}"/>
+       <mkdir dir="${dir.dist}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile the sources" >
+       <javac debug="false" 
+	   includeantruntime="false"
+	   srcdir="${dir.src}" 
+	   destdir="${dir.bin}"
+	   classpathref="project.classpath"/>
+       <copy todir="${dir.bin}"> 
+            <fileset dir="${dir.src}">
+                <exclude name="**/*.java"/>
+            </fileset>
+       </copy>
+    </target>
+
+    <target name="build" depends="compile">
+        <jar destfile="${dir.build}/dayon.jar">
             <manifest>
                 <attribute name="Implementation-Version" value="1.3 #0"/>
-                <attribute name="Main-Class" value=""/>
+                <attribute name="Main-Class" value="${main.class}"/>
                 <attribute name="Class-Path" value=". annotations-7.0.2.jar jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar"/>
             </manifest>
-            <fileset dir="${dir.buildfile}/bin"/>
+	    <fileset dir="${dir.bin}"/>
         </jar>
-        <delete dir="${dir.jarfile}/lib"/>
-        <mkdir dir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/annotations-7.0.2.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/jetty-continuation-8.1.21.v20160908.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/jetty-http-8.1.21.v20160908.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/jetty-io-8.1.21.v20160908.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/jetty-server-8.1.21.v20160908.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/jetty-util-8.1.21.v20160908.jar" todir="${dir.jarfile}/lib"/>
-        <copy file="${dir.buildfile}/lib/servlet-api-3.0.jar" todir="${dir.jarfile}/lib"/>
-        <copy todir="${dir.jarfile}">
-            <fileset dir="${dir.jarfile}/lib"/>
-        </copy>
-        <delete dir="${dir.jarfile}/lib"/>
     </target>
-	<target name="sign">
-		<signjar alias="me" storepass="apass" jar="${dir.jarfile}/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
-	</target>
+
+    <target name="dist" depends="build" description="creates files for distribution">
+	<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/annotations-7.0.2.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/jetty-continuation-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/jetty-http-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/jetty-io-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/jetty-server-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/jetty-util-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+        <copy file="${dir.binfile}/lib/servlet-api-3.0.jar" todir="${dir.dist}/lib"/>
+        <copy todir="${dir.dist}">
+            <fileset dir="${dir.res}"/>
+        </copy>
+    </target>
+
+    <target name="sign">
+	<signjar alias="me" storepass="apass" jar="${dir.build}/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
+    </target>
 </project>

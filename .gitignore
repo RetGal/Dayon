@@ -1,4 +1,11 @@
 .classpath
 .project
 .settings
-
+/bin/mpo/
+/bin/org/
+/bin/SevenZip/
+/build/*.jar
+/dist/bin/
+/dist/doc/
+/dist/license/
+/dist/lib/

@@ -3,7 +3,7 @@
 <jnlp spec="1.0+" codebase="http://${ipAddress}:${port}" href="dayon.jnlp">
     <information>
         <title>Dayon!</title>
-        <vendor>Marc Polizzi</vendor>
+        <vendor>Reto Galante</vendor>
         <description>Dayon! Assisted</description>
         <homepage href="http://dayonhome.sourceforge.net"/>
     </information>
