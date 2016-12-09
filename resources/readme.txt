@@ -12,7 +12,7 @@ Contents:
   
 Preferences (e.g., window location) & log file are saved in the directory:
 
-  USER_HOME/.dayon  
+  USER_HOME/.dayon
   
   
 Running Dayon!
@@ -21,7 +21,7 @@ Running Dayon!
   Open the connection port (e.g., firewall, DSL router, NAT, etc...) and note your external
   IP address (e.g., http://whatismyip.com/).
 
-  The settings (e.g.,, number of capture per second, compression method, ...) will be sent 
+  The settings (e.g.,, number of capture per second, compression method, ...) will be sent
   to the assisted machine during the connection. The assisted has nothing to do except entering
   the IP address and port number as described below.
   
@@ -34,7 +34,7 @@ Linux:
   You might need to chmod +x the scripts dayon.sh/dayon_assistant.sh/dayon_assisted.sh in the bin directory.
 
 
-Sourceforge.net:
+Project:
 
   The project is available at the following HTTP addresses:
 
@@ -42,6 +42,4 @@ Sourceforge.net:
         http://dayonhome.sourceforge.net
 
 
-
-  
 Enjoy!

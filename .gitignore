@@ -7,5 +7,6 @@
 /build/*.jar
 /dist/bin/
 /dist/doc/
+/dist/jre/
 /dist/license/
 /dist/lib/
