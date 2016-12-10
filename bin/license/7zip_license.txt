@@ -1,3 +1,0 @@
-SevenZip library from LZMA SDK is being used.
-The LZMA SDK is in the public domain.
-__
