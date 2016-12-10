@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings
+/bin/doc/
 /bin/mpo/
 /bin/org/
 /bin/SevenZip/
