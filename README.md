@@ -1,6 +1,7 @@
 # Dayon!
 Dayon! is a easy to use cross-platform remote assistance solution for family and friends.
-It consists of two parts - one for the assistant and one for the assisted.
+
+It consists of two parts - one for the assistant and one for the assisted. Both are included in one package.
 
 ## Key features
 
