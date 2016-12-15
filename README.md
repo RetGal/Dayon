@@ -7,7 +7,7 @@ With his permission I moved the code base to GitHub, where it can be maintained 
 
 ## Releases
 
-The latest version is 1.3 - released almost eight years after the previous version.
+The latest version is 1.3.0 - released almost eight years after the previous version.
 
 This version uses updated libraries, can handle Windows UAC-dialogs and huge screen resolutions, which were causing fatal errors in previous versions.
 
