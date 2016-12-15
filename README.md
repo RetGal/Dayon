@@ -1,5 +1,17 @@
 # Dayon!
-Dayon! - a cross-platform remote assistance solution for family and friends
+Dayon! is a easy to use cross-platform remote assistance solution for family and friends.
+It consists of two parts - one for the assistant and one for the assisted.
+
+## Key features
+
+- easy setup
+- no router or network configuration needed on the assisted side
+- friendly user interface
+- cross-platform
+- open source
+- free
+
+## History
 
 This great tool was originally developed by Marc Polizzi back in 2008.
 
