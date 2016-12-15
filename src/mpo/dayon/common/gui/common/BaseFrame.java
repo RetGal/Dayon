@@ -78,7 +78,7 @@ public abstract class BaseFrame extends JFrame
         return exit;
     }
 
-    protected static final String HTTP_HOME = "http://dayonhome.sourceforge.net/index.html";
+    protected static final String HTTP_HOME = "https://github.com/RetGal/Dayon";
 
     protected static final String HTTP_SUPPORT = "http://dayonhome.sourceforge.net/support.html";
 
