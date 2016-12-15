@@ -1,20 +1,13 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
 
-    <title>Dayon! - Remote assistance for your family and friends</title>
-
-    <meta name="verify-v1" content="DF1UtEv/mt6KUhVpCd2CWw4hVcpHI5/gX5crsQd68U4="/>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
     <meta name="description" content="Remote assistance for your family and friends."/>
-
-    <meta name="keywords"
-          content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <meta name="author" content="Marc Polizzi"/>
-
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - Remote assistance for your family and friends</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -41,7 +34,7 @@
         <a href="download.html">Download</a>
         <a href="support.html">Support</a>
         <a href="feedback.html">Feedback</a>
-        <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+        <a href="https://github.com/RetGal/Dayon">GitHub</a>
 
     </div>
 
@@ -82,9 +75,7 @@
                 Dayon! is dedicated to people who are quite new in the computer world. There's no need
                 to setup the network (i.e., no firewall setup, no router configuration, no NAT setup)
                 on their computer. Dayon! is acting there as a client connecting to the monitoring
-                computer. Since version 1.2, the assisted application can be started using a <b>single URL
-                click</b> within you favorite WEB browser (i.e., Java Web Start) for an even better (and
-                hopefully easiest) user experience.
+                computer.
             </p>
 
             <h3><img src="check.png" alt=""> Low Network Bandwidth</h3>
@@ -98,43 +89,48 @@
 
         </div>
 
-        <h2>Status (v1.2)</h2>
+        <h2>Status (1.3.0)</h2>
 
         <p>
-            Dayon! is currently the result of very few days of implementation and as such is
-            still quite un-mature. Many things can be improved in different areas. I'll improve
-            it as soon as I need new features to support my relatives back home and as well if
-            the community should have any interest in that tool.
+            Release 1.3.0 (Phoenix) is the first version of Dayon! that copes with the UAC-dialogs, first introduced with Windows Vista.
         </p>
 
         <h2>Rational</h2>
 
         <p>
-            I've developed Dayon! as I'm now living in the Philippines and communicating with my
-            family and friends back in Europe over Skype. Unfortunately, they're using Windows Vista
-            that I do not know at all and it's quite difficult for me to help them with very basic
-            tasks (e.g., setup a scanner to send me some documents, cleanup the disks, email issues,
-            virus warning, etc...).
+            Marc Polizzi has developed Dayon! when he was living in the Philippines and was communicating 
+	    with his family and friends back in Europe over Skype.
         </p>
 
         <p>
-            I did not want them to setup their firewall and DSL/cable router and NAT and whatever
-            required so that I can access their machine using a remote desktop connection. So, I've
-            decided to implement something very simple in my free time and at the same time take into
+            He did not wanted them to setup their firewall and DSL/cable router and NAT and whatever
+            required so that he could access their machine using a remote desktop connection. So, he
+            decided to implement something very simple in my his free time and at the same time take into
             account a low bandwidth and high latency network.
         </p>
 
+	<p>
+	    Several years later, I found this program on <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a> when I was looking for
+	    free cross-platform remote assistance solution. While using Dayon! to assist users running Windows 7 and later, I realised that it had some
+	    serious flaws. As the latest version (1.2) has been released back in early 2009, I decided to contact the author. With his permission I moved
+	    the source code of the project over to <a href="https://github.com">GitHub</a> in the late 2016.   
+	</p>
+
+	<p>
+	    I updated the used libs to newer versions, did some refactoring on the code, fixed some issues and created a new installer for the Windows platform. 
+	</p>
+
         <p>
-            By the way, Dayon! means Come In! in Visayas - the local dialect.
+            By the way, Dayon! means "Come in!" in Visayas - a local Philippine dialect.
         </p>
 
         <h2>License</h2>
 
         <p>
             This program is a free software licensed under the
-            <a href="http://www.opensource.org/licenses/gpl-2.0.php">GPL license</a>.
+            <a href="https://opensource.org/licenses/GPL-3.0">GPL license</a>.
             Dayon! is using other excellent free softwares:
-            <a href="http://www.mortbay.org/jetty/">Jetty</a>,
+            <a href="http://www.eclipse.org/jetty/">Jetty</a>,
             <a href="http://nsis.sourceforge.net/Main_Page">NSIS</a>,
             <a href="http://www.everaldo.com/crystal/">Crystal</a>
             and <a href="http://launch4j.sourceforge.net/index.html">launch4j</a>.
@@ -143,12 +139,6 @@
     </div>
 
     <div id="footer">
-
-        <a href="http://sourceforge.net">
-            <img style="border: none"
-                 src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
-                 alt="sf.net">
-        </a>
 
     </div>
 

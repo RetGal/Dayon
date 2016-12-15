@@ -1,18 +1,13 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
 
-    <title>Dayon! - Remote assistance for your family and friends</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
     <meta name="description" content="Remote assistance for your family and friends."/>
-
-    <meta name="keywords"
-          content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <meta name="author" content="Marc Polizzi"/>
-
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - Remote assistance for your family and friends</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -48,22 +43,24 @@
         <h2>Download</h2>
 
         <p>
-            Use the following <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">page</a>
-            to download the package according to your platform.
+            Use the following <a href="https://github.com/RetGal/Dayon/releases">page</a> to download the lastest package according to your platform.
         </p>
 
         <p>
-            <b>Windows:</b> an installer is available and the installation should be straightforward;
-            you might as well use the zip package if you prefer. Two packages are availabe: one with
-            the Sun JRE 1.6 bundled, the other one without (the exe is going to locate a JRE 1.6 on
-            the machine before starting).
+            Legacy relases (v1.0 to  v1.2) can be downloaded <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">here</a>.
         </p>
 
         <p>
-            <b>Linux:</b> you have to unzip the package and then setup the chmod +x of the scripts
-            (bin/dayon*) as well as the location of a JRE/JDK 1.6 (bin/dayon_run.sh). Note that, I've
-            simply tested the scripts but not the application itself as I've only access to a machine
-            in terminal mode. Please tell me if something does not work.
+            <b>Windows:</b> an installer is available and the installation should be straightforward.
+	    The package comes bundled with an OpenJDK 1.8 based JRE.
+        </p>
+
+        <p>
+            <b>Linux:</b> you have to tar xzvf the package and then setup the chmod +x of the scripts
+            (bin/dayon*). The location of the installed JRE/JDK is going to be detected automatically.
+	    It is not bundled in the tgz. If it should for whatever reason fail to do so, then you can
+	    set the JAVA_HOME in (bin/dayon_run.sh) manually. Note that, I've been testing this on Debian
+	    and Ubuntu distros only.
         </p>
 
         <p>
@@ -72,6 +69,29 @@
         </p>
 
         <h2>Change Log</h2>
+
+        <h3>Changes for Dayon! v1.3.0 Phoenix (December 10th, 2016)</h3>
+
+        <ul>
+            <li>
+                Issues with Windows UAC-dialogs solved.
+            </li>
+            <li>
+                Supports huge screen resoultions, which were causing fatal errors on previous versions.
+            </li>
+            <li>
+                Less manual configuration on Linux needed - it now auto detects the installed JAVA version
+            </li>
+            <li>
+                New, improved installer for Windows, including an OpenJDK (1.8) based JRE.
+            </li>
+            <li>
+                Updated libraries.
+            </li>
+            <li>
+                GPLv3.
+            </li>
+        </ul>
 
         <h3>Changes for Dayon! v1.2 (January 3rd, 2009)</h3>
 
@@ -117,12 +137,6 @@
     </div>
 
     <div id="footer">
-
-        <a href="http://sourceforge.net">
-            <img style="border: none"
-                 src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
-                 alt="sf.net">
-        </a>
 
     </div>
 
