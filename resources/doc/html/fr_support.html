@@ -1,18 +1,13 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Assistance à distance pour votre famille et vos amis."/>
+    <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dayon! - Remote assistance for your family and friends</title>
-
-    <meta name="description" content="Remote assistance for your family and friends."/>
-
-    <meta name="keywords"
-          content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <meta name="author" content="Marc Polizzi"/>
-
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -34,13 +29,13 @@
     </div>
 
     <div id="menu">
-
+    
         <a href="fr_index.html">Accueil</a>
         <a href="fr_quickstart.html">Premiers Pas</a>
         <a href="fr_download.html">Télécharger</a>
         <a href="fr_support.html">Aide</a>
         <a href="fr_feedback.html">Réactions</a>
-        <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+        <a href="https://github.com/RetGal/Dayon">GitHub</a>
 
     </div>
 
@@ -57,7 +52,7 @@
 
         <ul>
             <li>
-                Le support (version 1.2) du clavier est plutôt minimal; il n'y pas moyen pour le moment
+                Le support (version 1.3) du clavier est toujours plutôt minimal; il n'y pas moyen pour le moment
                 d'envoyer des signaux et quelques combinaisons de touches ne sont pas supportées correctement
                 (e.g., CTRL-ALT-DEL).
             </li>
@@ -66,83 +61,81 @@
                 dessiné pendant par example le déplacement des fenêtres..
             </li>
             <li>
-                Vista: quand on installe des applications sur l'ordinateur de l'assisté, les avertissements
-                de sécurité ne sont pas correctement rendus sur l'assistant (sans doute du à une limite du JDK).
+                En raison des contraintes de sécurité plus rigides, Java Web Start de l'application assistée ne 
+                fonctionne pas avec les versions plus récentes de JAVA.
             </li>
         </ul>
 
-        <h3>JAVA Process Properties</h3>
+        <h3>Propriétés du processus JAVA</h3>
 
         <p>
-            On Windows, I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still
-            configure the JVM of each process using the corresponding <code>.l4j.ini</code> file within
-            the <code>bin</code> directory of your Dayon! install.
+			Sous Windows, pour l'assistant j'utilise Launch4J pour envelopper la classe JAVA principale dans un fichier .exe. Vous pouvez toujours
+            Configurez la JVM de chaque processus à l'aide du fichier <code>.l4j.ini</code> correspondant
+            Le répertoire <code>bin</code> de votre Dayon! installation.
         </p>
 
         <p>
-            You can for example setup the JVM RAM usage taking into account the size of the cache and
-            whether or not you're using the LZMA compression method (requires more RAM on the assisted
-            side).
+			Vous pouvez par exemple configurer l'utilisation de la RAM JVM en tenant compte de la taille du cache et
+            Si vous utilisez la méthode de compression LZMA (nécessite plus de RAM sur la côte de l'assistant).
         </p>
 
         <p>
-            The <code>-server</code> option is available if you're using a JDK (as opposed to a JRE).
+            L'option <code>-server</code> est disponible si vous utilisez un JDK (par opposition à un JRE).
         </p>
 
         <p>
-            On Unix, the same options are available within the <code>dayon.sh</code> script.
+            Sous Unix, les mêmes options sont disponibles dans le script <code>dayon.sh</code>.
         </p>
 
-        <h3>Dayon! Home Directory</h3>
+        <h3>Répetoire d'accueil de Dayon!</h3>
 
         <p>
-            The directory <code>.dayon</code> is created within the directory referenced by the JAVA
-            property <code>user.home</code> and contains the saved user preferences and default log
-            files.
+			Le répertoire <code>.dayon</code> est créé dans le répertoire référencé par le JAVA Propriété 
+			<code>user.home</code> et contient les préférences utilisateur enregistrées et le journal par défaut
+		    fichiers.
         </p>
 
-        <h3>CRC Checksum</h3>
+        <h3>Somme de contrôle CRC</h3>
 
         <p>
-            On the assisted side, the screen is divided into different areas called <i>tiles</i>.
-            Only tiles that have changed from the previous capture are sent over the network to the
-            assistant side. To determine if a tile is different I'm currently computing a CRC code
-            (i.e., a unique integer value representing the pixels of the tile) that is not perfect
-            for the sake of speed. So it might happens that some <i>changed</i> tiles are not sent
-            to the assistant.
+			Sur le côté de l'assisté, l'écran est divisé en différentes zones appelées <i>tuiles</i>.
+            Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le
+            Côté assistant. Pour déterminer si une tuile est différente, je suis en train de calculer un code CRC
+            (C'est-à-dire, une valeur entière unique représentant les pixels de la tuile) qui n'est pas parfaite
+            Par souci de rapidité. Il se peut donc que certaines tuiles <i>changées</i> ne soient pas envoyées
+            à l'assistant.
         </p>
 
         <p>
-            Until now I've detected that issue during strong testing for very few pixels. Visually,
-            I've not noticed anything serious. But in case things are going mad you can then restart
-            the assisted or before try the <code>reset</code> action (<b>the orange lightning icon</b>)
-            that should clear every cached data and resend a full screen capture from scratch.
+			Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement,
+            Je n'ai rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer
+            L'aide ou avant d'essayer l'action <code>reset</code> (<b> l'icône orange de la foudre </b>)
+            Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
         </p>
 
-        <h3>Statistics Counters</h3>
+        <h3>Compteurs de statistiques</h3>
 
         <img style="border: none" src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
 
         <p>
-            The status bar of the assistant frame is displaying a set of counters.
+            La barre d'état du cadre assistant affiche un ensemble de compteurs.
         </p>
 
         <ol>
-            <li>Network Bandwidth</li>
-            <li>Compression Ratio: how many times the initial capture (diff only) has been
-                compressed
+            <li>Bande passante réseau</li>
+            <li>Compression Ratio: combien de fois la capture initiale (diff only) a été comprimé
             </li>
-            <li>Number of Tiles: the number of tile being transmitted over the network as well
-                as the cache hits.
+            <li>Number of Tiles: le nombre de carreaux étant également transmis sur le réseau
+                ou servis depuis le cache.
             </li>
-            <li>Number of Skipped Capture: the number of screen captures that have been skipped
-                because of a too high rate (i.e., low tick value) for the CPU. To minimize that
-                number you have to slow down the capture rate using a bigger tick value.
+            <li>Number of Skipped Capture: le nombre de captures d'écran qui ont été ignorées
+                En raison d'un taux trop élevé (c'est-à-dire, une valeur de cotation faible) pour la CPU. 
+                Pour minimiser cette vous devez ralentir le taux de capture en utilisant une valeur plus grande.
             </li>
-            <li>Number of Merged Capture: the number of screen captures that have been merged
-                before being transmitted. This is due to a capture rate too high for the current
-                compression method. To minimize that number you have to slow down the capture
-                rate and/or change the compression method using a faster one.
+            <li>Number of Merged Capture: le nombre de captures d'écran fusionnées
+                avant d'être transmis. Ceci est dû à un taux de capture trop élevé pour le courant
+                méthode de compression. Pour minimiser ce nombre, vous devez ralentir la capture
+                taux et / ou changer la méthode de compression en utilisant un plus rapide.
             </li>
 
         </ol>
@@ -150,12 +143,6 @@
     </div>
 
     <div id="footer">
-
-        <a href="http://sourceforge.net">
-            <img style="border: none"
-                 src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
-                 alt="sf.net">
-        </a>
 
     </div>
 

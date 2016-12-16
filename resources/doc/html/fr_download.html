@@ -1,18 +1,13 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Assistance à distance pour votre famille et vos amis."/>
+    <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dayon! - Remote assistance for your family and friends</title>
-
-    <meta name="description" content="Remote assistance for your family and friends."/>
-
-    <meta name="keywords"
-          content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <meta name="author" content="Marc Polizzi"/>
-
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -40,7 +35,7 @@
         <a href="fr_download.html">Télécharger</a>
         <a href="fr_support.html">Aide</a>
         <a href="fr_feedback.html">Réactions</a>
-        <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+        <a href="https://github.com/RetGal/Dayon">GitHub</a>
 
     </div>
 
@@ -49,22 +44,25 @@
         <h2>Télécharger</h2>
 
         <p>
-            Utilisez cette <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">page</a>
+            Utilisez cette <a href="https://github.com/RetGal/Dayon/releases">page</a>
             pour télécharger la version qui correspond à votre OS (i.e., Windows, Linux, Mac, ...).
         </p>
-
+        
         <p>
-            <b>Windows:</b> un programme d'installation est disponible et l'installation devrait être assez directe
-            (vous pouvez si vous le preferez utiliser le fichier ZIP). Notez que deux versions sont disponibles: une
-            avec le JRE 1.6 de Sun inclu, et l'autre sans (l'application essaiera de localiser sur la machine un JRE
-            1.6).
+            Les anciennes versions (v1.0 à v1.2) peuvent être téléchargées depuis <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">ici</a>.
         </p>
 
         <p>
-            <b>Linux:</b> you devez utiliser le fichier ZIP et modifier peut-être chmod +x des scripts
-            (bin/dayon*) ainsi que la location du JRE/JDK 1.6 (bin/dayon_run.sh). Notez, que j'ai pu simplement
-            testé les scripts mais pas l'application car je n'ai pas d'accès a une machine autrement qu'en mode
-            terminal. Dites moi si quelque chose ne fonctionne pas.
+            <b>Windows:</b> un programme d'installation est disponible et l'installation devrait être assez directe.
+            Le paquet est livré avec un JRE à base du OpenJDK 1.8.
+        </p>
+
+        <p>
+            <b>Linux:</b> you devez utiliser le fichier TGZ et modifier avec chmod +x les scripts
+            (bin/dayon*). La location du JRE/JDK installé va être détecté automatiquement.
+			Il n'est pas livré dans le tgz. Si, pour quelque raison que ce soit, il ne le fasse pas, vous pouvez
+			configurez JAVA_HOME dans (bin/dayon_run.sh) manuellement. Notez que, j'ai testé ceci sur Debian
+			et Ubuntu seulement.
         </p>
 
         <p>
@@ -72,58 +70,74 @@
             pouvez utiliser les shell scripts comme sur Linux.
         </p>
 
-        <h2>Change Log</h2>
-
-        <h3>Changes for Dayon! v1.2 (January 3rd, 2009)</h3>
-
+        <h2>Journal des modifications</h2>
+        
+        <h3>Modifications pour Dayon! V1.3 Phoenix (10 décembre 2016)</h3>
+        
         <ul>
             <li>
-                Fix possible black screen (assistant) at startup.
+                Résolu les problèmes avec Windows UAC-dialogues.
             </li>
             <li>
-                Control support.
+                Supporte les résolutions d'écran énormes, qui causaient des erreurs fatales sur les versions précédentes.
             </li>
             <li>
-                Java Web Start (<span style="color:#ff0000">v1.2 is not compatible with v1.1</span>) to start the
-                assisted.
+                Moins de configuration manuelle sous Linux nécessaire - la version installée de JAVA est maintenant détecte automatiquement. 
             </li>
             <li>
-                Public IP address service (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>).
+                Nouvel installeur amélioré pour Windows, y compris un JRE à basé du OpenJDK (1.8).
             </li>
             <li>
-                Quickstart guide improvements.
+                Bibliothèques mises à jour.
             </li>
             <li>
-                French localization.
+                GPLv3.
             </li>
         </ul>
 
-        <h3>Changes for Dayon! v1.1 (December 24, 2008)</h3>
+        <h3>Modifications pour Dayon! v1.2 (3 janvier 2009)</h3>
 
         <ul>
-            <li>Protocol improvements (<span style="color:#ff0000">v1.1 is not compatible with v1.0</span>).</li>
-            <li>Improved a bit the CPU usage.</li>
-            <li>Cleanup initial screen capture encoding.</li>
-            <li>New compression methods : BZIP2, LZMA.</li>
-            <li>Bitmap cache usage.</li>
-            <li>The GUI is a bit more polished.</li>
+            <li>
+                Correction d'un écran noir possible (assistant) au démarrage.
+            </li>
+            <li>
+                Support de contrôle.
+            </li>
+            <li>
+                Java Web Start (<span style="color:#ff0000">n'est pas compatible avec v1.1 </span>) pour lancer l' assisté.
+            </li>
+            <li>
+                Service d'adresse IP publique (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>).
+            </li>
+            <li>
+                Améliorations au guide de démarrage rapide.
+            </li>
+            <li>
+                Localisation française.
+            </li>
         </ul>
 
-        <h3>Changes for Dayon! v1.0 (December 4, 2008)</h3>
+        <h3>Modifications pour Dayon! v1.1 (24 decembre 2008)</h3>
 
         <ul>
-            <li>Initial release.</li>
+            <li>Améliorations apportées au protocole (<span style="color:#ff0000">v1.1 n'est pas compatible avec v1.0</span>).</li>
+            <li>Amélioré un peu l'utilisation du processeur.</li>
+            <li>Nettoyage de l'encodage initial de capture d'écran.</li>
+            <li>Nouvelles méthodes de compression: BZIP2, LZMA..</li>
+            <li>Utilisation du cache de bitmap.</li>
+            <li>L'interface graphique est un peu plus polie.</li>
+        </ul>
+
+        <h3>Modifications pour Dayon! v1.0 (4 decembre 2008)</h3>
+
+        <ul>
+            <li>Première version</li>
         </ul>
 
     </div>
 
     <div id="footer">
-
-        <a href="http://sourceforge.net">
-            <img style="border: none"
-                 src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
-                 alt="sf.net">
-        </a>
 
     </div>
 

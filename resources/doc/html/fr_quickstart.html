@@ -1,18 +1,13 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="fr">
 <head>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Assistance à distance pour votre famille et vos amis."/>
+    <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Dayon! - Remote assistance for your family and friends</title>
-
-    <meta name="description" content="Remote assistance for your family and friends."/>
-
-    <meta name="keywords"
-          content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java"/>
-
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-
-    <meta name="author" content="Marc Polizzi"/>
-
     <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
@@ -93,10 +88,8 @@
 
     <p>
         Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous
-        permettant de copier dans le clipboard l'<b>URL</b> (généré à partir de l'addresse IP et du numéro
-        de port) requis pour un démarrage avec <b>Java Web Start</b> côté <i>assisté</i>. Il vous sera ainsi
-        facile de coller dans une session Skype (ou autre) cet URL qui permettra alors un demarrage
-        avec un <b>simple click</b>.
+        permettant de copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi
+        facile de coller dans une session Skype (ou autre) ou dans un message email.
     </p>
 
     <img style="border: none" src="assistant_network_addresses_ex.jpg"
@@ -105,14 +98,12 @@
     <p>
         <i>
             Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application
-            écoute sur toutes les interfaces réseaux disponibles; elle est utilisée avec le numéro de port
-            pour générer les resources requises pas Java Web Start.
+            écoute sur toutes les interfaces réseaux disponibles; mais la personne assisté va avoir besoin de ces informations.
         </i>
     </p>
 
     <p>
-        C'est tout pour la configuration réseau; vous trouverez plus de détails <a
-            href="#assistant-details">ci-desous</a>.
+        C'est tout pour la configuration réseau; vous trouverez plus de détails <a href="#assistant-details">ci-desous</a>.
         Mais voyons tout d'abord comment mettre en place le côté <i>assisté</i>.
     </p>
 
@@ -130,37 +121,12 @@
 
     <p>
         Dayon! Assisté se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de
-        configuration réseau à faire. Depuis la version 1.2, vous avez deux options pour démarrer l'<i>assisté</i>:
-        soit comme une application <b>régulière</b> soit en utilisant <b>Java Web Start</b>.
+        configuration réseau à faire.
     </p>
 
     <p>
-        <b>Java Web Start</b> - La façon la plus simple (i.e., un <b>simple click</b> dans un browser, mise-à-jour
-        automatique, etc...). Pour votre information, Dayon! Assistant se comporte alors comme un serveur HTTP pendant
-        la phase de mise-en-route Dayon! Assisted. Donc pour démarrer, l'application, il vous suffit d'ouvrir
-        dans votre browser Web favori, l'<b>URL</b> communiqué par l'<i>assistant</i> et de suivre les
-        instructions:
-    </p>
-
-    <img style="border: none" src="assisted_jws.jpg" alt="Dayon! Assisted : Java Web Start">
-
-    <p>
-        Ensuite, il faut suivre les instructions donnée par Java Web Start et de <b>truster</b> l'application:
-    </p>
-
-    <img style="border: none" src="jws_warning.jpg" alt="Dayon! Assisted : Java Web Start Warning">
-
-    <p>
-        Ne vous inquiétez pas des avertissements de sécurité; de façon évidente cette application va utiliser
-        le réseau (et aussi des fichiers pour sauver vos préférences). J'ai signé le JAR avec un <b>self-certificate</b>.
-        Le code source complet est disponible et vous pouvez vérifier qu'il ne contient aucun
-        <i>malware</i> de quelque sorte que ce soit. A propos, en parlant de sécurité, Dayon! n'utilise pas
-        encore d'encryption pour la communication réseau.
-    </p>
-
-    <p>
-        <b>Application Régulière</b> - Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et
-        ensuite démarrer l'<i>assisté</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et
+        Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et  ensuite démarrer l'
+        <i>Dayon!</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et
         le numéro de port communiqué par l'<i>assistant</i>:
     </p>
 
@@ -241,18 +207,12 @@
     </p>
 
     <p>
-        That's all folk! Vous trouverez plus d'information sur la page <a href="support.html">support</a>.
+        That's all folk! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
     </p>
 
 </div>
 
 <div id="footer">
-
-    <a href="http://sourceforge.net">
-        <img style="border: none"
-             src="http://sourceforge.net/sflogo.php?group_id=95944&amp;type=4"
-             alt="sf.net">
-    </a>
 
 </div>
 
