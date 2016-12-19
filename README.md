@@ -8,6 +8,7 @@ It consists of two parts - one for the assistant and one for the assisted. Both 
 - easy setup
 - no router or network configuration needed on the assisted side
 - friendly user interface
+- assistant and assisted functionality in one packet
 - cross-platform
 - open source
 - free
@@ -20,7 +21,7 @@ With his permission I moved the code base to GitHub, where it can be maintained 
 
 ## Releases
 
-The latest version is 1.3.0 - released almost eight years after the previous version.
+The latest version is 1.3.1 - released almost eight years after the previous major version.
 
 This version uses updated libraries, can handle Windows UAC-dialogs and huge screen resolutions, which were causing fatal errors in previous versions.
 
@@ -28,5 +29,5 @@ Previous releases can be found on the original project site: http://dayonhome.so
 
 ## Trivia
 
-Dayon! means "come in!" in Visayas - a local Philippine dialect. 
+Dayon! means "Come in!" in Visayas - a local Philippine dialect. 
 
