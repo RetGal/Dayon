@@ -31,6 +31,7 @@ public class NetworkAssistantHttpEngine
         this.port = port;
 
         this.server = new Server();
+        this.server.setSendServerVersion(false);
 
         this.acceptor = new MySocketConnector();  
         this.acceptor.setKeystore("X509");
