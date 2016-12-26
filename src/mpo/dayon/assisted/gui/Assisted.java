@@ -24,12 +24,10 @@ import mpo.dayon.common.utils.SystemUtilities;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.cert.X509Certificate;
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;

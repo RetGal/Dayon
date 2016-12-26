@@ -8,6 +8,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,10 +33,11 @@ public class NetworkAssistantHttpEngine
 
         this.server = new Server();
         this.server.setSendServerVersion(false);
-
-        this.acceptor = new MySocketConnector();  
-        this.acceptor.setKeystore("X509");
-	    this.acceptor.setKeyPassword("spasspass");
+               
+        SslContextFactory contextFactory = new SslContextFactory(true);
+        contextFactory.setKeyStorePath("X509");
+        contextFactory.setKeyStorePassword("spasspass");
+        this.acceptor = new MySocketConnector(contextFactory);
 
         this.server.setConnectors(new Connector[]{this.acceptor});
 
@@ -121,8 +123,9 @@ public class NetworkAssistantHttpEngine
 
         private boolean __acceptStopped;
 
-        public MySocketConnector()
+        public MySocketConnector(SslContextFactory contextFactory)
         {
+            super(contextFactory);
             setPort(port);
         }
 
