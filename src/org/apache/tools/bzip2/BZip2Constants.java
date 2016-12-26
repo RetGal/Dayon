@@ -32,7 +32,7 @@ package org.apache.tools.bzip2;
  * You should have no need to use it.
  * </p>
  */
-public interface BZip2Constants {
+interface BZip2Constants {
 
     int baseBlockSize = 100000;
     int MAX_ALPHA_SIZE = 258;

@@ -10,7 +10,7 @@ public class Version
 
     private final int minor;
 
-    public Version(String version)
+    private Version(String version)
     {
         this.version = version == null ? "0.0 #0" : version;
 

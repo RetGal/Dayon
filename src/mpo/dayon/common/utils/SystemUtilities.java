@@ -18,7 +18,7 @@ import java.util.Properties;
 public abstract class SystemUtilities
 {
     @Nullable
-    public static File getInstallRoot()
+    private static File getInstallRoot()
     {
         try
         {
@@ -97,7 +97,7 @@ public abstract class SystemUtilities
     }
 
     @Nullable
-    public static synchronized File getOrCreateAppDir()
+    private static synchronized File getOrCreateAppDir()
     {
         final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
         if (homeDir == null)
@@ -192,7 +192,7 @@ public abstract class SystemUtilities
         System.setProperty("dayon.application.name", name);
     }
 
-    public static String getStringProperty(@Nullable Properties props, String name)
+    private static String getStringProperty(@Nullable Properties props, String name)
     {
         final String value = getStringProperty(props, name, null);
 
@@ -279,11 +279,11 @@ public abstract class SystemUtilities
 
     public static List<String> getSystemProperties()
     {
-        final List<String> props = new ArrayList<String>();
+        final List<String> props = new ArrayList<>();
 
         int size = Integer.MIN_VALUE;
 
-        final List<String> propnames = new ArrayList<String>();
+        final List<String> propnames = new ArrayList<>();
         for (Object entry : System.getProperties().keySet())
         {
             final String name = entry.toString();
@@ -332,7 +332,7 @@ public abstract class SystemUtilities
         return sb.toString();
     }
 
-    public static String getLineSeparator()
+    private static String getLineSeparator()
     {
         return AccessController.doPrivileged(new GetPropertyAction("line.separator"));
     }

@@ -4,7 +4,7 @@ import mpo.dayon.common.buffer.MemByteBuffer;
 
 import java.io.IOException;
 
-public abstract class Zipper
+abstract class Zipper
 {
     public abstract MemByteBuffer zip(MemByteBuffer unzipped) throws IOException;
 

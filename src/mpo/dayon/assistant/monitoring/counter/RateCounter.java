@@ -7,11 +7,11 @@ public abstract class RateCounter extends Counter<Double>
     /**
      * The last computed N instant rates : most recent is first (head).
      */
-    private final LinkedList<Double> instantRateHistory = new LinkedList<Double>();
+    private final LinkedList<Double> instantRateHistory = new LinkedList<>();
 
     private double instantValue = 0;
 
-    public RateCounter(String uid, String shortDescription)
+    RateCounter(String uid, String shortDescription)
     {
         super(uid, shortDescription);
     }
@@ -21,7 +21,7 @@ public abstract class RateCounter extends Counter<Double>
         return formatRate(value);
     }
 
-    public abstract String formatRate(Double rate);
+    protected abstract String formatRate(Double rate);
 
     public void add(double value)
     {

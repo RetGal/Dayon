@@ -16,11 +16,11 @@ public abstract class BaseFrame extends JFrame
 {
 	private static final long serialVersionUID = 3844044465771664147L;
 
-	protected ToolBar toolBar;
+	private ToolBar toolBar;
 
     protected StatusBar statusBar;
 
-    public BaseFrame()
+    protected BaseFrame()
     {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
@@ -34,7 +34,7 @@ public abstract class BaseFrame extends JFrame
         });
     }
 
-    protected void doExit()
+    private void doExit()
     {
         if (JOptionPane.showConfirmDialog(this,
                                           Babylon.translate("exit.confirm"),
@@ -78,11 +78,11 @@ public abstract class BaseFrame extends JFrame
         return exit;
     }
 
-    protected static final String HTTP_HOME = "https://github.com/RetGal/Dayon";
+    private static final String HTTP_HOME = "https://github.com/RetGal/Dayon";
 
-    protected static final String HTTP_SUPPORT = "http://dayonhome.sourceforge.net/support.html";
+    private static final String HTTP_SUPPORT = "http://dayonhome.sourceforge.net/support.html";
 
-    protected static final String HTTP_FEEDBACK = "http://dayonhome.sourceforge.net/feedback.html";
+    private static final String HTTP_FEEDBACK = "http://dayonhome.sourceforge.net/feedback.html";
 
     protected Action createShowInfoAction()
     {

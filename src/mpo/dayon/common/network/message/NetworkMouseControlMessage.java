@@ -15,9 +15,9 @@ public class NetworkMouseControlMessage extends NetworkMessage
         RELEASED,
     }
 
-    public static final int PRESSED = 1;
+    private static final int PRESSED = 1;
 
-    public static final int RELEASED = 1 << 1;
+    private static final int RELEASED = 1 << 1;
 
     public static final int BUTTON1 = 1 << 2;
 
@@ -25,7 +25,7 @@ public class NetworkMouseControlMessage extends NetworkMessage
 
     public static final int BUTTON3 = 1 << 4;
 
-    public static final int WHEEL = 1 << 5;
+    private static final int WHEEL = 1 << 5;
 
     private final int x;
 
@@ -177,7 +177,7 @@ public class NetworkMouseControlMessage extends NetworkMessage
         return "";
     }
 
-    public String toStringButton()
+    private String toStringButton()
     {
         if (isButton1())
         {

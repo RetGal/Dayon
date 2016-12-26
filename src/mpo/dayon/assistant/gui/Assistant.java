@@ -196,12 +196,7 @@ public class Assistant implements Configurable<AssistantConfiguration>
                                 }
 
                                 SystemUtilities.safeClose(in);
-                            }
-                            catch (MalformedURLException ex)
-                            {
-                                Log.error("What is my IP error!", ex);
-                            }
-                            catch (IOException ex)
+                            } catch (IOException ex)
                             {
                                 Log.error("What is my IP error!", ex);
                             }

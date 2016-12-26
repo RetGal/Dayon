@@ -20,14 +20,14 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private final CaptureFactory captureFactory;
 
-    private final Listeners<CaptureEngineListener> listeners = new Listeners<CaptureEngineListener>(CaptureEngineListener.class);
+    private final Listeners<CaptureEngineListener> listeners = new Listeners<>(CaptureEngineListener.class);
 
     private final Thread thread;
 
     /**
      * I keep only the checksum as I do not want to keep the referenceS to the byte[] of the previous captureS.
      */
-    private long[] previousCapture;
+    private final long[] previousCapture;
 
     private final Object reconfigurationLOCK = new Object();
 
@@ -215,7 +215,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     }
 
     @Nullable
-    public static CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, int width, int height, long[] previousCapture)
+    private static CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, int width, int height, long[] previousCapture)
     {
         CaptureTile[] dirty = null;
 

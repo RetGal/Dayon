@@ -22,7 +22,7 @@ public class AssistantFrame extends BaseFrame
 {
 	private static final long serialVersionUID = 6211310983963544650L;
 
-	private final Listeners<AssistantFrameListener> listeners = new Listeners<AssistantFrameListener>(AssistantFrameListener.class);
+	private final Listeners<AssistantFrameListener> listeners = new Listeners<>(AssistantFrameListener.class);
 
     private final JScrollPane assistantPanelWrapper;
 

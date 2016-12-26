@@ -2,15 +2,11 @@ package mpo.dayon.assistant.monitoring.counter;
 
 public abstract class AverageValueCounter extends Counter<Double>
 {
-    private double totalWeight = 0;
-
-    private double totalValue = 0;
-
     private double instantWeight = 0;
 
     private double instantValue = 0;
 
-    public AverageValueCounter(String uid, String shortDescription)
+    AverageValueCounter(String uid, String shortDescription)
     {
         super(uid, shortDescription);
     }
@@ -25,9 +21,6 @@ public abstract class AverageValueCounter extends Counter<Double>
         synchronized (this)
         {
             final double xvalue = weight * value;
-
-            totalWeight += weight;
-            totalValue += xvalue;
 
             instantWeight += weight;
             instantValue += xvalue;

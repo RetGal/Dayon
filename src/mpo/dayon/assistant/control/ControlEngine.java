@@ -125,7 +125,7 @@ public class ControlEngine
     /**
      * Fix missing pair'd PRESSED event from RELEASED
      */
-    private final Set<Integer> pressedKeys = new HashSet<Integer>();
+    private final Set<Integer> pressedKeys = new HashSet<>();
 
     /**
      * From AWT thread (!)

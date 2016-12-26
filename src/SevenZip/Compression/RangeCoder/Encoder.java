@@ -4,25 +4,25 @@ import java.io.IOException;
 
 public class Encoder
 {
-    static final int kTopMask = ~((1 << 24) - 1);
+    private static final int kTopMask = ~((1 << 24) - 1);
 
-    static final int kNumBitModelTotalBits = 11;
+    private static final int kNumBitModelTotalBits = 11;
 
-    static final int kBitModelTotal = (1 << kNumBitModelTotalBits);
+    private static final int kBitModelTotal = (1 << kNumBitModelTotalBits);
 
-    static final int kNumMoveBits = 5;
+    private static final int kNumMoveBits = 5;
 
-    java.io.OutputStream Stream;
+    private java.io.OutputStream Stream;
 
-    long Low;
+    private long Low;
 
-    int Range;
+    private int Range;
 
-    int _cacheSize;
+    private int _cacheSize;
 
-    int _cache;
+    private int _cache;
 
-    long _position;
+    private long _position;
 
     public void SetStream(java.io.OutputStream stream)
     {
@@ -56,7 +56,7 @@ public class Encoder
         Stream.flush();
     }
 
-    public void ShiftLow() throws IOException
+    private void ShiftLow() throws IOException
     {
         int LowHi = (int) (Low >>> 32);
         if (LowHi != 0 || Low < 0xFF000000L)
@@ -99,7 +99,7 @@ public class Encoder
     }
 
 
-    static final int kNumMoveReducingBits = 2;
+    private static final int kNumMoveReducingBits = 2;
 
     public static final int kNumBitPriceShiftBits = 6;
 
@@ -133,7 +133,7 @@ public class Encoder
         }
     }
 
-    private static int[] ProbPrices = new int[kBitModelTotal >>> kNumMoveReducingBits];
+    private static final int[] ProbPrices = new int[kBitModelTotal >>> kNumMoveReducingBits];
 
     static
     {

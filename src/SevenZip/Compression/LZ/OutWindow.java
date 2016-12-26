@@ -6,15 +6,15 @@ import java.io.IOException;
 
 public class OutWindow
 {
-    byte[] _buffer;
+    private byte[] _buffer;
 
-    int _pos;
+    private int _pos;
 
-    int _windowSize = 0;
+    private int _windowSize = 0;
 
-    int _streamPos;
+    private int _streamPos;
 
-    java.io.OutputStream _stream;
+    private java.io.OutputStream _stream;
 
     public void Create(int windowSize)
     {

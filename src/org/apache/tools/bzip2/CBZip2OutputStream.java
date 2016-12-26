@@ -140,14 +140,14 @@ public class CBZip2OutputStream extends OutputStream
     /**
      * The maximum supported blocksize <tt> == 9</tt>.
      */
-    public static final int MAX_BLOCKSIZE = 9;
+    private static final int MAX_BLOCKSIZE = 9;
 
     /**
      * This constant is accessible by subclasses for historical
      * purposes. If you don't know what it means then you don't need
      * it.
      */
-    protected static final int SETMASK = (1 << 21);
+    private static final int SETMASK = (1 << 21);
 
     /**
      * This constant is accessible by subclasses for historical
@@ -161,14 +161,14 @@ public class CBZip2OutputStream extends OutputStream
      * purposes. If you don't know what it means then you don't need
      * it.
      */
-    protected static final int GREATER_ICOST = 15;
+    private static final int GREATER_ICOST = 15;
 
     /**
      * This constant is accessible by subclasses for historical
      * purposes. If you don't know what it means then you don't need
      * it.
      */
-    protected static final int LESSER_ICOST = 0;
+    private static final int LESSER_ICOST = 0;
 
     /**
      * This constant is accessible by subclasses for historical
@@ -260,7 +260,7 @@ public class CBZip2OutputStream extends OutputStream
                 heap[1] = heap[nHeap];
                 nHeap--;
 
-                int yy = 0;
+                int yy;
                 int zz = 1;
                 int tmp = heap[1];
 
@@ -290,7 +290,6 @@ public class CBZip2OutputStream extends OutputStream
                 heap[1] = heap[nHeap];
                 nHeap--;
 
-                yy = 0;
                 zz = 1;
                 tmp = heap[1];
 
@@ -333,7 +332,6 @@ public class CBZip2OutputStream extends OutputStream
                 nHeap++;
                 heap[nHeap] = nNodes;
 
-                tmp = 0;
                 zz = nHeap;
                 tmp = heap[zz];
                 final int weight_tmp = weight[tmp];
@@ -415,7 +413,7 @@ public class CBZip2OutputStream extends OutputStream
                 heap[1] = heap[nHeap];
                 nHeap--;
 
-                int yy = 0;
+                int yy;
                 int zz = 1;
                 int tmp = heap[1];
 
@@ -445,7 +443,6 @@ public class CBZip2OutputStream extends OutputStream
                 heap[1] = heap[nHeap];
                 nHeap--;
 
-                yy = 0;
                 zz = 1;
                 tmp = heap[1];
 
@@ -486,7 +483,6 @@ public class CBZip2OutputStream extends OutputStream
                 nHeap++;
                 heap[nHeap] = nNodes;
 
-                tmp = 0;
                 zz = nHeap;
                 tmp = heap[zz];
                 final int weight_tmp = weight[tmp];
@@ -620,7 +616,7 @@ public class CBZip2OutputStream extends OutputStream
      * @see #MIN_BLOCKSIZE
      * @see #MAX_BLOCKSIZE
      */
-    public CBZip2OutputStream(final OutputStream out, final int blockSize)
+    private CBZip2OutputStream(final OutputStream out, final int blockSize)
         throws IOException {
         super();
 
@@ -728,7 +724,7 @@ public class CBZip2OutputStream extends OutputStream
     }
 
 
-    public void finish() throws IOException {
+    private void finish() throws IOException {
         if (out != null) {
             try {
                 if (this.runLength > 0) {

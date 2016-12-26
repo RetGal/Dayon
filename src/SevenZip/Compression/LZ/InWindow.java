@@ -6,29 +6,29 @@ import java.io.IOException;
 
 public class InWindow
 {
-    public byte[] _bufferBase; // pointer to buffer with data
+    byte[] _bufferBase; // pointer to buffer with data
 
-    java.io.InputStream _stream;
+    private java.io.InputStream _stream;
 
-    int _posLimit;  // offset (from _buffer) of first byte when new block reading must be done
+    private int _posLimit;  // offset (from _buffer) of first byte when new block reading must be done
 
-    boolean _streamEndWasReached; // if (true) then _streamPos shows real end of stream
+    private boolean _streamEndWasReached; // if (true) then _streamPos shows real end of stream
 
-    int _pointerToLastSafePosition;
+    private int _pointerToLastSafePosition;
 
-    public int _bufferOffset;
+    int _bufferOffset;
 
-    public int _blockSize;  // Size of Allocated memory block
+    private int _blockSize;  // Size of Allocated memory block
 
-    public int _pos;             // offset (from _buffer) of curent byte
+    int _pos;             // offset (from _buffer) of curent byte
 
-    int _keepSizeBefore;  // how many BYTEs must be kept in buffer before _pos
+    private int _keepSizeBefore;  // how many BYTEs must be kept in buffer before _pos
 
-    int _keepSizeAfter;   // how many BYTEs must be kept buffer after _pos
+    private int _keepSizeAfter;   // how many BYTEs must be kept buffer after _pos
 
-    public int _streamPos;   // offset (from _buffer) of first not read byte from Stream
+    int _streamPos;   // offset (from _buffer) of first not read byte from Stream
 
-    public void MoveBlock()
+    private void MoveBlock()
     {
         int offset = _bufferOffset + _pos - _keepSizeBefore;
         // we need one additional byte, since MovePos moves on 1 byte.
@@ -40,14 +40,11 @@ public class InWindow
         int numBytes = _bufferOffset + _streamPos - offset;
 
         // check negative offset ????
-        for (int i = 0; i < numBytes; i++)
-        {
-            _bufferBase[i] = _bufferBase[offset + i];
-        }
+        System.arraycopy(_bufferBase, offset, _bufferBase, 0, numBytes);
         _bufferOffset -= offset;
     }
 
-    public void ReadBlock() throws IOException
+    private void ReadBlock() throws IOException
     {
         if (_streamEndWasReached)
         {
@@ -81,12 +78,12 @@ public class InWindow
         }
     }
 
-    void Free()
+    private void Free()
     {
         _bufferBase = null;
     }
 
-    public void Create(int keepSizeBefore, int keepSizeAfter, int keepSizeReserv)
+    void Create(int keepSizeBefore, int keepSizeAfter, int keepSizeReserv)
     {
         _keepSizeBefore = keepSizeBefore;
         _keepSizeAfter = keepSizeAfter;
@@ -110,7 +107,7 @@ public class InWindow
         _stream = null;
     }
 
-    public void Init() throws IOException
+    void Init() throws IOException
     {
         _bufferOffset = 0;
         _pos = 0;
@@ -119,7 +116,7 @@ public class InWindow
         ReadBlock();
     }
 
-    public void MovePos() throws IOException
+    void MovePos() throws IOException
     {
         _pos++;
         if (_pos > _posLimit)
@@ -165,7 +162,7 @@ public class InWindow
         return _streamPos - _pos;
     }
 
-    public void ReduceOffsets(int subValue)
+    void ReduceOffsets(int subValue)
     {
         _bufferOffset += subValue;
         _posLimit -= subValue;

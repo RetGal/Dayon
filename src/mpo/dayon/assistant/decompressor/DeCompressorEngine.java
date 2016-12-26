@@ -22,7 +22,7 @@ public class DeCompressorEngine
         implements Configurable<DeCompressorEngineConfiguration>,
                    NetworkCaptureMessageHandler
 {
-    private final Listeners<DeCompressorEngineListener> listeners = new Listeners<DeCompressorEngineListener>(DeCompressorEngineListener.class);
+    private final Listeners<DeCompressorEngineListener> listeners = new Listeners<>(DeCompressorEngineListener.class);
 
     private ThreadPoolExecutor executor;
 

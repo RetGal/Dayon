@@ -15,9 +15,9 @@ public class NetworkKeyControlMessage extends NetworkMessage
         RELEASED,
     }
 
-    public static final int PRESSED = 1;
+    private static final int PRESSED = 1;
 
-    public static final int RELEASED = 1 << 1;
+    private static final int RELEASED = 1 << 1;
 
     private final int info;
 

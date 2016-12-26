@@ -8,7 +8,7 @@ import java.awt.*;
 
 public class MouseEngine implements Configurable<MouseEngineConfiguration>
 {
-    private final Listeners<MouseEngineListener> listeners = new Listeners<MouseEngineListener>(MouseEngineListener.class);
+    private final Listeners<MouseEngineListener> listeners = new Listeners<>(MouseEngineListener.class);
 
     private final Thread thread;
 

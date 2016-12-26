@@ -2,7 +2,7 @@
 
 package SevenZip.Compression.LZMA;
 
-public class Base
+class Base
 {
     public static final int kNumRepDistances = 4;
 
@@ -65,7 +65,7 @@ public class Base
         {
             return len;
         }
-        return (int) (kNumLenToPosStates - 1);
+        return kNumLenToPosStates - 1;
     }
 
     public static final int kNumAlignBits = 4;

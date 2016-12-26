@@ -7,43 +7,43 @@ import java.io.IOException;
 
 public class BinTree extends InWindow
 {
-    int _cyclicBufferPos;
+    private int _cyclicBufferPos;
 
-    int _cyclicBufferSize = 0;
+    private int _cyclicBufferSize = 0;
 
-    int _matchMaxLen;
+    private int _matchMaxLen;
 
-    int[] _son;
+    private int[] _son;
 
-    int[] _hash;
+    private int[] _hash;
 
-    int _cutValue = 0xFF;
+    private int _cutValue = 0xFF;
 
-    int _hashMask;
+    private int _hashMask;
 
-    int _hashSizeSum = 0;
+    private int _hashSizeSum = 0;
 
-    boolean HASH_ARRAY = true;
+    private boolean HASH_ARRAY = true;
 
-    static final int kHash2Size = 1 << 10;
+    private static final int kHash2Size = 1 << 10;
 
-    static final int kHash3Size = 1 << 16;
+    private static final int kHash3Size = 1 << 16;
 
-    static final int kBT2HashSize = 1 << 16;
+    private static final int kBT2HashSize = 1 << 16;
 
-    static final int kStartMaxLen = 1;
+    private static final int kStartMaxLen = 1;
 
-    static final int kHash3Offset = kHash2Size;
+    private static final int kHash3Offset = kHash2Size;
 
-    static final int kEmptyHashValue = 0;
+    private static final int kEmptyHashValue = 0;
 
-    static final int kMaxValForNormalize = (1 << 30) - 1;
+    private static final int kMaxValForNormalize = (1 << 30) - 1;
 
-    int kNumHashDirectBytes = 0;
+    private int kNumHashDirectBytes = 0;
 
-    int kMinMatchCheck = 4;
+    private int kMinMatchCheck = 4;
 
-    int kFixHashSize = kHash2Size + kHash3Size;
+    private int kFixHashSize = kHash2Size + kHash3Size;
 
     public void SetType(int numHashBytes)
     {
@@ -163,13 +163,13 @@ public class BinTree extends InWindow
         {
             int temp = CrcTable[_bufferBase[cur] & 0xFF] ^ (_bufferBase[cur + 1] & 0xFF);
             hash2Value = temp & (kHash2Size - 1);
-            temp ^= ((int) (_bufferBase[cur + 2] & 0xFF) << 8);
+            temp ^= ((_bufferBase[cur + 2] & 0xFF) << 8);
             hash3Value = temp & (kHash3Size - 1);
             hashValue = (temp ^ (CrcTable[_bufferBase[cur + 3] & 0xFF] << 5)) & _hashMask;
         }
         else
         {
-            hashValue = ((_bufferBase[cur] & 0xFF) ^ ((int) (_bufferBase[cur + 1] & 0xFF) << 8));
+            hashValue = ((_bufferBase[cur] & 0xFF) ^ ((_bufferBase[cur + 1] & 0xFF) << 8));
         }
 
         int curMatch = _hash[kFixHashSize + hashValue];
@@ -313,14 +313,14 @@ public class BinTree extends InWindow
                 int temp = CrcTable[_bufferBase[cur] & 0xFF] ^ (_bufferBase[cur + 1] & 0xFF);
                 int hash2Value = temp & (kHash2Size - 1);
                 _hash[hash2Value] = _pos;
-                temp ^= ((int) (_bufferBase[cur + 2] & 0xFF) << 8);
+                temp ^= ((_bufferBase[cur + 2] & 0xFF) << 8);
                 int hash3Value = temp & (kHash3Size - 1);
                 _hash[kHash3Offset + hash3Value] = _pos;
                 hashValue = (temp ^ (CrcTable[_bufferBase[cur + 3] & 0xFF] << 5)) & _hashMask;
             }
             else
             {
-                hashValue = ((_bufferBase[cur] & 0xFF) ^ ((int) (_bufferBase[cur + 1] & 0xFF) << 8));
+                hashValue = ((_bufferBase[cur] & 0xFF) ^ ((_bufferBase[cur + 1] & 0xFF) << 8));
             }
 
             int curMatch = _hash[kFixHashSize + hashValue];
@@ -384,7 +384,7 @@ public class BinTree extends InWindow
         while (--num != 0);
     }
 
-    void NormalizeLinks(int[] items, int numItems, int subValue)
+    private void NormalizeLinks(int[] items, int numItems, int subValue)
     {
         for (int i = 0; i < numItems; i++)
         {
@@ -401,7 +401,7 @@ public class BinTree extends InWindow
         }
     }
 
-    void Normalize()
+    private void Normalize()
     {
         int subValue = _pos - _cyclicBufferSize;
         NormalizeLinks(_son, _cyclicBufferSize * 2, subValue);

@@ -4,7 +4,7 @@ public abstract class AbsoluteValueCounter extends Counter<Long>
 {
     private long instantValue = 0;
 
-    public AbsoluteValueCounter(String uid, String shortDescription)
+    AbsoluteValueCounter(String uid, String shortDescription)
     {
         super(uid, shortDescription);
     }

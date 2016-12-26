@@ -4,9 +4,9 @@ import java.io.IOException;
 
 public class BitTreeEncoder
 {
-    short[] Models;
+    private final short[] Models;
 
-    int NumBitLevels;
+    private final int NumBitLevels;
 
     public BitTreeEncoder(int numBitLevels)
     {
