@@ -258,7 +258,7 @@ public class Assistant implements Configurable<AssistantConfiguration>
                     {
                         public void actionPerformed(ActionEvent ev)
                         {
-                            final String url = "http://" + button.getText() + ":" + network.getPort() + "/dayon.html";
+                            final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
 
                             final StringSelection value = new StringSelection(url);
                             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

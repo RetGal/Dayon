@@ -22,12 +22,23 @@ import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessage;
 import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessageHandler;
 import mpo.dayon.common.utils.SystemUtilities;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import javax.security.cert.X509Certificate;
 import javax.swing.*;
 import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class Assisted
 {
@@ -57,18 +68,28 @@ public class Assisted
         }
     }
 
-    public void start() throws IOException
+    public void start() throws IOException, KeyManagementException, NoSuchAlgorithmException
     {
         frame = new AssistedFrame(new AssistedFrameConfiguration());
 
         FatalErrorHandler.attachFrame(frame);
 
         frame.setVisible(true);
+        
+        SSLContext sc = SSLContext.getInstance("SSL");
+        
+        // avoid sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+        TrustManager[] fakeTrustManagerArray = new TrustManager[]{new TrustEveryoneManager()};
+        sc.init(null, fakeTrustManagerArray, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
+        // avoid java.security.cert.CertificateException: No subject alternative names present
+		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer()); //
+        
         configuration = new NetworkAssistedEngineConfiguration();
 
         final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-        final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+        final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);       
 
         if (ip == null)
         {
@@ -99,8 +120,8 @@ public class Assisted
 
         try
         {
-            final URL url = new URL("http://" + configuration.getServerName() + ":" + configuration.getServerPort() + "/hello");
-            final URLConnection conn = url.openConnection();
+            final URL url = new URL("https://" + configuration.getServerName() + ":" + configuration.getServerPort() + "/hello");
+            final URLConnection conn = url.openConnection();          
 
             conn.getInputStream();
 
@@ -279,6 +300,29 @@ public class Assisted
         {
             captureEngine.addListener(compressorEngine);
         }
+    }
+    
+    private class HostNameIgnorer implements HostnameVerifier {
+		@Override
+		public boolean verify(String hostname, SSLSession session) {
+			return true;
+		}
+    	
+    }
+
+    private class TrustEveryoneManager implements X509TrustManager {
+		@Override
+		public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
+				throws CertificateException {
+		}
+		@Override
+		public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
+				throws CertificateException {				
+		}
+		@Override
+		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+			return null;
+		}
     }
 
 }
