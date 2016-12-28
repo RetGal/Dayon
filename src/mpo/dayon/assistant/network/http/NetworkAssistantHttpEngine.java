@@ -5,9 +5,10 @@ import mpo.dayon.common.utils.SystemUtilities;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +32,12 @@ public class NetworkAssistantHttpEngine
         this.port = port;
 
         this.server = new Server();
-        this.acceptor = new MySocketConnector();
+        this.server.setSendServerVersion(false);
+               
+        SslContextFactory contextFactory = new SslContextFactory(true);
+        contextFactory.setKeyStorePath("X509");
+        contextFactory.setKeyStorePassword("spasspass");
+        this.acceptor = new MySocketConnector(contextFactory);
 
         this.server.setConnectors(new Connector[]{this.acceptor});
 
@@ -109,7 +115,7 @@ public class NetworkAssistantHttpEngine
         }
     }
 
-    private class MySocketConnector extends SocketConnector
+    private class MySocketConnector extends SslSocketConnector
     {
         private final Object __acceptLOCK = new Object();
 
@@ -117,8 +123,9 @@ public class NetworkAssistantHttpEngine
 
         private boolean __acceptStopped;
 
-        public MySocketConnector()
+        public MySocketConnector(SslContextFactory contextFactory)
         {
+            super(contextFactory);
             setPort(port);
         }
 
@@ -148,17 +155,16 @@ public class NetworkAssistantHttpEngine
                 }
             }
         }
+        
+    	@Override
+    	public void close() throws IOException {
+    		synchronized (__acceptLOCK) {
+    			__acceptClosed = true;
+    		}
 
-        @Override
-        public void close() throws IOException
-        {
-            synchronized (__acceptLOCK)
-            {
-                __acceptClosed = true;
-            }
+    		super.close();
+    	}
 
-            super.close();
-        }
     }
 
     /**

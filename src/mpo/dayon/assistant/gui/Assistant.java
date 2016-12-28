@@ -196,12 +196,7 @@ public class Assistant implements Configurable<AssistantConfiguration>
                                 }
 
                                 SystemUtilities.safeClose(in);
-                            }
-                            catch (MalformedURLException ex)
-                            {
-                                Log.error("What is my IP error!", ex);
-                            }
-                            catch (IOException ex)
+                            } catch (IOException ex)
                             {
                                 Log.error("What is my IP error!", ex);
                             }
@@ -258,7 +253,7 @@ public class Assistant implements Configurable<AssistantConfiguration>
                     {
                         public void actionPerformed(ActionEvent ev)
                         {
-                            final String url = "http://" + button.getText() + ":" + network.getPort() + "/dayon.html";
+                            final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
 
                             final StringSelection value = new StringSelection(url);
                             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();

@@ -86,7 +86,7 @@ public class AssistedFrame extends BaseFrame
         return statusBar;
     }
 
-    public void onReady()
+    private void onReady()
     {
         statusBar.setMessage(Babylon.translate("ready"));
     }

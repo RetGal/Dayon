@@ -118,8 +118,7 @@ class BlockSort {
     private static final int FALLBACK_QSORT_STACK_SIZE = 100;
 
     private static final int STACK_SIZE =
-        QSORT_STACK_SIZE < FALLBACK_QSORT_STACK_SIZE
-        ? FALLBACK_QSORT_STACK_SIZE : QSORT_STACK_SIZE;
+            QSORT_STACK_SIZE;
 
     /*
      * Used when sorting. If too many long comparisons happen, we stop sorting,
@@ -182,8 +181,8 @@ class BlockSort {
      * code, in particular deal with the fact that block starts at
      * offset 1 (in libbzip2 1.0.6 it starts at 0).
      */
-    final void fallbackSort(final CBZip2OutputStream.Data data,
-                            final int last) {
+    private void fallbackSort(final CBZip2OutputStream.Data data,
+                              final int last) {
         data.block[0] = data.block[last + 1];
         fallbackSort(data.fmap, data.block, last + 1);
         for (int i = 0; i < last + 1; i++) {
@@ -465,9 +464,8 @@ class BlockSort {
      *        partially sorted order
      * @param block the original data
      * @param nblock size of the block
-     * @param off offset of first byte to sort in block
      */
-    final void fallbackSort(int[] fmap, byte[] block, int nblock) {
+    private void fallbackSort(int[] fmap, byte[] block, int nblock) {
         final int[] ftab = new int[257];
         int H, i, j, k, l, r, cc, cc1;
         int nNotDone;
@@ -643,7 +641,7 @@ class BlockSort {
                         if (onceRunned) {
                             fmap[j] = a;
                             if ((j -= h) <= mj) {
-                                break HAMMER;
+                                break;
                             }
                         } else {
                             onceRunned = true;
@@ -680,7 +678,6 @@ class BlockSort {
                                                                                         i2 -= lastPlus1;
                                                                                     }
                                                                                     workDoneShadow++;
-                                                                                    continue X;
                                                                                 } else if ((quadrant[i1 + 3] > quadrant[i2 + 3])) {
                                                                                     continue HAMMER;
                                                                                 } else {
@@ -723,39 +720,33 @@ class BlockSort {
                                                     }
 
                                                 }
-                                                break HAMMER;
+                                                break;
                                             } // while x > 0
                                             else {
                                                 if ((block[i1] & 0xff) > (block[i2] & 0xff)) {
-                                                    continue HAMMER;
                                                 } else {
-                                                    break HAMMER;
+                                                    break;
                                                 }
                                             }
                                         } else if ((block[i1 + 5] & 0xff) > (block[i2 + 5] & 0xff)) {
-                                            continue HAMMER;
                                         } else {
-                                            break HAMMER;
+                                            break;
                                         }
                                     } else if ((block[i1 + 4] & 0xff) > (block[i2 + 4] & 0xff)) {
-                                        continue HAMMER;
                                     } else {
-                                        break HAMMER;
+                                        break;
                                     }
                                 } else if ((block[i1 + 3] & 0xff) > (block[i2 + 3] & 0xff)) {
-                                    continue HAMMER;
                                 } else {
-                                    break HAMMER;
+                                    break;
                                 }
                             } else if ((block[i1 + 2] & 0xff) > (block[i2 + 2] & 0xff)) {
-                                continue HAMMER;
                             } else {
-                                break HAMMER;
+                                break;
                             }
                         } else if ((block[i1 + 1] & 0xff) > (block[i2 + 1] & 0xff)) {
-                            continue HAMMER;
                         } else {
-                            break HAMMER;
+                            break;
                         }
 
                     } // HAMMER
@@ -912,8 +903,8 @@ class BlockSort {
     private static final int SETMASK = (1 << 21);
     private static final int CLEARMASK = (~SETMASK);
 
-    final void mainSort(final CBZip2OutputStream.Data dataShadow,
-                        final int lastShadow) {
+    private void mainSort(final CBZip2OutputStream.Data dataShadow,
+                          final int lastShadow) {
         final int[] runningOrder = this.mainSort_runningOrder;
         final int[] copy = this.mainSort_copy;
         final boolean[] bigDone = this.mainSort_bigDone;

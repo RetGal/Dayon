@@ -279,9 +279,9 @@ public class CaptureTile
 
     private static class XYWH_Cache
     {
-        XYWH_Configuration configuration;
+        final XYWH_Configuration configuration;
 
-        XYWH[] xywh;
+        final XYWH[] xywh;
 
         XYWH_Cache(XYWH_Configuration configuration, XYWH[] xywh)
         {

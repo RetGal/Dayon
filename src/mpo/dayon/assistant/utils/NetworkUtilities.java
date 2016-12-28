@@ -13,7 +13,7 @@ public abstract class NetworkUtilities
 {
     public static List<String> getInetAddresses()
     {
-        final List<String> addresses = new ArrayList<String>();
+        final List<String> addresses = new ArrayList<>();
 
         try
         {

@@ -50,7 +50,6 @@
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/annotations-7.0.2.jar" todir="${dir.dist}/lib" />
 		<copy file="${dir.binfile}/lib/jetty-continuation-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
 		<copy file="${dir.binfile}/lib/jetty-http-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
 		<copy file="${dir.binfile}/lib/jetty-io-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />

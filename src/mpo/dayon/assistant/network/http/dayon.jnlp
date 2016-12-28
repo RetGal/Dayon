@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<jnlp spec="1.0+" codebase="http://${ipAddress}:${port}" href="dayon.jnlp">
+<jnlp spec="1.0+" codebase="https://${ipAddress}:${port}" href="dayon.jnlp">
     <information>
         <title>Dayon!</title>
         <vendor>Reto Galante</vendor>

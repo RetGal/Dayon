@@ -4,7 +4,7 @@ import mpo.dayon.common.capture.CaptureTile;
 
 public abstract class TileCache
 {
-    protected TileCache()
+    TileCache()
     {
     }
 

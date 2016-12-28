@@ -22,7 +22,7 @@ public class CompressorEngine
         implements ReConfigurable<CompressorEngineConfiguration>,
                    CaptureEngineListener
 {
-    private final Listeners<CompressorEngineListener> listeners = new Listeners<CompressorEngineListener>(CompressorEngineListener.class);
+    private final Listeners<CompressorEngineListener> listeners = new Listeners<>(CompressorEngineListener.class);
 
     private ThreadPoolExecutor executor;
 
@@ -90,7 +90,7 @@ public class CompressorEngine
             {
                 if (!executor.isShutdown())
                 {
-                    final List<Runnable> pendings = new ArrayList<Runnable>();
+                    final List<Runnable> pendings = new ArrayList<>();
 
                     // pendings : oldest first (!)
                     executor.getQueue().drainTo(pendings);

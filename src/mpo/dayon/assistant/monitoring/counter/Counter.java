@@ -5,17 +5,17 @@ import mpo.dayon.common.event.Listeners;
 
 public abstract class Counter<T>
 {
-    private final Listeners<CounterListener<T>> listeners = new Listeners<CounterListener<T>>(CounterListener.class);
+    private final Listeners<CounterListener<T>> listeners = new Listeners<>(CounterListener.class);
 
     private final String uid;
 
     private final String shortDescription;
 
-    protected long totalStart = -1;
+    private long totalStart = -1;
 
-    protected long instantStart = -1;
+    long instantStart = -1;
 
-    public Counter(String uid, String shortDescription)
+    Counter(String uid, String shortDescription)
     {
         this.uid = uid;
         this.shortDescription = shortDescription;
@@ -46,7 +46,7 @@ public abstract class Counter<T>
      *
      * @see #start(long)
      */
-    public void initialize()
+    private void initialize()
     {
         synchronized (this)
         {
@@ -71,7 +71,7 @@ public abstract class Counter<T>
 
     public abstract int getWidth();
 
-    protected void fireOnInstantValueUpdated(T value)
+    void fireOnInstantValueUpdated(T value)
     {
         final CounterListener<T>[] xlisteners = listeners.getListeners();
 

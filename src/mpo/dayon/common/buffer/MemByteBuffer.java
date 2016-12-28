@@ -11,18 +11,18 @@ import java.util.Arrays;
  */
 public class MemByteBuffer extends OutputStream
 {
-    public static final int DEFAULT_INITIAL_CAPACITY = 32;
+    private static final int DEFAULT_INITIAL_CAPACITY = 32;
 
-    protected byte buffer[];
+    private byte[] buffer;
 
-    protected int count;
+    private int count;
 
     public MemByteBuffer()
     {
         this(DEFAULT_INITIAL_CAPACITY);
     }
 
-    public MemByteBuffer(int capacity)
+    private MemByteBuffer(int capacity)
     {
         buffer = new byte[capacity];
     }
@@ -51,7 +51,7 @@ public class MemByteBuffer extends OutputStream
         return count;
     }
 
-    public void resetToMark(int mark)
+    private void resetToMark(int mark)
     {
         count = mark;
     }
@@ -78,7 +78,7 @@ public class MemByteBuffer extends OutputStream
     /**
      * @see #write(int)
      */
-    public void write(int val1, int val2)
+    private void write(int val1, int val2)
     {
         final int newcount = count + 2;
 
@@ -143,8 +143,7 @@ public class MemByteBuffer extends OutputStream
         resetToMark(end);
     }
 
-    public void fill(int len, int val) throws IOException
-    {
+    public void fill(int len, int val) {
         final int newcount = count + len;
 
         if (newcount > buffer.length)

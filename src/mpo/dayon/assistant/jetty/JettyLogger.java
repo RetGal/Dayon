@@ -100,7 +100,7 @@ public class JettyLogger implements Logger
 
     private String format(String message, Object...args)
     {
-        StringBuffer mess = new StringBuffer(message);
+        StringBuilder mess = new StringBuilder(message);
         for (Object arg : args) {
             mess.append(", ");
             mess.append(arg);

@@ -26,7 +26,7 @@ public class NetworkAssistantEngine
 
     private final NetworkMouseLocationMessageHandler mouseMessageHandler;
 
-    private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<NetworkAssistantEngineListener>(NetworkAssistantEngineListener.class);
+    private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>(NetworkAssistantEngineListener.class);
 
     private NetworkAssistantConfiguration configuration;
 

@@ -4,19 +4,19 @@ import java.io.IOException;
 
 public class Decoder
 {
-    static final int kTopMask = ~((1 << 24) - 1);
+    private static final int kTopMask = ~((1 << 24) - 1);
 
-    static final int kNumBitModelTotalBits = 11;
+    private static final int kNumBitModelTotalBits = 11;
 
-    static final int kBitModelTotal = (1 << kNumBitModelTotalBits);
+    private static final int kBitModelTotal = (1 << kNumBitModelTotalBits);
 
-    static final int kNumMoveBits = 5;
+    private static final int kNumMoveBits = 5;
 
-    int Range;
+    private int Range;
 
-    int Code;
+    private int Code;
 
-    java.io.InputStream Stream;
+    private java.io.InputStream Stream;
 
     public final void SetStream(java.io.InputStream stream)
     {

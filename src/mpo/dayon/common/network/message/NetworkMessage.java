@@ -8,7 +8,7 @@ public abstract class NetworkMessage
 {
     private static final byte MAGIC_NUMBER = (byte) 170;
 
-    protected NetworkMessage()
+    NetworkMessage()
     {
     }
 
@@ -40,7 +40,7 @@ public abstract class NetworkMessage
         }
     }
 
-    public static <T extends Enum<T>> void marshallEnum(DataOutputStream out, Class<T> enumClass, Enum<T> value) throws IOException
+    static <T extends Enum<T>> void marshallEnum(DataOutputStream out, Class<T> enumClass, Enum<T> value) throws IOException
     {
         out.write(value.ordinal());
     }

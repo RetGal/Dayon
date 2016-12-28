@@ -19,9 +19,9 @@ public class RegularTileCache extends TileCache
      */
     public static final int DEFAULT_PURGE_SIZE = 14 * 1024;
 
-    private final Map<Integer, CaptureTile> tiles = new HashMap<Integer, CaptureTile>();
+    private final Map<Integer, CaptureTile> tiles = new HashMap<>();
 
-    private final LinkedList<Integer> lru = new LinkedList<Integer>();
+    private final LinkedList<Integer> lru = new LinkedList<>();
 
     private final int maxSize;
 

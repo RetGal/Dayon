@@ -7,6 +7,15 @@ tbody td {
     font-size: 100%;
 }
 
+table {
+	width: 100%;
+	border: none;
+}
+
+img {
+	border: none;	
+}
+
 #container {
     text-align: left;
     margin: 0 auto;

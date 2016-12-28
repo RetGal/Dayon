@@ -9,13 +9,13 @@ public class Decoder
 {
     class LenDecoder
     {
-        short[] m_Choice = new short[2];
+        final short[] m_Choice = new short[2];
 
-        BitTreeDecoder[] m_LowCoder = new BitTreeDecoder[Base.kNumPosStatesMax];
+        final BitTreeDecoder[] m_LowCoder = new BitTreeDecoder[Base.kNumPosStatesMax];
 
-        BitTreeDecoder[] m_MidCoder = new BitTreeDecoder[Base.kNumPosStatesMax];
+        final BitTreeDecoder[] m_MidCoder = new BitTreeDecoder[Base.kNumPosStatesMax];
 
-        BitTreeDecoder m_HighCoder = new BitTreeDecoder(Base.kNumHighLenBits);
+        final BitTreeDecoder m_HighCoder = new BitTreeDecoder(Base.kNumHighLenBits);
 
         int m_NumPosStates = 0;
 
@@ -62,7 +62,7 @@ public class Decoder
     {
         class Decoder2
         {
-            short[] m_Decoders = new short[0x300];
+            final short[] m_Decoders = new short[0x300];
 
             public void Init()
             {
@@ -143,39 +143,39 @@ public class Decoder
         }
     }
 
-    OutWindow m_OutWindow = new OutWindow();
+    private final OutWindow m_OutWindow = new OutWindow();
 
-    SevenZip.Compression.RangeCoder.Decoder m_RangeDecoder = new SevenZip.Compression.RangeCoder.Decoder();
+    private final SevenZip.Compression.RangeCoder.Decoder m_RangeDecoder = new SevenZip.Compression.RangeCoder.Decoder();
 
-    short[] m_IsMatchDecoders = new short[Base.kNumStates << Base.kNumPosStatesBitsMax];
+    private final short[] m_IsMatchDecoders = new short[Base.kNumStates << Base.kNumPosStatesBitsMax];
 
-    short[] m_IsRepDecoders = new short[Base.kNumStates];
+    private final short[] m_IsRepDecoders = new short[Base.kNumStates];
 
-    short[] m_IsRepG0Decoders = new short[Base.kNumStates];
+    private final short[] m_IsRepG0Decoders = new short[Base.kNumStates];
 
-    short[] m_IsRepG1Decoders = new short[Base.kNumStates];
+    private final short[] m_IsRepG1Decoders = new short[Base.kNumStates];
 
-    short[] m_IsRepG2Decoders = new short[Base.kNumStates];
+    private final short[] m_IsRepG2Decoders = new short[Base.kNumStates];
 
-    short[] m_IsRep0LongDecoders = new short[Base.kNumStates << Base.kNumPosStatesBitsMax];
+    private final short[] m_IsRep0LongDecoders = new short[Base.kNumStates << Base.kNumPosStatesBitsMax];
 
-    BitTreeDecoder[] m_PosSlotDecoder = new BitTreeDecoder[Base.kNumLenToPosStates];
+    private final BitTreeDecoder[] m_PosSlotDecoder = new BitTreeDecoder[Base.kNumLenToPosStates];
 
-    short[] m_PosDecoders = new short[Base.kNumFullDistances - Base.kEndPosModelIndex];
+    private final short[] m_PosDecoders = new short[Base.kNumFullDistances - Base.kEndPosModelIndex];
 
-    BitTreeDecoder m_PosAlignDecoder = new BitTreeDecoder(Base.kNumAlignBits);
+    private final BitTreeDecoder m_PosAlignDecoder = new BitTreeDecoder(Base.kNumAlignBits);
 
-    LenDecoder m_LenDecoder = new LenDecoder();
+    private final LenDecoder m_LenDecoder = new LenDecoder();
 
-    LenDecoder m_RepLenDecoder = new LenDecoder();
+    private final LenDecoder m_RepLenDecoder = new LenDecoder();
 
-    LiteralDecoder m_LiteralDecoder = new LiteralDecoder();
+    private final LiteralDecoder m_LiteralDecoder = new LiteralDecoder();
 
-    int m_DictionarySize = -1;
+    private int m_DictionarySize = -1;
 
-    int m_DictionarySizeCheck = -1;
+    private int m_DictionarySizeCheck = -1;
 
-    int m_PosStateMask;
+    private int m_PosStateMask;
 
     public Decoder()
     {
@@ -185,7 +185,7 @@ public class Decoder
         }
     }
 
-    boolean SetDictionarySize(int dictionarySize)
+    private boolean SetDictionarySize(int dictionarySize)
     {
         if (dictionarySize < 0)
         {
@@ -200,7 +200,7 @@ public class Decoder
         return true;
     }
 
-    boolean SetLcLpPb(int lc, int lp, int pb)
+    private boolean SetLcLpPb(int lc, int lp, int pb)
     {
         if (lc > Base.kNumLitContextBitsMax || lp > 4 || pb > Base.kNumPosStatesBitsMax)
         {
@@ -214,7 +214,7 @@ public class Decoder
         return true;
     }
 
-    void Init() throws IOException
+    private void Init() throws IOException
     {
         m_OutWindow.Init(false);
 
@@ -364,10 +364,8 @@ public class Decoder
         return true;
     }
 
-    public boolean SetDecoderProperties(byte[] properties)
-    {
-        if (properties.length < 5)
-        {
+    public boolean SetDecoderProperties(byte[] properties) {
+        if (properties.length < 5) {
             return false;
         }
         int val = properties[0] & 0xFF;
@@ -376,14 +374,9 @@ public class Decoder
         int lp = remainder % 5;
         int pb = remainder / 5;
         int dictionarySize = 0;
-        for (int i = 0; i < 4; i++)
-        {
+        for (int i = 0; i < 4; i++) {
             dictionarySize += ((int) (properties[1 + i]) & 0xFF) << (i * 8);
         }
-        if (!SetLcLpPb(lc, lp, pb))
-        {
-            return false;
-        }
-        return SetDictionarySize(dictionarySize);
+        return SetLcLpPb(lc, lp, pb) && SetDictionarySize(dictionarySize);
     }
 }

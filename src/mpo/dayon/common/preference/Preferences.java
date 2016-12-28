@@ -139,7 +139,7 @@ public class Preferences
     {
         private static final String REMOVE = "REMOVE-ME";
 
-        private final Map<String, String> entries = new HashMap();
+        private final Map<String, String> entries = new HashMap<>();
 
         public void set(String name, String value)
         {

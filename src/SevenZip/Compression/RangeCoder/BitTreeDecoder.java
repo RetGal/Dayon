@@ -2,9 +2,9 @@ package SevenZip.Compression.RangeCoder;
 
 public class BitTreeDecoder
 {
-    short[] Models;
+    private final short[] Models;
 
-    int NumBitLevels;
+    private final int NumBitLevels;
 
     public BitTreeDecoder(int numBitLevels)
     {

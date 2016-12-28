@@ -92,7 +92,7 @@ public class Capture
      * Note that the actual number of gray levels does not change that original amount as I want to see the impact
      * on the compression of using less number of gray levels.
      */
-    public int computeInitialByteCount()
+    private int computeInitialByteCount()
     {
         int count = 0;
 
@@ -241,6 +241,6 @@ public class Capture
                                           Transparency.OPAQUE,
                                           DataBuffer.TYPE_BYTE);
 
-        return new Pair<BufferedImage, byte[]>(new BufferedImage(cm, raster, false, null), buffer);
+        return new Pair<>(new BufferedImage(cm, raster, false, null), buffer);
     }
 }

@@ -10,7 +10,7 @@ public abstract class ScreenUtilities
 {
     private static final RobotPeer robot;
 
-    public static final Rectangle SCREEN;
+    private static final Rectangle SCREEN;
 
     static
     {
@@ -33,7 +33,7 @@ public abstract class ScreenUtilities
         return rgbToGray8(quantization, captureRGB(SCREEN));
     }
 
-    public static int[] captureRGB(Rectangle bounds)
+    private static int[] captureRGB(Rectangle bounds)
     {
         return robot.getRGBPixels(bounds);
     }
@@ -43,7 +43,7 @@ public abstract class ScreenUtilities
         return rgbToGray8(quantization, captureRGB(bounds));
     }
 
-    public static byte[] rgbToGray8(Gray8Bits quantization, int[] rgb)
+    private static byte[] rgbToGray8(Gray8Bits quantization, int[] rgb)
     {
         final byte[] gray = new byte[rgb.length];
 
@@ -52,7 +52,7 @@ public abstract class ScreenUtilities
         return gray;
     }
 
-    public static void doRgbToGray8(byte[] gray, Gray8Bits quantization, int[] rgb)
+    private static void doRgbToGray8(byte[] gray, Gray8Bits quantization, int[] rgb)
     {
         final byte[] xlevels = grays[quantization.ordinal()];
 

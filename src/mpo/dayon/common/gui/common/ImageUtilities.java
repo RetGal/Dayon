@@ -23,7 +23,7 @@ public abstract class ImageUtilities
         try
         {
             final Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
-            final ImageWriter writer = (ImageWriter) iter.next();
+            final ImageWriter writer = iter.next();
 
             final ImageOutputStream ios = ImageIO.createImageOutputStream(new File(where + name + ".jpg"));
             writer.setOutput(ios);
