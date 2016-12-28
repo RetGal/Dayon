@@ -27,16 +27,22 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 import java.awt.*;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
 public class Assisted
 {
@@ -66,22 +72,22 @@ public class Assisted
         }
     }
 
-    public void start() throws IOException, KeyManagementException, NoSuchAlgorithmException
+    public void start() throws IOException, KeyManagementException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, KeyStoreException, CertificateException
     {
         frame = new AssistedFrame(new AssistedFrameConfiguration());
 
         FatalErrorHandler.attachFrame(frame);
 
         frame.setVisible(true);
+
+		// avoid PKIX path building exception
+		X509TrustManager customTm = combineManagers();
+		SSLContext sc = SSLContext.getInstance("TLS");
+		sc.init(null, new TrustManager[] { customTm }, null);
         
-        SSLContext sc = SSLContext.getInstance("SSL");
-        
-        // avoid sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
-        TrustManager[] fakeTrustManagerArray = new TrustManager[]{new TrustEveryoneManager()};
-        sc.init(null, fakeTrustManagerArray, new java.security.SecureRandom());
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        // avoid java.security.cert.CertificateException: No subject alternative names present
+        // avoid No subject alternative names present exception
 		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer()); //
         
         configuration = new NetworkAssistedEngineConfiguration();
@@ -300,6 +306,44 @@ public class Assisted
         }
     }
     
+    private X509TrustManager combineManagers() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+    	    	
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		// Using null here initialises the TMF with the default trust store.
+		tmf.init((KeyStore) null);
+
+		// Get hold of the default trust manager
+		X509TrustManager defaultTm = null;
+		for (TrustManager tm : tmf.getTrustManagers()) {
+			if (tm instanceof X509TrustManager) {
+				defaultTm = (X509TrustManager) tm;
+				break;
+			}
+		}
+
+		FileInputStream myKeys = new FileInputStream("X509");
+
+		// Do the same with your trust store this time
+		KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		myTrustStore.load(myKeys, "spasspass".toCharArray());
+
+		myKeys.close();
+
+		tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		tmf.init(myTrustStore);
+
+		// Get hold of the default trust manager
+		X509TrustManager ownTm = null;
+		for (TrustManager tm : tmf.getTrustManagers()) {
+			if (tm instanceof X509TrustManager) {
+				ownTm = (X509TrustManager) tm;
+				break;
+			}
+		}
+		// return CustomTrustManager
+    	return new CustomTrustManager(defaultTm, ownTm);
+    }
+    
     private class HostNameIgnorer implements HostnameVerifier {
 		@Override
 		public boolean verify(String hostname, SSLSession session) {
@@ -307,20 +351,39 @@ public class Assisted
 		}
     	
     }
+    
+	private class CustomTrustManager implements X509TrustManager {
 
-    private class TrustEveryoneManager implements X509TrustManager {
-		@Override
-		public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType)
-				throws CertificateException {
+		final X509TrustManager finalDefaultTm;
+		final X509TrustManager finalOwnTm;
+
+		public CustomTrustManager(X509TrustManager defaultTm, X509TrustManager ownTm) {
+			finalDefaultTm = defaultTm;
+			finalOwnTm = ownTm;
 		}
+
 		@Override
-		public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType)
-				throws CertificateException {				
+		public X509Certificate[] getAcceptedIssuers() {
+			// If you're planning to use client-cert auth, merge results from "defaultTm" and "ownTm".
+			return finalDefaultTm.getAcceptedIssuers();
 		}
+
 		@Override
-		public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-			return null;
+		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+			try {
+				finalOwnTm.checkServerTrusted(chain, authType);
+			} catch (CertificateException e) {
+				// This will throw another CertificateException if this fails too.
+				finalDefaultTm.checkServerTrusted(chain, authType);
+			}
 		}
-    }
+
+		@Override
+		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+			// If you're planning to use client-cert auth, do the same as checking the server.
+			finalDefaultTm.checkClientTrusted(chain, authType);
+		}
+
+	}
 
 }
