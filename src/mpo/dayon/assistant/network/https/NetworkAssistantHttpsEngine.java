@@ -57,7 +57,7 @@ public class NetworkAssistantHttpsEngine
 
     public void start() throws IOException
     {
-        Log.info("[HTTP] The engine is starting...");
+        Log.info("[HTTPS] The engine is starting...");
 
         try
         {
@@ -73,7 +73,7 @@ public class NetworkAssistantHttpsEngine
             throw new RuntimeException(ex); // dunno (!)
         }
 
-        Log.info("[HTTP] The engine is waiting on its acceptor...");
+        Log.info("[HTTPS] The engine is waiting on its acceptor...");
 
         synchronized (acceptor.__acceptLOCK)
         {
@@ -89,7 +89,7 @@ public class NetworkAssistantHttpsEngine
             }
         }
 
-        Log.info("[HTTP] The engine is done - bye!");
+        Log.info("[HTTPS] The engine is done - bye!");
     }
 
     public void cancel()
@@ -100,13 +100,13 @@ public class NetworkAssistantHttpsEngine
         }
         catch (Exception ex)
         {
-            Log.warn("[HTT] Exception while closing Jetty!", ex);
+            Log.warn("[HTTPS] Exception while closing Jetty!", ex);
         }
     }
 
     public void onDayonAccepting()
     {
-        Log.info("[HTTP] engine.onDayonAccepting() received");
+        Log.info("[HTTPS] engine.onDayonAccepting() received");
 
         synchronized (handler.__dayonLOCK)
         {
@@ -134,20 +134,20 @@ public class NetworkAssistantHttpsEngine
         {
             try
             {
-                Log.info("[HTTP] The engine acceptor [" + acceptorID + "] is accepting...");
+                Log.info("[HTTPS] The engine acceptor [" + acceptorID + "] is accepting...");
 
                 super.accept(acceptorID);
 
             }
             finally
             {
-                Log.info("[HTTP] The engine acceptor has accepted.");
+                Log.info("[HTTPS] The engine acceptor has accepted.");
 
                 synchronized (__acceptLOCK)
                 {
                     if (__acceptClosed)
                     {
-                        Log.info("[HTTP] The engine acceptor is stopping...");
+                        Log.info("[HTTPS] The engine acceptor is stopping...");
 
                         __acceptStopped = true;
                         __acceptLOCK.notifyAll();
@@ -183,11 +183,11 @@ public class NetworkAssistantHttpsEngine
 
         public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
         {
-            Log.info("[HTTP] Processing the request \n-----\n" + request + "\n-----");
+            Log.info("[HTTPS] Processing the request \n-----\n" + request + "\n-----");
 
             if (target.contains("/hello"))
             {
-                Log.info("[HTTP] The handler is processing the /hello request");
+                Log.info("[HTTPS] The handler is processing the /hello request");
 
                 // That keeps all the connections open => then I can reply to this request ...
                 acceptor.close();
@@ -195,7 +195,7 @@ public class NetworkAssistantHttpsEngine
                 // Wait for the start of the Dayon! acceptor before replying to this HTTP request (I want to ensure
                 // we're now ready to receive a Dayon! message coming from the assisted side).
 
-                Log.info("[HTTP] The handler is waiting on Dayon! server start...");
+                Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
 
                 synchronized (__dayonLOCK)
                 {
@@ -212,12 +212,12 @@ public class NetworkAssistantHttpsEngine
                 }
 
                 // Currently do not care about the actual response (!)
-                Log.info("[HTTP] The handler is replying to the /hello message [404]...");
+                Log.info("[HTTPS] The handler is replying to the /hello message [404]...");
             }
 
             super.handle(target, baseRequest, request, response);
 
-            Log.info("[HTTP] Response \n-----\n" + response + "\n-----");
+            Log.info("[HTTPS] Response \n-----\n" + response + "\n-----");
         }
 
     }

@@ -22,11 +22,11 @@ public class NetworkAssistantHttpsResources
             throw new RuntimeException("No JNLP directory!");
         }
 
-        Log.warn("[HTTP] JNLP resource : [ip:" + ipAddress + "] [port:" + port + "] [path:" + jnlp.getAbsolutePath() + "]");
+        Log.warn("[HTTPS] JNLP resource : [ip:" + ipAddress + "] [port:" + port + "] [path:" + jnlp.getAbsolutePath() + "]");
 
         if (ipAddress.equals(prevIpAddress) && port == prevPort)
         {
-            Log.warn("[HTTP] JNLP resource : unchanged");
+            Log.warn("[HTTPS] JNLP resource : unchanged");
             return;
         }
 
@@ -36,7 +36,7 @@ public class NetworkAssistantHttpsResources
              * I keep that .html file : can be bookmark'd - the .jnlp alone cannot be.
              */
 
-            Log.warn("[HTTP] JNLP resource : dayon.html");
+            Log.warn("[HTTPS] JNLP resource : dayon.html");
             {
                 final int major = Version.get().getMajor();
                 final int minor = Version.get().getMinor();
@@ -72,7 +72,7 @@ public class NetworkAssistantHttpsResources
                 printer.close();
             }
 
-            Log.warn("[HTTP] JNLP resource : favicon.ico");
+            Log.warn("[HTTPS] JNLP resource : favicon.ico");
             {
                 final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("favicon.ico");
                 final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"));
@@ -91,7 +91,7 @@ public class NetworkAssistantHttpsResources
 
             final String jarname = createJarName();
 
-            Log.warn("[HTTP] JNLP resource : dayon.jnlp");
+            Log.warn("[HTTPS] JNLP resource : dayon.jnlp");
             {
                 final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.jnlp");
                 final BufferedReader in = new BufferedReader(new InputStreamReader(content, "UTF-8"));
@@ -123,7 +123,7 @@ public class NetworkAssistantHttpsResources
             final File jarfile = new File(jnlp, jarname);
             if (!jarfile.exists())
             {
-                Log.warn("[HTTP] JNLP resource : " + jarname);
+                Log.warn("[HTTPS] JNLP resource : " + jarname);
                 {
                     final InputStream content = createJarInputStream("dayon.jar");
                     final OutputStream out = new FileOutputStream(jarfile);
@@ -142,7 +142,7 @@ public class NetworkAssistantHttpsResources
             }
             else
             {
-                Log.warn("[HTTP] JNLP resource : " + jarname + " [ unchanged ]");
+                Log.warn("[HTTPS] JNLP resource : " + jarname + " [ unchanged ]");
             }
 
             prevIpAddress = ipAddress;

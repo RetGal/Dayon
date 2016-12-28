@@ -93,7 +93,7 @@ public class Assisted
 		}
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        // accept own cert, avoid No subject alternative names present exception
+        // accept own cert, avoid No name matching host found exception
 		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer()); //
         
         configuration = new NetworkAssistedEngineConfiguration();
@@ -126,7 +126,7 @@ public class Assisted
 
         frame.onHttpConnecting(configuration);
 
-        Log.info("[HTTP-handshake] Sending the /hello request...");
+        Log.info("[HTTPS-handshake] Sending the /hello request...");
 
         try
         {
@@ -136,14 +136,14 @@ public class Assisted
             conn.getInputStream();
 
             // Currently do not care about the response : returning a 404 response (!)
-            throw new RuntimeException("[HTTP-handshake] Missing expected /hello response!");
+            throw new RuntimeException("[HTTPS-handshake] Missing expected /hello response!");
         }
         catch (FileNotFoundException expected)
         {
             // ignored
         }
 
-        Log.info("[HTTP-handshake] Expected response (404) received.");
+        Log.info("[HTTPS-handshake] Expected response (404) received.");
 
         // -------------------------------------------------------------------------------------------------------------
 
