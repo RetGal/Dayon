@@ -1,7 +1,7 @@
 package mpo.dayon.assistant.network;
 
-import mpo.dayon.assistant.network.http.NetworkAssistantHttpEngine;
-import mpo.dayon.assistant.network.http.NetworkAssistantHttpResources;
+import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
+import mpo.dayon.assistant.network.https.NetworkAssistantHttpsResources;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -46,7 +46,7 @@ public class NetworkAssistantEngine
 
     private volatile boolean cancelling;
 
-    private NetworkAssistantHttpEngine http;
+    private NetworkAssistantHttpsEngine https;
 
     /**
      * I've to cleanup that stuff ASAP (!)
@@ -118,10 +118,10 @@ public class NetworkAssistantEngine
 
         cancelling = true;
 
-        if (http != null)
+        if (https != null)
         {
-            http.cancel();
-            http = null;
+            https.cancel();
+            https = null;
         }
 
         SystemUtilities.safeClose(server);
@@ -140,10 +140,10 @@ public class NetworkAssistantEngine
             Log.info(String.format("HTTP server [port:%d]", port));
             fireOnHttpStarting(configuration.getPort());
 
-            NetworkAssistantHttpResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)
+            NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)
 
-            http = new NetworkAssistantHttpEngine(port);
-            http.start(); // blocking call until the HTTP-acceptor has been closed (!)
+            https = new NetworkAssistantHttpsEngine(port);
+            https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
             Log.info(String.format("Dayon! server [port:%d]", configuration.getPort()));
             fireOnStarting(configuration.getPort());
@@ -153,9 +153,9 @@ public class NetworkAssistantEngine
             Log.info("Accepting ...");
             fireOnAccepting(configuration.getPort());
 
-            if (http != null)
+            if (https != null)
             {
-                http.onDayonAccepting();
+                https.onDayonAccepting();
             }
 
             do
@@ -193,10 +193,10 @@ public class NetworkAssistantEngine
                             throw new IOException("Unexpected message [HELLO]!");
                         }
 
-                        if (http != null)
+                        if (https != null)
                         {
-                            http.cancel();
-                            http = null;
+                            https.cancel();
+                            https = null;
                         }
 
                         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);

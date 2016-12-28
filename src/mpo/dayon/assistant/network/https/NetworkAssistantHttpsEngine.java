@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.network.http;
+package mpo.dayon.assistant.network.https;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 
-public class NetworkAssistantHttpEngine
+public class NetworkAssistantHttpsEngine
 {
     private final int port;
 
@@ -27,7 +27,7 @@ public class NetworkAssistantHttpEngine
     private final MyHttpHandler handler;
 
 
-    public NetworkAssistantHttpEngine(int port)
+    public NetworkAssistantHttpsEngine(int port)
     {
         this.port = port;
 

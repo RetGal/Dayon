@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.network.http;
+package mpo.dayon.assistant.network.https;
 
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.*;
 
-public class NetworkAssistantHttpResources
+public class NetworkAssistantHttpsResources
 {
     private static String prevIpAddress = null;
 
@@ -44,7 +44,7 @@ public class NetworkAssistantHttpResources
                 final String clickMe = Babylon.translate("clickMe");
                 final String clickMeMsg = Babylon.translate("clickMe.msg");
 
-                final InputStream content = NetworkAssistantHttpResources.class.getResourceAsStream("dayon.html");
+                final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.html");
                 final BufferedReader in = new BufferedReader(new InputStreamReader(content, "UTF-8"));
 
                 final StringBuilder sb = new StringBuilder();
@@ -74,7 +74,7 @@ public class NetworkAssistantHttpResources
 
             Log.warn("[HTTP] JNLP resource : favicon.ico");
             {
-                final InputStream content = NetworkAssistantHttpResources.class.getResourceAsStream("favicon.ico");
+                final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("favicon.ico");
                 final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"));
 
                 final byte[] buffer = new byte[4096];
@@ -93,7 +93,7 @@ public class NetworkAssistantHttpResources
 
             Log.warn("[HTTP] JNLP resource : dayon.jnlp");
             {
-                final InputStream content = NetworkAssistantHttpResources.class.getResourceAsStream("dayon.jnlp");
+                final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.jnlp");
                 final BufferedReader in = new BufferedReader(new InputStreamReader(content, "UTF-8"));
 
                 final StringBuilder sb = new StringBuilder();
