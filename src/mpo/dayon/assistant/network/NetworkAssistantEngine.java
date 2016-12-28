@@ -17,6 +17,9 @@ import mpo.dayon.common.version.Version;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class NetworkAssistantEngine
         extends NetworkEngine
@@ -128,7 +131,7 @@ public class NetworkAssistantEngine
         SystemUtilities.safeClose(connection);
     }
 
-    private void receivingLoop()
+    private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException
     {
         DataInputStream in = null;
         DataOutputStream out = null;

@@ -31,9 +31,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.swing.*;
 import java.awt.*;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
@@ -52,6 +52,10 @@ public class Assisted
     private volatile CaptureEngine captureEngine;
 
     private volatile CompressorEngine compressorEngine;
+    
+    private final String keyStorePass = "spasspass";
+    
+    private final String keyStorePath = "/mpo/dayon/common/security/X509";
 
 
     public Assisted()
@@ -327,11 +331,11 @@ public class Assisted
 			}
 		}
 
-		FileInputStream myKeys = new FileInputStream("X509");
+		InputStream myKeys = getClass().getResourceAsStream(keyStorePath);
 
 		// do the same with our own trust store this time
 		KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		myTrustStore.load(myKeys, "spasspass".toCharArray());
+		myTrustStore.load(myKeys, keyStorePass.toCharArray());
 
 		myKeys.close();
 

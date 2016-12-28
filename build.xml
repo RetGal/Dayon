@@ -40,9 +40,10 @@
 	<target name="build" depends="compile">
 		<jar destfile="${dir.build}/dayon.jar">
 			<manifest>
-				<attribute name="Implementation-Version" value="1.3 #1" />
+				<attribute name="Implementation-Version" value="1.4 #0" />
 				<attribute name="Main-Class" value="${main.class}" />
-				<attribute name="Class-Path" value=". annotations-7.0.2.jar jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar" />
+				<attribute name="Class-Path" value=". jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar" />
+				<attribute name="Permissions" value="all-permissions" />
 			</manifest>
 			<fileset dir="${dir.bin}" />
 		</jar>
@@ -72,6 +73,6 @@
 
 
 	<target name="sign" description="Signs the distribution project jar">
-		<signjar alias="me" storepass="apass" jar="${dir.dist}/lib/dayon.jar" tsaurl="http://tsa.starfieldtech.com" />
+		<signjar keystore="${dir.src}/mpo/dayon/common/security/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/lib/dayon.jar" tsaurl="http://tsa.starfieldtech.com" />
 	</target>
 </project>

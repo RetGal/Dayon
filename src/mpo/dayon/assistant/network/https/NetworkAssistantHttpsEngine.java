@@ -15,6 +15,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
 
 public class NetworkAssistantHttpsEngine
 {
@@ -25,9 +29,13 @@ public class NetworkAssistantHttpsEngine
     private final MySocketConnector acceptor;
 
     private final MyHttpHandler handler;
+    
+    private final String keyStorePass = "spasspass";
+    
+    private final String keyStorePath = "/mpo/dayon/common/security/X509";
 
 
-    public NetworkAssistantHttpsEngine(int port)
+    public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException
     {
         this.port = port;
 
@@ -35,8 +43,15 @@ public class NetworkAssistantHttpsEngine
         this.server.setSendServerVersion(false);
                
         SslContextFactory contextFactory = new SslContextFactory(true);
-        contextFactory.setKeyStorePath("X509");
-        contextFactory.setKeyStorePassword("spasspass");
+               
+        // this looks like fun, doesn't it?!?
+        // contextFactory.setKeyStorePath() would be easier, but it can't handle paths from within the jar..
+        // ..and contextFactory.setKeyStoreInputStream() is deprecated
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
+        keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
+        
+        contextFactory.setKeyStore(keyStore);
+        contextFactory.setKeyStorePassword(keyStorePass);
         this.acceptor = new MySocketConnector(contextFactory);
 
         this.server.setConnectors(new Connector[]{this.acceptor});

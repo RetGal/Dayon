@@ -3,7 +3,7 @@
 <jnlp spec="1.0+" codebase="https://${ipAddress}:${port}" href="dayon.jnlp">
     <information>
         <title>Dayon!</title>
-        <vendor>Reto Galante</vendor>
+        <vendor>Dayon!</vendor>
         <description>Dayon! Assisted</description>
         <homepage href="https://github.com/RetGal/Dayon"/>
     </information>
