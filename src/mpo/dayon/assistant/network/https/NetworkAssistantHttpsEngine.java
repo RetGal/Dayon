@@ -29,10 +29,6 @@ public class NetworkAssistantHttpsEngine
     private final MySocketConnector acceptor;
 
     private final MyHttpHandler handler;
-    
-    private final String keyStorePass = "spasspass";
-    
-    private final String keyStorePath = "/mpo/dayon/common/security/X509";
 
 
     public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException
@@ -47,6 +43,8 @@ public class NetworkAssistantHttpsEngine
         // this looks like fun, doesn't it?!?
         // contextFactory.setKeyStorePath() would be easier, but it can't handle paths from within the jar..
         // ..and contextFactory.setKeyStoreInputStream() is deprecated
+        final String keyStorePath = "/mpo/dayon/common/security/X509";
+        final String keyStorePass = "spasspass";
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
         keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
         

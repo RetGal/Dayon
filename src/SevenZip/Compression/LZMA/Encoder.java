@@ -275,8 +275,6 @@ public class Encoder
         }
     }
 
-    ;
-
     public static final int kNumLenSpecSymbols = Base.kNumLowLenSymbols + Base.kNumMidLenSymbols;
 
     class LenPriceTableEncoder extends LenEncoder
@@ -358,7 +356,6 @@ public class Encoder
         public void MakeAsShortRep()
         {
             BackPrev = 0;
-            ;
             Prev1IsChar = false;
         }
 
@@ -367,8 +364,6 @@ public class Encoder
             return (BackPrev == 0);
         }
     }
-
-    ;
 
     private final Optimal[] _optimum = new Optimal[kNumOpts];
 

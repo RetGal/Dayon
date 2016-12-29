@@ -52,11 +52,6 @@ public class Assisted
     private volatile CaptureEngine captureEngine;
 
     private volatile CompressorEngine compressorEngine;
-    
-    private final String keyStorePass = "spasspass";
-    
-    private final String keyStorePath = "/mpo/dayon/common/security/X509";
-
 
     public Assisted()
     {
@@ -85,9 +80,8 @@ public class Assisted
 
 		// accept own cert, avoid PKIX path building exception
         SSLContext sc = null;
-        X509TrustManager customTm = null;
         try {
-        	customTm = combineManagers();
+        	X509TrustManager customTm = combineManagers();
         	sc = SSLContext.getInstance("TLS");
         	sc.init(null, new TrustManager[] { customTm }, null);
         }
@@ -330,7 +324,10 @@ public class Assisted
 				break;
 			}
 		}
-
+		
+	    final String keyStorePath = "/mpo/dayon/common/security/X509";
+	    final String keyStorePass = "spasspass";
+	    
 		InputStream myKeys = getClass().getResourceAsStream(keyStorePath);
 
 		// do the same with our own trust store this time
