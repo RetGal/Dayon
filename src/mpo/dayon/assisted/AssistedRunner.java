@@ -5,11 +5,9 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
-import java.io.IOException;
-
 public class AssistedRunner
 {
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args)
     {
         try
         {

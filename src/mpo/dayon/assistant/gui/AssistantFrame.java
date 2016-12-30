@@ -328,7 +328,7 @@ public class AssistantFrame extends BaseFrame
 
         add(center = pane, BorderLayout.CENTER);
 
-        statusBar.setMessage(Babylon.translate("http.ready", port));
+        statusBar.setMessage(Babylon.translate("https.ready", port));
     }
 
     public void onStarting(int port)

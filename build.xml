@@ -29,7 +29,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
-		<javac debug="true" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath" />
+		<javac debug="false" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath" />
 		<copy todir="${dir.bin}">
 			<fileset dir="${dir.src}">
 				<exclude name="**/*.java" />
