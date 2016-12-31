@@ -1,126 +1,114 @@
 package mpo.dayon.common.squeeze;
 
-import mpo.dayon.common.capture.CaptureTile;
-import mpo.dayon.common.log.Log;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-public class RegularTileCache extends TileCache
-{
-    /**
-     * Maximum number of tiles; currently a tile is basically a 32x32 byte array (i.e., 1K).
-     */
-    public static final int DEFAULT_MAX_SIZE = 16 * 1024;
+import mpo.dayon.common.capture.CaptureTile;
+import mpo.dayon.common.log.Log;
 
-    /**
-     * Number of tiles after a purge.
-     */
-    public static final int DEFAULT_PURGE_SIZE = 14 * 1024;
+public class RegularTileCache extends TileCache {
+	/**
+	 * Maximum number of tiles; currently a tile is basically a 32x32 byte array
+	 * (i.e., 1K).
+	 */
+	public static final int DEFAULT_MAX_SIZE = 16 * 1024;
 
-    private final Map<Integer, CaptureTile> tiles = new HashMap<>();
+	/**
+	 * Number of tiles after a purge.
+	 */
+	public static final int DEFAULT_PURGE_SIZE = 14 * 1024;
 
-    private final LinkedList<Integer> lru = new LinkedList<>();
+	private final Map<Integer, CaptureTile> tiles = new HashMap<>();
 
-    private final int maxSize;
+	private final LinkedList<Integer> lru = new LinkedList<>();
 
-    private final int purgeSize;
+	private final int maxSize;
 
-    private int hits;
+	private final int purgeSize;
 
-    public RegularTileCache(int maxSize, int purgeSize)
-    {
-        this.maxSize = maxSize;
-        this.purgeSize = purgeSize;
+	private int hits;
 
-        Log.info("Regular cache created [MAX:" + maxSize + "][PURGE:" + purgeSize + "]");
-    }
+	public RegularTileCache(int maxSize, int purgeSize) {
+		this.maxSize = maxSize;
+		this.purgeSize = purgeSize;
 
-    @Override
-    public int getCacheId(CaptureTile tile)
-    {
-        final long cs = tile.getChecksum();
+		Log.info("Regular cache created [MAX:" + maxSize + "][PURGE:" + purgeSize + "]");
+	}
 
-        if (cs < 0 || cs > 4294967295L)
-        {
-            throw new RuntimeException("Ouch [" + cs + "]");
-        }
+	@Override
+	public int getCacheId(CaptureTile tile) {
+		final long cs = tile.getChecksum();
 
-        return (int) cs;
-    }
+		if (cs < 0 || cs > 4294967295L) {
+			throw new RuntimeException("Ouch [" + cs + "]");
+		}
 
-    @Override
-    public void add(CaptureTile tile)
-    {
-        if (tiles.size() < maxSize)
-        {
-            final Integer cacheId = getCacheId(tile);
+		return (int) cs;
+	}
 
-            tiles.put(cacheId, tile);
-            lru.addFirst(cacheId);
-        }
-    }
+	@Override
+	public void add(CaptureTile tile) {
+		if (tiles.size() < maxSize) {
+			final Integer cacheId = getCacheId(tile);
 
-    @Override
-    public CaptureTile get(int cacheId)
-    {
-        final Integer xcacheId = cacheId;
-        final CaptureTile tile = tiles.get(xcacheId);
+			tiles.put(cacheId, tile);
+			lru.addFirst(cacheId);
+		}
+	}
 
-        if (tile != null)
-        {
-            ++hits;
-            lru.addFirst(xcacheId);
-            return tile;
-        }
+	@Override
+	public CaptureTile get(int cacheId) {
+		final Integer xcacheId = cacheId;
+		final CaptureTile tile = tiles.get(xcacheId);
 
-        return CaptureTile.MISSING;
-    }
+		if (tile != null) {
+			++hits;
+			lru.addFirst(xcacheId);
+			return tile;
+		}
 
-    @Override
-    public int size()
-    {
-        return tiles.size();
-    }
+		return CaptureTile.MISSING;
+	}
 
-    public void clear()
-    {
-        Log.info("Clearing the cache...");
+	@Override
+	public int size() {
+		return tiles.size();
+	}
 
-        tiles.clear();
-        lru.clear();
-    }
+	public void clear() {
+		Log.info("Clearing the cache...");
 
-    /**
-     * Called once a capture has been processed either in the assisted or in the assistant side.
-     * <p/>
-     * Opportunity to remove oldest entries; not done during the processing of a capture to keep references
-     * to cached tiles in the network messages consistent - easier to debug this way I guess ...
-     */
-    public void onCaptureProcessed()
-    {
-        if (tiles.size() > 0 && tiles.size() >= maxSize)
-        {
-            Log.info("Purging the cache...");
+		tiles.clear();
+		lru.clear();
+	}
 
-            while (tiles.size() > purgeSize)
-            {
-                final Integer removed = lru.removeFirst();
-                tiles.remove(removed);
-            }
-        }
-    }
+	/**
+	 * Called once a capture has been processed either in the assisted or in the
+	 * assistant side.
+	 * <p/>
+	 * Opportunity to remove oldest entries; not done during the processing of a
+	 * capture to keep references to cached tiles in the network messages
+	 * consistent - easier to debug this way I guess ...
+	 */
+	public void onCaptureProcessed() {
+		if (tiles.size() > 0 && tiles.size() >= maxSize) {
+			Log.info("Purging the cache...");
 
-    @Override
-    public void clearHits()
-    {
-        hits = 0;
-    }
+			while (tiles.size() > purgeSize) {
+				final Integer removed = lru.removeFirst();
+				tiles.remove(removed);
+			}
+		}
+	}
 
-    @Override
-    public int getHits()
-    {
-        return hits;
-    }
+	@Override
+	public void clearHits() {
+		hits = 0;
+	}
+
+	@Override
+	public int getHits() {
+		return hits;
+	}
 }

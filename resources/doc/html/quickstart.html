@@ -1,183 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Remote assistance for your family and friends.">
-    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dayon! - Remote assistance for your family and friends</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="description" content="Remote assistance for your family and friends.">
+<meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Dayon! - Remote assistance for your family and friends</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
-
 <body>
-
-<div id="container">
-
-	<div id="top">
-	
-	    <table>
-	        <tr>
-	            <td><img src="dayon.png" alt="Dayon!"></td>
-	            <td align="right"><a href="fr_quickstart.html"><img src="france.png" alt="Français"></a></td>
-	        </tr>
-	    </table>
-	
+	<div id="container">
+		<div id="top">
+			<table>
+				<tr>
+					<td><img src="dayon.png" alt="Dayon!"></td>
+					<td align="right"><a href="fr_quickstart.html"><img src="france.png" alt="Français"></a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="menu">
+			<a href="index.html">Home</a> <a href="quickstart.html">Quick Start</a> <a href="download.html">Download</a> <a href="support.html">Support</a> <a href="feedback.html">Feedback</a> <a href="https://github.com/RetGal/Dayon">GitHub</a>
+		</div>
+		<div id="content">
+			<h2>Quick Start</h2>
+			<p>
+				Typically, the <i>assistant</i> is communicating with the <i>assisted</i> using Skype, the phone, their favorite IM, or whatever tool they like. Then starting Dayon! allows for watching live the <i>assisted</i> computer screen.
+			<p>
+				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup"><b>Setup the Assistant Computer</b></a>
+			<p>
+				Dayon! Assistant is acting as a typical server application (the <i>assisted</i> is going to connect to) and as such you've to configure your network to make it visible from the outside world. First thing to do is to decide the <b>listening port</b> as
+				shown in the following picture. Then authorize that port number in your <b>firewall</b> and possibly setup accordingly your <b>NAT</b> services (typically on your DSL router). <img src="assistant_network_settings.jpg"
+					alt="Dayon! Assistant: Network Settings">
+			<p>
+				Then you've to determine which <b>IP address</b> you want to give to the <i>assisted</i> to connect to the <i>assistant</i>; you should typically give your <b>public</b> IP address. But for testing within your local network you might want to use a
+				different one. You can retrieve your <b>public IP address</b> with the following menu: <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+			<p>
+				As you can see on the following picture, the menu contains an item to copy to the clipboard the actual <b>IP Address & Port Number</b>. It is then easy to <b>paste it into a chat session</b> (e.g., Skype) or into an email. <img
+					src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
+			<p>
+				<i>Note that this IP address is not required by the assistant application as it is listening on all the available network interfaces; but you need to communicate it to the assisted. (more on this later). </i>
+			<p>
+				That's it regarding the network configuration; you'll find more details <a href="#assistant-details">hereafter</a> in this page. But let's see first how to setup the <i>assisted</i> side.
+			<p>
+				<img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Setup the Assisted Computer</b></a>
+			<p>Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to setup.
+			<p>
+				Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i> application (you should have a shortcut on the desktop) and enter both the IP address and the port number as communicated by the <i>assistant</i>: <img
+					src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+			<p>
+				You'll then be shortly connected to the <i>assistant</i> that is monitoring your screen. Enjoy!
+			<p>
+				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>More on the Assistant Setup</b></a>
+			<p>
+				Use that form to setup how the <i>assisted</i> screen is going to be <b>captured</b>; you can configure the time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels. <img src="assistant_capture_settings.jpg"
+					alt="Dayon! Assistant: Capture Settings">
+			<p>
+				You can then setup the <b>compression</b> method; three methods are available: ZIP, BZIP2 and LZMA. BZIP2 and LZMA should give a better compression ratio but requires more CPU as they're much more complicated than ZIP and are currently implemented in
+				JAVA (ZIP is being implemented using some native code in the JDK).
+			<p>
+				In addition a <b>cache</b> is used that allows for not sending many times the same bitmap as for example when opening and navigating menus (i.e., what's under the menus are not sent more than once). The screen is divided into many tiles, each one being
+				possibly cached. You've to define the maximum number of tiles in the cache. Note that a tile is currently 32x32 pixels of 256 levels, that is 1K.
+			<p>
+				<img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
+			<p>
+				By default, the remote <b>control mode</b> is off; you can switch it on using the following icon:
+			<p>
+				<img src="assistant_control.jpg" alt="Dayon! Assistant : Compression Settings">
+			<p>
+				That's about it. You can now start the session and then ask the <i>assisted</i> to connect. You'll be shortly prompted to accept the incoming connection:
+			<p>
+				<img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
+			<p>You're now connected and monitoring the remote computer.
+			<p>
+				<img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+			<p>
+				That's all folk! You can find more information in the <a href="support.html">support</a> page.
+		</div>
+		<div id="footer"></div>
 	</div>
-
-	<div id="menu">
-
-        <a href="index.html">Home</a>
-        <a href="quickstart.html">Quick Start</a>
-        <a href="download.html">Download</a>
-        <a href="support.html">Support</a>
-        <a href="feedback.html">Feedback</a>
-        <a href="https://github.com/RetGal/Dayon">GitHub</a>
-
-	</div>
-
-	<div id="content">
-
-	    <h2>Quick Start</h2>
-	
-	    <p>
-	        Typically, the <i>assistant</i> is communicating with the <i>assisted</i> using Skype,
-	        the phone, their favorite IM, or whatever tool they like. Then starting Dayon! allows
-	        for watching live the <i>assisted</i> computer screen.
-	    </p>
-	
-	    <p>
-	       <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup"><b>Setup the Assistant Computer</b></a>
-	    </p>
-	
-	    <p>
-	        Dayon! Assistant is acting as a typical server application (the <i>assisted</i> is going to
-	        connect to) and as such you've to configure your network to make it visible from the
-	        outside world. First thing to do is to decide the <b>listening port</b> as shown in the following
-	        picture. Then authorize that port number in your <b>firewall</b> and possibly setup accordingly
-	        your <b>NAT</b> services (typically on your DSL router).
-	    </p>
-	
-	    <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
-	
-	    <p>
-	        Then you've to determine which <b>IP address</b> you want to give to the <i>assisted</i> to
-	        connect to the <i>assistant</i>; you should typically give your <b>public</b> IP address. But
-	        for testing within your local network you might want to use a different one. You can retrieve
-	        your <b>public IP address</b> with the following menu:
-	    </p>
-	
-	    <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
-	
-	    <p>
-	        As you can see on the following picture, the menu contains an item to copy to the clipboard
-	        the actual <b>IP Address & Port Number</b>. It is then easy to <b>paste it into a chat session</b> (e.g., Skype)
-	        or into an email.
-	    </p>
-	
-	    <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
-	
-	    <p>
-	        <i>Note that this IP address is not required by the assistant application as it is listening
-	            on all the available network interfaces; but you need to communicate it to the assisted. 
-	            (more on this later). </i>
-	    </p>
-	
-	    <p>
-	        That's it regarding the network configuration; you'll find more details <a
-	            href="#assistant-details">hereafter</a>
-	        in this page. But let's see first how to setup the <i>assisted</i> side.
-	    </p>
-	
-	    <p>
-	       <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Setup the Assisted Computer</b></a>
-	    </p>
-	
-	    <p>
-	        Dayon! Assisted is acting as a client application calling the outside world and as such there's
-	        no network configuration to setup.
-	    </p>
-	
-	    <p>
-	        Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i>
-	        application (you should have a shortcut on the desktop) and enter both the IP address and the port number
-	        as communicated by the <i>assistant</i>:
-	    </p>
-	
-	    <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
-	
-	    <p>
-	        You'll then be shortly connected to the <i>assistant</i> that is monitoring your screen. Enjoy!
-	    </p>
-	
-	    <p>
-	       <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>More on the Assistant Setup</b></a>
-	    <p>
-	        Use that form to setup how the <i>assisted</i> screen is going to be <b>captured</b>; you can
-	        configure the time (in milliseconds) between two captures (aka. tick) as well as the number of
-	        gray levels.
-	    </p>
-	
-	    <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
-	
-	    <p>
-	        You can then setup the <b>compression</b> method; three methods are available: ZIP, BZIP2 and LZMA.
-	        BZIP2 and LZMA should give a better compression ratio but requires more CPU as they're much more
-	        complicated than ZIP and are currently implemented in JAVA (ZIP is being implemented using some
-	        native code in the JDK).
-	    </p>
-	
-	    <p>
-	        In addition a <b>cache</b> is used that allows for not sending many times the same bitmap as for
-	        example when opening and navigating menus (i.e., what's under the menus are not sent more than
-	        once). The screen is divided into many tiles, each one being possibly cached. You've to define
-	        the maximum number of tiles in the cache. Note that a tile is currently 32x32 pixels of 256 levels,
-	        that is 1K.
-	    </p>
-	
-	    <p>
-	        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
-	    </p>
-	
-	    <p>
-	        By default, the remote <b>control mode</b> is off; you can switch it on using the following icon:
-	    </p>
-	
-	    <p>
-	        <img src="assistant_control.jpg" alt="Dayon! Assistant : Compression Settings">
-	    </p>
-	
-	    <p>
-	        That's about it. You can now start the session and then ask the <i>assisted</i> to connect. You'll
-	        be shortly prompted to accept the incoming connection:
-	    </p>
-	
-	    <p>
-	        <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
-	    </p>
-	
-	    <p>
-	        You're now connected and monitoring the remote computer.
-	    </p>
-	
-	    <p>
-	        <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
-	    </p>
-	
-	    <p>
-	        That's all folk! You can find more information in the <a href="support.html">support</a> page.
-	    </p>
-
-	</div>
-
-	<div id="footer">
-	
-	</div>
-
-</div>
-
 </body>
-
 </html>

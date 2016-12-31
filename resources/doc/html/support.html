@@ -1,143 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Remote assistance for your family and friends.">
-    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dayon! - Remote assistance for your family and friends</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="description" content="Remote assistance for your family and friends.">
+<meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Dayon! - Remote assistance for your family and friends</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
-
 <body>
-
-<div id="container">
-
-    <div id="top">
-
-        <table>
-            <tr>
-                <td><img src="dayon.png" alt="Dayon!"></td>
-                <td align="right"><a href="fr_support.html"><img src="france.png" alt="Français"></a></td>
-            </tr>
-        </table>
-
-    </div>
-
-    <div id="menu">
-
-        <a href="index.html">Home</a>
-        <a href="quickstart.html">Quick Start</a>
-        <a href="download.html">Download</a>
-        <a href="support.html">Support</a>
-        <a href="feedback.html">Feedback</a>
-        <a href="https://github.com/RetGal/Dayon">GitHub</a>
-
-    </div>
-
-    <div id="content">
-
-        <h2>Support</h2>
-
-        <p>
-            Use the following <a href="http://sourceforge.net/forum/?group_id=246651">forum</a>
-            to post any question or open an issue on <a href="https://github.com/RetGal/Dayon/issues">GitHub</a>.
-    
-        <h3>Known Limitations</h3>
-
-        <ul>
-            <li>
-                As of version 1.4, the keyboard control support is still quite minimal; there's currently no way to send
-                some signals and some key combinations are not properly supported (e.g., CTRL-ALT-DEL).
-            </li>
-            <li>
-                Mouse cursor: due to JAVA limitations, the mouse cursor during for example the resize or the move
-                of a window is not properly rendered.
-            </li>
-            <li>
-                Due to more rigid security constraints, Java Web Start of the assisted application does not work with newer JAVA versions (>1.7.45).
-            </li>
-        </ul>
-
-        <h3>JAVA Process Properties</h3>
-
-        <p>
-            On Windows, for the assistant I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still
-            configure the JVM of each process using the corresponding <code>.l4j.ini</code> file within
-            the <code>bin</code> directory of your Dayon! install.
-    
-        <p>
-            You can for example setup the JVM RAM usage taking into account the size of the cache and
-            whether or not you're using the LZMA compression method (requires more RAM on the assisted
-            side).
-    
-        <p>
-            The <code>-server</code> option is available if you're using a JDK (as opposed to a JRE).
-    
-        <p>
-            On Unix, the same options are available within the <code>dayon.sh</code> script.
-    
-        <h3>Dayon! Home Directory</h3>
-
-        <p>
-            The directory <code>.dayon</code> is created within the directory referenced by the JAVA
-            property <code>user.home</code> and contains the saved user preferences and default log
-            files.
-    
-        <h3>CRC Checksum</h3>
-
-        <p>
-            On the assisted side, the screen is divided into different areas called <i>tiles</i>.
-            Only tiles that have changed from the previous capture are sent over the network to the
-            assistant side. To determine if a tile is different I'm currently computing a CRC code
-            (i.e., a unique integer value representing the pixels of the tile) that is not perfect
-            for the sake of speed. So it might happens that some <i>changed</i> tiles are not sent
-            to the assistant.
-    
-        <p>
-            Until now I've detected that issue during strong testing for very few pixels. Visually,
-            I've not noticed anything serious. But in case things are going mad you can then restart
-            the assisted or before try the <code>reset</code> action (<b>the orange lightning icon</b>)
-            that should clear every cached data and resend a full screen capture from scratch.
-    
-        <h3>Statistics Counters</h3>
-
-        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
-
-        <p>
-            The status bar of the assistant frame is displaying a set of counters.
-    
-        <ol>
-            <li>Network Bandwidth</li>
-            <li>Compression Ratio: how many times the initial capture (diff only) has been
-                compressed
-            </li>
-            <li>Number of Tiles: the number of tile being transmitted over the network as well
-                as the cache hits.
-            </li>
-            <li>Number of Skipped Capture: the number of screen captures that have been skipped
-                because of a too high rate (i.e., low tick value) for the CPU. To minimize that
-                number you have to slow down the capture rate using a bigger tick value.
-            </li>
-            <li>Number of Merged Capture: the number of screen captures that have been merged
-                before being transmitted. This is due to a capture rate too high for the current
-                compression method. To minimize that number you have to slow down the capture
-                rate and/or change the compression method using a faster one.
-            </li>
-
-        </ol>
-
-    </div>
-
-    <div id="footer">
-
-    </div>
-
-</div>
-
+	<div id="container">
+		<div id="top">
+			<table>
+				<tr>
+					<td><img src="dayon.png" alt="Dayon!"></td>
+					<td align="right"><a href="fr_support.html"><img src="france.png" alt="Français"></a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="menu">
+			<a href="index.html">Home</a> <a href="quickstart.html">Quick Start</a> <a href="download.html">Download</a> <a href="support.html">Support</a> <a href="feedback.html">Feedback</a> <a href="https://github.com/RetGal/Dayon">GitHub</a>
+		</div>
+		<div id="content">
+			<h2>Support</h2>
+			<p>
+				Use the following <a href="http://sourceforge.net/forum/?group_id=246651">forum</a> to post any question or open an issue on <a href="https://github.com/RetGal/Dayon/issues">GitHub</a>.
+			<h3>Known Limitations</h3>
+			<ul>
+				<li>As of version 1.4, the keyboard control support is still quite minimal; there's currently no way to send some signals and some key combinations are not properly supported (e.g., CTRL-ALT-DEL).
+				<li>Mouse cursor: due to JAVA limitations, the mouse cursor during for example the resize or the move of a window is not properly rendered.
+				<li>Due to more rigid security constraints, Java Web Start of the assisted application does not work with newer JAVA versions (>1.7.45).
+			</ul>
+			<h3>JAVA Process Properties</h3>
+			<p>
+				On Windows, for the assistant I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still configure the JVM of each process using the corresponding
+				<code>.l4j.ini</code>
+				file within the
+				<code>bin</code>
+				directory of your Dayon! install.
+			<p>You can for example setup the JVM RAM usage taking into account the size of the cache and whether or not you're using the LZMA compression method (requires more RAM on the assisted side).
+			<p>
+				The
+				<code>-server</code>
+				option is available if you're using a JDK (as opposed to a JRE).
+			<p>
+				On Unix, the same options are available within the
+				<code>dayon.sh</code>
+				script.
+			<h3>Dayon! Home Directory</h3>
+			<p>
+				The directory
+				<code>.dayon</code>
+				is created within the directory referenced by the JAVA property
+				<code>user.home</code>
+				and contains the saved user preferences and default log files.
+			<h3>CRC Checksum</h3>
+			<p>
+				On the assisted side, the screen is divided into different areas called <i>tiles</i>. Only tiles that have changed from the previous capture are sent over the network to the assistant side. To determine if a tile is different I'm currently computing a
+				CRC code (i.e., a unique integer value representing the pixels of the tile) that is not perfect for the sake of speed. So it might happens that some <i>changed</i> tiles are not sent to the assistant.
+			<p>
+				Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed anything serious. But in case things are going mad you can then restart the assisted or before try the
+				<code>reset</code>
+				action (<b>the orange lightning icon</b>) that should clear every cached data and resend a full screen capture from scratch.
+			<h3>Statistics Counters</h3>
+			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
+			<p>The status bar of the assistant frame is displaying a set of counters.
+			<ol>
+				<li>Network Bandwidth
+				<li>Compression Ratio: how many times the initial capture (diff only) has been compressed
+				<li>Number of Tiles: the number of tile being transmitted over the network as well as the cache hits.
+				<li>Number of Skipped Capture: the number of screen captures that have been skipped because of a too high rate (i.e., low tick value) for the CPU. To minimize that number you have to slow down the capture rate using a bigger tick value.
+				<li>Number of Merged Capture: the number of screen captures that have been merged before being transmitted. This is due to a capture rate too high for the current compression method. To minimize that number you have to slow down the capture rate
+					and/or change the compression method using a faster one.
+			</ol>
+		</div>
+		<div id="footer"></div>
+	</div>
 </body>
-
 </html>

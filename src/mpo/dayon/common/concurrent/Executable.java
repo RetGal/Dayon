@@ -1,54 +1,47 @@
 package mpo.dayon.common.concurrent;
 
-import mpo.dayon.common.log.Log;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
-public abstract class Executable extends RunnableEx
-{
-    private final ExecutorService executor;
+import org.jetbrains.annotations.Nullable;
 
-    /**
-     * Limiting access to an unbounded queue (!)
-     */
-    @Nullable
-    private final Semaphore semaphore;
+import mpo.dayon.common.log.Log;
 
-    public Executable(ExecutorService executor)
-    {
-        this.executor = executor;
-        this.semaphore = null;
-    }
+public abstract class Executable extends RunnableEx {
+	private final ExecutorService executor;
 
-    public Executable(ExecutorService executor, @Nullable Semaphore semaphore)
-    {
-        this.executor = executor;
-        this.semaphore = semaphore;
-    }
+	/**
+	 * Limiting access to an unbounded queue (!)
+	 */
+	@Nullable
+	private final Semaphore semaphore;
 
-    public final void doRun() throws Exception
-    {
-        try
-        {
-            if (semaphore != null)
-            {
-                semaphore.release();
-            }
+	public Executable(ExecutorService executor) {
+		this.executor = executor;
+		this.semaphore = null;
+	}
 
-            execute();
-        }
-        catch (InterruptedException ex)
-        {
-            if (!executor.isShutdown()) // executor.shutdownNow() ...
-            {
-                throw ex;
-            }
+	public Executable(ExecutorService executor, @Nullable Semaphore semaphore) {
+		this.executor = executor;
+		this.semaphore = semaphore;
+	}
 
-            Log.info(Thread.currentThread().getName() + " has cancelled a task (shutdown)!");
-        }
-    }
+	public final void doRun() throws Exception {
+		try {
+			if (semaphore != null) {
+				semaphore.release();
+			}
 
-    protected abstract void execute() throws Exception;
+			execute();
+		} catch (InterruptedException ex) {
+			if (!executor.isShutdown()) // executor.shutdownNow() ...
+			{
+				throw ex;
+			}
+
+			Log.info(Thread.currentThread().getName() + " has cancelled a task (shutdown)!");
+		}
+	}
+
+	protected abstract void execute() throws Exception;
 }

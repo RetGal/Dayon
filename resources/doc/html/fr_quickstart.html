@@ -1,194 +1,87 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Assistance à distance pour votre famille et vos amis.">
-    <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="description" content="Assistance à distance pour votre famille et vos amis.">
+<meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
+<link rel="stylesheet" type="text/css" href="style.css">
 </head>
-
 <body>
-
-<div id="container">
-
-	<div id="top">
-
-        <table>
-            <tr>
-                <td><img src="dayon.png" alt="Dayon!"></td>
-                <td align="right"><a href="quickstart.html"><img src="great_britain.png" border="no" alt="English"></a></td>
-            </tr>
-        </table>
-
+	<div id="container">
+		<div id="top">
+			<table>
+				<tr>
+					<td><img src="dayon.png" alt="Dayon!"></td>
+					<td align="right"><a href="quickstart.html"><img src="great_britain.png" border="no" alt="English"></a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="menu">
+			<a href="fr_index.html">Accueil</a> <a href="fr_quickstart.html">Premiers Pas</a> <a href="fr_download.html">Télécharger</a> <a href="fr_support.html">Aide</a> <a href="fr_feedback.html">Réactions</a> <a href="https://github.com/RetGal/Dayon">GitHub</a>
+		</div>
+		<div id="content">
+			<h2>Premier Pas</h2>
+			<p>
+				Typiquement, l'<i>assistant</i> discute avec l'<i>assisté</i> en utilisant Skype, le téléphone, son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser en direct l'écran de l'ordinateur de l'<i>assisté</i>.
+			<p>Notez que les images sur cette page correspondent à la version anglaise mais que l'application elle-même est complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre l'essentiel.
+			<p>
+				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup"><b>Mise en Route Coté Assistant</b></a>
+			<p>
+				Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assisté</i> va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur. La première chose à faire est de configurer le
+				numéro de <b>port d'écoute</b> comme indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans votre <b>parefeu</b> et sans doute configurer un service <b>NAT</b> sur votre routeur DSL. <img src="assistant_network_settings.jpg"
+					alt="Dayon! Assistant: Network Settings">
+			<p>
+				Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assisté</i> pour qu'il se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <b>publique</b>. Mais pour un test sur votre réseau local (ou
+				sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP publique</b> avec le menu suivant: <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+			<p>
+				Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi facile de coller dans une session Skype (ou autre) ou dans un message
+				email.
+			</p>
+			<img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
+			<p>
+				<i> Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application écoute sur toutes les interfaces réseaux disponibles; mais la personne assisté va avoir besoin de ces informations.
+				</i>
+			</p>
+			<p>
+				C'est tout pour la configuration réseau; vous trouverez plus de détails <a href="#assistant-details">ci-desous</a>. Mais voyons tout d'abord comment mettre en place le côté <i>assisté</i>.
+			<p>
+				<img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Mise en Route Coté Assisté</b></a>
+			<p>Dayon! Assisté se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de configuration réseau à faire.
+			<p>
+				Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et ensuite démarrer l' <i>Dayon!</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et le numéro de port communiqué par l'<i>assistant</i>: <img
+					src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+			<p>
+				Vous serez alors promptement connecté à l'<i>assistant</i> qui sera déjà en train de regarder votre écran. Bonne session!
+			<p>
+				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>Mise en Route Coté Assistant (La Suite)</b></a>
+			<p>
+				Cette forme vous permet de configurer la façon dont l'écran est <b>capturé</b>; vous pouvez configurer l'interval de temps (en milli-seconde) entre deux captures (aka. tic-tac) ainsi que le nombre de niveau de gris. Moins de niveaux veut dire moins
+				d'information à transmettre sur le réseau (au détriment de la qualité des images). <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
+			<p>
+				Vous pouvez ensuite configuer la méthode de <b>compression</b>; trois méthodes sont disponibles: ZIP, BZIP2 and LZMA. BZIP2 et LZMA devraient donner les meilleurs résultats mais demandent plus de CPU; elles sont bien plus compliquées que ZIP et sont de
+				plus implémentées en JAVA (ZIP étant implémenté en code natif dans le JDK).
+			<p>
+				En plus de la compression, un <b>cache</b> est utilisé pour ne pas envoyer plusieurs fois des images identiques comme par exemple, quand on ouvre et ferme un menu (i.e., l'image sous le menu n'a pas besoin d'être renvoyée). Pour cela, l'écran est
+				divisé en carreaux, chacun pouvant être caché. Vous devez définir le nombre maximum de carreaux dans le cache. Noter qu'un carreaux représente 32x32 points de 256 niveaux de gris, ce qui fait 1K.
+			<p>
+				<img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
+			<p>
+				Par default, le <b>mode de contrôle</b> à distance n'est pas activé; vous pouvez l'activer avec l'icône suivante:
+			<p>
+				<img src="assistant_control.jpg" alt="Dayon! Assistant : Compression Settings">
+			<p>C'est à peu près tout. Vous pouvez démarrer une session et demander à l'assisté de se connecter. Vous serez alors promptement requis d'accepter une nouvelle connexion:
+			<p>
+				<img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
+			<p>Vous voila connecté visualisant l'ordinateur à distance.
+			<p>
+				<img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+			<p>
+				That's all folk! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
+		</div>
+		<div id="footer"></div>
 	</div>
-
-	<div id="menu">
-
-        <a href="fr_index.html">Accueil</a>
-        <a href="fr_quickstart.html">Premiers Pas</a>
-        <a href="fr_download.html">Télécharger</a>
-        <a href="fr_support.html">Aide</a>
-        <a href="fr_feedback.html">Réactions</a>
-        <a href="https://github.com/RetGal/Dayon">GitHub</a>
-
-	</div>
-
-	<div id="content">
-
-    <h2>Premier Pas</h2>
-
-    <p>
-        Typiquement, l'<i>assistant</i> discute avec l'<i>assisté</i> en utilisant Skype, le téléphone,
-        son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser
-        en direct l'écran de l'ordinateur de l'<i>assisté</i>.
-    </p>
-
-    <p>
-        Notez que les images sur cette page correspondent à la version anglaise mais que l'application
-        elle-même est complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre
-        l'essentiel.
-    </p>
-    
-    <p>
-       <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup"><b>Mise en Route Coté Assistant</b></a>
-
-    <p>
-        Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assisté</i>
-        va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis
-        l'extérieur. La première chose à faire est de configurer le numéro de <b>port d'écoute</b> comme
-        indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans votre <b>parefeu</b>
-        et sans doute configurer un service <b>NAT</b> sur votre routeur DSL.
-    </p>
-    
-    <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
-
-    <p>
-        Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assisté</i>
-        pour qu'il se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP
-        <b>publique</b>. Mais pour un test sur votre réseau local (ou sur votre PC en local), vous pouvez
-        utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP publique</b> avec le menu
-        suivant:
-    </p>
-    
-    <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
-
-    <p>
-        Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous
-        permettant de copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi
-        facile de coller dans une session Skype (ou autre) ou dans un message email.
-    </p>        
-
-    <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
-
-    <p>
-        <i>
-            Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application
-            écoute sur toutes les interfaces réseaux disponibles; mais la personne assisté va avoir besoin de ces informations.
-        </i>
-    </p>        
-
-    <p>
-        C'est tout pour la configuration réseau; vous trouverez plus de détails <a href="#assistant-details">ci-desous</a>.
-        Mais voyons tout d'abord comment mettre en place le côté <i>assisté</i>.
-
-
-    <p>
-       <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Mise en Route Coté Assisté</b></a>
-	</p>
-
-    <p>
-        Dayon! Assisté se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de
-        configuration réseau à faire.
-    </p>
-    
-    <p>
-        Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et  ensuite démarrer l'
-        <i>Dayon!</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et
-        le numéro de port communiqué par l'<i>assistant</i>:
-    </p>
-    
-    <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
-
-    <p>
-        Vous serez alors promptement connecté à l'<i>assistant</i> qui sera déjà en train de regarder
-        votre écran. Bonne session!
-    </p>
-    
-    <p>
-       <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>Mise en Route Coté Assistant (La Suite)</b></a>
-    </p>
-    
-    <p>
-        Cette forme vous permet de configurer la façon dont l'écran est <b>capturé</b>; vous pouvez
-        configurer l'interval de temps (en milli-seconde) entre deux captures (aka. tic-tac) ainsi
-        que le nombre de niveau de gris. Moins de niveaux veut dire moins d'information à transmettre
-        sur le réseau (au détriment de la qualité des images).
-    </p>
-    
-    <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
-
-    <p>
-        Vous pouvez ensuite configuer la méthode de <b>compression</b>; trois méthodes sont disponibles:
-        ZIP, BZIP2 and LZMA. BZIP2 et LZMA devraient donner les meilleurs résultats mais demandent plus
-        de CPU; elles sont bien plus compliquées que ZIP et sont de plus implémentées en JAVA (ZIP étant
-        implémenté en code natif dans le JDK).
-    </p>
-    
-    <p>
-        En plus de la compression, un <b>cache</b> est utilisé pour ne pas envoyer plusieurs fois des images
-        identiques comme par exemple, quand on ouvre et ferme un menu (i.e., l'image sous le menu n'a pas
-        besoin d'être renvoyée). Pour cela, l'écran est divisé en carreaux, chacun pouvant être caché. Vous
-        devez définir le nombre maximum de carreaux dans le cache. Noter qu'un carreaux représente 32x32 points
-        de 256 niveaux de gris, ce qui fait 1K.
-    </p>
-    
-    <p>
-        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
-    </p>
-
-    <p>
-        Par default, le <b>mode de contrôle</b> à distance n'est pas activé; vous pouvez l'activer avec
-        l'icône suivante:
-    </p>
-    
-    <p>
-        <img src="assistant_control.jpg" alt="Dayon! Assistant : Compression Settings">
-    </p>
-    
-    <p>
-        C'est à peu près tout. Vous pouvez démarrer une session et demander à l'assisté de se connecter.
-        Vous serez alors promptement requis d'accepter une nouvelle connexion:
-    </p>
-    
-    <p>
-        <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
-    </p>
-    
-    <p>
-        Vous voila connecté visualisant l'ordinateur à distance.
-    </p>
-    
-    <p>
-        <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
-    </p>
-    
-    <p>
-        That's all folk! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
-    </p>
-
-	</div>
-
-	<div id="footer">
-
-	</div>
-
-</div>
-
 </body>
-
 </html>

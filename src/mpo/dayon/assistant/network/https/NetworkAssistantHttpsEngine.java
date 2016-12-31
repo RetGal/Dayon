@@ -1,7 +1,16 @@
 package mpo.dayon.assistant.network.https;
 
-import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.SystemUtilities;
+import java.io.File;
+import java.io.IOException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -10,230 +19,190 @@ import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
+import mpo.dayon.common.log.Log;
+import mpo.dayon.common.utils.SystemUtilities;
 
-public class NetworkAssistantHttpsEngine
-{
-    private final int port;
+public class NetworkAssistantHttpsEngine {
+	private final int port;
 
-    private final Server server;
+	private final Server server;
 
-    private final MySocketConnector acceptor;
+	private final MySocketConnector acceptor;
 
-    private final MyHttpHandler handler;
+	private final MyHttpHandler handler;
 
+	public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		this.port = port;
 
-    public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException
-    {
-        this.port = port;
+		this.server = new Server();
+		this.server.setSendServerVersion(false);
 
-        this.server = new Server();
-        this.server.setSendServerVersion(false);
-               
-        SslContextFactory contextFactory = new SslContextFactory(true);
-               
-        // this looks like fun, doesn't it?!?
-        // contextFactory.setKeyStorePath() would be easier, but it can't handle paths from within the jar..
-        // ..and contextFactory.setKeyStoreInputStream() is deprecated
-        final String keyStorePath = "/mpo/dayon/common/security/X509";
-        final String keyStorePass = "spasspass";
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());    
-        keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
-        
-        contextFactory.setKeyStore(keyStore);
-        contextFactory.setKeyStorePassword(keyStorePass);
-        this.acceptor = new MySocketConnector(contextFactory);
+		SslContextFactory contextFactory = new SslContextFactory(true);
 
-        this.server.setConnectors(new Connector[]{this.acceptor});
+		// this looks like fun, doesn't it?!?
+		// contextFactory.setKeyStorePath() would be easier, but it can't handle
+		// paths from within the jar..
+		// ..and contextFactory.setKeyStoreInputStream() is deprecated
+		final String keyStorePath = "/mpo/dayon/common/security/X509";
+		final String keyStorePass = "spasspass";
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
 
-        final HandlerList httpHandlers = new HandlerList();
-        {
-            final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
-            if (jnlp == null)
-            {
-                throw new RuntimeException("No JNLP directory!");
-            }
+		contextFactory.setKeyStore(keyStore);
+		contextFactory.setKeyStorePassword(keyStorePass);
+		this.acceptor = new MySocketConnector(contextFactory);
 
-            httpHandlers.addHandler(handler = new MyHttpHandler(jnlp.getAbsolutePath()));
-        }
+		this.server.setConnectors(new Connector[] { this.acceptor });
 
-        this.server.setHandler(httpHandlers);
-    }
+		final HandlerList httpHandlers = new HandlerList();
+		{
+			final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
+			if (jnlp == null) {
+				throw new RuntimeException("No JNLP directory!");
+			}
 
-    public void start() throws IOException
-    {
-        Log.info("[HTTPS] The engine is starting...");
+			httpHandlers.addHandler(handler = new MyHttpHandler(jnlp.getAbsolutePath()));
+		}
 
-        try
-        {
-            server.start();
-        }
-        catch (Exception ex)
-        {
-            if (ex instanceof IOException)
-            {
-                throw (IOException) ex;
-            }
+		this.server.setHandler(httpHandlers);
+	}
 
-            throw new RuntimeException(ex); // dunno (!)
-        }
+	public void start() throws IOException {
+		Log.info("[HTTPS] The engine is starting...");
 
-        Log.info("[HTTPS] The engine is waiting on its acceptor...");
+		try {
+			server.start();
+		} catch (Exception ex) {
+			if (ex instanceof IOException) {
+				throw (IOException) ex;
+			}
 
-        synchronized (acceptor.__acceptLOCK)
-        {
-            while (!acceptor.__acceptStopped)
-            {
-                try
-                {
-                    acceptor.__acceptLOCK.wait();
-                }
-                catch (InterruptedException ignored)
-                {
-                }
-            }
-        }
+			throw new RuntimeException(ex); // dunno (!)
+		}
 
-        Log.info("[HTTPS] The engine is done - bye!");
-    }
+		Log.info("[HTTPS] The engine is waiting on its acceptor...");
 
-    public void cancel()
-    {
-        try
-        {
-            server.stop();
-        }
-        catch (Exception ex)
-        {
-            Log.warn("[HTTPS] Exception while closing Jetty!", ex);
-        }
-    }
+		synchronized (acceptor.__acceptLOCK) {
+			while (!acceptor.__acceptStopped) {
+				try {
+					acceptor.__acceptLOCK.wait();
+				} catch (InterruptedException ignored) {
+				}
+			}
+		}
 
-    public void onDayonAccepting()
-    {
-        Log.info("[HTTPS] engine.onDayonAccepting() received");
+		Log.info("[HTTPS] The engine is done - bye!");
+	}
 
-        synchronized (handler.__dayonLOCK)
-        {
-            handler.__dayonStarted = true;
-            handler.__dayonLOCK.notifyAll();
-        }
-    }
+	public void cancel() {
+		try {
+			server.stop();
+		} catch (Exception ex) {
+			Log.warn("[HTTPS] Exception while closing Jetty!", ex);
+		}
+	}
 
-    private class MySocketConnector extends SslSocketConnector
-    {
-        private final Object __acceptLOCK = new Object();
+	public void onDayonAccepting() {
+		Log.info("[HTTPS] engine.onDayonAccepting() received");
 
-        private boolean __acceptClosed;
+		synchronized (handler.__dayonLOCK) {
+			handler.__dayonStarted = true;
+			handler.__dayonLOCK.notifyAll();
+		}
+	}
 
-        private boolean __acceptStopped;
+	private class MySocketConnector extends SslSocketConnector {
+		private final Object __acceptLOCK = new Object();
 
-        public MySocketConnector(SslContextFactory contextFactory)
-        {
-            super(contextFactory);
-            setPort(port);
-        }
+		private boolean __acceptClosed;
 
-        @Override
-        public void accept(int acceptorID) throws IOException, InterruptedException
-        {
-            try
-            {
-                Log.info("[HTTPS] The engine acceptor [" + acceptorID + "] is accepting...");
+		private boolean __acceptStopped;
 
-                super.accept(acceptorID);
+		public MySocketConnector(SslContextFactory contextFactory) {
+			super(contextFactory);
+			setPort(port);
+		}
 
-            }
-            finally
-            {
-                Log.info("[HTTPS] The engine acceptor has accepted.");
+		@Override
+		public void accept(int acceptorID) throws IOException, InterruptedException {
+			try {
+				Log.info("[HTTPS] The engine acceptor [" + acceptorID + "] is accepting...");
 
-                synchronized (__acceptLOCK)
-                {
-                    if (__acceptClosed)
-                    {
-                        Log.info("[HTTPS] The engine acceptor is stopping...");
+				super.accept(acceptorID);
 
-                        __acceptStopped = true;
-                        __acceptLOCK.notifyAll();
-                    }
-                }
-            }
-        }
-        
-    	@Override
-    	public void close() throws IOException {
-    		synchronized (__acceptLOCK) {
-    			__acceptClosed = true;
-    		}
+			} finally {
+				Log.info("[HTTPS] The engine acceptor has accepted.");
 
-    		super.close();
-    	}
+				synchronized (__acceptLOCK) {
+					if (__acceptClosed) {
+						Log.info("[HTTPS] The engine acceptor is stopping...");
 
-    }
+						__acceptStopped = true;
+						__acceptLOCK.notifyAll();
+					}
+				}
+			}
+		}
 
-    /**
-     * Serving all the static (once this engine configured) resources required for JAVA WEB start.
-     */
-    private class MyHttpHandler extends ResourceHandler
-    {
-        private final Object __dayonLOCK = new Object();
+		@Override
+		public void close() throws IOException {
+			synchronized (__acceptLOCK) {
+				__acceptClosed = true;
+			}
 
-        private boolean __dayonStarted;
+			super.close();
+		}
 
-        public MyHttpHandler(String root)
-        {
-            setResourceBase(root);
-        }
+	}
 
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
-        {
-            Log.info("[HTTPS] Processing the request \n-----\n" + request + "\n-----");
+	/**
+	 * Serving all the static (once this engine configured) resources required
+	 * for JAVA WEB start.
+	 */
+	private class MyHttpHandler extends ResourceHandler {
+		private final Object __dayonLOCK = new Object();
 
-            if (target.contains("/hello"))
-            {
-                Log.info("[HTTPS] The handler is processing the /hello request");
+		private boolean __dayonStarted;
 
-                // That keeps all the connections open => then I can reply to this request ...
-                acceptor.close();
+		public MyHttpHandler(String root) {
+			setResourceBase(root);
+		}
 
-                // Wait for the start of the Dayon! acceptor before replying to this HTTP request (I want to ensure
-                // we're now ready to receive a Dayon! message coming from the assisted side).
+		public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+			Log.info("[HTTPS] Processing the request \n-----\n" + request + "\n-----");
 
-                Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
+			if (target.contains("/hello")) {
+				Log.info("[HTTPS] The handler is processing the /hello request");
 
-                synchronized (__dayonLOCK)
-                {
-                    while (!__dayonStarted)
-                    {
-                        try
-                        {
-                            __dayonLOCK.wait();
-                        }
-                        catch (InterruptedException ignored)
-                        {
-                        }
-                    }
-                }
+				// That keeps all the connections open => then I can reply to
+				// this request ...
+				acceptor.close();
 
-                // Currently do not care about the actual response (!)
-                Log.info("[HTTPS] The handler is replying to the /hello message [404]...");
-            }
+				// Wait for the start of the Dayon! acceptor before replying to
+				// this HTTP request (I want to ensure
+				// we're now ready to receive a Dayon! message coming from the
+				// assisted side).
 
-            super.handle(target, baseRequest, request, response);
+				Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
 
-            Log.info("[HTTPS] Response \n-----\n" + response + "\n-----");
-        }
+				synchronized (__dayonLOCK) {
+					while (!__dayonStarted) {
+						try {
+							__dayonLOCK.wait();
+						} catch (InterruptedException ignored) {
+						}
+					}
+				}
 
-    }
+				// Currently do not care about the actual response (!)
+				Log.info("[HTTPS] The handler is replying to the /hello message [404]...");
+			}
 
+			super.handle(target, baseRequest, request, response);
+
+			Log.info("[HTTPS] Response \n-----\n" + response + "\n-----");
+		}
+
+	}
 
 }

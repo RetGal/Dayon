@@ -1,41 +1,36 @@
 package mpo.dayon.common.concurrent;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class DefaultThreadFactoryEx implements ThreadFactory
-{
-    private final AtomicInteger threadNumber = new AtomicInteger(1);
+import org.jetbrains.annotations.NotNull;
 
-    private final ThreadGroup group;
+public class DefaultThreadFactoryEx implements ThreadFactory {
+	private final AtomicInteger threadNumber = new AtomicInteger(1);
 
-    private final String namePrefix;
+	private final ThreadGroup group;
 
-    public DefaultThreadFactoryEx(String name)
-    {
-        final SecurityManager sm = System.getSecurityManager();
+	private final String namePrefix;
 
-        group = (sm != null) ? sm.getThreadGroup() : Thread.currentThread().getThreadGroup();
-        namePrefix = name + "-";
-    }
+	public DefaultThreadFactoryEx(String name) {
+		final SecurityManager sm = System.getSecurityManager();
 
-    public Thread newThread(@NotNull Runnable runnable)
-    {
-        final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
+		group = (sm != null) ? sm.getThreadGroup() : Thread.currentThread().getThreadGroup();
+		namePrefix = name + "-";
+	}
 
-        if (thread.isDaemon())
-        {
-            thread.setDaemon(false);
-        }
+	public Thread newThread(@NotNull Runnable runnable) {
+		final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
 
-        if (thread.getPriority() != Thread.NORM_PRIORITY)
-        {
-            thread.setPriority(Thread.NORM_PRIORITY);
-        }
+		if (thread.isDaemon()) {
+			thread.setDaemon(false);
+		}
 
-        return thread;
-    }
+		if (thread.getPriority() != Thread.NORM_PRIORITY) {
+			thread.setPriority(Thread.NORM_PRIORITY);
+		}
+
+		return thread;
+	}
 
 }

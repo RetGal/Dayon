@@ -1,42 +1,36 @@
 package mpo.dayon.assistant.monitoring;
 
-import mpo.dayon.assistant.monitoring.counter.Counter;
-
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class BigBrother
-{
-    private final static BigBrother INSTANCE = new BigBrother();
+import mpo.dayon.assistant.monitoring.counter.Counter;
 
-    private final Timer timer = new Timer("BigBrother");
+public class BigBrother {
+	private final static BigBrother INSTANCE = new BigBrother();
 
-    private BigBrother()
-    {
-    }
+	private final Timer timer = new Timer("BigBrother");
 
-    public static BigBrother get()
-    {
-        return INSTANCE;
-    }
+	private BigBrother() {
+	}
 
-    /**
-     * @param instantRatePeriod millis
-     */
-    public void registerCounter(final Counter counter, final long instantRatePeriod)
-    {
-        timer.scheduleAtFixedRate(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                counter.computeAndResetInstantValue();
-            }
-        }, 0, instantRatePeriod);
-    }
+	public static BigBrother get() {
+		return INSTANCE;
+	}
 
-    public void registerRamInfo(TimerTask callback)
-    {
-        timer.scheduleAtFixedRate(callback, 0, 1000);
-    }
+	/**
+	 * @param instantRatePeriod
+	 *            millis
+	 */
+	public void registerCounter(final Counter counter, final long instantRatePeriod) {
+		timer.scheduleAtFixedRate(new TimerTask() {
+			@Override
+			public void run() {
+				counter.computeAndResetInstantValue();
+			}
+		}, 0, instantRatePeriod);
+	}
+
+	public void registerRamInfo(TimerTask callback) {
+		timer.scheduleAtFixedRate(callback, 0, 1000);
+	}
 }

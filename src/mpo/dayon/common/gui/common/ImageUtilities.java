@@ -1,13 +1,5 @@
 package mpo.dayon.common.gui.common;
 
-import mpo.dayon.assistant.resource.ImageNames;
-
-import javax.imageio.IIOImage;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageWriteParam;
-import javax.imageio.ImageWriter;
-import javax.imageio.stream.ImageOutputStream;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -16,55 +8,56 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-public abstract class ImageUtilities
-{
-    public static void writeAsJpeg(String where, String name, BufferedImage image, float compression)
-    {
-        try
-        {
-            final Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
-            final ImageWriter writer = iter.next();
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.swing.ImageIcon;
 
-            final ImageOutputStream ios = ImageIO.createImageOutputStream(new File(where + name + ".jpg"));
-            writer.setOutput(ios);
+import mpo.dayon.assistant.resource.ImageNames;
 
-            final ImageWriteParam iwp = writer.getDefaultWriteParam();
-            iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-            iwp.setCompressionQuality(compression);
+public abstract class ImageUtilities {
+	public static void writeAsJpeg(String where, String name, BufferedImage image, float compression) {
+		try {
+			final Iterator<ImageWriter> iter = ImageIO.getImageWritersByFormatName("jpeg");
+			final ImageWriter writer = iter.next();
 
-            writer.write(null, new IIOImage(image, null, null), iwp);
+			final ImageOutputStream ios = ImageIO.createImageOutputStream(new File(where + name + ".jpg"));
+			writer.setOutput(ios);
 
-            ios.flush();
-            ios.close();
-        }
-        catch (IOException ex)
-        {
-            throw new RuntimeException(ex);
-        }
-    }
+			final ImageWriteParam iwp = writer.getDefaultWriteParam();
+			iwp.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+			iwp.setCompressionQuality(compression);
 
-    private static final Map<String, ImageIcon> cache = new HashMap<>();
+			writer.write(null, new IIOImage(image, null, null), iwp);
 
-    public static ImageIcon getOrCreateIcon(String name)
-    {
-        final String rname = ImageNames.class.getPackage().getName().replace(".", "/") + "/images/" + name;
+			ios.flush();
+			ios.close();
+		} catch (IOException ex) {
+			throw new RuntimeException(ex);
+		}
+	}
 
-        ImageIcon icon = cache.get(name);
+	private static final Map<String, ImageIcon> cache = new HashMap<>();
 
-        if (icon == null)
-        {
-            final URL rsc = ImageUtilities.class.getClassLoader().getResource(rname);
-            if (rsc == null)
-            {
-                throw new RuntimeException(String.format("Missing icon [%s].", rname));
-            }
+	public static ImageIcon getOrCreateIcon(String name) {
+		final String rname = ImageNames.class.getPackage().getName().replace(".", "/") + "/images/" + name;
 
-            icon = new ImageIcon(rsc);
+		ImageIcon icon = cache.get(name);
 
-            cache.put(rname, icon);
-        }
+		if (icon == null) {
+			final URL rsc = ImageUtilities.class.getClassLoader().getResource(rname);
+			if (rsc == null) {
+				throw new RuntimeException(String.format("Missing icon [%s].", rname));
+			}
 
-        return icon;
-    }
+			icon = new ImageIcon(rsc);
+
+			cache.put(rname, icon);
+		}
+
+		return icon;
+	}
 
 }

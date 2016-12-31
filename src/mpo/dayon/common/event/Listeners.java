@@ -1,85 +1,73 @@
 package mpo.dayon.common.event;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.lang.reflect.Array;
 
-public class Listeners<T extends Listener>
-{
-    private final Class<?> clazz;
+import org.jetbrains.annotations.Nullable;
 
-    @Nullable
-    private T[] listeners;
+public class Listeners<T extends Listener> {
+	private final Class<?> clazz;
 
-    public Listeners(Class<?> clazz)
-    {
-        this.clazz = clazz;
-    }
+	@Nullable
+	private T[] listeners;
 
-    @Nullable
-    public T[] getListeners()
-    {
-        return listeners;
-    }
+	public Listeners(Class<?> clazz) {
+		this.clazz = clazz;
+	}
 
-    public synchronized void add(T listener)
-    {
-        if (listener == null)
-        {
-            return;
-        }
+	@Nullable
+	public T[] getListeners() {
+		return listeners;
+	}
 
-        if (listeners == null)
-        {
-            final T[] tmp = (T[]) Array.newInstance(clazz, 1);
-            tmp[0] = listener;
+	public synchronized void add(T listener) {
+		if (listener == null) {
+			return;
+		}
 
-            listeners = tmp;
-            return;
-        }
+		if (listeners == null) {
+			final T[] tmp = (T[]) Array.newInstance(clazz, 1);
+			tmp[0] = listener;
 
-        final T[] xlisteners = listeners;
+			listeners = tmp;
+			return;
+		}
 
-        final int len = xlisteners.length;
-        final T[] tmp = (T[]) Array.newInstance(clazz, len + 1);
+		final T[] xlisteners = listeners;
 
-        System.arraycopy(xlisteners, 0, tmp, 0, len);
-        tmp[len] = listener;
+		final int len = xlisteners.length;
+		final T[] tmp = (T[]) Array.newInstance(clazz, len + 1);
 
-        listeners = tmp;
-    }
+		System.arraycopy(xlisteners, 0, tmp, 0, len);
+		tmp[len] = listener;
 
-    public synchronized void remove(T listener)
-    {
-        if (listener == null || listeners == null)
-        {
-            return;
-        }
+		listeners = tmp;
+	}
 
-        final T[] xlisteners = listeners;
+	public synchronized void remove(T listener) {
+		if (listener == null || listeners == null) {
+			return;
+		}
 
-        int pos = -1;
+		final T[] xlisteners = listeners;
 
-        for (int idx = 0; idx < xlisteners.length; idx++)
-        {
-            if (listener == xlisteners[idx])
-            {
-                pos = idx;
-                break;
-            }
-        }
+		int pos = -1;
 
-        if (pos > -1)
-        {
-            final T[] tmp = (T[]) Array.newInstance(clazz, xlisteners.length - 1);
-            System.arraycopy(xlisteners, 0, tmp, 0, pos);
+		for (int idx = 0; idx < xlisteners.length; idx++) {
+			if (listener == xlisteners[idx]) {
+				pos = idx;
+				break;
+			}
+		}
 
-            if (pos < tmp.length)
-            {
-                System.arraycopy(xlisteners, pos + 1, tmp, pos, tmp.length - pos);
-            }
+		if (pos > -1) {
+			final T[] tmp = (T[]) Array.newInstance(clazz, xlisteners.length - 1);
+			System.arraycopy(xlisteners, 0, tmp, 0, pos);
 
-            listeners = (tmp.length == 0) ? null : tmp;
-        }
-    }
+			if (pos < tmp.length) {
+				System.arraycopy(xlisteners, pos + 1, tmp, pos, tmp.length - pos);
+			}
+
+			listeners = (tmp.length == 0) ? null : tmp;
+		}
+	}
 }

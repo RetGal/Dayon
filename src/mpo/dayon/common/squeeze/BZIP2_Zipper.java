@@ -1,61 +1,55 @@
 package mpo.dayon.common.squeeze;
 
-import mpo.dayon.common.buffer.MemByteBuffer;
-import org.apache.tools.bzip2.CBZip2InputStream;
-import org.apache.tools.bzip2.CBZip2OutputStream;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-public class BZIP2_Zipper extends Zipper
-{
-    public BZIP2_Zipper()
-    {
-    }
+import org.apache.tools.bzip2.CBZip2InputStream;
+import org.apache.tools.bzip2.CBZip2OutputStream;
 
-    public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException
-    {
-        final MemByteBuffer zipped = new MemByteBuffer();
+import mpo.dayon.common.buffer.MemByteBuffer;
 
-        final OutputStream zip = createBZip2OutputStream(zipped);
+public class BZIP2_Zipper extends Zipper {
+	public BZIP2_Zipper() {
+	}
 
-        zip.write(unzipped.getInternal(), 0, unzipped.size());
-        zip.flush();
+	public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
+		final MemByteBuffer zipped = new MemByteBuffer();
 
-        zip.close();
+		final OutputStream zip = createBZip2OutputStream(zipped);
 
-        return zipped;
-    }
+		zip.write(unzipped.getInternal(), 0, unzipped.size());
+		zip.flush();
 
-    private static OutputStream createBZip2OutputStream(MemByteBuffer zipped) throws IOException
-    {
-        return new CBZip2OutputStream(zipped);
-    }
+		zip.close();
 
-    public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException
-    {
-        final MemByteBuffer unzipped = new MemByteBuffer();
+		return zipped;
+	}
 
-        final InputStream unzip = createBZip2InputStream(zipped);
+	private static OutputStream createBZip2OutputStream(MemByteBuffer zipped) throws IOException {
+		return new CBZip2OutputStream(zipped);
+	}
 
-        final byte[] buffer = new byte[4096];
+	public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
+		final MemByteBuffer unzipped = new MemByteBuffer();
 
-        int count;
-        while ((count = unzip.read(buffer)) > 0)
-        {
-            unzipped.write(buffer, 0, count);
-        }
+		final InputStream unzip = createBZip2InputStream(zipped);
 
-        unzip.close();
+		final byte[] buffer = new byte[4096];
 
-        return unzipped;
-    }
+		int count;
+		while ((count = unzip.read(buffer)) > 0) {
+			unzipped.write(buffer, 0, count);
+		}
 
-    private static InputStream createBZip2InputStream(MemByteBuffer zipped) throws IOException
-    {
-        return new CBZip2InputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
-    }
+		unzip.close();
+
+		return unzipped;
+	}
+
+	private static InputStream createBZip2InputStream(MemByteBuffer zipped) throws IOException {
+		return new CBZip2InputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
+	}
 
 }

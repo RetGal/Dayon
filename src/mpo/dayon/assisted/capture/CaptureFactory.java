@@ -1,15 +1,15 @@
 package mpo.dayon.assisted.capture;
 
-import mpo.dayon.common.capture.Gray8Bits;
 import org.jetbrains.annotations.Nullable;
 
-abstract class CaptureFactory
-{
-    public abstract int getWidth();
+import mpo.dayon.common.capture.Gray8Bits;
 
-    public abstract int getHeight();
+abstract class CaptureFactory {
+	public abstract int getWidth();
 
-    @Nullable
-    public abstract byte[] captureGray(Gray8Bits quantization);
+	public abstract int getHeight();
+
+	@Nullable
+	public abstract byte[] captureGray(Gray8Bits quantization);
 
 }

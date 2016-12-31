@@ -1,19 +1,17 @@
 package mpo.dayon.common.log.console;
 
-import mpo.dayon.common.log.LogAppender;
-import mpo.dayon.common.log.LogLevel;
 import org.jetbrains.annotations.Nullable;
 
-public class ConsoleAppender extends LogAppender
-{
+import mpo.dayon.common.log.LogAppender;
+import mpo.dayon.common.log.LogLevel;
 
-    public synchronized void append(LogLevel level, @Nullable String message, @Nullable Throwable error)
-    {
-        System.out.println(format(level, message));
+public class ConsoleAppender extends LogAppender {
 
-        if (error != null)
-        {
-            error.printStackTrace(System.out);
-        }
-    }
+	public synchronized void append(LogLevel level, @Nullable String message, @Nullable Throwable error) {
+		System.out.println(format(level, message));
+
+		if (error != null) {
+			error.printStackTrace(System.out);
+		}
+	}
 }

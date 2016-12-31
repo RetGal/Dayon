@@ -1,7 +1,5 @@
 package mpo.dayon.common.squeeze;
 
-import mpo.dayon.common.buffer.MemByteBuffer;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,57 +8,52 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-public class ZIP_Zipper extends Zipper
-{
-    public ZIP_Zipper()
-    {
-    }
+import mpo.dayon.common.buffer.MemByteBuffer;
 
-    public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException
-    {
-        final MemByteBuffer zipped = new MemByteBuffer();
+public class ZIP_Zipper extends Zipper {
+	public ZIP_Zipper() {
+	}
 
-        final OutputStream zip = createZipOutputStream(zipped);
+	public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
+		final MemByteBuffer zipped = new MemByteBuffer();
 
-        zip.write(unzipped.getInternal(), 0, unzipped.size());
-        zip.flush();
+		final OutputStream zip = createZipOutputStream(zipped);
 
-        zip.close();
+		zip.write(unzipped.getInternal(), 0, unzipped.size());
+		zip.flush();
 
-        return zipped;
-    }
+		zip.close();
 
-    private static OutputStream createZipOutputStream(MemByteBuffer zipped) throws IOException
-    {
-        final ZipOutputStream zip = new ZipOutputStream(zipped);
-        zip.putNextEntry(new ZipEntry("dirty-tiles"));
-        return zip;
-    }
+		return zipped;
+	}
 
-    public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException
-    {
-        final MemByteBuffer unzipped = new MemByteBuffer();
+	private static OutputStream createZipOutputStream(MemByteBuffer zipped) throws IOException {
+		final ZipOutputStream zip = new ZipOutputStream(zipped);
+		zip.putNextEntry(new ZipEntry("dirty-tiles"));
+		return zip;
+	}
 
-        final InputStream unzip = createZipInputStream(zipped);
+	public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
+		final MemByteBuffer unzipped = new MemByteBuffer();
 
-        final byte[] buffer = new byte[4096];
+		final InputStream unzip = createZipInputStream(zipped);
 
-        int count;
-        while ((count = unzip.read(buffer)) > 0)
-        {
-            unzipped.write(buffer, 0, count);
-        }
+		final byte[] buffer = new byte[4096];
 
-        unzip.close();
+		int count;
+		while ((count = unzip.read(buffer)) > 0) {
+			unzipped.write(buffer, 0, count);
+		}
 
-        return unzipped;
-    }
+		unzip.close();
 
-    private static InputStream createZipInputStream(MemByteBuffer zipped) throws IOException
-    {
-        final ZipInputStream unzip = new ZipInputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
-        unzip.getNextEntry();
-        return unzip;
-    }
+		return unzipped;
+	}
+
+	private static InputStream createZipInputStream(MemByteBuffer zipped) throws IOException {
+		final ZipInputStream unzip = new ZipInputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
+		unzip.getNextEntry();
+		return unzip;
+	}
 
 }

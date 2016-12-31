@@ -1,234 +1,195 @@
 package mpo.dayon.common.preference;
 
-import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.SystemUtilities;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class Preferences
-{
-    private static final Preferences NULL = new Preferences();
+import mpo.dayon.common.log.Log;
+import mpo.dayon.common.utils.SystemUtilities;
 
-    private static Preferences preferences;
+public class Preferences {
+	private static final Preferences NULL = new Preferences();
 
-    private final String name;
+	private static Preferences preferences;
 
-    private final File file;
+	private final String name;
 
-    private final Properties props;
+	private final File file;
 
-    /**
-     * No need trying to write always...
-     */
-    private final AtomicBoolean writeError = new AtomicBoolean();
+	private final Properties props;
 
-    private final Object cloneLOCK = new Object();
+	/**
+	 * No need trying to write always...
+	 */
+	private final AtomicBoolean writeError = new AtomicBoolean();
 
-    private boolean dirty;
+	private final Object cloneLOCK = new Object();
 
-    private Preferences()
-    {
-        this.name = null;
-        this.file = null;
-        this.props = new Properties();
-    }
+	private boolean dirty;
 
-    private Preferences(String name, File file) throws IOException
-    {
-        this.name = name;
-        this.file = file;
-        this.props = new Properties();
+	private Preferences() {
+		this.name = null;
+		this.file = null;
+		this.props = new Properties();
+	}
 
-        if (file.exists()) // otherwise, use default values - until a persist() is done later ...
-        {
-            FileReader in = null;
+	private Preferences(String name, File file) throws IOException {
+		this.name = name;
+		this.file = file;
+		this.props = new Properties();
 
-            try
-            {
-                in = new FileReader(file);
-                props.load(in);
-            }
-            finally
-            {
-                SystemUtilities.safeClose(in);
-            }
-        }
-    }
+		if (file.exists()) // otherwise, use default values - until a persist()
+							// is done later ...
+		{
+			FileReader in = null;
 
-    public boolean isNull()
-    {
-        return this == NULL;
-    }
+			try {
+				in = new FileReader(file);
+				props.load(in);
+			} finally {
+				SystemUtilities.safeClose(in);
+			}
+		}
+	}
 
-    public static synchronized Preferences getPreferences()
-    {
-        if (preferences != null)
-        {
-            return preferences;
-        }
+	public boolean isNull() {
+		return this == NULL;
+	}
 
-        final String name = SystemUtilities.getApplicationName();
+	public static synchronized Preferences getPreferences() {
+		if (preferences != null) {
+			return preferences;
+		}
 
-        try
-        {
-            final Preferences xpreferences;
+		final String name = SystemUtilities.getApplicationName();
 
-            final File file = SystemUtilities.getOrCreateAppFile(name + ".properties");
+		try {
+			final Preferences xpreferences;
 
-            if (file != null)
-            {
-                if (file.exists())
-                {
-                    Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
-                    xpreferences = new Preferences(name, file);
-                }
-                else
-                {
-                    Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
-                    xpreferences = new Preferences(name, file);
-                }
-            }
-            else
-            {
-                Log.info("Preferences [null]");
-                xpreferences = NULL;
-            }
+			final File file = SystemUtilities.getOrCreateAppFile(name + ".properties");
 
-            setupPersister(xpreferences);
+			if (file != null) {
+				if (file.exists()) {
+					Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
+					xpreferences = new Preferences(name, file);
+				} else {
+					Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
+					xpreferences = new Preferences(name, file);
+				}
+			} else {
+				Log.info("Preferences [null]");
+				xpreferences = NULL;
+			}
 
-            return preferences = xpreferences;
-        }
-        catch (Exception ex)
-        {
-            Log.warn("Preferences get/create error!", ex);
-            return preferences = NULL;
-        }
-    }
+			setupPersister(xpreferences);
 
-    public String getStringPreference(String name, String defaultValue)
-    {
-        return SystemUtilities.getStringProperty(props, name, defaultValue);
-    }
+			return preferences = xpreferences;
+		} catch (Exception ex) {
+			Log.warn("Preferences get/create error!", ex);
+			return preferences = NULL;
+		}
+	}
 
-    public int getIntPreference(String name, int defaultValue)
-    {
-        return SystemUtilities.getIntProperty(props, name, defaultValue);
-    }
+	public String getStringPreference(String name, String defaultValue) {
+		return SystemUtilities.getStringProperty(props, name, defaultValue);
+	}
 
-    public <T extends Enum<T>> T getEnumPreference(String name, T defaultValue, T[] enums)
-    {
-        return SystemUtilities.getEnumProperty(props, name, defaultValue, enums);
-    }
+	public int getIntPreference(String name, int defaultValue) {
+		return SystemUtilities.getIntProperty(props, name, defaultValue);
+	}
 
-    public double getDoublePreference(String name, double defaultValue)
-    {
-        return SystemUtilities.getDoubleProperty(props, name, defaultValue);
-    }
+	public <T extends Enum<T>> T getEnumPreference(String name, T defaultValue, T[] enums) {
+		return SystemUtilities.getEnumProperty(props, name, defaultValue, enums);
+	}
 
-    public boolean getBooleanPreference(String name, boolean defaultValue)
-    {
-        return SystemUtilities.getBooleanProperty(props, name, defaultValue);
-    }
+	public double getDoublePreference(String name, double defaultValue) {
+		return SystemUtilities.getDoubleProperty(props, name, defaultValue);
+	}
 
-    public static class Props
-    {
-        private static final String REMOVE = "REMOVE-ME";
+	public boolean getBooleanPreference(String name, boolean defaultValue) {
+		return SystemUtilities.getBooleanProperty(props, name, defaultValue);
+	}
 
-        private final Map<String, String> entries = new HashMap<>();
+	public static class Props {
+		private static final String REMOVE = "REMOVE-ME";
 
-        public void set(String name, String value)
-        {
-            entries.put(name, value);
-        }
+		private final Map<String, String> entries = new HashMap<>();
 
-        public void clear(String name)
-        {
-            entries.put(name, REMOVE);
-        }
-    }
+		public void set(String name, String value) {
+			entries.put(name, value);
+		}
 
-    /**
-     * Called from multiple threads (!)
-     */
-    public void update(Props props)
-    {
-        synchronized (cloneLOCK)
-        {
-            for (Map.Entry<String, String> entry : props.entries.entrySet())
-            {
-                final String pname = entry.getKey();
-                final String pvalue = entry.getValue();
+		public void clear(String name) {
+			entries.put(name, REMOVE);
+		}
+	}
 
-                if (Props.REMOVE == pvalue)
-                {
-                    this.props.remove(pname);
-                }
-                else
-                {
-                    this.props.setProperty(pname, pvalue);
-                }
-            }
+	/**
+	 * Called from multiple threads (!)
+	 */
+	public void update(Props props) {
+		synchronized (cloneLOCK) {
+			for (Map.Entry<String, String> entry : props.entries.entrySet()) {
+				final String pname = entry.getKey();
+				final String pvalue = entry.getValue();
 
-            dirty = true;
-        }
-    }
+				if (Props.REMOVE == pvalue) {
+					this.props.remove(pname);
+				} else {
+					this.props.setProperty(pname, pvalue);
+				}
+			}
 
+			dirty = true;
+		}
+	}
 
-    /**
-     * Some components are possibly sending a lot of updates (e.g., main frame resize) and it makes no sense
-     * to write every changes as we want the last one only => I'm polling instead of saving each time a value
-     * has changed ...
-     */
-    private static void setupPersister(final Preferences preferences)
-    {
-        new Timer("PreferencesWriter").schedule(new TimerTask()
-        {
-            public void run()
-            {
-                if (preferences.isNull())
-                {
-                    return;
-                }
+	/**
+	 * Some components are possibly sending a lot of updates (e.g., main frame
+	 * resize) and it makes no sense to write every changes as we want the last
+	 * one only => I'm polling instead of saving each time a value has changed
+	 * ...
+	 */
+	private static void setupPersister(final Preferences preferences) {
+		new Timer("PreferencesWriter").schedule(new TimerTask() {
+			public void run() {
+				if (preferences.isNull()) {
+					return;
+				}
 
-                PrintWriter out = null;
-                try
-                {
-                    Properties cloned = null;
+				PrintWriter out = null;
+				try {
+					Properties cloned = null;
 
-                    synchronized (preferences.cloneLOCK)
-                    {
-                        if (preferences.dirty)
-                        {
-                            cloned = (Properties) preferences.props.clone();
-                            preferences.dirty = false;
-                        }
-                    }
+					synchronized (preferences.cloneLOCK) {
+						if (preferences.dirty) {
+							cloned = (Properties) preferences.props.clone();
+							preferences.dirty = false;
+						}
+					}
 
-                    if (cloned != null)
-                    {
-                        Log.info("Writing the preferences [" + preferences.file.getAbsolutePath() + "]...");
+					if (cloned != null) {
+						Log.info("Writing the preferences [" + preferences.file.getAbsolutePath() + "]...");
 
-                        out = new PrintWriter(preferences.file);
-                        cloned.store(out, null);
-                        out.flush();
-                    }
+						out = new PrintWriter(preferences.file);
+						cloned.store(out, null);
+						out.flush();
+					}
 
-                }
-                catch (IOException ex)
-                {
-                    Log.warn("Preferences write error!", ex);
-                    preferences.writeError.set(true);
-                }
-                finally
-                {
-                    SystemUtilities.safeClose(out);
-                }
-            }
-        }, 0, 2000);
-    }
+				} catch (IOException ex) {
+					Log.warn("Preferences write error!", ex);
+					preferences.writeError.set(true);
+				} finally {
+					SystemUtilities.safeClose(out);
+				}
+			}
+		}, 0, 2000);
+	}
 }

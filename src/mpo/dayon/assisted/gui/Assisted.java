@@ -1,5 +1,30 @@
 package mpo.dayon.assisted.gui;
 
+import java.awt.GridLayout;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.UIManager;
+
 import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
@@ -22,296 +47,240 @@ import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessage;
 import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessageHandler;
 import mpo.dayon.common.utils.SystemUtilities;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
-import javax.swing.*;
-import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
+public class Assisted {
+	private AssistedFrame frame;
 
-public class Assisted
-{
-    private AssistedFrame frame;
+	private NetworkAssistedEngineConfiguration configuration;
 
-    private NetworkAssistedEngineConfiguration configuration;
+	private volatile CaptureEngine captureEngine;
 
-    private volatile CaptureEngine captureEngine;
+	private volatile CompressorEngine compressorEngine;
 
-    private volatile CompressorEngine compressorEngine;
+	public Assisted() {
+	}
 
-    public Assisted()
-    {
-    }
+	public void configure() {
+		final String lnf = SystemUtilities.getDefaultLookAndFeel();
+		try {
+			UIManager.setLookAndFeel(lnf);
+		} catch (Exception ex) {
+			Log.warn("Cound not set the [" + lnf + "] L&F!", ex);
+		}
+	}
 
-    public void configure()
-    {
-        final String lnf = SystemUtilities.getDefaultLookAndFeel();
-        try
-        {
-            UIManager.setLookAndFeel(lnf);
-        }
-        catch (Exception ex)
-        {
-            Log.warn("Cound not set the [" + lnf + "] L&F!", ex);
-        }
-    }
+	public void start() throws IOException {
+		frame = new AssistedFrame(new AssistedFrameConfiguration());
 
-    public void start() throws IOException
-    {
-        frame = new AssistedFrame(new AssistedFrameConfiguration());
+		FatalErrorHandler.attachFrame(frame);
 
-        FatalErrorHandler.attachFrame(frame);
-
-        frame.setVisible(true);
+		frame.setVisible(true);
 
 		// accept own cert, avoid PKIX path building exception
-        SSLContext sc = null;
-        try {
-        	X509TrustManager customTm = combineManagers();
-        	sc = SSLContext.getInstance("TLS");
-        	sc.init(null, new TrustManager[] { customTm }, null);
-        }
-        catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | KeyManagementException e) {
-        	Log.error(e.getMessage());
-        	System.exit(1);
+		SSLContext sc = null;
+		try {
+			X509TrustManager customTm = combineManagers();
+			sc = SSLContext.getInstance("TLS");
+			sc.init(null, new TrustManager[] { customTm }, null);
+		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | KeyManagementException e) {
+			Log.error(e.getMessage());
+			System.exit(1);
 		}
-        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-        // accept own cert, avoid No name matching host found exception
+		// accept own cert, avoid No name matching host found exception
 		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer()); //
-        
-        configuration = new NetworkAssistedEngineConfiguration();
 
-        final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-        final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);       
+		configuration = new NetworkAssistedEngineConfiguration();
 
-        if (ip == null)
-        {
-            if (!requestConnectionSettings())
-            {
-                Log.info("Bye!");
-                System.exit(0);
-            }
-        }
-        else // JNLP startup (!)
-        {
-            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(ip, port);
-            if (!xconfiguration.equals(configuration))
-            {
-                configuration = xconfiguration;
-                configuration.persist();
-            }
-        }
+		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
+		final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
-        Log.info("Configuration " + configuration);
+		if (ip == null) {
+			if (!requestConnectionSettings()) {
+				Log.info("Bye!");
+				System.exit(0);
+			}
+		} else // JNLP startup (!)
+		{
+			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(ip, port);
+			if (!xconfiguration.equals(configuration)) {
+				configuration = xconfiguration;
+				configuration.persist();
+			}
+		}
 
-        // -------------------------------------------------------------------------------------------------------------
-        // HTTP request to notify the assistant we're ready and starting : i.e., JNLP stuff is done.
+		Log.info("Configuration " + configuration);
 
-        frame.onHttpConnecting(configuration);
+		// -------------------------------------------------------------------------------------------------------------
+		// HTTP request to notify the assistant we're ready and starting : i.e.,
+		// JNLP stuff is done.
 
-        Log.info("[HTTPS-handshake] Sending the /hello request...");
+		frame.onHttpConnecting(configuration);
 
-        try
-        {
-            final URL url = new URL("https://" + configuration.getServerName() + ":" + configuration.getServerPort() + "/hello");
-            final URLConnection conn = url.openConnection();          
+		Log.info("[HTTPS-handshake] Sending the /hello request...");
 
-            conn.getInputStream();
+		try {
+			final URL url = new URL("https://" + configuration.getServerName() + ":" + configuration.getServerPort() + "/hello");
+			final URLConnection conn = url.openConnection();
 
-            // Currently do not care about the response : returning a 404 response (!)
-            throw new RuntimeException("[HTTPS-handshake] Missing expected /hello response!");
-        }
-        catch (FileNotFoundException expected)
-        {
-            // ignored
-        }
+			conn.getInputStream();
 
-        Log.info("[HTTPS-handshake] Expected response (404) received.");
+			// Currently do not care about the response : returning a 404
+			// response (!)
+			throw new RuntimeException("[HTTPS-handshake] Missing expected /hello response!");
+		} catch (FileNotFoundException expected) {
+			// ignored
+		}
 
-        // -------------------------------------------------------------------------------------------------------------
+		Log.info("[HTTPS-handshake] Expected response (404) received.");
 
-        final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler =
-                new NetworkCaptureConfigurationMessageHandler()
-                {
-                    /**
-                     * Should not block as called from the network incoming message thread (!)
-                     */
-                    public void handleConfiguration(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration)
-                    {
-                        onCaptureEngineConfigured(engine, configuration);
-                        frame.onConnected();
-                    }
-                };
+		// -------------------------------------------------------------------------------------------------------------
 
-        final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler =
-                new NetworkCompressorConfigurationMessageHandler()
-                {
-                    /**
-                     * Should not block as called from the network incoming message thread (!)
-                     */
-                    public void handleConfiguration(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration)
-                    {
-                        onCompressorEngineConfigured(engine, configuration);
-                        frame.onConnected();
-                    }
-                };
+		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = new NetworkCaptureConfigurationMessageHandler() {
+			/**
+			 * Should not block as called from the network incoming message
+			 * thread (!)
+			 */
+			public void handleConfiguration(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
+				onCaptureEngineConfigured(engine, configuration);
+				frame.onConnected();
+			}
+		};
 
-        final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
+		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = new NetworkCompressorConfigurationMessageHandler() {
+			/**
+			 * Should not block as called from the network incoming message
+			 * thread (!)
+			 */
+			public void handleConfiguration(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
+				onCompressorEngineConfigured(engine, configuration);
+				frame.onConnected();
+			}
+		};
 
-        frame.onConnecting(configuration);
+		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
 
-        final NetworkAssistedEngine networkEngine =
-                new NetworkAssistedEngine(captureConfigurationHandler,
-                                          compressorConfigurationHandler,
-                                          controlHandler);
+		frame.onConnecting(configuration);
 
-        networkEngine.configure(configuration);
-        networkEngine.start();
-        networkEngine.sendHello();
-    }
+		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler);
 
-    private boolean requestConnectionSettings()
-    {
-        final JPanel pane = new JPanel();
+		networkEngine.configure(configuration);
+		networkEngine.start();
+		networkEngine.sendHello();
+	}
 
-        pane.setLayout(new GridLayout(2, 2, 10, 10));
+	private boolean requestConnectionSettings() {
+		final JPanel pane = new JPanel();
 
-        final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
-        final JTextField assistantIpAddressTextField = new JTextField();
-        assistantIpAddressTextField.setText(configuration.getServerName());
+		pane.setLayout(new GridLayout(2, 2, 10, 10));
 
-        pane.add(assistantIpAddress);
-        pane.add(assistantIpAddressTextField);
+		final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
+		final JTextField assistantIpAddressTextField = new JTextField();
+		assistantIpAddressTextField.setText(configuration.getServerName());
 
-        final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
-        final JTextField assistantPortNumberTextField = new JTextField();
-        assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
+		pane.add(assistantIpAddress);
+		pane.add(assistantIpAddressTextField);
 
-        pane.add(assistantPortNumberLbl);
-        pane.add(assistantPortNumberTextField);
+		final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
+		final JTextField assistantPortNumberTextField = new JTextField();
+		assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
 
-        final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, new DialogFactory.Validator()
-        {
-            public String validate()
-            {
-                final String ipAddress = assistantIpAddressTextField.getText();
-                if (ipAddress.isEmpty())
-                {
-                    return Babylon.translate("connection.settings.emptyIpAddress");
-                }
+		pane.add(assistantPortNumberLbl);
+		pane.add(assistantPortNumberTextField);
 
-                final String portNumber = assistantPortNumberTextField.getText();
-                if (portNumber.isEmpty())
-                {
-                    return Babylon.translate("connection.settings.emptyPortNumer");
-                }
+		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, new DialogFactory.Validator() {
+			public String validate() {
+				final String ipAddress = assistantIpAddressTextField.getText();
+				if (ipAddress.isEmpty()) {
+					return Babylon.translate("connection.settings.emptyIpAddress");
+				}
 
-                try
-                {
-                    Integer.valueOf(portNumber);
-                }
-                catch (NumberFormatException ex)
-                {
-                    return Babylon.translate("connection.settings.invalidPortNumber");
-                }
+				final String portNumber = assistantPortNumberTextField.getText();
+				if (portNumber.isEmpty()) {
+					return Babylon.translate("connection.settings.emptyPortNumer");
+				}
 
-                return null;
-            }
-        });
+				try {
+					Integer.valueOf(portNumber);
+				} catch (NumberFormatException ex) {
+					return Babylon.translate("connection.settings.invalidPortNumber");
+				}
 
-        if (ok)
-        {
-            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(), Integer.valueOf(assistantPortNumberTextField.getText()));
-            if (!xconfiguration.equals(configuration))
-            {
-                configuration = xconfiguration;
-                configuration.persist();
-            }
-        }
+				return null;
+			}
+		});
 
-        return ok;
-    }
+		if (ok) {
+			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(),
+					Integer.valueOf(assistantPortNumberTextField.getText()));
+			if (!xconfiguration.equals(configuration)) {
+				configuration = xconfiguration;
+				configuration.persist();
+			}
+		}
 
-    /**
-     * Should not block as called from the network incoming message thread (!)
-     */
-    private void onCaptureEngineConfigured(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration)
-    {
-        final CaptureEngineConfiguration captureEngineConfiguration = configuration.getConfiguration();
+		return ok;
+	}
 
-        Log.info("Capture configuration received " + captureEngineConfiguration);
+	/**
+	 * Should not block as called from the network incoming message thread (!)
+	 */
+	private void onCaptureEngineConfigured(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
+		final CaptureEngineConfiguration captureEngineConfiguration = configuration.getConfiguration();
 
-        if (captureEngine != null)
-        {
-            captureEngine.reconfigure(captureEngineConfiguration);
-            return;
-        }
+		Log.info("Capture configuration received " + captureEngineConfiguration);
 
-        // First time we receive a configuration from the assistant (!)
+		if (captureEngine != null) {
+			captureEngine.reconfigure(captureEngineConfiguration);
+			return;
+		}
 
-        // Setup the mouse engine (no need before I guess)
+		// First time we receive a configuration from the assistant (!)
 
-        final MouseEngine mouseEngine = new MouseEngine();
+		// Setup the mouse engine (no need before I guess)
 
-        mouseEngine.configure(new MouseEngineConfiguration());
-        mouseEngine.addListener((NetworkAssistedEngine) engine);
-        mouseEngine.start();
+		final MouseEngine mouseEngine = new MouseEngine();
 
-        captureEngine = new CaptureEngine(new RobotCaptureFactory());
-        captureEngine.configure(captureEngineConfiguration);
+		mouseEngine.configure(new MouseEngineConfiguration());
+		mouseEngine.addListener((NetworkAssistedEngine) engine);
+		mouseEngine.start();
 
-        if (compressorEngine != null)
-        {
-            captureEngine.addListener(compressorEngine);
-        }
+		captureEngine = new CaptureEngine(new RobotCaptureFactory());
+		captureEngine.configure(captureEngineConfiguration);
 
-        captureEngine.start();
-    }
+		if (compressorEngine != null) {
+			captureEngine.addListener(compressorEngine);
+		}
 
-    /**
-     * Should not block as called from the network incoming message thread (!)
-     */
-    private void onCompressorEngineConfigured(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration)
-    {
-        final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
+		captureEngine.start();
+	}
 
-        Log.info("Compressor configuration received " + compressorEngineConfiguration);
+	/**
+	 * Should not block as called from the network incoming message thread (!)
+	 */
+	private void onCompressorEngineConfigured(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
+		final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
 
-        if (compressorEngine != null)
-        {
-            compressorEngine.reconfigure(compressorEngineConfiguration);
-            return;
-        }
+		Log.info("Compressor configuration received " + compressorEngineConfiguration);
 
-        compressorEngine = new CompressorEngine();
+		if (compressorEngine != null) {
+			compressorEngine.reconfigure(compressorEngineConfiguration);
+			return;
+		}
 
-        compressorEngine.configure(compressorEngineConfiguration);
-        compressorEngine.addListener((NetworkAssistedEngine) engine);
-        compressorEngine.start(1);
+		compressorEngine = new CompressorEngine();
 
-        if (captureEngine != null)
-        {
-            captureEngine.addListener(compressorEngine);
-        }
-    }
-    
-    private X509TrustManager combineManagers() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
-    	    	
+		compressorEngine.configure(compressorEngineConfiguration);
+		compressorEngine.addListener((NetworkAssistedEngine) engine);
+		compressorEngine.start(1);
+
+		if (captureEngine != null) {
+			captureEngine.addListener(compressorEngine);
+		}
+	}
+
+	private X509TrustManager combineManagers() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
+
 		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 		// using null here initialises the TMF with the default trust store.
 		tmf.init((KeyStore) null);
@@ -324,10 +293,10 @@ public class Assisted
 				break;
 			}
 		}
-		
-	    final String keyStorePath = "/mpo/dayon/common/security/X509";
-	    final String keyStorePass = "spasspass";
-	    
+
+		final String keyStorePath = "/mpo/dayon/common/security/X509";
+		final String keyStorePass = "spasspass";
+
 		InputStream myKeys = getClass().getResourceAsStream(keyStorePath);
 
 		// do the same with our own trust store this time
@@ -348,17 +317,17 @@ public class Assisted
 			}
 		}
 		// return a brand new CustomTrustManager
-    	return new CustomTrustManager(defaultTm, ownTm);
-    }
-    
-    private class HostNameIgnorer implements HostnameVerifier {
+		return new CustomTrustManager(defaultTm, ownTm);
+	}
+
+	private class HostNameIgnorer implements HostnameVerifier {
 		@Override
 		public boolean verify(String hostname, SSLSession session) {
 			return true;
 		}
-    	
-    }
-    
+
+	}
+
 	private class CustomTrustManager implements X509TrustManager {
 
 		final X509TrustManager finalDefaultTm;
@@ -371,7 +340,8 @@ public class Assisted
 
 		@Override
 		public X509Certificate[] getAcceptedIssuers() {
-			// if you're planning to use client-cert auth, merge results from "defaultTm" and "ownTm".
+			// if you're planning to use client-cert auth, merge results from
+			// "defaultTm" and "ownTm".
 			return finalDefaultTm.getAcceptedIssuers();
 		}
 
@@ -381,14 +351,16 @@ public class Assisted
 				// check with own TM first
 				finalOwnTm.checkServerTrusted(chain, authType);
 			} catch (CertificateException e) {
-				// this will throw another CertificateException if this fails too.
+				// this will throw another CertificateException if this fails
+				// too.
 				finalDefaultTm.checkServerTrusted(chain, authType);
 			}
 		}
 
 		@Override
 		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			// if you're planning to use client-cert auth, do the same as checking the server.
+			// if you're planning to use client-cert auth, do the same as
+			// checking the server.
 			finalDefaultTm.checkClientTrusted(chain, authType);
 		}
 

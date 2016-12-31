@@ -1,341 +1,310 @@
 package mpo.dayon.common.capture;
 
-import mpo.dayon.common.buffer.MemByteBuffer;
-
 import java.util.Arrays;
 import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
-public class CaptureTile
-{
-    public static final CaptureTile MISSING = new CaptureTile();
-
-    private final int captureId;
-
-    private final int id;
-
-    private final long checksum;
-
-    private final int x;
-
-    private final int y;
-
-    private final int width;
-
-    private final int height;
-
-    private final MemByteBuffer capture;
-
-    private final byte singleLevel;
-
-    /**
-     * Created from a cache - testing purpose - I've to identify that kind of tile as the Adler32
-     * is not perfect and from time to time I've a few erroneous pixels when comparing initial capture
-     * (coming from the assisted) to the decompressed captures in the assistant.
-     */
-    private final boolean fromCache;
-
-    private CaptureTile()
-    {
-        this.captureId = -1;
-        this.id = -1;
-        this.checksum = -1;
-        this.x = -1;
-        this.y = -1;
-        this.width = -1;
-        this.height = -1;
-        this.capture = null;
-        this.singleLevel = -1;
-        this.fromCache = false;
-    }
-
-    public CaptureTile(int captureId, int id, long checksum, int x, int y, int width, int height, byte[] capture)
-    {
-        this.captureId = captureId;
-
-        this.id = id;
-        this.checksum = checksum;
-
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-
-        this.capture = new MemByteBuffer(capture);
-        this.singleLevel = computeSingleLevel(capture);
-        this.fromCache = false;
-    }
-
-    /**
-     * Assisted to assistant : result of network data decompression.
-     */
-    public CaptureTile(int captureId, int id, XYWH xywh, MemByteBuffer capture)
-    {
-        this.captureId = captureId;
-
-        this.id = id;
-        this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
-
-        this.x = xywh.x;
-        this.y = xywh.y;
-        this.width = xywh.w;
-        this.height = xywh.h;
-
-        this.capture = capture;
-        this.singleLevel = -1;
-
-        if (width * height != capture.size())
-        {
-            throw new RuntimeException("Ouch!");
-        }
-
-        this.fromCache = false;
-    }
-
-    /**
-     * Assisted to assistant : result of network data decompression (single level tile).
-     */
-    public CaptureTile(int captureId, int id, XYWH xywh, byte singleLevel)
-    {
-        this.captureId = captureId;
-
-        this.id = id;
-        this.checksum = -1;
-
-        this.x = xywh.x;
-        this.y = xywh.y;
-        this.width = xywh.w;
-        this.height = xywh.h;
-
-        final byte[] data = new byte[width * height];
-        Arrays.fill(data, singleLevel);
-
-        this.capture = new MemByteBuffer(data);
-        this.singleLevel = singleLevel;
-        this.fromCache = false;
-    }
-
-    /**
-     * Assisted to assistant : result of network data decompression (from the cache).
-     */
-    public CaptureTile(int captureId, int id, XYWH xywh, CaptureTile cached)
-    {
-        this.captureId = captureId;
-
-        this.id = id;
-        this.checksum = -1;
-
-        this.x = xywh.x;
-        this.y = xywh.y;
-        this.width = xywh.w;
-        this.height = xywh.h;
-
-        this.singleLevel = -1;
-
-        this.capture = (cached == MISSING)
-                       ? new MemByteBuffer(new byte[width * height]) // black image (!)
-                       : cached.capture;                             // sharing it (!)
-
-        if (width * height != capture.size())
-        {
-            throw new RuntimeException("Ouch!");
-        }
-
-        this.fromCache = true;
-    }
-
-    public static long computeChecksum(byte[] data, int offset, int len)
-    {
-        final Checksum checksum = new Adler32();
-        // final Checksum checksum = new CRC32(); -- more CPU - Adler32 seems quite good until now ...
-        checksum.update(data, offset, len);
-        return checksum.getValue();
-    }
-
-    public int getCaptureId()
-    {
-        return captureId;
-    }
-
-    public int getId()
-    {
-        return id;
-    }
-
-    public long getChecksum()
-    {
-        return checksum;
-    }
-
-    public int getX()
-    {
-        return x;
-    }
-
-    public int getY()
-    {
-        return y;
-    }
-
-    public int getWidth()
-    {
-        return width;
-    }
-
-    public int getHeight()
-    {
-        return height;
-    }
-
-    public MemByteBuffer getCapture()
-    {
-        return capture;
-    }
-
-    /**
-     * @return -1 if not applicable.
-     */
-    public int getSingleLevel()
-    {
-        return singleLevel;
-    }
-
-    public boolean isFromCache()
-    {
-        return fromCache;
-    }
-
-    private static byte computeSingleLevel(byte[] capture)
-    {
-        final byte level = capture[0];
-
-        for (int idx = 1; idx < capture.length; idx++)
-        {
-            if (capture[idx] != level)
-            {
-                return -1; // multi-level
-            }
-        }
-
-        return level;
-    }
-
-    // =================================================================================================================
-    //
-    // A bit of caching to compute the conversion : t-id => tx, ty, tw, th
-    //
-    // =================================================================================================================
-
-    public static class XYWH
-    {
-        public final int x;
-
-        public final int y;
-
-        public final int w;
-
-        public final int h;
-
-        public XYWH(int x, int y, int w, int h)
-        {
-            this.x = x;
-            this.y = y;
-            this.w = w;
-            this.h = h;
-        }
-
-        public boolean equals(int x, int y, int w, int h)
-        {
-            return x == this.x && y == this.y && w == this.w && h == this.h;
-        }
-    }
-
-    private static class XYWH_Configuration
-    {
-        final int captureWidth;
-
-        final int captureHeight;
-
-        final int tileWidth;
-
-        final int tileHeight;
-
-        XYWH_Configuration(int captureWidth, int captureHeight, int tileWidth, int tileHeight)
-        {
-            this.captureWidth = captureWidth;
-            this.captureHeight = captureHeight;
-            this.tileWidth = tileWidth;
-            this.tileHeight = tileHeight;
-        }
-
-        boolean equals(int captureWidth, int captureHeight, int tileWidth, int tileHeight)
-        {
-            return captureHeight == this.captureHeight
-                   && captureWidth == this.captureWidth
-                   && tileWidth == this.tileWidth
-                   && tileHeight == this.tileHeight;
-        }
-    }
-
-    private static class XYWH_Cache
-    {
-        final XYWH_Configuration configuration;
-
-        final XYWH[] xywh;
-
-        XYWH_Cache(XYWH_Configuration configuration, XYWH[] xywh)
-        {
-            this.configuration = configuration;
-            this.xywh = xywh;
-        }
-    }
-
-    private static XYWH_Cache cachedXYWH;
-
-    /**
-     * The cache might change in case the assistant is re-configuring the assisted capture configuration
-     * (capture width/height and/or tile width/height); currently not possible.
-     * <p/>
-     * Remember that the last tile (either along the X axis or the Z axis might not be tile width/height)
-     * due to rounding error; e.g., 1920 / 32 = 60  --  1200 / 32 = 37.5
-     */
-    public static XYWH[] getXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight)
-    {
-        synchronized (CaptureTile.class)
-        {
-            if (cachedXYWH == null || !cachedXYWH.configuration.equals(captureWidth, captureHeight, tileWidth, tileHeight))
-            {
-                cachedXYWH = computeXYWH(captureWidth, captureHeight, tileWidth, tileHeight);
-            }
-            return cachedXYWH.xywh;
-        }
-    }
-
-    private static XYWH_Cache computeXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight)
-    {
-        final int x = (int) Math.ceil(captureWidth / (double) tileWidth);
-        final int y = (int) Math.ceil(captureHeight / (double) tileHeight);
-
-        final XYWH[] xywh = new XYWH[x * y];
-
-        int tileId = 0;
-
-        for (int ty = 0; ty < captureHeight; ty += tileHeight)
-        {
-            final int th = Math.min(captureHeight - ty, tileHeight);
-
-            for (int tx = 0; tx < captureWidth; tx += tileWidth)
-            {
-                final int tw = Math.min(captureWidth - tx, tileWidth);
-
-                xywh[tileId++] = new XYWH(tx, ty, tw, th);
-            }
-        }
-
-        final XYWH_Configuration configuration
-                = new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight);
-
-        return new XYWH_Cache(configuration, xywh);
-    }
+import mpo.dayon.common.buffer.MemByteBuffer;
+
+public class CaptureTile {
+	public static final CaptureTile MISSING = new CaptureTile();
+
+	private final int captureId;
+
+	private final int id;
+
+	private final long checksum;
+
+	private final int x;
+
+	private final int y;
+
+	private final int width;
+
+	private final int height;
+
+	private final MemByteBuffer capture;
+
+	private final byte singleLevel;
+
+	/**
+	 * Created from a cache - testing purpose - I've to identify that kind of
+	 * tile as the Adler32 is not perfect and from time to time I've a few
+	 * erroneous pixels when comparing initial capture (coming from the
+	 * assisted) to the decompressed captures in the assistant.
+	 */
+	private final boolean fromCache;
+
+	private CaptureTile() {
+		this.captureId = -1;
+		this.id = -1;
+		this.checksum = -1;
+		this.x = -1;
+		this.y = -1;
+		this.width = -1;
+		this.height = -1;
+		this.capture = null;
+		this.singleLevel = -1;
+		this.fromCache = false;
+	}
+
+	public CaptureTile(int captureId, int id, long checksum, int x, int y, int width, int height, byte[] capture) {
+		this.captureId = captureId;
+
+		this.id = id;
+		this.checksum = checksum;
+
+		this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+
+		this.capture = new MemByteBuffer(capture);
+		this.singleLevel = computeSingleLevel(capture);
+		this.fromCache = false;
+	}
+
+	/**
+	 * Assisted to assistant : result of network data decompression.
+	 */
+	public CaptureTile(int captureId, int id, XYWH xywh, MemByteBuffer capture) {
+		this.captureId = captureId;
+
+		this.id = id;
+		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache
+																					// usage
+																					// (!)
+
+		this.x = xywh.x;
+		this.y = xywh.y;
+		this.width = xywh.w;
+		this.height = xywh.h;
+
+		this.capture = capture;
+		this.singleLevel = -1;
+
+		if (width * height != capture.size()) {
+			throw new RuntimeException("Ouch!");
+		}
+
+		this.fromCache = false;
+	}
+
+	/**
+	 * Assisted to assistant : result of network data decompression (single
+	 * level tile).
+	 */
+	public CaptureTile(int captureId, int id, XYWH xywh, byte singleLevel) {
+		this.captureId = captureId;
+
+		this.id = id;
+		this.checksum = -1;
+
+		this.x = xywh.x;
+		this.y = xywh.y;
+		this.width = xywh.w;
+		this.height = xywh.h;
+
+		final byte[] data = new byte[width * height];
+		Arrays.fill(data, singleLevel);
+
+		this.capture = new MemByteBuffer(data);
+		this.singleLevel = singleLevel;
+		this.fromCache = false;
+	}
+
+	/**
+	 * Assisted to assistant : result of network data decompression (from the
+	 * cache).
+	 */
+	public CaptureTile(int captureId, int id, XYWH xywh, CaptureTile cached) {
+		this.captureId = captureId;
+
+		this.id = id;
+		this.checksum = -1;
+
+		this.x = xywh.x;
+		this.y = xywh.y;
+		this.width = xywh.w;
+		this.height = xywh.h;
+
+		this.singleLevel = -1;
+
+		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black
+																							// image
+																							// (!)
+				: cached.capture; // sharing it (!)
+
+		if (width * height != capture.size()) {
+			throw new RuntimeException("Ouch!");
+		}
+
+		this.fromCache = true;
+	}
+
+	public static long computeChecksum(byte[] data, int offset, int len) {
+		final Checksum checksum = new Adler32();
+		// final Checksum checksum = new CRC32(); -- more CPU - Adler32 seems
+		// quite good until now ...
+		checksum.update(data, offset, len);
+		return checksum.getValue();
+	}
+
+	public int getCaptureId() {
+		return captureId;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public long getChecksum() {
+		return checksum;
+	}
+
+	public int getX() {
+		return x;
+	}
+
+	public int getY() {
+		return y;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
+	public MemByteBuffer getCapture() {
+		return capture;
+	}
+
+	/**
+	 * @return -1 if not applicable.
+	 */
+	public int getSingleLevel() {
+		return singleLevel;
+	}
+
+	public boolean isFromCache() {
+		return fromCache;
+	}
+
+	private static byte computeSingleLevel(byte[] capture) {
+		final byte level = capture[0];
+
+		for (int idx = 1; idx < capture.length; idx++) {
+			if (capture[idx] != level) {
+				return -1; // multi-level
+			}
+		}
+
+		return level;
+	}
+
+	// =================================================================================================================
+	//
+	// A bit of caching to compute the conversion : t-id => tx, ty, tw, th
+	//
+	// =================================================================================================================
+
+	public static class XYWH {
+		public final int x;
+
+		public final int y;
+
+		public final int w;
+
+		public final int h;
+
+		public XYWH(int x, int y, int w, int h) {
+			this.x = x;
+			this.y = y;
+			this.w = w;
+			this.h = h;
+		}
+
+		public boolean equals(int x, int y, int w, int h) {
+			return x == this.x && y == this.y && w == this.w && h == this.h;
+		}
+	}
+
+	private static class XYWH_Configuration {
+		final int captureWidth;
+
+		final int captureHeight;
+
+		final int tileWidth;
+
+		final int tileHeight;
+
+		XYWH_Configuration(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+			this.captureWidth = captureWidth;
+			this.captureHeight = captureHeight;
+			this.tileWidth = tileWidth;
+			this.tileHeight = tileHeight;
+		}
+
+		boolean equals(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+			return captureHeight == this.captureHeight && captureWidth == this.captureWidth && tileWidth == this.tileWidth && tileHeight == this.tileHeight;
+		}
+	}
+
+	private static class XYWH_Cache {
+		final XYWH_Configuration configuration;
+
+		final XYWH[] xywh;
+
+		XYWH_Cache(XYWH_Configuration configuration, XYWH[] xywh) {
+			this.configuration = configuration;
+			this.xywh = xywh;
+		}
+	}
+
+	private static XYWH_Cache cachedXYWH;
+
+	/**
+	 * The cache might change in case the assistant is re-configuring the
+	 * assisted capture configuration (capture width/height and/or tile
+	 * width/height); currently not possible.
+	 * <p/>
+	 * Remember that the last tile (either along the X axis or the Z axis might
+	 * not be tile width/height) due to rounding error; e.g., 1920 / 32 = 60 --
+	 * 1200 / 32 = 37.5
+	 */
+	public static XYWH[] getXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+		synchronized (CaptureTile.class) {
+			if (cachedXYWH == null || !cachedXYWH.configuration.equals(captureWidth, captureHeight, tileWidth, tileHeight)) {
+				cachedXYWH = computeXYWH(captureWidth, captureHeight, tileWidth, tileHeight);
+			}
+			return cachedXYWH.xywh;
+		}
+	}
+
+	private static XYWH_Cache computeXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+		final int x = (int) Math.ceil(captureWidth / (double) tileWidth);
+		final int y = (int) Math.ceil(captureHeight / (double) tileHeight);
+
+		final XYWH[] xywh = new XYWH[x * y];
+
+		int tileId = 0;
+
+		for (int ty = 0; ty < captureHeight; ty += tileHeight) {
+			final int th = Math.min(captureHeight - ty, tileHeight);
+
+			for (int tx = 0; tx < captureWidth; tx += tileWidth) {
+				final int tw = Math.min(captureWidth - tx, tileWidth);
+
+				xywh[tileId++] = new XYWH(tx, ty, tw, th);
+			}
+		}
+
+		final XYWH_Configuration configuration = new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight);
+
+		return new XYWH_Cache(configuration, xywh);
+	}
 
 }

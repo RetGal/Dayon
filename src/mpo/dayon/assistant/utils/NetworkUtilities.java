@@ -1,7 +1,5 @@
 package mpo.dayon.assistant.utils;
 
-import mpo.dayon.common.log.Log;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -9,49 +7,40 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-public abstract class NetworkUtilities
-{
-    public static List<String> getInetAddresses()
-    {
-        final List<String> addresses = new ArrayList<>();
+import mpo.dayon.common.log.Log;
 
-        try
-        {
-            InetAddress loopback = null;
+public abstract class NetworkUtilities {
+	public static List<String> getInetAddresses() {
+		final List<String> addresses = new ArrayList<>();
 
-            final Enumeration<NetworkInterface> nintfs = NetworkInterface.getNetworkInterfaces();
+		try {
+			InetAddress loopback = null;
 
-            while (nintfs.hasMoreElements())
-            {
-                final NetworkInterface nintf = nintfs.nextElement();
+			final Enumeration<NetworkInterface> nintfs = NetworkInterface.getNetworkInterfaces();
 
-                final Enumeration<InetAddress> inetAddresses = nintf.getInetAddresses();
+			while (nintfs.hasMoreElements()) {
+				final NetworkInterface nintf = nintfs.nextElement();
 
-                while (inetAddresses.hasMoreElements())
-                {
-                    final InetAddress inetAddress = inetAddresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress())
-                    {
-                        addresses.add(inetAddress.getHostAddress());
-                    }
-                    else
-                    {
-                        loopback = inetAddress;
-                    }
-                }
-            }
+				final Enumeration<InetAddress> inetAddresses = nintf.getInetAddresses();
 
-            if (loopback != null)
-            {
-                addresses.add(loopback.getHostAddress());
-            }
-        }
-        catch (SocketException ex)
-        {
-            Log.warn("Inet Addresses error!", ex);
-        }
+				while (inetAddresses.hasMoreElements()) {
+					final InetAddress inetAddress = inetAddresses.nextElement();
+					if (!inetAddress.isLoopbackAddress()) {
+						addresses.add(inetAddress.getHostAddress());
+					} else {
+						loopback = inetAddress;
+					}
+				}
+			}
 
-        return addresses;
-    }
+			if (loopback != null) {
+				addresses.add(loopback.getHostAddress());
+			}
+		} catch (SocketException ex) {
+			Log.warn("Inet Addresses error!", ex);
+		}
+
+		return addresses;
+	}
 
 }

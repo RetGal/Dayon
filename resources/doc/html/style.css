@@ -1,10 +1,10 @@
 body {
-    font: 12px / 20px Verdana, Arial, Helvetica, sans-serif;
-    text-align: center;
+	font: 12px/20px Verdana, Arial, Helvetica, sans-serif;
+	text-align: center;
 }
 
 tbody td {
-    font-size: 100%;
+	font-size: 100%;
 }
 
 table {
@@ -13,83 +13,82 @@ table {
 }
 
 img {
-	border: none;	
+	border: none;
 }
 
 #container {
-    text-align: left;
-    margin: 0 auto;
-    width: 820px;
-    border-width: 0;
-    background-color: #ffffff;
+	text-align: left;
+	margin: 0 auto;
+	width: 820px;
+	border-width: 0;
+	background-color: #ffffff;
 }
 
 #top {
-    padding-bottom: 1.0em;
-    background-color: #ffffff;
+	padding-bottom: 1.0em;
+	background-color: #ffffff;
 }
 
 #menu {
-    text-align: center;
-    background-color: #ffffff;
+	text-align: center;
+	background-color: #ffffff;
 }
 
 #menu a:link, #menu a:visited {
-    border-left: 1px solid #cccccc;
-    font-size: 150%;
-    padding: 0 0.5em 0 0.5em;
-    text-decoration: none;
-    color: #666666;
+	border-left: 1px solid #cccccc;
+	font-size: 150%;
+	padding: 0 0.5em 0 0.5em;
+	text-decoration: none;
+	color: #666666;
 }
 
 #menu a:hover {
-    font-size: 150%;
-    padding: 0 0.5em 0 0.5em;
-    background-color: #307fe1;
-    color: #ffffff;
+	font-size: 150%;
+	padding: 0 0.5em 0 0.5em;
+	background-color: #307fe1;
+	color: #ffffff;
 }
 
 #content {
-    padding-top: 2.0em;
-    background-color: #ffffff;
+	padding-top: 2.0em;
+	background-color: #ffffff;
 }
 
 #content ul {
-    list-style-image: url( 'bullet.gif' );
+	list-style-image: url( 'bullet.gif' );
 }
 
 #content a:link, #content a:visited {
-    text-decoration: none;
-    color: #307fe1;
+	text-decoration: none;
+	color: #307fe1;
 }
 
 #content a:hover {
-    color: #307fe1;
-    text-decoration: underline;
+	color: #307fe1;
+	text-decoration: underline;
 }
 
 #content h2 {
-    font-size: 150%;
+	font-size: 150%;
 }
 
 #content h3 {
-    font-size: 120%;
+	font-size: 120%;
 }
 
 #content h4 {
-    font-size: 110%;
+	font-size: 110%;
 }
 
 #features {
-    border: 1px dashed #666666;
-    background-color: #f2f7fb;
-    padding-left: 10px;
-    padding-right: 10px;
+	border: 1px dashed #666666;
+	background-color: #f2f7fb;
+	padding-left: 10px;
+	padding-right: 10px;
 }
 
 #footer {
-    padding: 2.0em 0 2.0em 0;
-    text-align: center;
-    background-color: #ffffff;
+	padding: 2.0em 0 2.0em 0;
+	text-align: center;
+	background-color: #ffffff;
 }
-
