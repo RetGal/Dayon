@@ -19,7 +19,7 @@ img {
 	width:820px;
 	height:130px;
 	padding-bottom:1.0em;
-	background:#fff url(dayon.png) no-repeat left;
+	background:#fff url('dayon.png') no-repeat left;
 	text-align:right;
 }
 
@@ -48,12 +48,12 @@ img {
 }
 
 #content {
-	padding-top:2.0em;
+	padding-top:1.0em;
 	background-color:#fff;
 }
 
 #content ul {
-	list-style-image:url( 'bullet.gif' );
+	list-style-image:url('bullet.gif');
 }
 
 #content a:link, #content a:visited {
@@ -81,7 +81,7 @@ img {
 #intro {
 	width:820px;
 	min-height:120px;
-	background:url(intro.jpg) no-repeat 5px;	
+	background:url('intro.jpg') no-repeat 5px 5px;	
 }
 
 #intro p {
