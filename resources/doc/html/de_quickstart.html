@@ -12,12 +12,7 @@
 <body>
 	<div id="container">
 		<div id="top">
-			<table>
-				<tr>
-					<td><img src="dayon.png" alt="Dayon!"></td>
-					<td align="right"><a href="quickstart.html"><img src="great_britain.png" alt="English"></a> <a href="fr_quickstart.html"><img src="france.png" alt="Français"></a></td>
-				</tr>
-			</table>
+			<a href="quickstart.html"><img src="great_britain.png" alt="English"></a> <a href="fr_quickstart.html"><img src="france.png" alt="Français"></a>
 		</div>
 		<div id="menu">
 			<a href="de_index.html">Home</a> <a href="de_quickstart.html">Schnellstart</a> <a href="de_download.html">Download</a> <a href="de_support.html">Hilfe</a> <a href="de_feedback.html">Feedback</a> <a href="https://github.com/RetGal/Dayon">GitHub</a>
@@ -30,7 +25,7 @@
 			<p>
 				<img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-setup"><b>Konfiguration Assistent</b></a>
 			<p>
-				Dayon! der Assistent fungiert als eine typische Server-Anwendung (der <i>Unterstützte</i> verbindet sich mit dieser). Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand von N	öten. Das Netzwerk des <i>Assistenten</i> (der, welcher Hilfe
+				Dayon! der Assistent fungiert als eine typische Server-Anwendung (der <i>Unterstützte</i> verbindet sich mit dieser). Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand von N öten. Das Netzwerk des <i>Assistenten</i> (der, welcher Hilfe
 				anbietet) muss so konfiguriert werden, dass es vom Internet her erreichbar ist. Als erstes wird der <b>Port</b> definiert, auf welchem der Server horchen soll. Anschliessend wird dieser Port auf der <b>Firewall</b> für eingehenden Verkehr geöffnet. In
 				den meisten Fällen wird es notwendig sein, diesen Port via <b>NAT</b> auf dem <b>Router</b> an den entsprechenden Rechner weiter zu leiten. Bebilderte Schritt-für-Schritt-Anleitungen für das Einrichten von Portweiterleitungen für die gängigsten Router
 				Modelle finden Sie <a href="https://portforward.com/router.htm">hier</a><br> <img src="assistant_network_settings.jpg" alt="Dayon! Assistent: Network Settings">
@@ -59,8 +54,8 @@
 				Hier kann der <i>Assistent</i> definieren, wie der Bildschirm des <i>Unterstützten</i> <b>erfasst</b> werden soll; Es kann sowohl der Intervall (in Millisekunden) zwischen zwei Aufnahmen (Tick), als auch die Anzahl Graustufen definiert werden.<br>
 				<img src="assistant_capture_settings.jpg" alt="Dayon! Assistent: Capture Settings">
 			<p>
-				Da kann die <b>Komprimierung</b> festgelegt werden; Es stehen drei verschiedene Methoden zur Auswahl: ZIP, BZIP2 und LZMA. BZIP2 und LZMA sollten für einen besseren Komprimierungsgrad sorgen, benötigen aber etwas mehr Rechenleistung (verursachen erhöhte
-				CPU Last), da ihre Algorithmen aufwändiger sind als ZIP und sie in JAVA implementiert sind. (während ZIP via nativem Code vom JDK implementiert ist).
+				Da kann die <b>Komprimierung</b> festgelegt werden; Es stehen drei verschiedene Methoden zur Auswahl: ZIP, BZIP2 und LZMA. BZIP2 und LZMA sollten für einen besseren Komprimierungsgrad sorgen, benötigen aber etwas mehr Rechenleistung (verursachen
+				erhöhte CPU Last), da ihre Algorithmen aufwändiger sind als ZIP und sie in JAVA implementiert sind. (während ZIP via nativem Code vom JDK implementiert ist).
 			<p>
 				Zusätzlich wird ein <b>Puffer</b> (Cache) verwendet, um nicht immer aufs neue die selben, unveränderten Bitmaps übertragen zu müssen. Hierfür wird der Bildschirm in zahlreiche <i>Kacheln</i> aufgeteilt. Jede dieser Kacheln kann separat gepuffert
 				werden. Die maximale Anzahl zwischen gespeicherten Kacheln kann definiert werden. Eine einzelne Kachel besteht aus 32x32 Pixel (Bildpunkten) in maximal 256 Graustufen - das entspricht rund 1K.
