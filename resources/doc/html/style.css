@@ -3,15 +3,6 @@ body {
 	text-align:center;
 }
 
-tbody td {
-	font-size:100%;
-}
-
-table {
-	width:100%;
-	border:none;
-}
-
 img {
 	border:none;
 }
@@ -85,6 +76,17 @@ img {
 
 #content h4 {
 	font-size:110%;
+}
+
+#intro {
+	width:820px;
+	min-height:120px;
+	background:url(intro.jpg) no-repeat 5px;	
+}
+
+#intro p {
+	margin-left:220px;
+	font-size:130%;
 }
 
 #features {
