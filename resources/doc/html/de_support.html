@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="description" content="Remote Support für Familie und Freunde.">
+<meta name="keywords" content="fernwartung, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>Dayon! - Remote Support für Familie und Freunde</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+	<div id="container">
+		<div id="top">
+			<table>
+				<tr>
+					<td><img src="dayon.png" alt="Dayon!"></td>
+					<td align="right"><a href="support.html"><img src="great_britain.png" alt="English"> <a href="fr_support.html"><img src="france.png" alt="Français"></a></td>
+				</tr>
+			</table>
+		</div>
+		<div id="menu">
+			<a href="de_index.html">Home</a> <a href="de_quickstart.html">Schnellstart</a> <a href="de_download.html">Download</a> <a href="de_support.html">Hilfe</a> <a href="de_feedback.html">Feedback</a> <a href="https://github.com/RetGal/Dayon">GitHub</a>
+		</div>
+		<div id="content">
+			<h2>Hilfe</h2>
+			<p>
+				Benutzen Sie folgendes <a href="http://sourceforge.net/forum/?group_id=246651">Forum</a> um Fragen zu stellen oder erfassen Sie ein Issue auf <a href="https://github.com/RetGal/Dayon/issues">GitHub</a>.
+			<h3>Bekannte Einschränkungen</h3>
+			<ul>
+				<li>Auch mit Version 1.4 ist die Tastaturunterstützung noch immer ziemlich minimalistisch; Es gibt zZt. keine Möglichkeit gewisse Tastenkombinationen wie etwa (e.g., CTRL-ALT-DEL) an den entfernten Computer zu senden.
+				<li>Mauszeiger: technologisch (JAVA) bedingt, wird der Mauszeiger wärend dem Vergrössern oder Bewegen von Fenstern mitunter nicht sauber dargestellt.
+				<li>Wegen verschärften Sicherheitseinstellungen, funktioniert der <i>Java Web Start</i> der Applikation des <i>Unterstützten</i> mit neueren JAVA Versionen (>1.7.45) leider nicht mehr.
+			</ul>
+			<h3>JAVA Prozess Eigenschaften</h3>
+			<p>
+				Unter Windows, wird für den <i>Assistenten</i> Launch4J verwendet, um die JAVA-Hauptklasse in eine .exe-Datei zu packen. Sie können die JVM für diesen Prozess konfigurieren, indem Sie die entsprechende <code>.l4j.ini</code> Datei im <code>bin</code>
+				Verzeichnis des Dayon! Installationsverzeichnisses anpassen.
+			<p>Sie können dort etwa den der JVM zugewiesenen Arbeitsspeicher anpassen. Je nach grösse des Puffers und der verwendeten Kompressionsmethode. (LZMA ist auch in dieser Hinsicht etwas resourcenhungriger).
+			<p>
+				Die <code>-server</code> Option ist bloss verfügbar, wenn Sie das JDK verwenden. (an Stelle der JRE).
+			<p>
+				Unter Linux sind diese Optionen im <code>dayon.sh</code> Script konfigurierbar.
+			<h3>Dayon! Heimverzeichnis</h3>
+			<p>
+				Das Verzeichnis <code>.dayon</code> wird im via JAVA-Property definierten Benutzerverzeichnis is created within the directory referenced by the JAVA property <code>user.home</code> erstellt und enthält nebst den gespeicherten Einstellungen auch die
+				Logdateien.
+			<h3>CRC Checksumme</h3>
+			<p>
+				Auf der Seite des <i>Unterstützten</i> wird der Bildschirm in <i>Kacheln</i> genannte Bereiche aufgeteilt. Bloss veränderte Kacheln werden über das Netzwerk zum <i>Assistenten</i> gesendet. Um zu entscheiden ob sich eine Kachel seit der letzten
+				Erfassung verändert hat, wird ein CRC-Code berechnet (ein eindeutiger Wert für die in einer Kachel enthaltenen Pixel). Dieses Verfahren ist hinsichtlich der Verarbeitungsgeschwindigkeit nicht die optimale Lösung. Es kann mitunter vorkommen, dass einige
+				<i>veränderte</i> Kacheln nicht an den Assistenten gesandt werden.
+			<p>
+				Bis jetzt konnte rein durch intensives Testen Verfälschungen von einigen Pixeln entdeckt werden. Visuell konnte bis anhin nichts ernsthaft störendes festgestellt werden. Sollte in der Praxis in dieser Hinsicht Mal etwas aus dem Ruder laufen, kann
+				entweder die Applikation des Unterstützten neu gestartet, oder dessen Puffer zurück gesetzt werden. (<b>oranges Pfeilsymbol</b>).
+			<h3>Statistiken in Statusleiste</h3>
+			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
+			<p>Die Statusleiste des Assistenten zeigt folgende Zähler an:
+			<ol>
+				<li>Netzwerkbandbreite
+				<li>Kompressionsverhältnis: wie oft der Inhalt der initial erfassten Kacheln (bloss Differenz) komprimiert wurde
+				<li>Anzahl Kacheln: Anzahl übermittelter Kacheln (inkl. Puffer-Treffer).
+				<li>Anzahl übersprungener Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche wegen eines zu kurzen Aktualisierungsintevall (für die entsprechende Hardware) übersprungen worden sind. Um diese Anzahl zu reduzieren, erhöhen Sie das
+					Erfassungsintervall.
+				<li>Anzahl kombinierter Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche vor der Übertragung kombiniert worden sind. Dies ist ein Anzeichen für ein zu kurzes Erfassungsintervall für die gewählte Komprimierungsmethode. Am einfachsten das
+					Erfassungsintervall erhöhen und/oder eine schnellere Kompressionsmethode wählen.
+			</ol>
+		</div>
+		<div id="footer"></div>
+	</div>
+</body>
+</html>

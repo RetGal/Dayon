@@ -15,7 +15,7 @@
 			<table>
 				<tr>
 					<td><img src="dayon.png" alt="Dayon!"></td>
-					<td align="right"><a href="support.html"><img src="great_britain.png" alt="English"></a></td>
+					<td align="right"><a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="support.html"><img src="great_britain.png" alt="English"></a></td>
 				</tr>
 			</table>
 		</div>
@@ -34,34 +34,22 @@
 			</ul>
 			<h3>Propriétés du processus JAVA</h3>
 			<p>
-				Sous Windows, pour l'assistant j'utilise Launch4J pour envelopper la classe JAVA principale dans un fichier .exe. Vous pouvez toujours Configurez la JVM de chaque processus à l'aide du fichier
-				<code>.l4j.ini</code>
-				correspondant Le répertoire
-				<code>bin</code>
+				Sous Windows, pour l'assistant j'utilise Launch4J pour envelopper la classe JAVA principale dans un fichier .exe. Vous pouvez toujours Configurez la JVM de chaque processus à l'aide du fichier <code>.l4j.ini</code> correspondant Le répertoire <code>bin</code>
 				de votre Dayon! installation.
 			<p>Vous pouvez par exemple configurer l'utilisation de la RAM JVM en tenant compte de la taille du cache et Si vous utilisez la méthode de compression LZMA (nécessite plus de RAM sur la côte de l'assistant).
 			<p>
-				L'option
-				<code>-server</code>
-				est disponible si vous utilisez un JDK (par opposition à un JRE).
+				L'option <code>-server</code> est disponible si vous utilisez un JDK (par opposition à un JRE).
 			<p>
-				Sous Unix, les mêmes options sont disponibles dans le script
-				<code>dayon.sh</code>
-				.
+				Sous Unix, les mêmes options sont disponibles dans le script <code>dayon.sh</code> .
 			<h3>Répetoire d'accueil de Dayon!</h3>
 			<p>
-				Le répertoire
-				<code>.dayon</code>
-				est créé dans le répertoire référencé par le JAVA Propriété
-				<code>user.home</code>
-				et contient les préférences utilisateur enregistrées et le journal par défaut fichiers.
+				Le répertoire <code>.dayon</code> est créé dans le répertoire référencé par le JAVA Propriété <code>user.home</code> et contient les préférences utilisateur enregistrées et le journal par défaut fichiers.
 			<h3>Somme de contrôle CRC</h3>
 			<p>
 				Sur le côté de l'assisté, l'écran est divisé en différentes zones appelées <i>tuiles</i>. Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant. Pour déterminer si une tuile est différente, je suis en
 				train de calculer un code CRC (C'est-à-dire, une valeur entière unique représentant les pixels de la tuile) qui n'est pas parfaite Par souci de rapidité. Il se peut donc que certaines tuiles <i>changées</i> ne soient pas envoyées à l'assistant.
 			<p>
-				Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, Je n'ai rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer L'aide ou avant d'essayer l'action
-				<code>reset</code>
+				Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, Je n'ai rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer L'aide ou avant d'essayer l'action <code>reset</code>
 				(<b> l'icône orange de la foudre </b>) Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
 			<h3>Compteurs de statistiques</h3>
 			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">

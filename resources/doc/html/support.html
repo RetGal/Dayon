@@ -15,7 +15,7 @@
 			<table>
 				<tr>
 					<td><img src="dayon.png" alt="Dayon!"></td>
-					<td align="right"><a href="fr_support.html"><img src="france.png" alt="Français"></a></td>
+					<td align="right"><a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="fr_support.html"><img src="france.png" alt="Français"></a></td>
 				</tr>
 			</table>
 		</div>
@@ -34,35 +34,23 @@
 			</ul>
 			<h3>JAVA Process Properties</h3>
 			<p>
-				On Windows, for the assistant I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still configure the JVM of each process using the corresponding
-				<code>.l4j.ini</code>
-				file within the
-				<code>bin</code>
-				directory of your Dayon! install.
+				On Windows, for the assistant I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still configure the JVM of each process using the corresponding <code>.l4j.ini</code> file within the <code>bin</code> directory of your Dayon!
+				install.
 			<p>You can for example setup the JVM RAM usage taking into account the size of the cache and whether or not you're using the LZMA compression method (requires more RAM on the assisted side).
 			<p>
-				The
-				<code>-server</code>
-				option is available if you're using a JDK (as opposed to a JRE).
+				The <code>-server</code> option is available if you're using a JDK (as opposed to a JRE).
 			<p>
-				On Unix, the same options are available within the
-				<code>dayon.sh</code>
-				script.
+				On Unix, the same options are available within the <code>dayon.sh</code> script.
 			<h3>Dayon! Home Directory</h3>
 			<p>
-				The directory
-				<code>.dayon</code>
-				is created within the directory referenced by the JAVA property
-				<code>user.home</code>
-				and contains the saved user preferences and default log files.
+				The directory <code>.dayon</code> is created within the directory referenced by the JAVA property <code>user.home</code> and contains the saved user preferences and default log files.
 			<h3>CRC Checksum</h3>
 			<p>
 				On the assisted side, the screen is divided into different areas called <i>tiles</i>. Only tiles that have changed from the previous capture are sent over the network to the assistant side. To determine if a tile is different I'm currently computing a
 				CRC code (i.e., a unique integer value representing the pixels of the tile) that is not perfect for the sake of speed. So it might happens that some <i>changed</i> tiles are not sent to the assistant.
 			<p>
-				Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed anything serious. But in case things are going mad you can then restart the assisted or before try the
-				<code>reset</code>
-				action (<b>the orange lightning icon</b>) that should clear every cached data and resend a full screen capture from scratch.
+				Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed anything serious. But in case things are going mad you can then restart the assisted or before try the <code>reset</code> action (<b>the orange
+					lightning icon</b>) that should clear every cached data and resend a full screen capture from scratch.
 			<h3>Statistics Counters</h3>
 			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
 			<p>The status bar of the assistant frame is displaying a set of counters.
