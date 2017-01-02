@@ -38,7 +38,7 @@ Project:
 
   The project is available at the following HTTP addresses:
 
-        https://github.com/RetGal/Dayon
+        https://github.com/retgal/dayon
         http://dayonhome.sourceforge.net
 
 

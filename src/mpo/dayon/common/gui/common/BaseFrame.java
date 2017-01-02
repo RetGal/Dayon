@@ -82,7 +82,7 @@ public abstract class BaseFrame extends JFrame {
 		return exit;
 	}
 
-	private static final String HTTP_HOME = "https://github.com/RetGal/Dayon";
+	private static final String HTTP_HOME = "https://github.com/retgal/dayon";
 
 	private static final String HTTP_SUPPORT = "http://dayonhome.sourceforge.net/support.html";
 
