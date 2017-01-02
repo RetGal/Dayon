@@ -219,6 +219,8 @@ public class AssistantFrame extends BaseFrame {
 		toolbar.addAction(lookAndFeelAction);
 		toolbar.addSeparator();
 		toolbar.addAction(createShowInfoAction());
+		toolbar.addSeparator();
+		toolbar.addAction(createShowHelpAction());
 		toolbar.addGlue();
 		toolbar.addAction(ipAddressAction);
 		toolbar.addSeparator();

@@ -37,4 +37,6 @@ public abstract class ImageNames {
 
 	public static final String CONTROL = "control.png";
 
+	public static final String HELP = "help.png";
+
 }

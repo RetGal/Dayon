@@ -106,6 +106,7 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel info = new JLabel("<html><a href=''>Dayon!</a> : " + Babylon.translate("synopsys") + ".</html>");
 				info.setAlignmentX(Component.LEFT_ALIGNMENT);
+
 				// info.setAlignmentX(Component.CENTER_ALIGNMENT);
 				info.addMouseListener(new MouseAdapter() {
 					@Override
@@ -157,6 +158,27 @@ public abstract class BaseFrame extends JFrame {
 		showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
 
 		return showSystemInfo;
+	}
+
+	protected Action createShowHelpAction() {
+		final Action showHelp = new AbstractAction() {
+			private static final long serialVersionUID = 3906155654667295840L;
+
+			public void actionPerformed(ActionEvent ev) {
+
+				final URI uri = SystemUtilities.getLocalIndexHtml();
+
+				browse(uri.toString());
+
+			}
+
+		};
+
+		showHelp.putValue(Action.NAME, "showHelp");
+		showHelp.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("help"));
+		showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.HELP));
+
+		return showHelp;
 	}
 
 	private static void browse(String url) {

@@ -345,7 +345,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 					public String validate() {
 						final String portNumber = portNumberTextField.getText();
 						if (portNumber.isEmpty()) {
-							return Babylon.translate("connection.settings.emptyPortNumer");
+							return Babylon.translate("connection.settings.emptyPortNumber");
 						}
 
 						try {

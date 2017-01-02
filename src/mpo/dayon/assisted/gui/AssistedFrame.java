@@ -60,6 +60,8 @@ public class AssistedFrame extends BaseFrame {
 		final ToolBar toolbar = new ToolBar();
 
 		toolbar.addAction(createShowInfoAction());
+		toolbar.addSeparator();
+		toolbar.addAction(createShowHelpAction());
 		toolbar.addGlue();
 		toolbar.addAction(createExitAction());
 

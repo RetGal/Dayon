@@ -197,7 +197,7 @@ public class Assisted {
 
 				final String portNumber = assistantPortNumberTextField.getText();
 				if (portNumber.isEmpty()) {
-					return Babylon.translate("connection.settings.emptyPortNumer");
+					return Babylon.translate("connection.settings.emptyPortNumber");
 				}
 
 				try {
