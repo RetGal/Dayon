@@ -25,6 +25,10 @@ The latest version is 1.4 - released eight years after the latest release of the
 
 This version uses updated libraries, can handle Windows UAC-dialogs and encrypts its communication.
 
+## Screen
+
+![Assistant connected](/resources/doc/html/assistant_connected.jpg?raw=true "Assistant connected")
+
 ## Trivia
 
 Dayon! means "Come in!" in Visayas - a local Philippine dialect. 
