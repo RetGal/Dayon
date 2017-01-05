@@ -29,11 +29,8 @@
 			</ul>
 			<h3>JAVA Process Properties</h3>
 			<p>
-				On Windows, for the assistant I'm using Launch4J to wrap the main JAVA class into an .exe file. You can still configure the JVM of each process using the corresponding <code>.l4j.ini</code> file within the <code>bin</code> directory of your Dayon!
-				install.
+				On Windows, you can customize the memory allocated to the JVM by modifying the <code>Xms</code> and <code>Xmx</code> values of the startup links.
 			<p>You can for example setup the JVM RAM usage taking into account the size of the cache and whether or not you're using the LZMA compression method (requires more RAM on the assisted side).
-			<p>
-				The <code>-server</code> option is available if you're using a JDK (as opposed to a JRE).
 			<p>
 				On Unix, the same options are available within the <code>dayon.sh</code> script.
 			<h3>Dayon! Home Directory</h3>
