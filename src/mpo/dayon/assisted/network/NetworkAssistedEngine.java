@@ -6,7 +6,16 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -29,6 +38,7 @@ import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMessage;
 import mpo.dayon.common.network.message.NetworkMessageType;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
+import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
 public class NetworkAssistedEngine extends NetworkEngine
@@ -64,10 +74,16 @@ public class NetworkAssistedEngine extends NetworkEngine
 		this.configuration = configuration;
 	}
 
-	public void start() throws IOException {
+	public void start()
+			throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
 		Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
-		Socket connection = new Socket(configuration.getServerName(), configuration.getServerPort());
+		SSLContext scontext = SSLContext.getInstance("TLS");
+		scontext.init(null, new TrustManager[] { new CustomTrustManager() }, null);
+
+		SSLSocketFactory ssf = scontext.getSocketFactory();
+
+		SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
 
 		DataOutputStream out = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 		in = new DataInputStream(new BufferedInputStream(connection.getInputStream()));

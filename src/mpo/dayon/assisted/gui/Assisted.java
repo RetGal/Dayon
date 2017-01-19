@@ -3,23 +3,19 @@ package mpo.dayon.assisted.gui;
 import java.awt.GridLayout;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.security.cert.X509Certificate;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -45,6 +41,7 @@ import mpo.dayon.common.network.message.NetworkCaptureConfigurationMessage;
 import mpo.dayon.common.network.message.NetworkCaptureConfigurationMessageHandler;
 import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessage;
 import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessageHandler;
+import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class Assisted {
@@ -78,10 +75,9 @@ public class Assisted {
 		// accept own cert, avoid PKIX path building exception
 		SSLContext sc = null;
 		try {
-			X509TrustManager customTm = combineManagers();
 			sc = SSLContext.getInstance("TLS");
-			sc.init(null, new TrustManager[] { customTm }, null);
-		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | KeyManagementException e) {
+			sc.init(null, new TrustManager[] { new CustomTrustManager() }, null);
+		} catch (NoSuchAlgorithmException | KeyManagementException e) {
 			Log.error(e.getMessage());
 			System.exit(1);
 		}
@@ -165,7 +161,12 @@ public class Assisted {
 		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler);
 
 		networkEngine.configure(configuration);
-		networkEngine.start();
+		try {
+			networkEngine.start();
+		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | KeyManagementException | UnrecoverableKeyException e) {
+			Log.error(e.getMessage());
+			System.exit(1);
+		}
 		networkEngine.sendHello();
 	}
 
@@ -279,89 +280,10 @@ public class Assisted {
 		}
 	}
 
-	private X509TrustManager combineManagers() throws NoSuchAlgorithmException, KeyStoreException, CertificateException, IOException {
-
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		// using null here initialises the TMF with the default trust store.
-		tmf.init((KeyStore) null);
-
-		// get hold of the default trust manager
-		X509TrustManager defaultTm = null;
-		for (TrustManager tm : tmf.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				defaultTm = (X509TrustManager) tm;
-				break;
-			}
-		}
-
-		final String keyStorePath = "/mpo/dayon/common/security/X509";
-		final String keyStorePass = "spasspass";
-
-		InputStream myKeys = getClass().getResourceAsStream(keyStorePath);
-
-		// do the same with our own trust store this time
-		KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		myTrustStore.load(myKeys, keyStorePass.toCharArray());
-
-		myKeys.close();
-
-		tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		tmf.init(myTrustStore);
-
-		// get hold of the default trust manager
-		X509TrustManager ownTm = null;
-		for (TrustManager tm : tmf.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				ownTm = (X509TrustManager) tm;
-				break;
-			}
-		}
-		// return a brand new CustomTrustManager
-		return new CustomTrustManager(defaultTm, ownTm);
-	}
-
 	private class HostNameIgnorer implements HostnameVerifier {
 		@Override
 		public boolean verify(String hostname, SSLSession session) {
 			return true;
-		}
-
-	}
-
-	private class CustomTrustManager implements X509TrustManager {
-
-		final X509TrustManager finalDefaultTm;
-		final X509TrustManager finalOwnTm;
-
-		public CustomTrustManager(X509TrustManager defaultTm, X509TrustManager ownTm) {
-			finalDefaultTm = defaultTm;
-			finalOwnTm = ownTm;
-		}
-
-		@Override
-		public X509Certificate[] getAcceptedIssuers() {
-			// if you're planning to use client-cert auth, merge results from
-			// "defaultTm" and "ownTm".
-			return finalDefaultTm.getAcceptedIssuers();
-		}
-
-		@Override
-		public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			try {
-				// check with own TM first
-				finalOwnTm.checkServerTrusted(chain, authType);
-			} catch (CertificateException e) {
-				// this will throw another CertificateException if this fails
-				// too.
-				finalDefaultTm.checkServerTrusted(chain, authType);
-			}
-		}
-
-		@Override
-		public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-			// if you're planning to use client-cert auth, do the same as
-			// checking the server.
-			finalDefaultTm.checkClientTrusted(chain, authType);
 		}
 
 	}
