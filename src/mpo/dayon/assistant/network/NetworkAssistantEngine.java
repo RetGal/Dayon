@@ -5,11 +5,18 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
 
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsResources;
@@ -52,7 +59,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	 */
 	private NetworkSender sender;
 
-	private ServerSocket server;
+	private SSLServerSocket server;
 
 	private Socket connection;
 
@@ -136,20 +143,26 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			Log.info(String.format("HTTP server [port:%d]", port));
 			fireOnHttpStarting(configuration.getPort());
 
-			NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP
-																		// support
-																		// (.html,
-																		// .jnlp,
-																		// .jar)
+			NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)
 
 			https = new NetworkAssistantHttpsEngine(port);
-			https.start(); // blocking call until the HTTP-acceptor has been
-							// closed (!)
+			https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
 			Log.info(String.format("Dayon! server [port:%d]", configuration.getPort()));
 			fireOnStarting(configuration.getPort());
 
-			server = new ServerSocket(configuration.getPort());
+			final String keyStorePath = "/mpo/dayon/common/security/X509";
+			final String keyStorePass = "spasspass";
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
+
+			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+			kmf.init(keyStore, keyStorePass.toCharArray());
+			SSLContext scontext = SSLContext.getInstance("TLS");
+			scontext.init(kmf.getKeyManagers(), null, null);
+			
+			SSLServerSocketFactory ssf = scontext.getServerSocketFactory();
+			server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
 
 			Log.info("Accepting ...");
 			fireOnAccepting(configuration.getPort());
@@ -159,9 +172,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			}
 
 			do {
-				SystemUtilities.safeClose(connection); // we might have refused
-														// the accepted
-														// connection (!)
+				SystemUtilities.safeClose(connection); // we might have refused the accepted connection (!)
 
 				connection = server.accept();
 
@@ -196,9 +207,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 					}
 
 					final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
-					fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic
-																	// number
-																	// (byte)
+					fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
 
 					final Version version = Version.get();
 					final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
@@ -218,9 +227,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 					}
 
 					final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
-					fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic
-																	// number
-																	// (byte)
+					fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
 
 					captureMessageHandler.handleCapture(capture);
 
@@ -232,9 +239,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 					}
 
 					final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
-					fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic
-																	// number
-																	// (byte)
+					fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
 
 					mouseMessageHandler.handleLocation(mouse);
 
@@ -262,6 +267,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			server = null;
 			connection = null;
 			receiver = null;
+		} catch (KeyManagementException | UnrecoverableKeyException e) {
+			Log.error("Fatal, can not init encryption", e);
 		}
 
 		fireOnReady();
