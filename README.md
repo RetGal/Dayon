@@ -1,5 +1,5 @@
 # Dayon!
-Dayon! is an easy to use, cross-platform remote assistance solution.
+Dayon! is an easy to use, cross-platform remote desktop assistance solution.
 
 It consists of two parts - one for the assistant and one for the assisted. Both are included in one single package.
 
@@ -22,7 +22,7 @@ With his permission I moved the code base to GitHub, where it can be maintained 
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is 1.4.1 - released more than eight years after the latest release of the original author.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is 1.4.2 - released more than eight years after the latest release of the original author.
 
 This version uses updated libraries, can handle Windows UAC-dialogs and encrypts all its communication.
 
