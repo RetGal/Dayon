@@ -34,6 +34,8 @@ import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.error.FatalErrorHandler;
+import mpo.dayon.common.error.SeriousErrorHandler;
+import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
@@ -44,7 +46,7 @@ import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessageHan
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class Assisted {
+public class Assisted implements Subscriber {
 	private AssistedFrame frame;
 
 	private NetworkAssistedEngineConfiguration configuration;
@@ -155,6 +157,10 @@ public class Assisted {
 		};
 
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
+		
+		SeriousErrorHandler.attachFrame(frame);
+		
+		controlHandler.subscribe(this);
 
 		frame.onConnecting(configuration);
 
@@ -286,6 +292,11 @@ public class Assisted {
 			return true;
 		}
 
+	}
+
+	@Override
+	public void digest(String message) {
+		SeriousErrorHandler.warn(String.valueOf(message));
 	}
 
 }

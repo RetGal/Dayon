@@ -19,14 +19,17 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 	private final int info;
 
 	private final int keycode;
+	
+	private final char keychar;
 
-	public NetworkKeyControlMessage(KeyState buttonState, int keycode) {
-		this(buttonState == KeyState.PRESSED ? PRESSED : RELEASED, keycode);
+	public NetworkKeyControlMessage(KeyState buttonState, int keycode, char keychar) {
+		this(buttonState == KeyState.PRESSED ? PRESSED : RELEASED, keycode, keychar);
 	}
 
-	private NetworkKeyControlMessage(int info, int keycode) {
+	private NetworkKeyControlMessage(int info, int keycode, char keychar) {
 		this.info = info;
 		this.keycode = keycode;
+		this.keychar = keychar;
 	}
 
 	public NetworkMessageType getType() {
@@ -35,6 +38,10 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 
 	public int getKeyCode() {
 		return keycode;
+	}
+	
+	public char getKeyChar() {
+		return keychar;
 	}
 
 	public boolean isPressed() {
@@ -46,7 +53,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 	}
 
 	public int getWireSize() {
-		return 9; // type (byte) + info (int) + keycode (int)
+		return 11; // type (byte) + info (int) + keycode (int) + keychar (char)
 	}
 
 	public void marshall(DataOutputStream out) throws IOException {
@@ -54,17 +61,19 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 
 		out.writeInt(info);
 		out.writeInt(keycode);
+		out.writeChar(keychar);
 	}
 
 	public static NetworkKeyControlMessage unmarshall(DataInputStream in) throws IOException {
 		final int info = in.readInt();
 		final int keycode = in.readInt();
+		final char keychar = in.readChar();
 
-		return new NetworkKeyControlMessage(info, keycode);
+		return new NetworkKeyControlMessage(info, keycode, keychar);
 	}
 
 	public String toString() {
-		return String.format("[%s] [%d]", toStringPressed(), keycode);
+		return String.format("[%s] [%d]", toStringPressed(), keycode, keychar);
 	}
 
 	private String toStringPressed() {

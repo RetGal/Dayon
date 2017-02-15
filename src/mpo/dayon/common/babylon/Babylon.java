@@ -66,8 +66,7 @@ public abstract class Babylon {
 	private static String formatValue(Locale locale, String tagValue, String tag, Object... arguments) {
 		String formattedTagValue;
 
-		if (tagValue != tag) // The identity equality is fine; that's what I
-								// want!
+		if (tagValue != tag) // The identity equality is fine; that's what I want!
 		{
 			try {
 				// The locale is required for example to convert a double into
@@ -78,20 +77,12 @@ public abstract class Babylon {
 				formattedTagValue = String.format(locale, tagValue, arguments);
 			} catch (IllegalFormatException ex) {
 				Log.warn("Illegal format for tag [" + tag + "] - " + ex.getMessage(), ex);
-				formattedTagValue = tagValue + " " + Arrays.toString(arguments); // what
-																					// else
-																					// can
-																					// I
-																					// do
-																					// here?
+				formattedTagValue = tagValue + " " + Arrays.toString(arguments);
+				// what else can I do here?
 			}
 		} else {
-			formattedTagValue = tagValue + " " + Arrays.toString(arguments); // what
-																				// else
-																				// can
-																				// I
-																				// do
-																				// here?
+			formattedTagValue = tagValue + " " + Arrays.toString(arguments);
+			// what else can I do here?
 		}
 
 		return formattedTagValue;

@@ -101,14 +101,12 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	/**
 	 * From AWT thread (!)
 	 */
-	public void onKeyPressed(final int keycode) {
+	public void onKeyPressed(final int keycode, final char keychar) {
 		executor.execute(new Executable(executor, null) {
 			protected void execute() throws Exception {
-				// System.out.println("PRESSED:" +
-				// KeyEvent.getKeyText(keycode));
 
 				pressedKeys.add(keycode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keycode));
+				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keycode, keychar));
 			}
 		});
 	}
@@ -116,7 +114,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	/**
 	 * From AWT thread (!)
 	 */
-	public void onKeyReleased(final int keycode) {
+	public void onKeyReleased(final int keycode, final char keychar) {
 		// -------------------------------------------------------------------------------------------------------------
 		// E.g., Windows + R : [Windows.PRESSED] and then the focus is LOST =>
 		// missing RELEASED events
@@ -129,23 +127,21 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 			if (pressedKeys.size() > 0) {
 				final Integer[] pkeys = pressedKeys.toArray(new Integer[pressedKeys.size()]);
 				for (Integer pkey : pkeys) {
-					onKeyReleased(pkey);
+					onKeyReleased(pkey, keychar);
 				}
 			}
 			return;
 		}
 
 		if (!pressedKeys.contains(keycode)) {
-			onKeyPressed(keycode);
+			onKeyPressed(keycode, keychar);
 		}
 
 		executor.execute(new Executable(executor, null) {
 			protected void execute() throws Exception {
-				// System.out.println("RELEASED:" +
-				// KeyEvent.getKeyText(keycode));
 
 				pressedKeys.remove(keycode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keycode));
+				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keycode, keychar));
 			}
 		});
 	}

@@ -11,7 +11,7 @@ public interface AssistantFrameListener extends Listener {
 
 	void onMouseWheeled(int x, int y, int rotations);
 
-	void onKeyPressed(int keycode);
+	void onKeyPressed(int keycode, char keychar);
 
-	void onKeyReleased(int keycode);
+	void onKeyReleased(int keycode, char keychar);
 }

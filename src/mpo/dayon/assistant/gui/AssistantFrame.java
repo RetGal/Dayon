@@ -160,14 +160,14 @@ public class AssistantFrame extends BaseFrame {
 			@Override
 			public void keyPressed(KeyEvent ev) {
 				if (controlActivated) {
-					fireOnKeyPressed(ev.getKeyCode());
+					fireOnKeyPressed(ev.getKeyCode(), ev.getKeyChar());
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent ev) {
 				if (controlActivated) {
-					fireOnKeyReleased(ev.getKeyCode());
+					fireOnKeyReleased(ev.getKeyCode(), ev.getKeyChar());
 				}
 			}
 		});
@@ -176,7 +176,7 @@ public class AssistantFrame extends BaseFrame {
 			@Override
 			public void focusLost(FocusEvent ev) {
 				if (controlActivated) {
-					fireOnKeyReleased(-1);
+					fireOnKeyReleased(-1, Character.MIN_VALUE);
 				}
 			}
 		});
@@ -427,7 +427,7 @@ public class AssistantFrame extends BaseFrame {
 		}
 	}
 
-	private void fireOnKeyPressed(int keycode) {
+	private void fireOnKeyPressed(int keycode, char keychar) {
 		final AssistantFrameListener[] xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
@@ -435,11 +435,11 @@ public class AssistantFrame extends BaseFrame {
 		}
 
 		for (final AssistantFrameListener xlistener : xlisteners) {
-			xlistener.onKeyPressed(keycode);
+			xlistener.onKeyPressed(keycode, keychar);
 		}
 	}
 
-	private void fireOnKeyReleased(int keycode) {
+	private void fireOnKeyReleased(int keycode, char keychar) {
 		final AssistantFrameListener[] xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
@@ -447,7 +447,7 @@ public class AssistantFrame extends BaseFrame {
 		}
 
 		for (final AssistantFrameListener xlistener : xlisteners) {
-			xlistener.onKeyReleased(keycode);
+			xlistener.onKeyReleased(keycode, keychar);
 		}
 	}
 
