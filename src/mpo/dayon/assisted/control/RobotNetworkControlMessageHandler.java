@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,24 +18,24 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 
 public class RobotNetworkControlMessageHandler implements NetworkControlMessageHandler {
 	private final Robot robot;
-	
-	private List<Subscriber> subscribers = new ArrayList<Subscriber>();
-	
-	public void subscribe(Subscriber subscriber) {
-		subscribers.add(subscriber);
-	}
-	
-	public void shout(char bogusChar) {
-		for (Subscriber subscriber : subscribers) {
-			subscriber.digest(String.valueOf(bogusChar));
-		}
-	}
 
+	private List<Subscriber> subscribers = new ArrayList<>();
+	
 	public RobotNetworkControlMessageHandler() {
 		try {
 			robot = new Robot();
 		} catch (AWTException ex) {
 			throw new RuntimeException(ex);
+		}
+	}
+
+	public void subscribe(Subscriber subscriber) {
+		subscribers.add(subscriber);
+	}
+
+	public void shout(char bogusChar) {
+		for (Subscriber subscriber : subscribers) {
+			subscriber.digest(String.valueOf(bogusChar));
 		}
 	}
 
@@ -61,7 +62,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		} else if (message.isWheel()) {
 			robot.mouseWheel(message.getRotations());
 		}
-
 		robot.mouseMove(message.getX(), message.getY());
 	}
 
@@ -74,12 +74,14 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				robot.keyPress(message.getKeyCode());
 			} catch (IllegalArgumentException ex) {
 				Log.warn(message.toString() +" contained an invalid keyCode for "+message.getKeyChar());
-				shout(message.getKeyChar());
 				if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-					KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar());
+					KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
+					// plan b
 					if (key.getKeyCode() != Character.MIN_VALUE) {
 						Log.warn("retrying with keyCode "+key.getKeyCode());
-						robot.keyPress(key.getKeyCode());
+						typeUnicode(key.getKeyCode());
+					} else {
+						shout(message.getKeyChar());
 					}
 				}
 			}
@@ -88,16 +90,93 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				robot.keyRelease(message.getKeyCode());
 			} catch (IllegalArgumentException ex) {
 				Log.warn(message.toString() +" contained an invalid keyCode for "+message.getKeyChar());
-				shout(message.getKeyChar());
-				if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-					KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar());
-					if (key.getKeyCode() != Character.MIN_VALUE) {
-						Log.warn("retrying with keyCode "+key.getKeyCode());
-						robot.keyRelease(key.getKeyCode());
-					}
-				}
 			}
-			
+		}
+	}
+
+	/**
+	 * Q&D OS detection
+	 */
+	public void typeUnicode(int keyCode)
+	{
+		if (File.separatorChar == '/') {
+			typeLinuxUnicode(keyCode);
+		} else {
+			typeWindowsUnicode(keyCode);
+		}
+	}
+
+	/**
+	 * Unicode characters are typed in decimal on Windows ä => 228
+	 */
+	private void typeWindowsUnicode(int keyCode) {
+	    robot.keyPress(KeyEvent.VK_ALT);
+	    // simulate a numpad key press for each digit
+	    for(int i = 3; i >= 0; --i)
+	    {
+	        int code = keyCode / (int) (Math.pow(10, i)) % 10 + KeyEvent.VK_NUMPAD0;
+	        robot.keyPress(code);
+	        robot.keyRelease(code);
+	    }
+	    robot.keyRelease(KeyEvent.VK_ALT);
+	}
+
+	/**
+	 * Unicode characters are typed in hex on Linux ä => e4
+	 */
+	private void typeLinuxUnicode(int keyCode) {
+	    robot.keyPress(KeyEvent.VK_CONTROL);
+	    robot.keyPress(KeyEvent.VK_SHIFT);
+	    robot.keyPress(KeyEvent.VK_U);
+	    robot.keyRelease(KeyEvent.VK_U);
+	    char[] charArray = Integer.toHexString(keyCode).toCharArray();
+	    // simulate a key press for each char
+	    for (char c : charArray) {
+	        int code = getKeyCode(c);
+	        robot.keyPress(code);
+	        robot.keyRelease(code);
+		}
+	    robot.keyRelease(KeyEvent.VK_SHIFT);
+	    robot.keyRelease(KeyEvent.VK_CONTROL);
+	}
+
+	/**
+	 * Maps a hex char to its corresponding virtual key code
+	 */
+	private int getKeyCode(char c) {
+		switch(c) {
+		case '0':
+			return 48;
+		case '1':
+			return 49;
+		case '2':
+			return 50;
+		case '3':
+			return 51;
+		case '4':
+			return 52;
+		case '5':
+			return 53;
+		case '6':
+			return 54;
+		case '7':
+			return 55;
+		case '8':
+			return 56;
+		case '9':
+			return 57;
+		case 'a':
+			return 65;
+		case 'b':
+			return 66;
+		case 'c':
+			return 67;
+		case 'd':
+			return 68;
+		case 'e':
+			return 69;
+		default:
+			return 70;
 		}
 	}
 }

@@ -71,6 +71,7 @@ public class Assisted implements Subscriber {
 		frame = new AssistedFrame(new AssistedFrameConfiguration());
 
 		FatalErrorHandler.attachFrame(frame);
+		SeriousErrorHandler.attachFrame(frame);
 
 		frame.setVisible(true);
 
@@ -157,8 +158,6 @@ public class Assisted implements Subscriber {
 		};
 
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
-		
-		SeriousErrorHandler.attachFrame(frame);
 		
 		controlHandler.subscribe(this);
 

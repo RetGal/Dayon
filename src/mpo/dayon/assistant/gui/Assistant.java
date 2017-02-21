@@ -164,6 +164,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 		FatalErrorHandler.attachFrame(frame);
 
+
 		frame.addListener(control);
 		frame.setVisible(true);
 	}

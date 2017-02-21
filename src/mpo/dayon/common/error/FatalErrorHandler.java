@@ -12,6 +12,9 @@ public abstract class FatalErrorHandler {
 	@Nullable
 	private static JFrame frame;
 
+	/**
+	 * Displays a translated error message and terminates
+	 */
 	public static void bye(String message, Throwable error) {
 		Log.fatal(message, error);
 		Log.fatal("Bye!");
