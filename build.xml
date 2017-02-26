@@ -2,6 +2,7 @@
 <project default="build" name="Create runnable jar for project Dayon! with libraries in same folder">
 	<property name="dir.binfile" value="." />
 	<property name="dir.src" value="${dir.binfile}/src" />
+	<property name="dir.docs" value="${dir.binfile}/docs" />
 	<property name="dir.lib" value="${dir.binfile}/lib" />
 	<property name="dir.res" value="${dir.binfile}/resources" />
 	<property name="dir.bin" value="${dir.binfile}/bin" />
@@ -25,7 +26,7 @@
 		<tstamp />
 		<mkdir dir="${dir.bin}" />
 		<mkdir dir="${dir.build}" />
-		<mkdir dir="${dir.dist}" />
+		<mkdir dir="${dir.dist}/doc/html" />
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
@@ -63,11 +64,17 @@
 				<exclude name="license/azul_zulu_license.txt" />
 			</fileset>
 		</copy>
+		<copy todir="${dir.dist}/doc/html">
+			<fileset dir="${dir.docs}"/>
+		</copy>
 	</target>
 
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}" />
+		</copy>
+		<copy todir="${dir.dist}/docs/html">
+			<fileset dir="${dir.docs}"/>
 		</copy>
 	</target>
 
