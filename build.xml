@@ -73,7 +73,7 @@
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}" />
 		</copy>
-		<copy todir="${dir.dist}/docs/html">
+		<copy todir="${dir.dist}/doc/html">
 			<fileset dir="${dir.docs}"/>
 		</copy>
 	</target>

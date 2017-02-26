@@ -18,7 +18,7 @@ It consists of two parts - one for the assistant and one for the assisted. Both 
 
 Dayon! was originally developed by Marc Polizzi back in 2008.
 
-With his permission I moved the code base to GitHub, where it can be maintained more easely.
+With his permission I moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
@@ -26,9 +26,15 @@ The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is 1.4.3 
 
 This version uses updated libraries, can handle Windows UAC-dialogs and encrypts all its communication.
 
+## Website
+
+[Deutsch](https://retgal.github.io/Dayon/de_index.html)<br>
+[English](https://retgal.github.io/Dayon/index.html)<br>
+[Français](https://retgal.github.io/Dayon/fr_index.html)
+
 ## Screen
 
-![Assistant connected](/resources/doc/html/assistant_connected.jpg?raw=true "Assistant connected")
+![Assistant connected](/docs/assistant_connected.jpg?raw=true "Assistant connected")
 
 ## Trivia
 
