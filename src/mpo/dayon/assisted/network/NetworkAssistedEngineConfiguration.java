@@ -34,7 +34,8 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 	}
 
 	public NetworkAssistedEngineConfiguration(String serverName, int serverPort) {
-		this.serverName = serverName;
+
+		this.serverName = handleIpV6(serverName);
 		this.serverPort = serverPort;
 	}
 
@@ -100,6 +101,13 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 		}
 
 		Preferences.getPreferences().update(props); // atomic (!)
+	}
+	
+	private String handleIpV6(String serverName) {
+		if (serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(\\d{1,3}\\.){3}\\d{1,3}")) {
+			return '[' + serverName + ']';
+		}
+		return serverName;
 	}
 
 	@Override
