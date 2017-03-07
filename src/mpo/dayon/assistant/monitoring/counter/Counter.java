@@ -10,9 +10,9 @@ public abstract class Counter<T> {
 
 	private final String shortDescription;
 
-	private long totalStart = -1;
+	private long totalStart;
 
-	long instantStart = -1;
+	long instantStart;
 
 	Counter(String uid, String shortDescription) {
 		this.uid = uid;

@@ -75,7 +75,7 @@ public class AssistantFrame extends BaseFrame {
 
 	public AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
 			Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
-			AssistantStartAction startAction, AssistantStopAction stopAction, Counter... counters) {
+			AssistantStartAction startAction, AssistantStopAction stopAction, Counter<?>... counters) {
 		this.configuration = configuration;
 
 		setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
@@ -229,10 +229,10 @@ public class AssistantFrame extends BaseFrame {
 		return toolbar;
 	}
 
-	private StatusBar createStatusBar(Counter[] counters) {
+	private StatusBar createStatusBar(Counter<?>[] counters) {
 		final StatusBar statusBar = new StatusBar();
 
-		for (Counter counter : counters) {
+		for (Counter<?> counter : counters) {
 			statusBar.addSeparator();
 			statusBar.addCounter(counter, counter.getWidth());
 		}

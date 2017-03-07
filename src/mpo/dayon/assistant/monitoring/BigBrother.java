@@ -21,7 +21,7 @@ public class BigBrother {
 	 * @param instantRatePeriod
 	 *            millis
 	 */
-	public void registerCounter(final Counter counter, final long instantRatePeriod) {
+	public void registerCounter(final Counter<?> counter, final long instantRatePeriod) {
 		timer.scheduleAtFixedRate(new TimerTask() {
 			@Override
 			public void run() {

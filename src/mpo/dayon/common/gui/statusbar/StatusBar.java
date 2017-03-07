@@ -56,7 +56,7 @@ public class StatusBar extends JPanel {
 		this.message.setText(message);
 	}
 
-	public void addCounter(Counter counter, int width) {
+	public void addCounter(Counter<?> counter, int width) {
 		final JLabel lbl = new JLabel(counter.getUid());
 
 		lbl.setHorizontalAlignment(SwingConstants.CENTER);

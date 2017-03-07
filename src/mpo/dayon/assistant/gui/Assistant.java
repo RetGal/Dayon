@@ -406,7 +406,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				pane.add(tickTextField);
 
 				final JLabel grayLevelsLbl = new JLabel(Babylon.translate("grays"));
-				final JComboBox grayLevelsCb = new JComboBox(Gray8Bits.values());
+				final JComboBox<Gray8Bits> grayLevelsCb = new JComboBox<>(Gray8Bits.values());
 				grayLevelsCb.setSelectedItem(captureEngineConfiguation.getCaptureQuantization());
 
 				pane.add(grayLevelsLbl);
@@ -478,7 +478,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				pane.setLayout(new GridLayout(4, 2, 10, 10));
 
 				final JLabel methodLbl = new JLabel(Babylon.translate("compression.method"));
-				final JComboBox methodCb = new JComboBox(CompressionMethod.values());
+				final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
 				methodCb.setSelectedItem(compressorEngineConfiguation.getMethod());
 
 				pane.add(methodLbl);
