@@ -322,12 +322,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 			private static final long serialVersionUID = -84234190591882758L;
 
 			public void actionPerformed(ActionEvent ev) {
-				// *** HACK
-				// ********************************************************************************************
-				Component frame = (Component) ev.getSource();
-				while (!(frame instanceof JFrame)) {
-					frame = frame.getParent();
-				}
+				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 
@@ -385,12 +380,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 			private static final long serialVersionUID = 2038613804711501981L;
 
 			public void actionPerformed(ActionEvent ev) {
-				// *** HACK
-				// ********************************************************************************************
-				Component frame = (Component) ev.getSource();
-				while (!(frame instanceof JFrame)) {
-					frame = frame.getParent();
-				}
+				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 
@@ -467,12 +457,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 			private static final long serialVersionUID = 1552702344410146383L;
 
 			public void actionPerformed(ActionEvent ev) {
-				// *** HACK
-				// ********************************************************************************************
-				Component frame = (Component) ev.getSource();
-				while (!(frame instanceof JFrame)) {
-					frame = frame.getParent();
-				}
+				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 				pane.setLayout(new GridLayout(4, 2, 10, 10));

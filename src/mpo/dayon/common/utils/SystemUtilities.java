@@ -55,10 +55,9 @@ public abstract class SystemUtilities {
 						}
 					}
 				}
-				ucl.close();
 			}
 			return rootPATH;
-		} catch (URISyntaxException | IOException ex) {
+		} catch (URISyntaxException ex) {
 			throw new RuntimeException(ex); // unlikely (!)
 		}
 	}
