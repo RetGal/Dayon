@@ -10,8 +10,6 @@ public abstract class Counter<T> {
 
 	private final String shortDescription;
 
-	private long totalStart;
-
 	long instantStart;
 
 	Counter(String uid, String shortDescription) {
@@ -42,15 +40,14 @@ public abstract class Counter<T> {
 	 */
 	private void initialize() {
 		synchronized (this) {
-			this.totalStart = this.instantStart = System.currentTimeMillis();
+			this.instantStart = System.currentTimeMillis();
 		}
 	}
 
 	/**
 	 * Initializes that counter and registers it to the {@link BigBrother}.
 	 *
-	 * @param instantPeriod
-	 *            millis
+	 * @param instantPeriod millis
 	 */
 	public void start(long instantPeriod) {
 		initialize();

@@ -119,7 +119,7 @@ public class Assisted implements Subscriber {
 		Log.info("[HTTPS-handshake] Sending the /hello request...");
 
 		try {
-			final URL url = new URL("https://" + configuration.getServerName() + ":" + configuration.getServerPort() + "/hello");
+			final URL url = new URL("https://" + SystemUtilities.formatIPv6(configuration.getServerName()) + ":" + configuration.getServerPort() + "/hello");
 			final URLConnection conn = url.openConnection();
 
 			conn.getInputStream();
@@ -158,7 +158,7 @@ public class Assisted implements Subscriber {
 		};
 
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
-		
+
 		controlHandler.subscribe(this);
 
 		frame.onConnecting(configuration);
@@ -211,7 +211,6 @@ public class Assisted implements Subscriber {
 				} catch (NumberFormatException ex) {
 					return Babylon.translate("connection.settings.invalidPortNumber");
 				}
-
 				return null;
 			}
 		});
@@ -224,7 +223,6 @@ public class Assisted implements Subscriber {
 				configuration.persist();
 			}
 		}
-
 		return ok;
 	}
 
@@ -244,7 +242,6 @@ public class Assisted implements Subscriber {
 		// First time we receive a configuration from the assistant (!)
 
 		// Setup the mouse engine (no need before I guess)
-
 		final MouseEngine mouseEngine = new MouseEngine();
 
 		mouseEngine.configure(new MouseEngineConfiguration());
@@ -275,7 +272,6 @@ public class Assisted implements Subscriber {
 		}
 
 		compressorEngine = new CompressorEngine();
-
 		compressorEngine.configure(compressorEngineConfiguration);
 		compressorEngine.addListener((NetworkAssistedEngine) engine);
 		compressorEngine.start(1);

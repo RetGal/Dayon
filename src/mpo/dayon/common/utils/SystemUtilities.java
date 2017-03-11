@@ -55,10 +55,10 @@ public abstract class SystemUtilities {
 						}
 					}
 				}
+				ucl.close();
 			}
-
 			return rootPATH;
-		} catch (URISyntaxException ex) {
+		} catch (URISyntaxException | IOException ex) {
 			throw new RuntimeException(ex); // unlikely (!)
 		}
 	}
@@ -79,7 +79,6 @@ public abstract class SystemUtilities {
 		if (path.exists() && path.isDirectory()) {
 			return path;
 		}
-
 		return null;
 	}
 
@@ -90,10 +89,8 @@ public abstract class SystemUtilities {
 
 		if (rootPATH != null) {
 			// Anchor not supported : #assistant-setup
-
 			return new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html")).toURI();
 		}
-
 		return null;
 	}
 
@@ -120,7 +117,6 @@ public abstract class SystemUtilities {
 				return null;
 			}
 		}
-
 		return appDir;
 	}
 
@@ -145,7 +141,6 @@ public abstract class SystemUtilities {
 				return null;
 			}
 		}
-
 		return dir;
 	}
 
@@ -163,7 +158,6 @@ public abstract class SystemUtilities {
 			Log.warn("Could not create the application file (2) [" + name + "]!");
 			return null;
 		}
-
 		return file;
 	}
 
@@ -185,7 +179,6 @@ public abstract class SystemUtilities {
 		if (value == null) {
 			throw new RuntimeException("Missing property [" + name + "]!");
 		}
-
 		return value;
 	}
 
@@ -199,7 +192,6 @@ public abstract class SystemUtilities {
 
 			return prop;
 		}
-
 		return props.getProperty(name, defaultValue);
 	}
 
@@ -209,7 +201,6 @@ public abstract class SystemUtilities {
 		if (prop == null) {
 			return defaultValue;
 		}
-
 		return Integer.valueOf(prop);
 	}
 
@@ -219,7 +210,6 @@ public abstract class SystemUtilities {
 		if (prop == null) {
 			return defaultValue;
 		}
-
 		return Boolean.valueOf(prop);
 	}
 
@@ -229,7 +219,6 @@ public abstract class SystemUtilities {
 		if (prop == null) {
 			return defaultValue;
 		}
-
 		return Double.valueOf(prop);
 	}
 
@@ -247,7 +236,6 @@ public abstract class SystemUtilities {
 				return anEnum;
 			}
 		}
-
 		return defaultValue;
 	}
 
@@ -283,7 +271,6 @@ public abstract class SystemUtilities {
 
 			props.add(String.format("%" + size + "." + size + "s [%s]", propname, propvalue));
 		}
-
 		return props;
 	}
 
@@ -294,7 +281,6 @@ public abstract class SystemUtilities {
 			sb.append(line);
 			sb.append(getLineSeparator());
 		}
-
 		return sb.toString();
 	}
 
@@ -369,8 +355,14 @@ public abstract class SystemUtilities {
 				return lookAndFeelInfo.getClassName();
 			}
 		}
-
 		return MetalLookAndFeel.class.getName();
+	}
+
+	public static String formatIPv6(String serverName) {
+		if (serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(\\d{1,3}\\.){3}\\d{1,3}")) {
+			return '[' + serverName + ']';
+		}
+		return serverName;
 	}
 
 }

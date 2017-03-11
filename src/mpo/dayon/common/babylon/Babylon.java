@@ -45,7 +45,7 @@ public abstract class Babylon {
 		return value;
 	}
 
-	public static String translateEnum(Enum value) {
+	public static String translateEnum(Enum<?> value) {
 		final String tag = "enum." + value.getClass().getSimpleName() + "." + value.name();
 		final String val = translate(tag);
 

@@ -19,8 +19,6 @@ public class Preferences {
 
 	private static Preferences preferences;
 
-	private final String name;
-
 	private final File file;
 
 	private final Properties props;
@@ -35,13 +33,11 @@ public class Preferences {
 	private boolean dirty;
 
 	private Preferences() {
-		this.name = null;
 		this.file = null;
 		this.props = new Properties();
 	}
 
-	private Preferences(String name, File file) throws IOException {
-		this.name = name;
+	private Preferences(File file) throws IOException {
 		this.file = file;
 		this.props = new Properties();
 
@@ -78,11 +74,10 @@ public class Preferences {
 			if (file != null) {
 				if (file.exists()) {
 					Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
-					xpreferences = new Preferences(name, file);
 				} else {
 					Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
-					xpreferences = new Preferences(name, file);
 				}
+				xpreferences = new Preferences(file);
 			} else {
 				Log.info("Preferences [null]");
 				xpreferences = NULL;
