@@ -358,7 +358,7 @@ public abstract class SystemUtilities {
 	}
 
 	public static String formatIPv6(String serverName) {
-		if (serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(\\d{1,3}\\.){3}\\d{1,3}")) {
+		if (serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}")) {
 			return '[' + serverName + ']';
 		}
 		return serverName;
