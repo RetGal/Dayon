@@ -1,9 +1,7 @@
 #!/bin/sh
 
 DAYON_HOME=$(dirname "$0")/..
-# Your favorite JRE/JDK 1.6+ ...
-#JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre"
-JAVA_HOME=`ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/java' '{print $1}'`
+JAVA_HOME=$(/usr/libexec/java_home)
 JAVA=$JAVA_HOME/bin/java
 JAVA_OPTS="-Xms32M -Xmx192M"
 

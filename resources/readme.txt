@@ -4,7 +4,7 @@ Contents:
 
   readme.txt   This file.
   doc/         More documentation.
-  bin/         Startup exe & scripts as well configuration files (JVM, LOG4J).
+  bin/         Startup scripts as well configuration files (JVM, LOG4J).
   lib/         JAR files.
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
@@ -31,15 +31,20 @@ Running Dayon!
 
 Linux:
 
-  You might need to chmod +x the scripts dayon.sh/dayon_assistant.sh/dayon_assisted.sh in the bin directory.
+  You might need to chmod +x the scripts dayon.sh, dayon_assistant.sh and dayon_assisted.sh in the bin directory.
+
+
+OSX:
+
+  You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted in the bin directory.
 
 
 Project:
 
   The project is available at the following HTTP addresses:
 
-        https://github.com/retgal/dayon
-        http://dayonhome.sourceforge.net
+	https://retgal.github.io/Dayon/
+	https://github.com/retgal/dayon
 
 
 Enjoy!
