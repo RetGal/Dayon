@@ -28,43 +28,49 @@
 				für 64Bit Windows Varianten.
 			<p>
 				<b>Linux:</b> das .tgz-Paket mittels <code>tar xzvf</code> entpacken und anschliessend die Shellskripte (bin/dayon*) mit <code>chmod +x</code> ausführbar machen. Die installierte JRE resp. JDK wird automatisch detektiert. Die JRE ist nicht im
-				.tgz-Paket enthalten. Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so überprüfen Sie das Vorhandensein einer JRE und definieren deren Pfad in der Variable <code>JAVA_HOME</code> im Skript (bin/dayon_run.sh). Beachten Sie, dass die
+				.tgz-Paket enthalten. Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so überprüfen Sie das Vorhandensein einer JRE und definieren deren Pfad in der Variable <code>JAVA_HOME</code> im Skript (bin/dayon.sh). Beachten Sie, dass die
 				Skripte bloss auf diversen Debian und Ubuntu Versionen getestet worden sind.
 			<p>
-				<b>Mac OS/OS X:</b> Die Applikation ist bisher nicht auf einem Mac getestet worden. Eigentlich sollten die (Linux-) Shellskripte dort ebenso funktionieren (Voraussetzung: installierte JRE).
+				<b>Mac OS/OS X:</b> das Paket an einen Ort ihrer Wahl entpacken. Ev. einen Alias für bin/dayon_assisted und bin/dayon_assistant erstellen und auf den Desktop kopieren. (Voraussetzung: installierte JRE > 1.6).
 			<h2>Changelog</h2>
+			<h3>Änderungen Dayon! v1.5 Pendragon (5. Mai 2017)</h3>
+			<ul>
+				<li>IPv6 Unterstützung
+				<li>Startskripte OS X kompatibel
+				<li>Aktualisierte JRE
+			</ul>
 			<h3>Änderungen Dayon! v1.4 Skytale (3. Januar 2017)</h3>
 			<ul>
-				<li>Verschlüsselte Kommunikation zwischen dem Assistenten und dem Assistierten (<span style="color: #ff0000">v1.4 ist inkompatibel zu allen Vorgängerversionen</span>).
+				<li>Verschlüsselte Kommunikation zwischen dem Assistenten und dem Assistierten (<span class="red">v1.4 ist inkompatibel zu allen Vorgängerversionen</span>)
 				<li>Windows-Installer optimiert
 				<li>Deutsche Lokalisierung (Oberfläche und Doku)
 			</ul>
 			<h3>Änderungen Dayon! v1.3 Phoenix (10. Dezember 2016)</h3>
 			<ul>
-				<li>Probleme mit Windows UAC-Dialogen behoben.
-				<li>Unterstützt hohe Bildschirmauflösungen, welche in früheren zu schwerwiegenden Fehlern geführt hatten.
-				<li>Weniger manuelle Konfiguration unter Linux notwendig - die installierte JAVA-Version wird automatisch erkannt.
-				<li>Neuer, verbesserter Installer für Windows, inklusive einer OpenJDK (1.8) basierten JRE.
-				<li>Aktualisierte Bibliotheken.
-				<li>GPLv3.
+				<li>Probleme mit Windows UAC-Dialogen behoben
+				<li>Unterstützt hohe Bildschirmauflösungen, welche in früheren zu schwerwiegenden Fehlern geführt hatten
+				<li>Weniger manuelle Konfiguration unter Linux notwendig - die installierte JAVA-Version wird automatisch erkannt
+				<li>Neuer, verbesserter Installer für Windows, inklusive einer OpenJDK (1.8) basierten JRE
+				<li>Aktualisierte Bibliotheken
+				<li>GPLv3
 			</ul>
 			<h3>Änderungen Dayon! v1.2 (3. Januar 2009)</h3>
 			<ul>
-				<li>Möglicher schwarzer Bildschirm beim Aufstarten (Assistent) behoben.
-				<li>Unterstützung Kontrolle.
-				<li>Java Web Start (<span style="color: #ff0000">v1.2 ist nicht kompatibel mit v1.1</span>) um die Unterstützten-App zu starten.
-				<li>Öffentliche IP-Adresse-Dienst (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>).
-				<li>Detailliertere Schnellstart-Anleitung.
-				<li>Französische Lokalisierung.
+				<li>Möglicher schwarzer Bildschirm beim Aufstarten (Assistent) behoben
+				<li>Unterstützung Kontrolle
+				<li>Java Web Start (<span class="red">v1.2 ist nicht kompatibel mit v1.1</span>) um die Unterstützten-App zu starten
+				<li>Öffentliche IP-Adresse-Dienst (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>)
+				<li>Detailliertere Schnellstart-Anleitung
+				<li>Französische Lokalisierung
 			</ul>
 			<h3>Änderungen Dayon! v1.1 (24. Dezember 2008)</h3>
 			<ul>
-				<li>Protokollverbesserungen (<span style="color: #ff0000">v1.1 ist nicht kompatibel mit v1.0</span>).
-				<li>CPU-Belastung verbessert.
-				<li>Initiale Bildschirmerfassungs-Enkodierung aufgeräumt.
-				<li>Neue Kompressionsmethoden: BZIP2, LZMA.
-				<li>Bitmap Puffer.
-				<li>GUI etwas aufpolliert.
+				<li>Protokollverbesserungen (<span class="red">v1.1 ist nicht kompatibel mit v1.0</span>)
+				<li>CPU-Belastung verbessert
+				<li>Initiale Bildschirmerfassungs-Enkodierung aufgeräumt
+				<li>Neue Kompressionsmethoden: BZIP2, LZMA
+				<li>Bitmap Puffer
+				<li>GUI etwas aufpolliert
 			</ul>
 			<h3>Änderungen Dayon! v1.0 (4. Dezember 2008)</h3>
 			<ul>

@@ -29,11 +29,17 @@
 				<b>Linux:</b> you have to <code>tar xzvf</code> the package and then setup the <code>chmod +x</code> of the scripts (bin/dayon*). The location of the installed JRE/JDK is going to be detected automatically. It is not bundled in the tgz. If it should
 				for whatever reason fail to do so, then you can set the JAVA_HOME in (bin/dayon_run.sh) manually. Note that, I've been testing this on various Debian and Ubuntu releases only.
 			<p>
-				<b>Mac OS/OS X:</b> I've not tested the application on a Mac platform (no access to such a machine) but I guess you can use the shell scripts.
+				<b>Mac OS/OS X:</b> extract the package to a location of your choice. For more convenience you may want to create an alias for bin/dayon_assisted and bin/dayon_assistant and copy them to your desktop. (JRE > 1.6 required)
 			<h2>Change Log</h2>
+			<h3>Changes for Dayon! v1.5 Pendragon (May 5th, 2017)</h3>
+			<ul>
+				<li>IPv6 support
+				<li>OS X compatible start scripts
+				<li>Updated JRE
+			</ul>
 			<h3>Changes for Dayon! v1.4 Skytale (January 3rd, 2017)</h3>
 			<ul>
-				<li>Encrypted communication between assistant and assisted (<span style="color: #ff0000">v1.4 is not compatible with all previous versions</span>).
+				<li>Encrypted communication between assistant and assisted (<span class="red">v1.4 is not compatible with all previous versions</span>).
 				<li>Optimized Windows installer
 				<li>German localisation.
 			</ul>
@@ -50,14 +56,14 @@
 			<ul>
 				<li>Fix possible black screen (assistant) at startup.
 				<li>Control support.
-				<li>Java Web Start (<span style="color: #ff0000">v1.2 is not compatible with v1.1</span>) to start the assisted.
+				<li>Java Web Start (<span class="red">v1.2 is not compatible with v1.1</span>) to start the assisted.
 				<li>Public IP address service (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>).
 				<li>Quickstart guide improvements.
 				<li>French localization.
 			</ul>
 			<h3>Changes for Dayon! v1.1 (December 24, 2008)</h3>
 			<ul>
-				<li>Protocol improvements (<span style="color: #ff0000">v1.1 is not compatible with v1.0</span>).
+				<li>Protocol improvements (<span class="red">v1.1 is not compatible with v1.0</span>).
 				<li>Improved a bit the CPU usage.
 				<li>Cleanup initial screen capture encoding.
 				<li>New compression methods : BZIP2, LZMA.
