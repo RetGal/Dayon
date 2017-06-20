@@ -5,6 +5,7 @@
 /bin/org/
 /bin/SevenZip/
 /build/*.jar
+/dist/
 /dist/readme.txt
 /dist/bin/
 /dist/doc/
