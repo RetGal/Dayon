@@ -4,7 +4,7 @@ Contents:
 
   readme.txt   This file.
   doc/         More documentation.
-  bin/         Startup scripts as well configuration files (JVM, LOG4J).
+  bin/         Startup scripts and configuration files.
   lib/         JAR files.
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
@@ -31,7 +31,7 @@ Running Dayon!
 
 Linux:
 
-  You might need to chmod +x the scripts dayon.sh, dayon_assistant.sh and dayon_assisted.sh in the bin directory.
+  You might need to chmod +x setup.sh before executing it.
 
 
 OSX:

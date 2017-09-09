@@ -22,6 +22,7 @@ INSTALL_DIR=$(dirname "$0")
 if [ "$INSTALL_DIR" = "." ]; then
 	INSTALL_DIR=`pwd`
 fi
+chmod +x $INSTALL_DIR/bin/*.sh
 
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
