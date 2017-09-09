@@ -9,6 +9,8 @@
 	<property name="dir.build" value="${dir.binfile}/build" />
 	<property name="dir.dist" value="${dir.binfile}/dist" />
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner" />
+	<property name="ant.build.javac.source" value="1.7"/>
+	<property name="ant.build.javac.target" value="1.7"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -41,7 +43,7 @@
 	<target name="build" depends="compile">
 		<jar destfile="${dir.build}/dayon.jar">
 			<manifest>
-				<attribute name="Implementation-Version" value="1.5 #0" />
+				<attribute name="Implementation-Version" value="1.5 #1" />
 				<attribute name="Main-Class" value="${main.class}" />
 				<attribute name="Class-Path" value=". jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar" />
 				<attribute name="Permissions" value="all-permissions" />
