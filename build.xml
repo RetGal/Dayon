@@ -67,6 +67,8 @@
 		<copy todir="${dir.dist}/doc/html">
 			<fileset dir="${dir.docs}"/>
 		</copy>
+		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
+		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
