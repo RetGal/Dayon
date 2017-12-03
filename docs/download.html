@@ -26,10 +26,10 @@
 			<p>
 				<b>Windows:</b> two installers are available and the installation should be straightforward. One package comes bundled with an OpenJDK 1.8 based JRE and one without. The one with included JRE is for 64bit versions of Windows only.
 			<p>
-				<b>Linux:</b> you have to <code>tar xzvf</code> the package and then setup the <code>chmod +x</code> of the scripts (bin/dayon*). The location of the installed JRE/JDK is going to be detected automatically. It is not bundled in the tgz. If it should
-				for whatever reason fail to do so, then you can set the JAVA_HOME in (bin/dayon_run.sh) manually. Note that, I've been testing this on various Debian and Ubuntu releases only.
+				<b>Linux:</b> you have to <code>tar xzvf</code> the package. Make the script <code>setup.sh</code> executable (<code>chmod +x</code>) and run it afterwards. The location of the installed JRE/JDK is going to be detected automatically. It is not bundled in the tgz. If it should
+				for whatever reason fail to do so, then you can set the <code>JAVA_HOME</code> in (<code>bin/dayon_run.sh</code>) manually. Note that, I've been testing this on various Debian and Ubuntu releases only.
 			<p>
-				<b>Mac OS/OS X:</b> extract the package to a location of your choice. For more convenience you may want to create an alias for bin/dayon_assisted and bin/dayon_assistant and copy them to your desktop. (JRE > 1.6 required)
+				<b>Mac OS/OS X:</b> extract the package to a location of your choice. For more convenience you may want to create an alias for bin/dayon_assisted and bin/dayon_assistant and copy them to your desktop. (JDK > 1.6 required)
 			<h2>Change Log</h2>
 			<h3>Changes for Dayon! v1.5 Pendragon (May 5th, 2017)</h3>
 			<ul>

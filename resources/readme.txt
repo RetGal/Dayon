@@ -34,7 +34,7 @@ Linux:
   You might need to chmod +x setup.sh before executing it.
 
 
-OSX:
+OSX/macOS:
 
   You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted in the bin directory.
 
