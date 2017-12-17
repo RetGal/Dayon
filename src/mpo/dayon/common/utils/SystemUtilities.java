@@ -278,13 +278,9 @@ public abstract class SystemUtilities {
 
 		for (String line : getSystemProperties()) {
 			sb.append(line);
-			sb.append(getLineSeparator());
+			sb.append(System.getProperty("line.separator"));
 		}
 		return sb.toString();
-	}
-
-	private static String getLineSeparator() {
-		return AccessController.doPrivileged(new GetPropertyAction("line.separator"));
 	}
 
 	public static String getRamInfo() {
