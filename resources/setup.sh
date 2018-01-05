@@ -29,7 +29,7 @@ cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 Encoding=UTF-8
 Name=Dayon! Assistant
 Exec=$INSTALL_DIR/bin/dayon_assistant.sh
-Icon=$INSTALL_DIR/favicon.ico
+Icon=$INSTALL_DIR/doc/html/favicon.ico
 Terminal=false
 Type=Application
 Categories=Network;Communication;
@@ -43,7 +43,7 @@ cat <<EOF > /usr/share/applications/DayonAssisted.desktop
 Encoding=UTF-8
 Name=Dayon! Assisted
 Exec=$INSTALL_DIR/bin/dayon_assisted.sh
-Icon=$INSTALL_DIR/favicon.ico
+Icon=$INSTALL_DIR/doc/html/favicon.ico
 Terminal=false
 Type=Application
 Categories=Network;Communication;
