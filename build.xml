@@ -1,41 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="build" name="Create runnable jar for project Dayon! with libraries in same folder">
-	<property name="dir.binfile" value="." />
-	<property name="dir.src" value="${dir.binfile}/src" />
-	<property name="dir.docs" value="${dir.binfile}/docs" />
-	<property name="dir.lib" value="${dir.binfile}/lib" />
-	<property name="dir.res" value="${dir.binfile}/resources" />
-	<property name="dir.bin" value="${dir.binfile}/bin" />
-	<property name="dir.build" value="${dir.binfile}/build" />
-	<property name="dir.dist" value="${dir.binfile}/dist" />
-	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner" />
+	<property name="dir.binfile" value="."/>
+	<property name="dir.src" value="${dir.binfile}/src"/>
+	<property name="dir.docs" value="${dir.binfile}/docs"/>
+	<property name="dir.lib" value="${dir.binfile}/lib"/>
+	<property name="dir.res" value="${dir.binfile}/resources"/>
+	<property name="dir.bin" value="${dir.binfile}/bin"/>
+	<property name="dir.build" value="${dir.binfile}/build"/>
+	<property name="dir.dist" value="${dir.binfile}/dist"/>
+	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.7"/>
 	<property name="ant.build.javac.target" value="1.7"/>
+	<property name="version.major" value="1.5"/>
+	<property name="version.minor" value="3"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
-			<include name="*.jar" />
+			<include name="*.jar"/>
 		</fileset>
 	</path>
 
 	<target name="clean">
-		<delete dir="${dir.bin}" />
-		<delete dir="${dir.build}" />
-		<delete dir="${dir.dist}" />
+		<delete dir="${dir.bin}"/>
+		<delete dir="${dir.build}"/>
+		<delete dir="${dir.dist}"/>
 	</target>
 
 	<target name="init">
-		<tstamp />
-		<mkdir dir="${dir.bin}" />
-		<mkdir dir="${dir.build}" />
-		<mkdir dir="${dir.dist}/doc/html" />
+		<tstamp/>
+		<mkdir dir="${dir.bin}"/>
+		<mkdir dir="${dir.build}"/>
+		<mkdir dir="${dir.dist}/doc/html"/>
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
-		<javac debug="true" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath" />
+		<javac debug="true" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath"/>
 		<copy todir="${dir.bin}">
 			<fileset dir="${dir.src}">
-				<exclude name="**/*.java" />
+				<exclude name="**/*.java"/>
 			</fileset>
 		</copy>
 	</target>
@@ -43,27 +45,27 @@
 	<target name="build" depends="compile">
 		<jar destfile="${dir.build}/dayon.jar">
 			<manifest>
-				<attribute name="Implementation-Version" value="1.5 #2" />
-				<attribute name="Main-Class" value="${main.class}" />
-				<attribute name="Class-Path" value=". jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar" />
-				<attribute name="Permissions" value="all-permissions" />
+				<attribute name="Implementation-Version" value="${version.major} #${version.minor}"/>
+				<attribute name="Main-Class" value="${main.class}"/>
+				<attribute name="Class-Path" value=". jetty-continuation-8.1.21.v20160908.jar jetty-http-8.1.21.v20160908.jar jetty-io-8.1.21.v20160908.jar jetty-server-8.1.21.v20160908.jar jetty-util-8.1.21.v20160908.jar servlet-api-3.0.jar"/>
+				<attribute name="Permissions" value="all-permissions"/>
 			</manifest>
-			<fileset dir="${dir.bin}" />
+			<fileset dir="${dir.bin}"/>
 		</jar>
 	</target>
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/jetty-continuation-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/jetty-http-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/jetty-io-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/jetty-server-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/jetty-util-8.1.21.v20160908.jar" todir="${dir.dist}/lib" />
-		<copy file="${dir.binfile}/lib/servlet-api-3.0.jar" todir="${dir.dist}/lib" />
+		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/jetty-continuation-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/jetty-http-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/jetty-io-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/jetty-server-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/jetty-util-8.1.21.v20160908.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/servlet-api-3.0.jar" todir="${dir.dist}/lib"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
-				<exclude name="jre/" />
-				<exclude name="license/azul_zulu_license.txt" />
+				<exclude name="jre/"/>
+				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
 		<copy todir="${dir.dist}/doc/html">
@@ -75,15 +77,35 @@
 
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
 		<copy todir="${dir.dist}">
-			<fileset dir="${dir.res}" />
+			<fileset dir="${dir.res}"/>
 		</copy>
 		<copy todir="${dir.dist}/doc/html">
 			<fileset dir="${dir.docs}"/>
 		</copy>
 	</target>
 
-
 	<target name="sign" description="Signs the distribution project jar">
-		<signjar keystore="${dir.src}/mpo/dayon/common/security/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/lib/dayon.jar" tsaurl="http://tsa.starfieldtech.com" />
+		<signjar keystore="${dir.src}/mpo/dayon/common/security/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/lib/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
+	</target>
+
+	<target name="tar" depends="dist" description="Creates a gzipped tar archive of the distribution for Linux">
+		<copy todir="${dir.dist}/tar/dayon">
+			<fileset dir="${dir.dist}">
+				<exclude name="jre/"/>
+				<exclude name="license/azul_zulu_license.txt"/>
+			</fileset>
+		</copy>
+		<tar destfile="${dir.dist}/dayon.${version.major}.${version.minor}.tgz" longfile="gnu" compression="gzip">
+			<tarfileset dir="${dir.dist}/tar">
+				<include name="**/*"/>
+				<exclude name="**/*.sh"/>
+				<exclude name="**/bin/*"/>
+			</tarfileset>
+			<tarfileset dir="${dir.dist}/tar" filemode="755">
+				<include name="**/*.sh"/>
+				<include name="**/bin/*"/>
+			</tarfileset>
+		</tar>
+		<delete dir="${dir.dist}/tar"/>
 	</target>
 </project>
