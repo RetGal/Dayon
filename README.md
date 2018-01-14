@@ -22,7 +22,7 @@ With his permission I moved the code base to GitHub, where it can easier be main
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is 1.5.3 - released more than nine years after the latest release of the original author.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is 1.5.3 - released more than nine years after the latest release of the original author.
 
 This version uses updated libraries, can handle Windows UAC-dialogs, encrypts all its communication, is IPv6 compliant and finally fully **macOS** compatible.
 
