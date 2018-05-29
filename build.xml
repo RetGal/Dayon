@@ -12,7 +12,7 @@
 	<property name="ant.build.javac.source" value="1.7"/>
 	<property name="ant.build.javac.target" value="1.7"/>
 	<property name="version.major" value="1.5"/>
-	<property name="version.minor" value="3"/>
+	<property name="version.minor" value="4"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
