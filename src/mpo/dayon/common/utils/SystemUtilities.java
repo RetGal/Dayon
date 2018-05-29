@@ -12,7 +12,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -22,8 +21,6 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.sun.jmx.mbeanserver.GetPropertyAction;
 
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;

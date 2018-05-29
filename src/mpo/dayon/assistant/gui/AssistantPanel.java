@@ -22,8 +22,6 @@ public class AssistantPanel extends JPanel {
 
 	private static final int MOUSE_CURSOR_HEIGHT = 20;
 
-	private int captureId = -1;
-
 	@Nullable
 	private BufferedImage captureImage;
 
@@ -78,8 +76,6 @@ public class AssistantPanel extends JPanel {
 					setSize(size);
 					setPreferredSize(size);
 				}
-
-				AssistantPanel.this.captureId = captureId;
 
 				AssistantPanel.this.captureImage = captureImage;
 
