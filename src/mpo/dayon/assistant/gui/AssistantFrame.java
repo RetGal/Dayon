@@ -19,6 +19,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -380,7 +381,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnMouseMove(int x, int y) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -392,7 +393,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnMousePressed(int x, int y, int button) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -404,7 +405,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnMouseReleased(int x, int y, int button) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -416,7 +417,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnMouseWheeled(int x, int y, int rotations) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -428,7 +429,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnKeyPressed(int keycode, char keychar) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -440,7 +441,7 @@ public class AssistantFrame extends BaseFrame {
 	}
 
 	private void fireOnKeyReleased(int keycode, char keychar) {
-		final AssistantFrameListener[] xlisteners = listeners.getListeners();
+		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;

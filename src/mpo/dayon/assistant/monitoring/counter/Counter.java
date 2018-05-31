@@ -1,10 +1,12 @@
 package mpo.dayon.assistant.monitoring.counter;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import mpo.dayon.assistant.monitoring.BigBrother;
-import mpo.dayon.common.event.Listeners;
 
 public abstract class Counter<T> {
-	private final Listeners<CounterListener<T>> listeners = new Listeners<>(CounterListener.class);
+	private final List<CounterListener<T>> listeners = new CopyOnWriteArrayList<>();
 
 	private final String uid;
 
@@ -61,7 +63,7 @@ public abstract class Counter<T> {
 	public abstract int getWidth();
 
 	void fireOnInstantValueUpdated(T value) {
-		final CounterListener<T>[] xlisteners = listeners.getListeners();
+		final List<CounterListener<T>> xlisteners = listeners;
 
 		if (xlisteners == null) {
 			return;
