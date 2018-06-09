@@ -12,45 +12,40 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class NetworkAssistantHttpsEngine {
-	private final int port;
+
+	private final static String KEY_STORE_PATH = "/mpo/dayon/common/security/X509";
+	private final static String KEY_STORE_PASS = "spasspass";
 
 	private final Server server;
 
-	private final MySocketConnector acceptor;
+	private final MyServerConnector acceptor;
 
 	private final MyHttpHandler handler;
 
 	public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		this.port = port;
 
 		this.server = new Server();
-		this.server.setSendServerVersion(false);
 
-		SslContextFactory contextFactory = new SslContextFactory(true);
+		HttpConfiguration https_config = new HttpConfiguration();
+		https_config.setSecureScheme("https");
+		https_config.addCustomizer(new SecureRequestCustomizer());
 
-		// this looks like fun, doesn't it?!?
-		// contextFactory.setKeyStorePath() would be easier, but it can't handle
-		// paths from within the jar..
-		// ..and contextFactory.setKeyStoreInputStream() is deprecated
-		final String keyStorePath = "/mpo/dayon/common/security/X509";
-		final String keyStorePass = "spasspass";
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
-
-		contextFactory.setKeyStore(keyStore);
-		contextFactory.setKeyStorePassword(keyStorePass);
-		this.acceptor = new MySocketConnector(contextFactory);
+		this.acceptor = new MyServerConnector(server, createSslContextFactory(), port);
+		this.acceptor.addConnectionFactory(new HttpConnectionFactory(https_config));
 
 		this.server.setConnectors(new Connector[] { this.acceptor });
 
@@ -76,7 +71,6 @@ public class NetworkAssistantHttpsEngine {
 			if (ex instanceof IOException) {
 				throw (IOException) ex;
 			}
-
 			throw new RuntimeException(ex); // dunno (!)
 		}
 
@@ -87,6 +81,7 @@ public class NetworkAssistantHttpsEngine {
 				try {
 					acceptor.__acceptLOCK.wait();
 				} catch (InterruptedException ignored) {
+					Log.info("[HTTPS] Swallowed an InterruptedException");
 				}
 			}
 		}
@@ -111,28 +106,36 @@ public class NetworkAssistantHttpsEngine {
 		}
 	}
 
-	private class MySocketConnector extends SslSocketConnector {
+	private SslContextFactory createSslContextFactory() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+		SslContextFactory sslContextFactory = new SslContextFactory();
+		// contextFactory.setKeyStorePath() would be more intuitive - but it
+		// can't handle paths from within the jar..
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+		sslContextFactory.setKeyStore(keyStore);
+		sslContextFactory.setKeyStorePassword(KEY_STORE_PASS);
+		return sslContextFactory;
+	}
+
+	private class MyServerConnector extends ServerConnector {
 		private final Object __acceptLOCK = new Object();
 
 		private boolean __acceptClosed;
-
 		private boolean __acceptStopped;
 
-		public MySocketConnector(SslContextFactory contextFactory) {
-			super(contextFactory);
+		public MyServerConnector(Server server, SslContextFactory contextFactory, int port) {
+			super(server, contextFactory);
 			setPort(port);
 		}
 
 		@Override
-		public void accept(int acceptorID) throws IOException, InterruptedException {
+		public void accept(int acceptorID) throws IOException {
 			try {
 				Log.info("[HTTPS] The engine acceptor [" + acceptorID + "] is accepting...");
-
 				super.accept(acceptorID);
 
 			} finally {
 				Log.info("[HTTPS] The engine acceptor has accepted.");
-
 				synchronized (__acceptLOCK) {
 					if (__acceptClosed) {
 						Log.info("[HTTPS] The engine acceptor is stopping...");
@@ -145,14 +148,12 @@ public class NetworkAssistantHttpsEngine {
 		}
 
 		@Override
-		public void close() throws IOException {
+		public void close() {
 			synchronized (__acceptLOCK) {
 				__acceptClosed = true;
 			}
-
 			super.close();
 		}
-
 	}
 
 	/**
@@ -179,10 +180,9 @@ public class NetworkAssistantHttpsEngine {
 				acceptor.close();
 
 				// Wait for the start of the Dayon! acceptor before replying to
-				// this HTTP request (I want to ensure
-				// we're now ready to receive a Dayon! message coming from the
-				// assisted side).
-
+				// this HTTP request
+				// (I want to ensure we're now ready to receive a Dayon! message
+				// coming from the assisted side).
 				Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
 
 				synchronized (__dayonLOCK) {
@@ -199,7 +199,6 @@ public class NetworkAssistantHttpsEngine {
 			}
 
 			super.handle(target, baseRequest, request, response);
-
 			Log.info("[HTTPS] Response \n-----\n" + response + "\n-----");
 		}
 

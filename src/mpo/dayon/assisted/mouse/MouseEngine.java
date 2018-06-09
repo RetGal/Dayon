@@ -2,6 +2,7 @@ package mpo.dayon.assisted.mouse;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.util.List;
 
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.Configurable;
@@ -81,7 +82,7 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 	}
 
 	private boolean fireOnLocationUpdated(Point location) {
-		final MouseEngineListener[] xlisteners = listeners.getListeners();
+		final List<MouseEngineListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return true;

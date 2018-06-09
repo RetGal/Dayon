@@ -1,6 +1,7 @@
 package mpo.dayon.assisted.capture;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -252,7 +253,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	}
 
 	private void fireOnCaptured(Capture capture) {
-		final CaptureEngineListener[] xlisteners = listeners.getListeners();
+		final List<CaptureEngineListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
@@ -264,7 +265,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	}
 
 	private void fireOnRawCaptured(int id, byte[] grays) {
-		final CaptureEngineListener[] xlisteners = listeners.getListeners();
+		final List<CaptureEngineListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;

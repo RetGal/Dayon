@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.decompressor;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -98,7 +99,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	}
 
 	private void fireOnDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
-		final DeCompressorEngineListener[] xlisteners = listeners.getListeners();
+		final List<DeCompressorEngineListener> xlisteners = listeners.getListeners();
 
 		if (xlisteners == null) {
 			return;
