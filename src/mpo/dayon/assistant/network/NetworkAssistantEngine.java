@@ -1,5 +1,8 @@
 package mpo.dayon.assistant.network;
 
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
@@ -42,6 +45,7 @@ import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
+	
 	private final NetworkCaptureMessageHandler captureMessageHandler;
 
 	private final NetworkMouseLocationMessageHandler mouseMessageHandler;
@@ -139,10 +143,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		DataOutputStream out = null;
 
 		try {
-			final int port = configuration.getPort();
+			final int port = getPort();
 
 			Log.info(String.format("HTTP server [port:%d]", port));
-			fireOnHttpStarting(configuration.getPort());
+			fireOnHttpStarting(port);
 
 			NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)
 
@@ -152,21 +156,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			Log.info(String.format("Dayon! server [port:%d]", configuration.getPort()));
 			fireOnStarting(configuration.getPort());
 
-			final String keyStorePath = "/mpo/dayon/common/security/X509";
-			final String keyStorePass = "spasspass";
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(keyStorePath), keyStorePass.toCharArray());
+			keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(keyStore, keyStorePass.toCharArray());
-			SSLContext scontext = SSLContext.getInstance("TLS");
-			scontext.init(kmf.getKeyManagers(), null, null);
+			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
+			SSLContext sslContext = SSLContext.getInstance("TLS");
+			sslContext.init(kmf.getKeyManagers(), null, null);
 			
-			SSLServerSocketFactory ssf = scontext.getServerSocketFactory();
-			server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
+			SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+			server = (SSLServerSocket) ssf.createServerSocket(port);
 
 			Log.info("Accepting ...");
-			fireOnAccepting(configuration.getPort());
+			fireOnAccepting(port);
 
 			if (https != null) {
 				https.onDayonAccepting();

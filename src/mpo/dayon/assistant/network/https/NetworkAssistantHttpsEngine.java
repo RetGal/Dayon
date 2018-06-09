@@ -1,5 +1,8 @@
 package mpo.dayon.assistant.network.https;
 
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -26,9 +29,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class NetworkAssistantHttpsEngine {
-
-	private final static String KEY_STORE_PATH = "/mpo/dayon/common/security/X509";
-	private final static String KEY_STORE_PASS = "spasspass";
 
 	private final Server server;
 

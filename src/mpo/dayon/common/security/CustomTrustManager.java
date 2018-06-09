@@ -13,75 +13,64 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 public class CustomTrustManager implements X509TrustManager {
+	
+	public final static String KEY_STORE_PATH = "/mpo/dayon/common/security/X509";
+	public final static String KEY_STORE_PASS = "spasspass";
 
-	final X509TrustManager finalDefaultTm;
-	final X509TrustManager finalOwnTm;
+	private X509TrustManager defaultTm;
+	private X509TrustManager ownTm;
 
 	public CustomTrustManager() {
-		
-		X509TrustManager defaultTm = null;
-		X509TrustManager ownTm = null;
-		
+				
 		TrustManagerFactory tmf;
 		try {
 			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		// using null here initialises the TMF with the default trust store.
-		tmf.init((KeyStore) null);
-
-		// get hold of the default trust manager
-		for (TrustManager tm : tmf.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				defaultTm = (X509TrustManager) tm;
-				break;
-			}
-		}
+			// using null here initializes the TMF with the default trust store.
+			tmf.init((KeyStore) null);
+			// get hold of the default trust manager
+			defaultTm = getDefaultX509TrustManager(tmf);
 		
-		final String keyStorePath = "/mpo/dayon/common/security/X509";
-		final String keyStorePass = "spasspass";
-
-		InputStream myKeys = getClass().getResourceAsStream(keyStorePath);
-
-		// do the same with our own trust store this time
-		KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		myTrustStore.load(myKeys, keyStorePass.toCharArray());
-
-		myKeys.close();
-
-		tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		tmf.init(myTrustStore);
-
-		// get hold of the default trust manager
-		for (TrustManager tm : tmf.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				ownTm = (X509TrustManager) tm;
-				break;
-			}
-		}
+			// do the same with our own trust store this time
+			KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			InputStream myKeys = getClass().getResourceAsStream(KEY_STORE_PATH);
+			myTrustStore.load(myKeys, KEY_STORE_PASS.toCharArray());
+			myKeys.close();
+	
+			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+			tmf.init(myTrustStore);
+			// get hold of the default trust manager
+			ownTm = getDefaultX509TrustManager(tmf);
 		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		finalDefaultTm = defaultTm;
-		finalOwnTm = ownTm;
+	}
+	
+	private X509TrustManager getDefaultX509TrustManager(TrustManagerFactory tmf) throws NoSuchAlgorithmException {
+		for (TrustManager tm : tmf.getTrustManagers()) {
+			if (tm instanceof X509TrustManager) {
+				return (X509TrustManager) tm;
+			}
+		}
+		throw new NoSuchAlgorithmException();
 	}
 
 	@Override
 	public X509Certificate[] getAcceptedIssuers() {
 		// if you're planning to use client-cert auth, merge results from
 		// "defaultTm" and "ownTm".
-		return finalDefaultTm.getAcceptedIssuers();
+		return defaultTm.getAcceptedIssuers();
 	}
 
 	@Override
 	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 		try {
 			// check with own TM first
-			finalOwnTm.checkServerTrusted(chain, authType);
+			ownTm.checkServerTrusted(chain, authType);
 		} catch (CertificateException e) {
 			// this will throw another CertificateException if this fails
 			// too.
-			finalDefaultTm.checkServerTrusted(chain, authType);
+			defaultTm.checkServerTrusted(chain, authType);
 		}
 	}
 
@@ -89,7 +78,7 @@ public class CustomTrustManager implements X509TrustManager {
 	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
 		// if you're planning to use client-cert auth, do the same as
 		// checking the server.
-		finalDefaultTm.checkClientTrusted(chain, authType);
+		defaultTm.checkClientTrusted(chain, authType);
 	}
 
 }
