@@ -45,6 +45,13 @@ public class JettyLogger implements Logger {
 			Log.debug("[JETTY] " + message, throwable);
 		}
 	}
+	
+	@Override
+	public void debug(String message, long arg) {
+		if (isDebugEnabled()) {
+			Log.debug("[JETTY] " + format(message, arg));
+		}
+	}
 
 	@Override
 	public String getName() {
