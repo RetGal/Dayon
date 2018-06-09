@@ -49,7 +49,7 @@
 			<manifest>
 				<attribute name="Implementation-Version" value="${version.major} #${version.minor}"/>
 				<attribute name="Main-Class" value="${main.class}"/>
-				<attribute name="Class-Path" value=". jetty-continuation-${jetty.version}.jar jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar servlet-api-3.1.jar"/>
+				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar servlet-api-3.1.jar"/>
 				<attribute name="Permissions" value="all-permissions"/>
 			</manifest>
 			<fileset dir="${dir.bin}"/>
@@ -58,7 +58,6 @@
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/jetty-continuation-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-http-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-io-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-server-${jetty.version}.jar" todir="${dir.dist}/lib"/>
