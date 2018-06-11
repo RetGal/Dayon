@@ -130,9 +130,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	    robot.keyPress(KeyEvent.VK_U);
 	    robot.keyRelease(KeyEvent.VK_U);
 	    char[] charArray = Integer.toHexString(keyCode).toCharArray();
-	    // simulate a key press for each char
+	    // simulate a key press/release for each char
+    	// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
 	    for (char c : charArray) {
-	        int code = getKeyCode(c);
+	        int code = Integer.valueOf(Character.toUpperCase(c));
 	        robot.keyPress(code);
 	        robot.keyRelease(code);
 		}
@@ -140,43 +141,4 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	    robot.keyRelease(KeyEvent.VK_CONTROL);
 	}
 
-	/**
-	 * Maps a hex char to its corresponding virtual key code
-	 */
-	private int getKeyCode(char c) {
-		switch(c) {
-		case '0':
-			return 48;
-		case '1':
-			return 49;
-		case '2':
-			return 50;
-		case '3':
-			return 51;
-		case '4':
-			return 52;
-		case '5':
-			return 53;
-		case '6':
-			return 54;
-		case '7':
-			return 55;
-		case '8':
-			return 56;
-		case '9':
-			return 57;
-		case 'a':
-			return 65;
-		case 'b':
-			return 66;
-		case 'c':
-			return 67;
-		case 'd':
-			return 68;
-		case 'e':
-			return 69;
-		default:
-			return 70;
-		}
-	}
 }
