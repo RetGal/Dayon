@@ -21,6 +21,8 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 	public static final int BUTTON2 = 1 << 3;
 
 	public static final int BUTTON3 = 1 << 4;
+	
+	public static final int UNDEFINED = -1;
 
 	private static final int WHEEL = 1 << 5;
 

@@ -43,41 +43,36 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	public void onMousePressed(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
 			protected void execute() throws Exception {
-				int xbutton = -1;
-
-				if (MouseEvent.BUTTON1 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON1;
-				} else if (MouseEvent.BUTTON2 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON2;
-				} else if (MouseEvent.BUTTON3 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON3;
-				}
-
-				if (button != -1) {
+				int xbutton = getActingMouseButton(button);
+				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
 				}
 			}
 		});
 	}
-
+	
 	public void onMouseReleased(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
 			protected void execute() throws Exception {
-				int xbutton = -1;
-
-				if (MouseEvent.BUTTON1 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON1;
-				} else if (MouseEvent.BUTTON2 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON2;
-				} else if (MouseEvent.BUTTON3 == button) {
-					xbutton = NetworkMouseControlMessage.BUTTON3;
-				}
-
-				if (button != -1) {
+				int xbutton = getActingMouseButton(button);
+				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.RELEASED, xbutton));
 				}
 			}
 		});
+	}
+	
+	private int getActingMouseButton(final int button) {
+		if (MouseEvent.BUTTON1 == button) {
+			return NetworkMouseControlMessage.BUTTON1;
+		}
+		if (MouseEvent.BUTTON2 == button) {
+			return NetworkMouseControlMessage.BUTTON2;
+		}
+		if (MouseEvent.BUTTON3 == button) {
+			return NetworkMouseControlMessage.BUTTON3;
+		}
+		return NetworkMouseControlMessage.UNDEFINED;
 	}
 
 	public void onMouseWheeled(final int x, final int y, final int rotations) {
