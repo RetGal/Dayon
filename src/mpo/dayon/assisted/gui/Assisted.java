@@ -168,7 +168,7 @@ public class Assisted implements Subscriber {
 		networkEngine.configure(configuration);
 		try {
 			networkEngine.start();
-		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException | KeyManagementException | UnrecoverableKeyException e) {
+		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
 			Log.error(e.getMessage());
 			System.exit(1);
 		}

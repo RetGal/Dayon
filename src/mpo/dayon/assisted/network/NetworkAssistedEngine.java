@@ -75,7 +75,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 	}
 
 	public void start()
-			throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+			throws IOException, NoSuchAlgorithmException, KeyManagementException {
 		Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
 		SSLContext scontext = SSLContext.getInstance("TLS");

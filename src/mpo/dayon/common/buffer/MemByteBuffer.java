@@ -1,6 +1,5 @@
 package mpo.dayon.common.buffer;
 
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -55,7 +54,7 @@ public class MemByteBuffer extends OutputStream {
 	 * byte to be written is the eight low-order bits of the argument
 	 * <code>b</code>. The 24 high-order bits of <code>b</code> are ignored.
 	 */
-	public void write(int val) throws IOException {
+	public void write(int val) {
 		final int newcount = count + 1;
 
 		if (newcount > buffer.length) {

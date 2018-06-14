@@ -34,7 +34,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 
 	public void onMouseMove(final int x, final int y) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y));
 			}
 		});
@@ -42,7 +42,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 
 	public void onMousePressed(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
@@ -53,7 +53,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	
 	public void onMouseReleased(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.RELEASED, xbutton));
@@ -77,7 +77,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 
 	public void onMouseWheeled(final int x, final int y, final int rotations) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y, rotations));
 			}
 		});
@@ -98,7 +98,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	 */
 	public void onKeyPressed(final int keycode, final char keychar) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 
 				pressedKeys.add(keycode);
 				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keycode, keychar));
@@ -133,7 +133,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		}
 
 		executor.execute(new Executable(executor, null) {
-			protected void execute() throws Exception {
+			protected void execute() {
 
 				pressedKeys.remove(keycode);
 				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keycode, keychar));

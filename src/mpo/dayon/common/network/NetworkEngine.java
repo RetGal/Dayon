@@ -13,5 +13,5 @@ import java.security.cert.CertificateException;
  * both the sending and the receiving sides.
  */
 public abstract class NetworkEngine {
-	public abstract void start() throws IOException, KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException;
+	public abstract void start() throws IOException, NoSuchAlgorithmException, KeyManagementException;
 }

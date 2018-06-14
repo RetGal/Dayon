@@ -63,13 +63,8 @@ public abstract class Counter<T> {
 	public abstract int getWidth();
 
 	void fireOnInstantValueUpdated(T value) {
-		final List<CounterListener<T>> xlisteners = listeners;
 
-		if (xlisteners == null) {
-			return;
-		}
-
-		for (final CounterListener<T> xlistener : xlisteners) {
+		for (final CounterListener<T> xlistener : listeners) {
 			xlistener.onInstantValueUpdated(this, value);
 		}
 	}

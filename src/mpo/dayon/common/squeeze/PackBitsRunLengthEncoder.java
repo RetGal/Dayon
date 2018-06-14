@@ -37,29 +37,26 @@ public class PackBitsRunLengthEncoder extends RunLengthEncoder {
 		}
 	}
 
-	private final int VERBATIM_MAX = 128;
-
-	private void encodeVerbatim(MemByteBuffer out, byte[] in, int start, int end) throws IOException {
+    private void encodeVerbatim(MemByteBuffer out, byte[] in, int start, int end) throws IOException {
 		// [ start .. end [
 
-		final int d = (end - start) / VERBATIM_MAX;
+        int verbatimMax = 128;
+        final int d = (end - start) / verbatimMax;
 
 		for (int idx = 0; idx < d; idx++) {
-			out.write(VERBATIM_MAX - 1);
-			out.arraycopy(in, start + idx * VERBATIM_MAX, VERBATIM_MAX);
+			out.write(verbatimMax - 1);
+			out.arraycopy(in, start + idx * verbatimMax, verbatimMax);
 		}
 
-		final int m = (end - start) % VERBATIM_MAX;
+		final int m = (end - start) % verbatimMax;
 
 		if (m > 0) {
 			out.write(m - 1);
-			out.arraycopy(in, start + d * VERBATIM_MAX, m);
+			out.arraycopy(in, start + d * verbatimMax, m);
 		}
 	}
 
-	private final int RUN_MAX = 130;
-
-	private int encodeRun(MemByteBuffer out, byte[] in, int from) throws IOException {
+    private int encodeRun(MemByteBuffer out, byte[] in, int from) throws IOException {
 		final int val = in[from];
 
 		int pos = from;
@@ -70,14 +67,15 @@ public class PackBitsRunLengthEncoder extends RunLengthEncoder {
 
 		// [ from .. pos [
 
-		final int d = (pos - from) / RUN_MAX;
+        int runMax = 130;
+        final int d = (pos - from) / runMax;
 
 		for (int idx = 0; idx < d; idx++) {
-			out.write(2 - RUN_MAX);
+			out.write(2 - runMax);
 			out.write(val);
 		}
 
-		final int m = (pos - from) % RUN_MAX;
+		final int m = (pos - from) % runMax;
 
 		if (m > 2) {
 			out.write(2 - m);

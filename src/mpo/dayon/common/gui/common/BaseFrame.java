@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -168,7 +169,7 @@ public abstract class BaseFrame extends JFrame {
 
 				final URI uri = SystemUtilities.getLocalIndexHtml();
 
-				browse(uri.toString());
+				browse(Objects.requireNonNull(uri).toString());
 
 			}
 

@@ -73,7 +73,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[%s] [%d]", toStringPressed(), keycode, keychar);
+		return String.format("%s [%d] [%s]", toStringPressed(), keycode, keychar);
 	}
 
 	private String toStringPressed() {
