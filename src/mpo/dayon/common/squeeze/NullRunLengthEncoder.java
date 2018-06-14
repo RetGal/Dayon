@@ -1,7 +1,5 @@
 package mpo.dayon.common.squeeze;
 
-import java.io.IOException;
-
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class NullRunLengthEncoder extends RunLengthEncoder {
