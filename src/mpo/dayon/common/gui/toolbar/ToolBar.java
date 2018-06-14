@@ -10,7 +10,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
 public class ToolBar extends JToolBar {
-	private static final long serialVersionUID = -848556615635858141L;
 	private static final Insets zeroInsets = new Insets(1, 1, 1, 1);
 
 	public ToolBar() {

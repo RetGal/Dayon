@@ -47,7 +47,6 @@ public abstract class SeriousErrorHandler {
 					}
 				}
 			}) {
-				private static final long serialVersionUID = -3451080808563481433L;
 
 				{
 					setInitialDelay(0);

@@ -142,7 +142,6 @@ public abstract class DialogFactory {
 
 			final ActionMap actionMap = dialog.getRootPane().getActionMap();
 			actionMap.put("ESCAPE", new AbstractAction() {
-				private static final long serialVersionUID = 1170076438027969220L;
 
 				public void actionPerformed(ActionEvent e) {
 					dialog.setVisible(false);

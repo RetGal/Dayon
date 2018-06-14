@@ -43,7 +43,6 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
 public class AssistantFrame extends BaseFrame {
-	private static final long serialVersionUID = 6211310983963544650L;
 
 	private final Listeners<AssistantFrameListener> listeners = new Listeners<>(AssistantFrameListener.class);
 
@@ -247,7 +246,6 @@ public class AssistantFrame extends BaseFrame {
 
 	private Action createToggleControlMode() {
 		final Action showSystemInfo = new AbstractAction() {
-			private static final long serialVersionUID = -789732926764276856L;
 
 			public void actionPerformed(ActionEvent ev) {
 				controlActivated = !controlActivated;
@@ -290,7 +288,6 @@ public class AssistantFrame extends BaseFrame {
 		final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
 
 		JPanel pane = new JPanel() {
-			private static final long serialVersionUID = -5478995801477317651L;
 
 			@Override
 			protected void paintComponent(Graphics g) {

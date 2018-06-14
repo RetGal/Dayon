@@ -11,7 +11,6 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
 public class AssistantStopAction extends AbstractAction {
-	private static final long serialVersionUID = 8396252577114773282L;
 	private final NetworkAssistantEngine networkEngine;
 
 	public AssistantStopAction(NetworkAssistantEngine networkEngine) {

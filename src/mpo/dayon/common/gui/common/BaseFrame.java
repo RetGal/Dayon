@@ -32,7 +32,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public abstract class BaseFrame extends JFrame {
-	private static final long serialVersionUID = 3844044465771664147L;
 
 	private ToolBar toolBar;
 
@@ -69,7 +68,6 @@ public abstract class BaseFrame extends JFrame {
 
 	protected Action createExitAction() {
 		final Action exit = new AbstractAction() {
-			private static final long serialVersionUID = -6255123500219118167L;
 
 			public void actionPerformed(ActionEvent ev) {
 				doExit();
@@ -91,7 +89,6 @@ public abstract class BaseFrame extends JFrame {
 
 	protected Action createShowInfoAction() {
 		final Action showSystemInfo = new AbstractAction() {
-			private static final long serialVersionUID = 3696155654667295840L;
 
 			public void actionPerformed(ActionEvent ev) {
 				final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
@@ -163,7 +160,6 @@ public abstract class BaseFrame extends JFrame {
 
 	protected Action createShowHelpAction() {
 		final Action showHelp = new AbstractAction() {
-			private static final long serialVersionUID = 3906155654667295840L;
 
 			public void actionPerformed(ActionEvent ev) {
 

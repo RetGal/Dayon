@@ -171,7 +171,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createWhatIsMyIpAction() {
 		final Action ip = new AbstractAction() {
-			private static final long serialVersionUID = -9171976557462660207L;
 			private String pip;
 
 			public void actionPerformed(ActionEvent ev) {
@@ -319,7 +318,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createNetworkAssistantConfigurationAction() {
 		final Action exit = new AbstractAction() {
-			private static final long serialVersionUID = -84234190591882758L;
 
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
@@ -377,7 +375,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createCaptureConfigurationAction() {
 		final Action configure = new AbstractAction() {
-			private static final long serialVersionUID = 2038613804711501981L;
 
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
@@ -454,7 +451,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createComressionConfigurationAction() {
 		final Action configure = new AbstractAction() {
-			private static final long serialVersionUID = 1552702344410146383L;
 
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
@@ -583,7 +579,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createResetAction() {
 		final Action configure = new AbstractAction() {
-			private static final long serialVersionUID = 804748196312905403L;
 
 			public void actionPerformed(ActionEvent ev) {
 				// Currently making a RESET within the assisted ...
@@ -600,7 +595,6 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 	private Action createSwitchLookAndFeelAction() {
 		final Action exit = new AbstractAction() {
-			private static final long serialVersionUID = -6715265554806896315L;
 
 			public void actionPerformed(ActionEvent ev) {
 				final JPopupMenu choices = new JPopupMenu();

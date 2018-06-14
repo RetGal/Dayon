@@ -14,7 +14,6 @@ import mpo.dayon.assistant.resource.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
 public class AssistantPanel extends JPanel {
-	private static final long serialVersionUID = -3038637229690950161L;
 
 	private static final Image MOUSE_CURSOR = ImageUtilities.getOrCreateIcon(ImageNames.MOUSE_YELLOW).getImage();
 

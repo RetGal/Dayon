@@ -15,8 +15,7 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
 public class AssistedFrame extends BaseFrame {
-	private static final long serialVersionUID = 8933477003881437972L;
-	private AssistedFrameConfiguration configuration;
+		private AssistedFrameConfiguration configuration;
 
 	public AssistedFrame(AssistedFrameConfiguration configuration) {
 		this.configuration = configuration;
