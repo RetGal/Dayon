@@ -9,6 +9,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -24,12 +25,12 @@ public class Capture {
 	/**
 	 * @see #mergeDirtyTiles(Capture[])
 	 */
-	private volatile int skipped;
+	private AtomicInteger skipped;
 
 	/**
 	 * @see #mergeDirtyTiles(Capture[])
 	 */
-	private volatile int merged;
+	private AtomicInteger merged;
 
 	private final int width;
 
@@ -45,8 +46,8 @@ public class Capture {
 		this.id = captureId;
 		this.reset = reset;
 
-		this.skipped = skipped;
-		this.merged = merged;
+		this.skipped = new AtomicInteger(skipped);
+		this.merged = new AtomicInteger(merged);
 
 		this.width = width;
 		this.height = height;
@@ -66,11 +67,11 @@ public class Capture {
 	}
 
 	public int getSkipped() {
-		return skipped;
+		return skipped.get();
 	}
 
 	public int getMerged() {
-		return merged;
+		return merged.get();
 	}
 
 	/**
@@ -146,12 +147,12 @@ public class Capture {
 		for (final Capture older : olders) {
 			doMergeDirtyTiles(older);
 
-			xskipped += older.skipped;
-			xmerged += older.merged;
+			xskipped += older.skipped.get();
+			xmerged += older.merged.get();
 		}
 
-		skipped += xskipped;
-		merged = 1 + xmerged;
+		skipped.addAndGet(xskipped);
+		merged.set(1 + xmerged);
 
 		Log.warn(String.format("Merged [id:%d] [count:%d] [skipped:%d][merged:%d]", id, olders.length, skipped, merged));
 	}

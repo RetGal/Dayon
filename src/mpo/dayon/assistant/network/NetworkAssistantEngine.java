@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -68,7 +69,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private Socket connection;
 
-	private volatile boolean cancelling;
+	private AtomicBoolean cancelling = new AtomicBoolean(false);
 
 	private NetworkAssistantHttpsEngine https;
 
@@ -108,7 +109,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	 * Possibly called from a GUI action => do not block the AWT thread (!)
 	 */
 	public void start() {
-		if (cancelling || receiver != null) {
+		if (cancelling.get() || receiver != null) {
 			return;
 		}
 
@@ -127,7 +128,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	public void cancel() {
 		Log.info("Cancelling the network assistant engine...");
 
-		cancelling = true;
+		cancelling.set(true);
 
 		if (https != null) {
 			https.cancel();
@@ -255,7 +256,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		} catch (IOException ex) {
 			Log.error("IO error (cancelling:" + cancelling + ")!", ex);
 
-			if (!cancelling) {
+			if (!cancelling.get()) {
 				fireOnIOError(ex);
 			}
 
@@ -266,7 +267,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			SystemUtilities.safeClose(in);
 			SystemUtilities.safeClose(out);
 
-			cancelling = false;
+			cancelling.set(false);
 			server = null;
 			connection = null;
 			receiver = null;

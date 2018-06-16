@@ -20,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -71,7 +72,7 @@ public class AssistantFrame extends BaseFrame {
 	@Nullable
 	private JComponent center;
 
-	private volatile boolean controlActivated;
+	private AtomicBoolean controlActivated = new AtomicBoolean(false);
 
 	public AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
 			Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
@@ -116,14 +117,14 @@ public class AssistantFrame extends BaseFrame {
 		assistantPanel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnMousePressed(ev.getX(), ev.getY(), ev.getButton());
 				}
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnMouseReleased(ev.getX(), ev.getY(), ev.getButton());
 				}
 			}
@@ -131,13 +132,13 @@ public class AssistantFrame extends BaseFrame {
 
 		assistantPanel.addMouseMotionListener(new MouseMotionListener() {
 			public void mouseDragged(MouseEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnMouseMove(ev.getX(), ev.getY());
 				}
 			}
 
 			public void mouseMoved(MouseEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnMouseMove(ev.getX(), ev.getY());
 				}
 			}
@@ -145,7 +146,7 @@ public class AssistantFrame extends BaseFrame {
 
 		assistantPanel.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
 				}
 			}
@@ -159,14 +160,14 @@ public class AssistantFrame extends BaseFrame {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnKeyPressed(ev.getKeyCode(), ev.getKeyChar());
 				}
 			}
 
 			@Override
 			public void keyReleased(KeyEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnKeyReleased(ev.getKeyCode(), ev.getKeyChar());
 				}
 			}
@@ -175,7 +176,7 @@ public class AssistantFrame extends BaseFrame {
 		addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(FocusEvent ev) {
-				if (controlActivated) {
+				if (controlActivated.get()) {
 					fireOnKeyReleased(-1, Character.MIN_VALUE);
 				}
 			}
@@ -248,7 +249,7 @@ public class AssistantFrame extends BaseFrame {
 		final Action showSystemInfo = new AbstractAction() {
 
 			public void actionPerformed(ActionEvent ev) {
-				controlActivated = !controlActivated;
+				controlActivated.set(!controlActivated.get());
 			}
 		};
 
