@@ -30,8 +30,8 @@ public abstract class RateCounter extends Counter<Double> {
 		double rate = Double.NaN;
 
 		synchronized (this) {
-			if (instantStart != -1) {
-				final long elapsed = System.currentTimeMillis() - instantStart;
+			if (instantStart.get() != -1) {
+				final long elapsed = System.currentTimeMillis() - instantStart.get();
 				rate = 1000.0 * instantValue / (double) elapsed;
 
 				synchronized (instantRateHistory) {
@@ -41,7 +41,7 @@ public abstract class RateCounter extends Counter<Double> {
 					}
 				}
 
-				instantStart = System.currentTimeMillis();
+				instantStart.set(System.currentTimeMillis());
 				instantValue = 0;
 			}
 		}

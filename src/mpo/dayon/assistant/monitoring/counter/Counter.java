@@ -2,6 +2,7 @@ package mpo.dayon.assistant.monitoring.counter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 import mpo.dayon.assistant.monitoring.BigBrother;
 
@@ -12,7 +13,7 @@ public abstract class Counter<T> {
 
 	private final String shortDescription;
 
-	long instantStart;
+	AtomicLong instantStart;
 
 	Counter(String uid, String shortDescription) {
 		this.uid = uid;
@@ -41,9 +42,7 @@ public abstract class Counter<T> {
 	 * @see #start(long)
 	 */
 	private void initialize() {
-		synchronized (this) {
-			this.instantStart = System.currentTimeMillis();
-		}
+		this.instantStart = new AtomicLong(System.currentTimeMillis());
 	}
 
 	/**

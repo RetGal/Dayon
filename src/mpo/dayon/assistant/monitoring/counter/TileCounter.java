@@ -10,9 +10,10 @@ public class TileCounter extends AbsoluteValueCounter {
 		super.add(value);
 	}
 
+	@Override
 	public String formatInstantValue(Long value) {
 		if (value == null) {
-			return "-(-)";
+			return "- (-)";
 		}
 
 		final int tiles = (int) (value >> 32 & 0xffffffffL);
@@ -21,12 +22,13 @@ public class TileCounter extends AbsoluteValueCounter {
 		final double percent = 100.0 * (hits / (double) tiles);
 
 		if (Double.isNaN(percent)) {
-			return String.format("%d(-%%)", tiles);
+			return String.format("%d (-%%)", tiles);
 		}
 
-		return String.format("%d(%.1f%%)", tiles, percent);
+		return String.format("%d (%.1f%%)", tiles, percent);
 	}
 
+	@Override
 	public int getWidth() {
 		return 100;
 	}

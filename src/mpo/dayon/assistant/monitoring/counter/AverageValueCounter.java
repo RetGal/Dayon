@@ -26,10 +26,10 @@ public abstract class AverageValueCounter extends Counter<Double> {
 		double value = Double.NaN;
 
 		synchronized (this) {
-			if (instantStart != -1) {
+			if (instantStart.get() != -1) {
 				value = (instantWeight == 0.0) ? 0.0 : instantValue / instantWeight;
 
-				instantStart = System.currentTimeMillis();
+				instantStart.set(System.currentTimeMillis());
 
 				instantWeight = 0;
 				instantValue = 0;

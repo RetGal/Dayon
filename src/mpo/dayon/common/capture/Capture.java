@@ -154,7 +154,7 @@ public class Capture {
 		skipped.addAndGet(xskipped);
 		merged.set(1 + xmerged);
 
-		Log.warn(String.format("Merged [id:%d] [count:%d] [skipped:%d][merged:%d]", id, olders.length, skipped, merged));
+		Log.warn(String.format("Merged [id:%d] [count:%d] [skipped:%d][merged:%d]", id, olders.length, skipped.get(), merged.get()));
 	}
 
 	/**
