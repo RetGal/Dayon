@@ -10,12 +10,16 @@ import javax.swing.Box;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.BaseFrame;
+import mpo.dayon.common.gui.common.Dimension;
+import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
 public class AssistedFrame extends BaseFrame {
 		private AssistedFrameConfiguration configuration;
+		private final Position position;
+		private final Dimension dimension;
 
 	public AssistedFrame(AssistedFrameConfiguration configuration) {
 		this.configuration = configuration;
@@ -24,9 +28,11 @@ public class AssistedFrame extends BaseFrame {
 
 		setupToolBar(createToolBar());
 		setupStatusBar(createStatusBar());
-
-		this.setLocation(configuration.getX(), configuration.getY());
-		this.setSize(configuration.getWidth(), configuration.getHeight());
+		
+		this.position = new Position(configuration.getX(), configuration.getY());
+		this.setLocation(position.getX(), position.getY());
+		this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
+		this.setSize(dimension.getWidth(), dimension.getHeight());
 
 		addWindowListener(new WindowAdapter() {
 			public void windowOpened(WindowEvent ev) {
@@ -46,12 +52,16 @@ public class AssistedFrame extends BaseFrame {
 	}
 
 	private void onLocationUpdated(int x, int y) {
-		configuration = new AssistedFrameConfiguration(x, y, configuration.getWidth(), configuration.getHeight());
+		this.position.setX(x);
+		this.position.setY(y);
+		configuration = new AssistedFrameConfiguration(position, dimension);
 		configuration.persist(false);
 	}
 
 	private void onSizeUpdated(int width, int height) {
-		configuration = new AssistedFrameConfiguration(configuration.getX(), configuration.getY(), width, height);
+		dimension.setWidth(width);
+		dimension.setHeight(height);
+		configuration = new AssistedFrameConfiguration(position, dimension);
 		configuration.persist(false);
 	}
 
