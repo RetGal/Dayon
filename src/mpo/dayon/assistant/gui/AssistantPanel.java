@@ -59,42 +59,38 @@ public class AssistantPanel extends JPanel {
 	 * Called from within the de-compressor engine thread (!)
 	 */
 	public void onCaptureUpdated(final int captureId, final BufferedImage captureImage) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				final int captureWidth = captureImage.getWidth();
-				final int captureHeight = captureImage.getHeight();
+		SwingUtilities.invokeLater(() -> {
+            final int captureWidth = captureImage.getWidth();
+            final int captureHeight = captureImage.getHeight();
 
-				if (AssistantPanel.this.captureWidth != captureWidth || AssistantPanel.this.captureHeight != captureHeight) {
-					AssistantPanel.this.captureImage = null;
+            if (AssistantPanel.this.captureWidth != captureWidth || AssistantPanel.this.captureHeight != captureHeight) {
+                AssistantPanel.this.captureImage = null;
 
-					AssistantPanel.this.captureWidth = captureWidth;
-					AssistantPanel.this.captureHeight = captureHeight;
+                AssistantPanel.this.captureWidth = captureWidth;
+                AssistantPanel.this.captureHeight = captureHeight;
 
-					final Dimension size = new Dimension(captureWidth, captureHeight);
+                final Dimension size = new Dimension(captureWidth, captureHeight);
 
-					setSize(size);
-					setPreferredSize(size);
-				}
+                setSize(size);
+                setPreferredSize(size);
+            }
 
-				AssistantPanel.this.captureImage = captureImage;
+            AssistantPanel.this.captureImage = captureImage;
 
-				repaint();
-			}
-		});
+            repaint();
+        });
 	}
 
 	public void onMouseLocationUpdated(final int x, final int y) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				if (AssistantPanel.this.mouseX != -1 && AssistantPanel.this.mouseY != -1) {
-					repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
-				}
+		SwingUtilities.invokeLater(() -> {
+            if (AssistantPanel.this.mouseX != -1 && AssistantPanel.this.mouseY != -1) {
+                repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
+            }
 
-				AssistantPanel.this.mouseX = x;
-				AssistantPanel.this.mouseY = y;
+            AssistantPanel.this.mouseX = x;
+            AssistantPanel.this.mouseY = y;
 
-				repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
-			}
-		});
+            repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
+        });
 	}
 }

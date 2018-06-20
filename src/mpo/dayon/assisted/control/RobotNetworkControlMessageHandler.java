@@ -19,7 +19,7 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 public class RobotNetworkControlMessageHandler implements NetworkControlMessageHandler {
 	private final Robot robot;
 
-	private List<Subscriber> subscribers = new ArrayList<>();
+	private final List<Subscriber> subscribers = new ArrayList<>();
 	
 	public RobotNetworkControlMessageHandler() {
 		try {

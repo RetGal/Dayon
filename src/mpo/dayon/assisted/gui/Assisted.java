@@ -191,26 +191,24 @@ public class Assisted implements Subscriber {
 		pane.add(assistantPortNumberLbl);
 		pane.add(assistantPortNumberTextField);
 
-		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, new DialogFactory.Validator() {
-			public String validate() {
-				final String ipAddress = assistantIpAddressTextField.getText();
-				if (ipAddress.isEmpty()) {
-					return Babylon.translate("connection.settings.emptyIpAddress");
-				}
+		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, () -> {
+            final String ipAddress = assistantIpAddressTextField.getText();
+            if (ipAddress.isEmpty()) {
+                return Babylon.translate("connection.settings.emptyIpAddress");
+            }
 
-				final String portNumber = assistantPortNumberTextField.getText();
-				if (portNumber.isEmpty()) {
-					return Babylon.translate("connection.settings.emptyPortNumber");
-				}
+            final String portNumber = assistantPortNumberTextField.getText();
+            if (portNumber.isEmpty()) {
+                return Babylon.translate("connection.settings.emptyPortNumber");
+            }
 
-				try {
-					Integer.valueOf(portNumber);
-				} catch (NumberFormatException ex) {
-					return Babylon.translate("connection.settings.invalidPortNumber");
-				}
-				return null;
-			}
-		});
+            try {
+                Integer.valueOf(portNumber);
+            } catch (NumberFormatException ex) {
+                return Babylon.translate("connection.settings.invalidPortNumber");
+            }
+            return null;
+        });
 
 		if (ok) {
 			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(),

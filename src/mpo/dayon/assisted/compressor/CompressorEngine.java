@@ -3,7 +3,6 @@ package mpo.dayon.assisted.compressor;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -84,32 +83,30 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("CompressorEngine"));
 
-		executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
-			public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
-				if (!executor.isShutdown()) {
-					final List<Runnable> pendings = new ArrayList<>();
+		executor.setRejectedExecutionHandler((runnable, executor) -> {
+            if (!executor.isShutdown()) {
+                final List<Runnable> pendings = new ArrayList<>();
 
-					// pendings : oldest first (!)
-					executor.getQueue().drainTo(pendings);
+                // pendings : oldest first (!)
+                executor.getQueue().drainTo(pendings);
 
-					final MyExecutable newer = (MyExecutable) runnable;
+                final MyExecutable newer = (MyExecutable) runnable;
 
-					if (pendings.size() > 0) {
-						final Capture[] cpendings = new Capture[pendings.size()];
+                if (pendings.size() > 0) {
+                    final Capture[] cpendings = new Capture[pendings.size()];
 
-						int pos = 0;
+                    int pos = 0;
 
-						for (int idx = pendings.size() - 1; idx > -1; idx--) {
-							cpendings[pos++] = ((MyExecutable) pendings.get(idx)).capture;
-						}
+                    for (int idx = pendings.size() - 1; idx > -1; idx--) {
+                        cpendings[pos++] = ((MyExecutable) pendings.get(idx)).capture;
+                    }
 
-						newer.capture.mergeDirtyTiles(cpendings);
-					}
+                    newer.capture.mergeDirtyTiles(cpendings);
+                }
 
-					executor.execute(newer);
-				}
-			}
-		});
+                executor.execute(newer);
+            }
+        });
 	}
 
 	/**

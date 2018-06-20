@@ -5,7 +5,7 @@ import java.io.IOException;
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class RegularRunLengthEncoder extends RunLengthEncoder {
-	public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) throws IOException {
+	public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) {
 		final byte[] xcapture = capture.getInternal();
 		final int len = capture.size();
 
@@ -46,7 +46,7 @@ public class RegularRunLengthEncoder extends RunLengthEncoder {
 		}
 	}
 
-	public void runLengthDecode(MemByteBuffer out, MemByteBuffer encoded) throws IOException {
+	public void runLengthDecode(MemByteBuffer out, MemByteBuffer encoded) {
 		final byte[] xencoded = encoded.getInternal();
 		final int len = encoded.size();
 

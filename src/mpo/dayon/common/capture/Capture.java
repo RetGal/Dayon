@@ -9,6 +9,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jetbrains.annotations.Nullable;
@@ -25,12 +27,12 @@ public class Capture {
 	/**
 	 * @see #mergeDirtyTiles(Capture[])
 	 */
-	private AtomicInteger skipped;
+	private final AtomicInteger skipped;
 
 	/**
 	 * @see #mergeDirtyTiles(Capture[])
 	 */
-	private AtomicInteger merged;
+	private final AtomicInteger merged;
 
 	private final int width;
 
@@ -97,15 +99,8 @@ public class Capture {
 	 * number of gray levels.
 	 */
 	private int computeInitialByteCount() {
-		int count = 0;
 
-		for (final CaptureTile tile : dirty) {
-			if (tile != null) {
-				count += tile.getCapture().size();
-			}
-		}
-
-		return count;
+		return Arrays.stream(dirty).filter(Objects::nonNull).mapToInt(tile -> tile.getCapture().size()).sum();
 	}
 
 	public int getWidth() {
@@ -125,15 +120,8 @@ public class Capture {
 	}
 
 	public int getDirtyTileCount() {
-		int count = 0;
 
-		for (final CaptureTile tile : dirty) {
-			if (tile != null) {
-				++count;
-			}
-		}
-
-		return count;
+		return (int) Arrays.stream(dirty).filter(Objects::nonNull).count();
 	}
 
 	public CaptureTile[] getDirtyTiles() {

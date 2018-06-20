@@ -10,7 +10,6 @@ import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -64,7 +63,6 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.network.message.NetworkMouseLocationMessage;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Pair;
@@ -126,11 +124,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 		decompressor.addListener(new MyDeCompressorEngineListener());
 		decompressor.start(8);
 
-		NetworkMouseLocationMessageHandler mouseHandler = new NetworkMouseLocationMessageHandler() {
-			public void handleLocation(NetworkMouseLocationMessage mouse) {
-				frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
-			}
-		};
+		NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
 
 		network = new NetworkAssistantEngine(decompressor, mouseHandler);
 
@@ -180,59 +174,49 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 				if (pip == null) {
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("retrieveMe"));
-					menuItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							final Cursor cursor = frame.getCursor();
+					menuItem.addActionListener(ev16 -> {
+                        final Cursor cursor = frame.getCursor();
 
-							try {
-								frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                        try {
+                            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 
-								final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
-								final URLConnection conn = url.openConnection();
+                            final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
+                            final URLConnection conn = url.openConnection();
 
-								final InputStream in = conn.getInputStream();
-								final BufferedReader lines = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                            final InputStream in = conn.getInputStream();
+                            final BufferedReader lines = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-								String line;
-								while ((line = lines.readLine()) != null) {
-									pip = line;
-								}
+                            String line;
+                            while ((line = lines.readLine()) != null) {
+                                pip = line;
+                            }
 
-								SystemUtilities.safeClose(in);
-							} catch (IOException ex) {
-								Log.error("What is my IP error!", ex);
-							} finally {
-								frame.setCursor(cursor);
-							}
+                            SystemUtilities.safeClose(in);
+                        } catch (IOException ex) {
+                            Log.error("What is my IP error!", ex);
+                        } finally {
+                            frame.setCursor(cursor);
+                        }
 
-							if (pip == null) {
-								JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
-										JOptionPane.ERROR_MESSAGE);
-							} else {
-								button.setText(network.__ipAddress = pip);
+                        if (pip == null) {
+                            JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
+                                    JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            button.setText(network.__ipAddress = pip);
 
-							}
-						}
-					});
+                        }
+                    });
 					choices.add(menuItem);
 				} else {
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("ipAddressPublic", pip));
-					menuItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							button.setText(network.__ipAddress = pip);
-						}
-					});
+					menuItem.addActionListener(ev15 -> button.setText(network.__ipAddress = pip));
 					choices.add(menuItem);
 				}
 
 				final List<String> addrs = NetworkUtilities.getInetAddresses();
 				for (String addr : addrs) {
 					final JMenuItem menuItem = new JMenuItem(addr);
-					menuItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							button.setText(network.__ipAddress = menuItem.getText());
-						}
-					});
+					menuItem.addActionListener(ev14 -> button.setText(network.__ipAddress = menuItem.getText()));
 					choices.add(menuItem);
 				}
 
@@ -240,51 +224,45 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				{
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg1"));
 					// menuItem.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.COPY));
-					menuItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
+					menuItem.addActionListener(ev13 -> {
+                        final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
 
-							final StringSelection value = new StringSelection(url);
-							final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-							clipboard.setContents(value, value);
-						}
-					});
+                        final StringSelection value = new StringSelection(url);
+                        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(value, value);
+                    });
 					choices.add(menuItem);
 				}
 				{
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg2"));
 					// menuItem.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.COPY));
-					menuItem.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							final String url = button.getText() + " " + network.getPort();
+					menuItem.addActionListener(ev12 -> {
+                        final String url = button.getText() + " " + network.getPort();
 
-							final StringSelection value = new StringSelection(url);
-							final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-							clipboard.setContents(value, value);
-						}
-					});
+                        final StringSelection value = new StringSelection(url);
+                        final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                        clipboard.setContents(value, value);
+                    });
 					choices.add(menuItem);
 				}
 
 				choices.addSeparator();
 				final JMenuItem help = new JMenuItem(Babylon.translate("help"));
 				// help.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.INFO_SMALL));
-				help.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ev) {
-						try {
-							final URI uri = SystemUtilities.getLocalIndexHtml();
+				help.addActionListener(ev1 -> {
+                    try {
+                        final URI uri = SystemUtilities.getLocalIndexHtml();
 
-							if (uri != null && Desktop.isDesktopSupported()) {
-								final Desktop desktop = Desktop.getDesktop();
-								if (desktop.isSupported(Desktop.Action.BROWSE)) {
-									desktop.browse(uri);
-								}
-							}
-						} catch (IOException ex) {
-							Log.warn("Help Error!", ex);
-						}
-					}
-				});
+                        if (uri != null && Desktop.isDesktopSupported()) {
+                            final Desktop desktop = Desktop.getDesktop();
+                            if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                                desktop.browse(uri);
+                            }
+                        }
+                    } catch (IOException ex) {
+                        Log.warn("Help Error!", ex);
+                    }
+                });
 				choices.add(help);
 
 				// -- display the menu
@@ -335,22 +313,20 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				pane.add(portNumberLbl);
 				pane.add(portNumberTextField);
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.network.settings"), pane, new DialogFactory.Validator() {
-					public String validate() {
-						final String portNumber = portNumberTextField.getText();
-						if (portNumber.isEmpty()) {
-							return Babylon.translate("connection.settings.emptyPortNumber");
-						}
+				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.network.settings"), pane, () -> {
+                    final String portNumber = portNumberTextField.getText();
+                    if (portNumber.isEmpty()) {
+                        return Babylon.translate("connection.settings.emptyPortNumber");
+                    }
 
-						try {
-							Integer.valueOf(portNumber);
-						} catch (NumberFormatException ex) {
-							return Babylon.translate("connection.settings.invalidPortNumber");
-						}
+                    try {
+                        Integer.valueOf(portNumber);
+                    } catch (NumberFormatException ex) {
+                        return Babylon.translate("connection.settings.invalidPortNumber");
+                    }
 
-						return null;
-					}
-				});
+                    return null;
+                });
 
 				if (ok) {
 					final NetworkAssistantConfiguration xnetworkConfiguration = new NetworkAssistantConfiguration(
@@ -399,22 +375,20 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				pane.add(grayLevelsLbl);
 				pane.add(grayLevelsCb);
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("capture.settings"), pane, new DialogFactory.Validator() {
-					public String validate() {
-						final String tick = tickTextField.getText();
-						if (tick.isEmpty()) {
-							return Babylon.translate("tick.msg1");
-						}
+				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("capture.settings"), pane, () -> {
+                    final String tick = tickTextField.getText();
+                    if (tick.isEmpty()) {
+                        return Babylon.translate("tick.msg1");
+                    }
 
-						try {
-							Integer.valueOf(tick);
-						} catch (NumberFormatException ex) {
-							return Babylon.translate("tick.msg2");
-						}
+                    try {
+                        Integer.valueOf(tick);
+                    } catch (NumberFormatException ex) {
+                        return Babylon.translate("tick.msg2");
+                    }
 
-						return null;
-					}
-				});
+                    return null;
+                });
 
 				if (ok) {
 					final CaptureEngineConfiguration configuration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
@@ -441,12 +415,8 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 	 * Should not block (!)
 	 */
 	private void sendCaptureConfiguration(final CaptureEngineConfiguration captureEngineConfiguation) {
-		new Thread(new Runnable() // Ok as very few of that (!)
-		{
-			public void run() {
-				network.sendCaptureConfiguration(captureEngineConfiguation);
-			}
-		}, "CaptureEngineSettingsSender").start();
+		// Ok as very few of that (!)
+		new Thread(() -> network.sendCaptureConfiguration(captureEngineConfiguation), "CaptureEngineSettingsSender").start();
 	}
 
 	private Action createComressionConfigurationAction() {
@@ -486,63 +456,59 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 				pane.add(purgeSizeLbl);
 				pane.add(purgeSizeTf);
 
-				useCacheCb.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent ev) {
-						maxSizeLbl.setEnabled(useCacheCb.isSelected());
-						maxSizeTf.setEnabled(useCacheCb.isSelected());
-						purgeSizeLbl.setEnabled(useCacheCb.isSelected());
-						purgeSizeTf.setEnabled(useCacheCb.isSelected());
-					}
-				});
+				useCacheCb.addActionListener(ev1 -> {
+                    maxSizeLbl.setEnabled(useCacheCb.isSelected());
+                    maxSizeTf.setEnabled(useCacheCb.isSelected());
+                    purgeSizeLbl.setEnabled(useCacheCb.isSelected());
+                    purgeSizeTf.setEnabled(useCacheCb.isSelected());
+                });
 
 				maxSizeLbl.setEnabled(useCacheCb.isSelected());
 				maxSizeTf.setEnabled(useCacheCb.isSelected());
 				purgeSizeLbl.setEnabled(useCacheCb.isSelected());
 				purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("compression.settings"), pane, new DialogFactory.Validator() {
-					public String validate() {
-						final String max = maxSizeTf.getText();
-						if (max.isEmpty()) {
-							return Babylon.translate("compression.cache.max.msg1");
-						}
+				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("compression.settings"), pane, () -> {
+                    final String max = maxSizeTf.getText();
+                    if (max.isEmpty()) {
+                        return Babylon.translate("compression.cache.max.msg1");
+                    }
 
-						final int _max;
+                    final int _max;
 
-						try {
-							_max = Integer.valueOf(max);
-						} catch (NumberFormatException ex) {
-							return Babylon.translate("compression.cache.max.msg2");
-						}
+                    try {
+                        _max = Integer.valueOf(max);
+                    } catch (NumberFormatException ex) {
+                        return Babylon.translate("compression.cache.max.msg2");
+                    }
 
-						final String purge = purgeSizeTf.getText();
-						if (purge.isEmpty()) {
-							return Babylon.translate("compression.cache.purge.msg1");
-						}
+                    final String purge = purgeSizeTf.getText();
+                    if (purge.isEmpty()) {
+                        return Babylon.translate("compression.cache.purge.msg1");
+                    }
 
-						final int _purge;
+                    final int _purge;
 
-						try {
-							_purge = Integer.valueOf(purge);
-						} catch (NumberFormatException ex) {
-							return Babylon.translate("compression.cache.purge.msg2");
-						}
+                    try {
+                        _purge = Integer.valueOf(purge);
+                    } catch (NumberFormatException ex) {
+                        return Babylon.translate("compression.cache.purge.msg2");
+                    }
 
-						if (_max <= 0) {
-							return Babylon.translate("compression.cache.max.msg3");
-						}
+                    if (_max <= 0) {
+                        return Babylon.translate("compression.cache.max.msg3");
+                    }
 
-						if (_purge <= 0) {
-							return Babylon.translate("compression.cache.purge.msg3");
-						}
+                    if (_purge <= 0) {
+                        return Babylon.translate("compression.cache.purge.msg3");
+                    }
 
-						if (_purge >= _max) {
-							return Babylon.translate("compression.cache.purge.msg4");
-						}
+                    if (_purge >= _max) {
+                        return Babylon.translate("compression.cache.purge.msg4");
+                    }
 
-						return null;
-					}
-				});
+                    return null;
+                });
 
 				if (ok) {
 					final CompressorEngineConfiguration configuration = new CompressorEngineConfiguration((CompressionMethod) methodCb.getSelectedItem(),
@@ -569,12 +535,8 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 	 * Should not block (!)
 	 */
 	private void sendCompressorConfiguration(final CompressorEngineConfiguration compressorEngineConfiguration) {
-		new Thread(new Runnable() // Ok as very few of that (!)
-		{
-			public void run() {
-				network.sendCompressorConfiguration(compressorEngineConfiguration);
-			}
-		}, "CompressorEngineSettingsSender").start();
+		// Ok as very few of that (!)
+		new Thread(() -> network.sendCompressorConfiguration(compressorEngineConfiguration), "CompressorEngineSettingsSender").start();
 	}
 
 	private Action createResetAction() {
@@ -610,11 +572,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 					final JMenuItem mi = new JMenuItem(info.getName());
 
-					mi.addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent ev) {
-							switchLookAndFeel(info);
-						}
-					});
+					mi.addActionListener(ev1 -> switchLookAndFeel(info));
 					choices.add(mi);
 				}
 

@@ -4,6 +4,9 @@ import org.eclipse.jetty.util.log.Logger;
 
 import mpo.dayon.common.log.Log;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class JettyLogger implements Logger {
 	@Override
 	public Logger getLogger(String name) {
@@ -89,12 +92,7 @@ public class JettyLogger implements Logger {
 	}
 
 	private String format(String message, Object... args) {
-		StringBuilder mess = new StringBuilder(message);
-		for (Object arg : args) {
-			mess.append(", ");
-			mess.append(arg);
-		}
-		return mess.toString();
+		return Arrays.stream(args).map(arg -> ", " + arg).collect(Collectors.joining("", message, ""));
 	}
 
 }

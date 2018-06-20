@@ -3,7 +3,7 @@ package mpo.dayon.assistant.monitoring.counter;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbsoluteValueCounter extends Counter<Long> {
-	private AtomicLong instantValue = new AtomicLong(0);
+	private final AtomicLong instantValue = new AtomicLong(0);
 
 	AbsoluteValueCounter(String uid, String shortDescription) {
 		super(uid, shortDescription);
@@ -17,7 +17,7 @@ public abstract class AbsoluteValueCounter extends Counter<Long> {
 		Long value = null;
 		
 		if (instantStart.get() != -1) {
-			value = instantValue.getAndSet(0l);
+			value = instantValue.getAndSet(0L);
 			instantStart.set(System.currentTimeMillis());
 		}
 

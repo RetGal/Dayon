@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -53,17 +54,13 @@ public class NetworkAssistantHttpsResources {
 				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.html");
 				final BufferedReader in = new BufferedReader(new InputStreamReader(content, "UTF-8"));
 
-				final StringBuilder sb = new StringBuilder();
+				final String sb;
 
-				String line;
-				while ((line = in.readLine()) != null) {
-					sb.append(line);
-					sb.append("\n");
-				}
+				sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
 
 				in.close();
 
-				String html = sb.toString();
+				String html = sb;
 
 				html = html.replace("${major}", String.valueOf(major));
 				html = html.replace("${minor}", String.valueOf(minor));
@@ -100,17 +97,13 @@ public class NetworkAssistantHttpsResources {
 				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.jnlp");
 				final BufferedReader in = new BufferedReader(new InputStreamReader(content, "UTF-8"));
 
-				final StringBuilder sb = new StringBuilder();
+				final String sb;
 
-				String line;
-				while ((line = in.readLine()) != null) {
-					sb.append(line);
-					sb.append("\n");
-				}
+				sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
 
 				in.close();
 
-				String html = sb.toString();
+				String html = sb;
 
 				html = html.replace("${jarname}", jarname);
 

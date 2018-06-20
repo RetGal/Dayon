@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -54,24 +53,20 @@ public abstract class DialogFactory {
 
 		final boolean[] result = new boolean[1];
 
-		ok.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				final String validationMessage = (validator == null ? null : validator.validate());
-				if (validationMessage == null) {
-					result[0] = true;
-					dialog.dispose();
-				} else {
-					JOptionPane.showMessageDialog(dialog, validationMessage, title + " : Error", JOptionPane.ERROR_MESSAGE);
-				}
-			}
-		});
+		ok.addActionListener(ev -> {
+            final String validationMessage = (validator == null ? null : validator.validate());
+            if (validationMessage == null) {
+                result[0] = true;
+                dialog.dispose();
+            } else {
+                JOptionPane.showMessageDialog(dialog, validationMessage, title + " : Error", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-		cancel.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				result[0] = false;
-				dialog.dispose();
-			}
-		});
+		cancel.addActionListener(ev -> {
+            result[0] = false;
+            dialog.dispose();
+        });
 
 		dialog.setVisible(true);
 

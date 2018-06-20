@@ -69,7 +69,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private Socket connection;
 
-	private AtomicBoolean cancelling = new AtomicBoolean(false);
+	private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
 	private NetworkAssistantHttpsEngine https;
 

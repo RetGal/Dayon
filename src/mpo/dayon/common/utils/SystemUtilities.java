@@ -12,10 +12,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -227,12 +225,7 @@ public abstract class SystemUtilities {
 
 		final int ordinal = Integer.valueOf(prop);
 
-		for (T anEnum : enums) {
-			if (ordinal == anEnum.ordinal()) {
-				return anEnum;
-			}
-		}
-		return defaultValue;
+		return Arrays.stream(enums).filter(anEnum -> ordinal == anEnum.ordinal()).findFirst().orElse(defaultValue);
 	}
 
 	public static List<String> getSystemProperties() {
@@ -271,13 +264,8 @@ public abstract class SystemUtilities {
 	}
 
 	public static String getSystemPropertiesEx() {
-		final StringBuilder sb = new StringBuilder();
 
-		for (String line : getSystemProperties()) {
-			sb.append(line);
-			sb.append(System.getProperty("line.separator"));
-		}
-		return sb.toString();
+		return getSystemProperties().stream().map(line -> line + System.getProperty("line.separator")).collect(Collectors.joining());
 	}
 
 	public static String getRamInfo() {

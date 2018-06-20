@@ -37,7 +37,7 @@ public class PackBitsRunLengthEncoder extends RunLengthEncoder {
 		}
 	}
 
-    private void encodeVerbatim(MemByteBuffer out, byte[] in, int start, int end) throws IOException {
+    private void encodeVerbatim(MemByteBuffer out, byte[] in, int start, int end) {
 		// [ start .. end [
 
         int verbatimMax = 128;
@@ -56,7 +56,7 @@ public class PackBitsRunLengthEncoder extends RunLengthEncoder {
 		}
 	}
 
-    private int encodeRun(MemByteBuffer out, byte[] in, int from) throws IOException {
+    private int encodeRun(MemByteBuffer out, byte[] in, int from) {
 		final int val = in[from];
 
 		int pos = from;
@@ -89,7 +89,7 @@ public class PackBitsRunLengthEncoder extends RunLengthEncoder {
 		return pos;
 	}
 
-	public void runLengthDecode(MemByteBuffer out, MemByteBuffer encoded) throws IOException {
+	public void runLengthDecode(MemByteBuffer out, MemByteBuffer encoded) {
 		final byte[] xencoded = encoded.getInternal();
 		final int len = encoded.size();
 

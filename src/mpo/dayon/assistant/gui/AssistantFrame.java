@@ -12,8 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -78,7 +76,7 @@ public class AssistantFrame extends BaseFrame {
 	@Nullable
 	private JComponent center;
 
-	private AtomicBoolean controlActivated = new AtomicBoolean(false);
+	private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
 	public AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
 			Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
@@ -152,13 +150,11 @@ public class AssistantFrame extends BaseFrame {
 			}
 		});
 
-		assistantPanel.addMouseWheelListener(new MouseWheelListener() {
-			public void mouseWheelMoved(MouseWheelEvent ev) {
-				if (controlActivated.get()) {
-					fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
-				}
-			}
-		});
+		assistantPanel.addMouseWheelListener(ev -> {
+            if (controlActivated.get()) {
+                fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
+            }
+        });
 
 		// -------------------------------------------------------------------------------------------------------------
 		// Not really needed for the time being - allows for seeing
