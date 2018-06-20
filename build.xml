@@ -9,8 +9,8 @@
 	<property name="dir.build" value="${dir.binfile}/build"/>
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
-	<property name="ant.build.javac.source" value="1.7"/>
-	<property name="ant.build.javac.target" value="1.7"/>
+	<property name="ant.build.javac.source" value="1.8"/>
+	<property name="ant.build.javac.target" value="1.8"/>
 	<property name="jetty.version" value="9.4.11.v20180605"/>
 	<property name="version.major" value="1.5"/>
 	<property name="version.minor" value="4"/>
