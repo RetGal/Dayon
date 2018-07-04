@@ -200,64 +200,63 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 				final NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
 
 				switch (type) {
-				case HELLO:
-					if (introduced) {
-						throw new IOException("Unexpected message [HELLO]!");
-					}
-
-					if (https != null) {
-						https.cancel();
-						https = null;
-					}
-
-					final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
-					fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
-
-					final Version version = Version.get();
-					final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
-
-					if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
-						throw new IOException("Version Error!");
-					}
-
-					introduced = true;
-					fireOnConnected(connection);
-
-					break;
-
-				case CAPTURE:
-					if (!introduced) {
-						throw new IOException("Unexpected message [CAPTURE]!");
-					}
-
-					final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
-					fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
-
-					captureMessageHandler.handleCapture(capture);
-
-					break;
-
-				case MOUSE_LOCATION:
-					if (!introduced) {
-						throw new IOException("Unexpected message [CAPTURE]!");
-					}
-
-					final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
-					fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
-
-					mouseMessageHandler.handleLocation(mouse);
-
-					break;
-
-				default:
-					throw new IOException("Unsupported message type [" + type + "]!");
+					case HELLO:
+						if (introduced) {
+							throw new IOException("Unexpected message [HELLO]!");
+						}
+	
+						if (https != null) {
+							https.cancel();
+							https = null;
+						}
+	
+						final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
+						fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
+	
+						final Version version = Version.get();
+						final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
+	
+						if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
+							throw new IOException("Version Error!");
+						}
+	
+						introduced = true;
+						fireOnConnected(connection);
+						break;
+	
+					case CAPTURE:
+						if (!introduced) {
+							throw new IOException("Unexpected message [CAPTURE]!");
+						}
+	
+						final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
+						fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
+	
+						captureMessageHandler.handleCapture(capture);
+						break;
+	
+					case MOUSE_LOCATION:
+						if (!introduced) {
+							throw new IOException("Unexpected message [CAPTURE]!");
+						}
+	
+						final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
+						fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
+	
+						mouseMessageHandler.handleLocation(mouse);
+						break;
+	
+					default:
+						throw new IOException("Unsupported message type [" + type + "]!");
 				}
 			}
 		} catch (IOException ex) {
-			Log.error("IO error (cancelling:" + cancelling + ")!", ex);
-
+			
 			if (!cancelling.get()) {
+				Log.error("IO error (not cancelled)", ex);
 				fireOnIOError(ex);
+			} else {
+				Log.info("Stopped network receiver (cancelled)");
 			}
 
 			if (sender != null) {
