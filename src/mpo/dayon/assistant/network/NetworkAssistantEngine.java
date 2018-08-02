@@ -13,6 +13,7 @@ import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.List;
@@ -22,6 +23,7 @@ import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManager;
 
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsResources;
@@ -42,6 +44,7 @@ import mpo.dayon.common.network.message.NetworkMessageType;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessage;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
+import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
@@ -163,7 +166,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
 			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(kmf.getKeyManagers(), null, null);
+			sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
 			
 			SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
 			server = (SSLServerSocket) ssf.createServerSocket(port);
@@ -180,7 +183,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 				connection = server.accept();
 
-				Log.info(String.format("Incoming connection from [%s]", connection));
+				Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
 			} while (!fireOnAccepted(connection));
 
 			server.close();

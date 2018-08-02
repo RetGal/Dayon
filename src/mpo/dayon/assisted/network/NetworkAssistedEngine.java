@@ -1,5 +1,8 @@
 package mpo.dayon.assisted.network;
 
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+
 import java.awt.Point;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -7,8 +10,14 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
+import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -16,6 +25,7 @@ import javax.net.ssl.TrustManager;
 
 import org.jetbrains.annotations.Nullable;
 
+import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
@@ -74,12 +84,22 @@ public class NetworkAssistedEngine extends NetworkEngine
 	public void start()
 			throws IOException, NoSuchAlgorithmException, KeyManagementException {
 		Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
+		
+		
+		KeyStore keyStore;
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		try {
+			keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
+		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
+			Log.error("Fatal, can not init encryption", e);
+		}
+		
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
 
-		SSLContext scontext = SSLContext.getInstance("TLS");
-		scontext.init(null, new TrustManager[] { new CustomTrustManager() }, null);
-
-		SSLSocketFactory ssf = scontext.getSocketFactory();
-
+		SSLSocketFactory ssf = sslContext.getSocketFactory();
 		SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
 
 		DataOutputStream out = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
