@@ -8,6 +8,7 @@ import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -68,7 +69,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	 */
 	private NetworkSender sender;
 
-	private SSLServerSocket server;
+	private ServerSocket server;
 
 	private Socket connection;
 
@@ -169,7 +170,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
 			
 			SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
-			server = (SSLServerSocket) ssf.createServerSocket(port);
+			server = ssf.createServerSocket(port);
 
 			Log.info("Accepting ...");
 			fireOnAccepting(port);
