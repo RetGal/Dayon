@@ -255,10 +255,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	private void fireOnCaptured(Capture capture) {
 		final List<CaptureEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final CaptureEngineListener xlistener : xlisteners) {
 			xlistener.onCaptured(capture);
 		}
@@ -266,10 +262,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
 	private void fireOnRawCaptured(int id, byte[] grays) {
 		final List<CaptureEngineListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final CaptureEngineListener xlistener : xlisteners) {
 			xlistener.onRawCaptured(id, grays);

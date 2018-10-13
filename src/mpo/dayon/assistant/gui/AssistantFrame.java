@@ -389,10 +389,6 @@ public class AssistantFrame extends BaseFrame {
 	private void fireOnMouseMove(int x, int y) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onMouseMove(x, y);
 		}
@@ -400,10 +396,6 @@ public class AssistantFrame extends BaseFrame {
 
 	private void fireOnMousePressed(int x, int y, int button) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onMousePressed(x, y, button);
@@ -413,10 +405,6 @@ public class AssistantFrame extends BaseFrame {
 	private void fireOnMouseReleased(int x, int y, int button) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onMouseReleased(x, y, button);
 		}
@@ -424,10 +412,6 @@ public class AssistantFrame extends BaseFrame {
 
 	private void fireOnMouseWheeled(int x, int y, int rotations) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onMouseWheeled(x, y, rotations);
@@ -437,10 +421,6 @@ public class AssistantFrame extends BaseFrame {
 	private void fireOnKeyPressed(int keycode, char keychar) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onKeyPressed(keycode, keychar);
 		}
@@ -448,10 +428,6 @@ public class AssistantFrame extends BaseFrame {
 
 	private void fireOnKeyReleased(int keycode, char keychar) {
 		final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final AssistantFrameListener xlistener : xlisteners) {
 			xlistener.onKeyReleased(keycode, keychar);

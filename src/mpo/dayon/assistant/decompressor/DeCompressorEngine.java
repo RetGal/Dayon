@@ -101,10 +101,6 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	private void fireOnDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
 		final List<DeCompressorEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final DeCompressorEngineListener xlistener : xlisteners) {
 			xlistener.onDeCompressed(capture, cacheHits, compressionRatio);
 		}

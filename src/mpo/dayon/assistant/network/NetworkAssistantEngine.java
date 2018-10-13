@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.TrustManager;
 
@@ -324,10 +323,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private void fireOnReady() {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onReady();
 		}
@@ -335,10 +330,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private void fireOnHttpStarting(int port) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onHttpStarting(port);
@@ -348,10 +339,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private void fireOnStarting(int port) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onStarting(port);
 		}
@@ -360,10 +347,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private void fireOnAccepting(int port) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onAccepting(port);
 		}
@@ -371,10 +354,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private boolean fireOnAccepted(Socket connection) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return true;
-		}
 
 		boolean ok = true;
 
@@ -390,10 +369,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private void fireOnConnected(Socket connection) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onConnected(connection);
 		}
@@ -402,10 +377,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private void fireOnByteReceived(int count) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onByteReceived(count);
 		}
@@ -413,10 +384,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private void fireOnIOError(IOException error) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-		if (xlisteners == null) {
-			return;
-		}
 
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onIOError(error);

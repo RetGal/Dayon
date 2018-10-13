@@ -185,10 +185,6 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			MemByteBuffer compressed) {
 		final List<CompressorEngineListener> xlisteners = listeners.getListeners();
 
-		if (xlisteners == null) {
-			return;
-		}
-
 		for (final CompressorEngineListener xlistener : xlisteners) {
 			xlistener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
 		}
