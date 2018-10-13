@@ -40,8 +40,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	public CaptureEngine(CaptureFactory captureFactory) {
 		this.captureFactory = captureFactory;
 
-		final int x = Math.round(captureFactory.getWidth() / (float) TILE_WIDTH);
-		final int y = Math.round(captureFactory.getHeight() / (float) TILE_HEIGHT);
+		final int x = Math.round(captureFactory.getWidth() / TILE_WIDTH);
+		final int y = Math.round(captureFactory.getHeight() / TILE_HEIGHT);
 
 		this.previousCapture = new long[x * y + 200];
 		resetPreviousCapture();
