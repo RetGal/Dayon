@@ -11,7 +11,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="jetty.version" value="9.4.11.v20180605"/>
+	<property name="jetty.version" value="9.4.14.v20181114"/>
 	<property name="version.major" value="1.5"/>
 	<property name="version.minor" value="4"/>
 
@@ -49,7 +49,7 @@
 			<manifest>
 				<attribute name="Implementation-Version" value="${version.major} #${version.minor}"/>
 				<attribute name="Main-Class" value="${main.class}"/>
-				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar javax.servlet-api-4.0.1.jar"/>
+				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar javax.servlet-api-3.1.0.jar"/>
 				<attribute name="Permissions" value="all-permissions"/>
 			</manifest>
 			<fileset dir="${dir.bin}"/>
@@ -62,7 +62,7 @@
 		<copy file="${dir.binfile}/lib/jetty-io-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-server-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-util-${jetty.version}.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/javax.servlet-api-4.0.1.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/javax.servlet-api-3.1.0.jar" todir="${dir.dist}/lib"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
 				<exclude name="jre/"/>
