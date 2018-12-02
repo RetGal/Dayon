@@ -14,6 +14,8 @@ public class AssistantRunner {
 			// JETTY setup
 			//
 			System.setProperty("org.eclipse.jetty.util.log.class", JettyLogger.class.getName());
+			// System.setProperty("org.eclipse.jetty.util.log.announce", "false");
+			// System.setProperty("org.eclipse.jetty.LEVEL", "OFF");
 
 			// System.setProperty("DEBUG", "on");
 			// System.setProperty("VERBOSE", "on");

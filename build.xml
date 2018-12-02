@@ -48,7 +48,7 @@
 			<manifest>
 				<attribute name="Implementation-Version" value="${version}"/>
 				<attribute name="Main-Class" value="${main.class}"/>
-				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar javax.servlet-api-3.1.0.jar"/>
+				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar javax.servlet-api-3.1.0.jar bzip2-0.9.1.jar grizzly-lzma-1.9.65.jar"/>
 				<attribute name="Permissions" value="all-permissions"/>
 			</manifest>
 			<fileset dir="${dir.bin}"/>
@@ -62,6 +62,8 @@
 		<copy file="${dir.binfile}/lib/jetty-server-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/jetty-util-${jetty.version}.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/javax.servlet-api-3.1.0.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/bzip2-0.9.1.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.binfile}/lib/grizzly-lzma-1.9.65.jar" todir="${dir.dist}/lib"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
 				<exclude name="jre/"/>

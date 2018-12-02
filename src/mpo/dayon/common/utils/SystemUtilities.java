@@ -339,10 +339,26 @@ public abstract class SystemUtilities {
 	}
 
 	public static String formatIPv6(String serverName) {
-		if (serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}")) {
+		if (isValidIpV6(serverName)) {
 			return '[' + serverName + ']';
 		}
 		return serverName;
+	}
+	
+	public static boolean isValidIpAdressOrHostName(String serverName) {
+		return isValidIpV4(serverName) || isValidIpV6(serverName) || isValidHostname(serverName);
+	}
+	
+	private static boolean isValidIpV4(String serverName) {
+		return serverName.matches("^([\\d]{1,3}\\.){3}[\\d]{1,3}");
+	}
+	
+	private static boolean isValidIpV6(String serverName) {
+		return serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
+	}
+	
+	private static boolean isValidHostname(String serverName) {
+		return serverName.matches("^([\\w]*[\\.]?)*[\\w]+$");
 	}
 
 }

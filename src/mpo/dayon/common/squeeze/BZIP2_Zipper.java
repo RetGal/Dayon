@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.tools.bzip2.CBZip2InputStream;
-import org.apache.tools.bzip2.CBZip2OutputStream;
+import org.itadaki.bzip2.BZip2InputStream;
+import org.itadaki.bzip2.BZip2OutputStream;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
 
@@ -28,7 +28,7 @@ public class BZIP2_Zipper extends Zipper {
 	}
 
 	private static OutputStream createBZip2OutputStream(MemByteBuffer zipped) throws IOException {
-		return new CBZip2OutputStream(zipped);
+		return new BZip2OutputStream(zipped);
 	}
 
 	public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
@@ -49,7 +49,7 @@ public class BZIP2_Zipper extends Zipper {
 	}
 
 	private static InputStream createBZip2InputStream(MemByteBuffer zipped) throws IOException {
-		return new CBZip2InputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
+		return new BZip2InputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()), false);
 	}
 
 }

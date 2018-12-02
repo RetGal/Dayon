@@ -7,7 +7,7 @@ JAVA_HOME=`ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/
 JAVA=$JAVA_HOME/bin/java
 JAVA_OPTS="-Xms32M -Xmx192M"
 
-CLASSPATH="$DAYON_HOME/lib/dayon.jar:$DAYON_HOME/lib/jetty-http-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-io-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-server-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-util-9.4.14.v20181114.jar:$DAYON_HOME/lib/javax.servlet-api-3.1.0.jar"
+CLASSPATH="$DAYON_HOME/lib/dayon.jar:$DAYON_HOME/lib/jetty-http-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-io-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-server-9.4.14.v20181114.jar:$DAYON_HOME/lib/jetty-util-9.4.14.v20181114.jar:$DAYON_HOME/lib/javax.servlet-api-3.1.0.jar:$DAYON_HOME/lib/bzip2-0.9.1.jar:$DAYON_HOME/lib/grizzly-lzma-1.9.65.jar"
 
 $JAVA $JAVA_OPTS -cp $CLASSPATH -Ddayon.log=file $2
 

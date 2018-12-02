@@ -149,7 +149,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		try {
 			final int port = getPort();
 
-			Log.info(String.format("HTTP server [port:%d]", port));
+			Log.info(String.format("HTTPS server [port:%d]", port));
 			fireOnHttpStarting(port);
 
 			NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)

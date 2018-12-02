@@ -114,6 +114,7 @@ public class NetworkAssistantHttpsEngine {
 		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 		sslContextFactory.setKeyStore(keyStore);
 		sslContextFactory.setKeyStorePassword(KEY_STORE_PASS);
+		sslContextFactory.setEndpointIdentificationAlgorithm("TLS");
 		return sslContextFactory;
 	}
 

@@ -195,6 +195,8 @@ public class Assisted implements Subscriber {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");
+            } else if (!SystemUtilities.isValidIpAdressOrHostName(ipAddress)) {
+            	return Babylon.translate("connection.settings.invalidIpAddress");
             }
 
             final String portNumber = assistantPortNumberTextField.getText();

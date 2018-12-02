@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import SevenZip.Compression.LZMA.Encoder;
+import com.sun.grizzly.lzma.compression.lzma.Decoder;
+import com.sun.grizzly.lzma.compression.lzma.Encoder;
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class LZMA_Zipper extends Zipper {
@@ -12,7 +13,7 @@ public class LZMA_Zipper extends Zipper {
 	}
 
 	public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
-		final Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
+		final Encoder encoder = new Encoder();
 
 		final InputStream inStream = new ByteArrayInputStream(unzipped.getInternal(), 0, unzipped.size());
 
@@ -55,7 +56,7 @@ public class LZMA_Zipper extends Zipper {
 			throw new IOException("LZMA: input .lzma file is too short");
 		}
 
-		final SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();
+		final Decoder decoder = new Decoder();
 		if (!decoder.SetDecoderProperties(properties)) {
 			throw new IOException("LZMA: Incorrect stream properties");
 		}
