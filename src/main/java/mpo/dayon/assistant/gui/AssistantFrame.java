@@ -32,7 +32,7 @@ import javax.swing.JScrollPane;
 import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.assistant.monitoring.counter.Counter;
-import mpo.dayon.assistant.resource.ImageNames;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.gui.common.BaseFrame;

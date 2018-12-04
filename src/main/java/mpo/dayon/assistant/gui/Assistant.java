@@ -51,7 +51,7 @@ import mpo.dayon.assistant.monitoring.counter.TileCounter;
 import mpo.dayon.assistant.network.NetworkAssistantConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
-import mpo.dayon.assistant.resource.ImageNames;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.assistant.utils.NetworkUtilities;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;

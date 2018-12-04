@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.resource;
+package mpo.dayon.common.gui.common;
 
 public abstract class ImageNames {
 	public static final String APP = "app_32.png";

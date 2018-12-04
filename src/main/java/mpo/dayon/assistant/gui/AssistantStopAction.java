@@ -6,22 +6,25 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
-import mpo.dayon.assistant.resource.ImageNames;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
-public class AssistantStartAction extends AbstractAction {
+public class AssistantStopAction extends AbstractAction {
 	private final NetworkAssistantEngine networkEngine;
 
-	public AssistantStartAction(NetworkAssistantEngine networkEngine) {
+	public AssistantStopAction(NetworkAssistantEngine networkEngine) {
+		setEnabled(false);
+
 		this.networkEngine = networkEngine;
 
-		putValue(Action.NAME, "start");
-		putValue(Action.SHORT_DESCRIPTION, Babylon.translate("start.session"));
-		putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
+		putValue(Action.NAME, "stop");
+		putValue(Action.SHORT_DESCRIPTION, Babylon.translate("stop.session"));
+		putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		networkEngine.start();
+		networkEngine.cancel();
 	}
+
 }

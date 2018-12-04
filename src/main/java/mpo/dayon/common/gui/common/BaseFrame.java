@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import mpo.dayon.assistant.resource.ImageNames;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;

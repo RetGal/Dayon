@@ -10,7 +10,7 @@ import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.Nullable;
 
-import mpo.dayon.assistant.resource.ImageNames;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
 public class AssistantPanel extends JPanel {
