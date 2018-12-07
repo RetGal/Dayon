@@ -25,6 +25,7 @@
 		<jetbrains.annotations.version>16.0.2</jetbrains.annotations.version>
 		<bzip2.version>0.9.1</bzip2.version>
 		<grizzly-lzma.version>1.9.65</grizzly-lzma.version>
+		<junit.jupiter.version>5.3.1</junit.jupiter.version>
 	</properties>
 
 	<dependencies>
@@ -67,6 +68,12 @@
 			<groupId>com.sun.grizzly</groupId>
 			<artifactId>grizzly-lzma</artifactId>
 			<version>${grizzly-lzma.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit.jupiter.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 

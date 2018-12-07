@@ -29,32 +29,29 @@ public abstract class SystemUtilities {
 		try {
 			final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
-			File rootPATH = null;
-
 			if (cl instanceof URLClassLoader) {
 				final URLClassLoader ucl = (URLClassLoader) cl;
 				final URL[] urls = ucl.getURLs();
-
+				ucl.close();
 				for (final URL url : urls) {
 					if ("file".equals(url.getProtocol())) {
 						final String path = url.toExternalForm();
 
 						if (path.contains("/out/idea/")) {
 							final int pos = path.indexOf("/out");
-							rootPATH = new File(new URI(path.substring(0, pos)));
-							break;
+							return new File(new URI(path.substring(0, pos)));
 						} else if (path.contains("/lib/dayon.jar")) {
 							final int pos = path.indexOf("/lib");
-							rootPATH = new File(new URI(path.substring(0, pos)));
-							break;
+							return new File(new URI(path.substring(0, pos)));
 						}
 					}
 				}
 			}
-			return rootPATH;
 		} catch (URISyntaxException ex) {
 			throw new RuntimeException(ex); // unlikely (!)
+		} catch (IOException ignored) {
 		}
+		return null;
 	}
 
 	@Nullable
@@ -344,21 +341,22 @@ public abstract class SystemUtilities {
 		}
 		return serverName;
 	}
-	
+
 	public static boolean isValidIpAdressOrHostName(String serverName) {
 		return isValidIpV4(serverName) || isValidIpV6(serverName) || isValidHostname(serverName);
 	}
-	
+
 	private static boolean isValidIpV4(String serverName) {
-		return serverName.matches("^([\\d]{1,3}\\.){3}[\\d]{1,3}");
+		return serverName.matches("^([\\d]{1,3}\\.){3}[\\d]{1,3}$")
+				&& !Arrays.asList(serverName.split("\\.")).stream().filter(seg -> Integer.parseInt(seg) > 255).findFirst().isPresent();
 	}
-	
+
 	private static boolean isValidIpV6(String serverName) {
 		return serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
 	}
-	
+
 	private static boolean isValidHostname(String serverName) {
-		return serverName.matches("^([\\w]*[\\.]?)*[\\w]+$");
+		return serverName.matches("^(([a-zA-Z]|[a-zA-Z][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$");
 	}
 
 }
