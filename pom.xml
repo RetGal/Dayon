@@ -9,14 +9,15 @@
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
 	<version>1.5.4</version>
-    <licenses>
-        <license>
-            <name>GNU General Public License Version 3</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
-        </license>
-    </licenses>
+	<licenses>
+		<license>
+			<name>GNU General Public License Version 3</name>
+			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+		</license>
+	</licenses>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
@@ -115,7 +116,6 @@
 				<configuration>
 					<source>${maven.compiler.source}</source>
 					<target>${maven.compiler.target}</target>
-					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -188,7 +188,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/target/classes/mpo/dayon/common/babylon</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>${basedir}/src/main/java/mpo/dayon/common/babylon</directory>
@@ -207,7 +206,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/target/classes/mpo/dayon/assistant/network/https</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>${basedir}/src/main/java/mpo/dayon/assistant/network/https</directory>
@@ -228,7 +226,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/dist</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>resources</directory>
@@ -245,7 +242,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/dist/doc/html</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>${basedir}/docs</directory>
@@ -262,7 +258,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/dist</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>${basedir}/target</directory>
@@ -282,7 +277,6 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/dist/lib</outputDirectory>
-							<encoding>UTF-8</encoding>
 							<resources>
 								<resource>
 									<directory>${basedir}/target</directory>
