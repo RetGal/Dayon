@@ -1,4 +1,4 @@
 #!/bin/sh
 
-$(dirname "$0")/dayon.sh dayon.jar mpo.dayon.assistant.AssistantRunner
+$(dirname "$0")/dayon.sh mpo.dayon.assistant.AssistantRunner $1
 

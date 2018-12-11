@@ -3,6 +3,7 @@ package mpo.dayon.assistant;
 import mpo.dayon.assistant.gui.Assistant;
 import mpo.dayon.assistant.gui.AssistantConfiguration;
 import mpo.dayon.assistant.jetty.JettyLogger;
+import mpo.dayon.common.babylon.Zion;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
@@ -24,6 +25,8 @@ public class AssistantRunner {
 
 			SystemUtilities.setApplicationName("dayon_assistant");
 			// System.setProperty("dayon.debug", "on");
+			
+			Zion.overrideLocale(args);
 
 			Log.info("============================================================================================");
 			for (String line : SystemUtilities.getSystemProperties()) {
