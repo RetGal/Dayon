@@ -28,7 +28,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	}
 
 	public void start() {
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 		executor.setThreadFactory(new DefaultThreadFactoryEx("ControlEngine"));
 	}
 

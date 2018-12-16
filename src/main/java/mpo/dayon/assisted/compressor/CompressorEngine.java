@@ -79,7 +79,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		// the
 		// network queue is full => too many capture (!)
 
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize));
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("CompressorEngine"));
 

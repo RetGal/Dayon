@@ -57,7 +57,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 		// thread then
 		// have a look how the de-compressed data are sent to the GUI (!)
 
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("DeCompressorEngine"));
 
