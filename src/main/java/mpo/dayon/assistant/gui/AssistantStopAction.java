@@ -10,7 +10,7 @@ import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
-public class AssistantStopAction extends AbstractAction {
+class AssistantStopAction extends AbstractAction {
 	private final NetworkAssistantEngine networkEngine;
 
 	public AssistantStopAction(NetworkAssistantEngine networkEngine) {

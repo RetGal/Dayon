@@ -140,7 +140,7 @@ public class Compressor {
 		}
 	}
 
-	private static void encodeTile(TileCache cache, RunLengthEncoder encoder, MemByteBuffer encoded, CaptureTile tile) throws IOException {
+	private static void encodeTile(TileCache cache, RunLengthEncoder encoder, MemByteBuffer encoded, CaptureTile tile) {
 		// single-level tile : [ 0 .. 256 [
 
 		if (tile.getSingleLevel() != -1) {

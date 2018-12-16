@@ -64,7 +64,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assisted 2 assitant.
+	 * Assisted 2 assistant.
 	 */
 	public void sendHello() {
 		final Version version = Version.get();
@@ -75,7 +75,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assisted 2 assitant.
+	 * Assisted 2 assistant.
 	 */
 	public void sendCapture(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
 			MemByteBuffer compressed) {
@@ -85,7 +85,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assisted 2 assitant.
+	 * Assisted 2 assistant.
 	 */
 	public boolean sendMouseLocation(Point location) {
 		// No point to buffer old location of the mouse - here the mouse engine
@@ -106,7 +106,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assistant 2 assited.
+	 * Assistant 2 assisted.
 	 */
 	public void sendCaptureConfiguration(CaptureEngineConfiguration configuration) {
 		send(true, new NetworkCaptureConfigurationMessage(configuration));
@@ -115,7 +115,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assistant 2 assited.
+	 * Assistant 2 assisted.
 	 */
 	public void sendCompressorConfiguration(CompressorEngineConfiguration configuration) {
 		send(true, new NetworkCompressorConfigurationMessage(configuration));
@@ -124,7 +124,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assistant 2 assited.
+	 * Assistant 2 assisted.
 	 */
 	public void sendMouseControl(NetworkMouseControlMessage message) {
 		send(true, message);
@@ -133,7 +133,7 @@ public class NetworkSender {
 	/**
 	 * Might block (!)
 	 * <p/>
-	 * Assistant 2 assited.
+	 * Assistant 2 assisted.
 	 */
 	public void sendKeyControl(NetworkKeyControlMessage message) {
 		send(true, message);

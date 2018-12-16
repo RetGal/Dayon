@@ -48,7 +48,7 @@ public class BZIP2_Zipper extends Zipper {
 		return unzipped;
 	}
 
-	private static InputStream createBZip2InputStream(MemByteBuffer zipped) throws IOException {
+	private static InputStream createBZip2InputStream(MemByteBuffer zipped) {
 		return new BZip2InputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()), false);
 	}
 

@@ -82,17 +82,8 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 	}
 
 	private boolean fireOnLocationUpdated(Point location) {
-		final List<MouseEngineListener> xlisteners = listeners.getListeners();
-
-		boolean ok = true;
-
-		for (final MouseEngineListener xlistener : xlisteners) {
-			if (!xlistener.onLocationUpdated(location)) {
-				ok = false;
-			}
-		}
-
-		return ok;
+		final List<MouseEngineListener> xListeners = listeners.getListeners();
+		return xListeners.stream().allMatch(xListener -> xListener.onLocationUpdated(location));
 	}
 
 }

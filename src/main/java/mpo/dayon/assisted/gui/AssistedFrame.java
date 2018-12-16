@@ -16,7 +16,7 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
-public class AssistedFrame extends BaseFrame {
+class AssistedFrame extends BaseFrame {
 		private AssistedFrameConfiguration configuration;
 		private final Position position;
 		private final Dimension dimension;

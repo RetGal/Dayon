@@ -119,12 +119,7 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		// [Windows] key and the like (e.g.,CTRL-ALT-DEL, etc...) at all ...
 		// -------------------------------------------------------------------------------------------------------------
 		if (keycode == -1) {
-			if (pressedKeys.size() > 0) {
-				final Integer[] pkeys = pressedKeys.toArray(new Integer[pressedKeys.size()]);
-				for (Integer pkey : pkeys) {
-					onKeyReleased(pkey, keychar);
-				}
-			}
+			pressedKeys.forEach(pressedKey -> onKeyReleased(pressedKey, keychar));
 			return;
 		}
 

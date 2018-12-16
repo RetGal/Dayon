@@ -32,7 +32,6 @@ public abstract class SystemUtilities {
 			if (cl instanceof URLClassLoader) {
 				final URLClassLoader ucl = (URLClassLoader) cl;
 				final URL[] urls = ucl.getURLs();
-				ucl.close();
 				for (final URL url : urls) {
 					if ("file".equals(url.getProtocol())) {
 						final String path = url.toExternalForm();
@@ -43,13 +42,15 @@ public abstract class SystemUtilities {
 						} else if (path.contains("/lib/dayon.jar")) {
 							final int pos = path.indexOf("/lib");
 							return new File(new URI(path.substring(0, pos)));
+						} else if (path.contains("/target/classes")) {
+							final int pos = path.indexOf("/classes");
+							return new File(new URI(path.substring(0, pos)));
 						}
 					}
 				}
 			}
 		} catch (URISyntaxException ex) {
 			throw new RuntimeException(ex); // unlikely (!)
-		} catch (IOException ignored) {
 		}
 		return null;
 	}
@@ -60,8 +61,13 @@ public abstract class SystemUtilities {
 		if (root == null) {
 			return null;
 		}
+		
+		File path = new File(root, "dayon.jar");
+		if (path.exists() && path.isFile()) {
+			return root;
+		}		
 
-		File path = new File(root, "out/ant/jars");
+		path = new File(root, "out/ant/jars");
 		if (path.exists() && path.isDirectory()) {
 			return path;
 		}
@@ -80,7 +86,11 @@ public abstract class SystemUtilities {
 
 		if (rootPATH != null) {
 			// Anchor not supported : #assistant-setup
-			return new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html")).toURI();
+			File quickStart = new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html"));
+			if (!quickStart.isFile()) {
+				quickStart = new File(rootPATH, "../docs/" + Babylon.translate("quickstart.html"));
+			}
+			return quickStart.toURI();
 		}
 		return null;
 	}
@@ -227,35 +237,27 @@ public abstract class SystemUtilities {
 
 	public static List<String> getSystemProperties() {
 		final List<String> props = new ArrayList<>();
+		final List<String> propNames = new ArrayList<>();
+		
+		System.getProperties().keySet().forEach(entry -> propNames.add(entry.toString()));
+		int size = propNames.stream().max(Comparator.comparing(String::length)).get().length();
 
-		int size = Integer.MIN_VALUE;
+		Collections.sort(propNames);
 
-		final List<String> propnames = new ArrayList<>();
-		for (Object entry : System.getProperties().keySet()) {
-			final String name = entry.toString();
-			propnames.add(name);
-
-			if (name.length() > size) {
-				size = name.length();
-			}
-		}
-
-		Collections.sort(propnames);
-
-		for (String propname : propnames) {
-			String propvalue = System.getProperty(propname);
+		for (String propName : propNames) {
+			String propValue = System.getProperty(propName);
 
 			// I want to display the actual content of the line separator...
-			if (propname.equals("line.separator")) {
+			if (propName.equals("line.separator")) {
 				String hex = "";
-				for (int idx = 0; idx < propvalue.length(); idx++) {
-					final int cc = propvalue.charAt(idx);
+				for (int idx = 0; idx < propValue.length(); idx++) {
+					final int cc = propValue.charAt(idx);
 					hex += "\\" + cc;
 				}
-				propvalue = hex;
+				propValue = hex;
 			}
 
-			props.add(String.format("%" + size + "." + size + "s [%s]", propname, propvalue));
+			props.add(String.format("%" + size + "." + size + "s [%s]", propName, propValue));
 		}
 		return props;
 	}
@@ -348,7 +350,7 @@ public abstract class SystemUtilities {
 
 	private static boolean isValidIpV4(String serverName) {
 		return serverName.matches("^([\\d]{1,3}\\.){3}[\\d]{1,3}$")
-				&& !Arrays.asList(serverName.split("\\.")).stream().filter(seg -> Integer.parseInt(seg) > 255).findFirst().isPresent();
+				&& Arrays.stream(serverName.split("\\.")).noneMatch(seg -> Integer.parseInt(seg) > 255);
 	}
 
 	private static boolean isValidIpV6(String serverName) {

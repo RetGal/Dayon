@@ -33,10 +33,8 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		subscribers.add(subscriber);
 	}
 
-	public void shout(char bogusChar) {
-		for (Subscriber subscriber : subscribers) {
-			subscriber.digest(String.valueOf(bogusChar));
-		}
+	private void shout(char bogusChar) {
+		subscribers.forEach(subscriber -> subscriber.digest(String.valueOf(bogusChar)));
 	}
 
 	/**
@@ -73,23 +71,23 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			try {
 				robot.keyPress(message.getKeyCode());
 			} catch (IllegalArgumentException ex) {
-				Log.warn(message.toString() +" contained an invalid keyCode for "+message.getKeyChar());
+				Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
 				if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
 					KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
 					// plan b
 					if (key.getKeyCode() != Character.MIN_VALUE) {
-						Log.warn("retrying with keyCode "+key.getKeyCode());
+						Log.warn("retrying with keyCode " + key.getKeyCode());
 						typeUnicode(key.getKeyCode());
-					} else {
-						shout(message.getKeyChar());
+						return;
 					}
+					shout(message.getKeyChar());
 				}
 			}
 		} else if (message.isReleased()) {
 			try {
 				robot.keyRelease(message.getKeyCode());
 			} catch (IllegalArgumentException ex) {
-				Log.warn(message.toString() +" contained an invalid keyCode for "+message.getKeyChar());
+				Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
 			}
 		}
 	}
@@ -101,9 +99,9 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	{
 		if (File.separatorChar == '/') {
 			typeLinuxUnicode(keyCode);
-		} else {
-			typeWindowsUnicode(keyCode);
+			return;
 		}
+		typeWindowsUnicode(keyCode);
 	}
 
 	/**
@@ -112,8 +110,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	private void typeWindowsUnicode(int keyCode) {
 	    robot.keyPress(KeyEvent.VK_ALT);
 	    // simulate a numpad key press for each digit
-	    for(int i = 3; i >= 0; --i)
-	    {
+	    for (int i = 3; i >= 0; --i) {
 	        int code = keyCode / (int) (Math.pow(10, i)) % 10 + KeyEvent.VK_NUMPAD0;
 	        robot.keyPress(code);
 	        robot.keyRelease(code);

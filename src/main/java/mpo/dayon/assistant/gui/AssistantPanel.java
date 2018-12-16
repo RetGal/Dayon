@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
-public class AssistantPanel extends JPanel {
+class AssistantPanel extends JPanel {
 
 	private static final Image MOUSE_CURSOR = ImageUtilities.getOrCreateIcon(ImageNames.MOUSE_YELLOW).getImage();
 

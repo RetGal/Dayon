@@ -1,11 +1,9 @@
 package mpo.dayon.common.squeeze;
 
-import java.io.IOException;
-
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class PackBitsRunLengthEncoder extends RunLengthEncoder {
-	public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) throws IOException {
+	public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) {
 		final byte[] xcapture = capture.getInternal();
 		final int len = capture.size();
 

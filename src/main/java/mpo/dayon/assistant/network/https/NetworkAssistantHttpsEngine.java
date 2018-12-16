@@ -124,7 +124,7 @@ public class NetworkAssistantHttpsEngine {
 		private boolean __acceptClosed;
 		private boolean __acceptStopped;
 
-		public MyServerConnector(Server server, SslContextFactory contextFactory, int port) {
+		MyServerConnector(Server server, SslContextFactory contextFactory, int port) {
 			super(server, contextFactory);
 			setPort(port);
 		}
@@ -166,7 +166,7 @@ public class NetworkAssistantHttpsEngine {
 
 		private boolean __dayonStarted;
 
-		public MyHttpHandler(String root) {
+		MyHttpHandler(String root) {
 			setResourceBase(root);
 		}
 

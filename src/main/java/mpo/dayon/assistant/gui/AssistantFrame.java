@@ -43,7 +43,7 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
-public class AssistantFrame extends BaseFrame {
+class AssistantFrame extends BaseFrame {
 
 	private final Listeners<AssistantFrameListener> listeners = new Listeners<>(AssistantFrameListener.class);
 
