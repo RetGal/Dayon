@@ -5,10 +5,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<name>Dayon!</name>
-	<url>https://github.com/RetGal/Dayon</url>
+	<url>https://github.com/retgal/dayon</url>
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
-	<version>1.5.4</version>
+	<version>1.6.0</version>
 	<licenses>
 		<license>
 			<name>GNU General Public License Version 3</name>
@@ -126,12 +126,12 @@
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
 						<manifest>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<mainClass>${dayon.mainClass}</mainClass>
 						</manifest>
 						<manifestEntries>
-							<Trusted-Library>true</Trusted-Library>
+							<ImplementationVersion>${project.version}</ImplementationVersion>
 							<Permissions>all-permissions</Permissions>
+							<Trusted-Library>true</Trusted-Library>
 							<Built-By>a computer</Built-By>
 						</manifestEntries>
 					</archive>
@@ -167,9 +167,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<keystore>${basedir}/target/classes/trust/X509</keystore>
+					<keystore>${basedir}/src/main/resources/trust/X509</keystore>
 					<alias>mykey</alias>
 					<storepass>spasspass</storepass>
+					<tsa>http://tsa.starfieldtech.com</tsa>
 				</configuration>
 			</plugin>
 			<plugin>
