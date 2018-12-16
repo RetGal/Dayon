@@ -1,14 +1,7 @@
 .classpath
 .project
 .settings
-/bin/mpo/
+/bin/
 /build/*.jar
 /dist/
-/dist/readme.txt
-/dist/bin/
-/dist/doc/
-/dist/jre/
-/dist/license/
-/dist/lib/
-/bin/
 /target/
