@@ -13,7 +13,7 @@
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
 	<property name="jetty.version" value="9.4.14.v20181114"/>
-	<property name="version" value="1.5.4"/>
+	<property name="version" value="1.6.0"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -50,8 +50,8 @@
 			<manifest>
 				<attribute name="Implementation-Version" value="${version}"/>
 				<attribute name="Main-Class" value="${main.class}"/>
-				<attribute name="Class-Path" value=". jetty-http-${jetty.version}.jar jetty-io-${jetty.version}.jar jetty-server-${jetty.version}.jar jetty-util-${jetty.version}.jar javax.servlet-api-3.1.0.jar bzip2-0.9.1.jar grizzly-lzma-1.9.65.jar"/>
 				<attribute name="Permissions" value="all-permissions"/>
+				<attribute name="Trusted-Library" value="true"/>
 			</manifest>
 			<fileset dir="${dir.bin}"/>
 		</jar>
