@@ -212,13 +212,10 @@ public class CaptureTile {
 	// =================================================================================================================
 
 	public static class XYWH {
-		public final int x;
-
-		public final int y;
-
-		public final int w;
-
-		public final int h;
+		final int x;
+		final int y;
+		final int w;
+		final int h;
 
 		public XYWH(int x, int y, int w, int h) {
 			this.x = x;
@@ -234,11 +231,8 @@ public class CaptureTile {
 
 	private static class XYWH_Configuration {
 		final int captureWidth;
-
 		final int captureHeight;
-
 		final int tileWidth;
-
 		final int tileHeight;
 
 		XYWH_Configuration(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {

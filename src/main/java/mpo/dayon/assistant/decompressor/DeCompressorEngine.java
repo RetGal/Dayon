@@ -57,7 +57,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 		// thread then
 		// have a look how the de-compressed data are sent to the GUI (!)
 
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("DeCompressorEngine"));
 
@@ -109,7 +109,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	private class MyExecutable extends Executable {
 		private final NetworkCaptureMessage message;
 
-		public MyExecutable(ExecutorService executor, Semaphore semaphore, NetworkCaptureMessage message) {
+		MyExecutable(ExecutorService executor, Semaphore semaphore, NetworkCaptureMessage message) {
 			super(executor, semaphore);
 
 			this.message = message;

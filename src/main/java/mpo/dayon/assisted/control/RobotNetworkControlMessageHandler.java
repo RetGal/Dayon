@@ -95,7 +95,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	/**
 	 * Q&D OS detection
 	 */
-	public void typeUnicode(int keyCode)
+	private void typeUnicode(int keyCode)
 	{
 		if (File.separatorChar == '/') {
 			typeLinuxUnicode(keyCode);

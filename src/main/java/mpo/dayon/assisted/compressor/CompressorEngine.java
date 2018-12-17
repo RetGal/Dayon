@@ -79,7 +79,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		// the
 		// network queue is full => too many capture (!)
 
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize));
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(queueSize));
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("CompressorEngine"));
 
@@ -131,9 +131,8 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 	private class MyExecutable extends Executable {
 		private final Capture capture;
 
-		public MyExecutable(Capture capture) {
+		MyExecutable(Capture capture) {
 			super(executor);
-
 			this.capture = capture;
 		}
 
