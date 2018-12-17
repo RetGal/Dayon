@@ -1,9 +1,15 @@
 package mpo.dayon.common.version;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class Version {
 	private static final Version VERSION_NULL = new Version(null);
+	public static final String RELEASE_LOCATION = "https://github.com/retgal/dayon/releases/";
 
 	private final String version;
+	private String latestVersion;
 
 	private final int major;
 	private final int minor;
@@ -45,4 +51,29 @@ public class Version {
 		return "v" + version;
 	}
 
+	public boolean isLatesVersion() {
+		boolean latest = getLatestRelease().equals(version);
+		return latest;
+	}
+
+	public String getLatestRelease() {
+		if (latestVersion == null) {
+			HttpURLConnection conn = null;
+			try {
+				URL obj = new URL(RELEASE_LOCATION + "latest");
+				conn = (HttpURLConnection) obj.openConnection();
+				conn.setInstanceFollowRedirects(false);
+			} catch (IOException e) {
+				// offline?
+			} finally {
+				conn.disconnect();
+			}
+
+			String latestLocation = conn.getHeaderField("Location");
+			if (latestLocation != null) {
+				latestVersion = latestLocation.substring(latestLocation.lastIndexOf("v"));
+			}
+		}
+		return latestVersion;
+	}
 }

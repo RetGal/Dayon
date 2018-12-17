@@ -30,6 +30,7 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
+import mpo.dayon.common.version.Version;
 
 public abstract class BaseFrame extends JFrame {
 
@@ -82,9 +83,7 @@ public abstract class BaseFrame extends JFrame {
 	}
 
 	private static final String HTTP_HOME = "https://github.com/retgal/dayon";
-
-	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/support.html";
-
+	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/support" + Babylon.translate("language.suffix") + ".html";
 	private static final String HTTP_FEEDBACK = "https://github.com/retgal/dayon/issues";
 
 	protected Action createShowInfoAction() {
@@ -100,16 +99,35 @@ public abstract class BaseFrame extends JFrame {
 				final JPanel panel = new JPanel();
 				panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 
-				panel.setPreferredSize(new Dimension(500, 250));
+				panel.setPreferredSize(new Dimension(500, 300));
 
-				final JLabel info = new JLabel("<html><a href=''>Dayon!</a> : " + Babylon.translate("synopsys") + ".</html>");
+				final JLabel info = new JLabel("<html>Dayon! : <a href=''>" + Babylon.translate("synopsys") + ".</a></html>");
 				info.setAlignmentX(Component.LEFT_ALIGNMENT);
-
 				// info.setAlignmentX(Component.CENTER_ALIGNMENT);
 				info.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						browse(HTTP_HOME);
+					}
+				});
+
+				final JLabel version = new JLabel("<html>" + Babylon.translate("version.installed") + " : <a href=''>" + Version.get() + "</a></html>");
+				version.setAlignmentX(Component.LEFT_ALIGNMENT);
+				// version.setAlignmentX(Component.CENTER_ALIGNMENT);
+				version.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						browse(Version.RELEASE_LOCATION + Version.get());
+					}
+				});
+
+				final JLabel latest = new JLabel("<html>" + Babylon.translate("version.latest") + " : <a href=''>" + Version.get().getLatestRelease() + "</a></html>");
+				version.setAlignmentX(Component.LEFT_ALIGNMENT);
+				// version.setAlignmentX(Component.CENTER_ALIGNMENT);
+				latest.addMouseListener(new MouseAdapter() {
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						browse(Version.RELEASE_LOCATION + Version.get().getLatestRelease());
 					}
 				});
 
@@ -138,6 +156,12 @@ public abstract class BaseFrame extends JFrame {
 
 				panel.add(Box.createVerticalStrut(10));
 				panel.add(info);
+				panel.add(Box.createVerticalStrut(5));
+				panel.add(version);
+				if (Version.get().getLatestRelease() != null) {
+					panel.add(Box.createVerticalStrut(5));
+					panel.add(latest);
+				}
 				panel.add(Box.createVerticalStrut(10));
 				panel.add(spane);
 				panel.add(Box.createVerticalStrut(10));
@@ -162,13 +186,9 @@ public abstract class BaseFrame extends JFrame {
 		final Action showHelp = new AbstractAction() {
 
 			public void actionPerformed(ActionEvent ev) {
-
 				final URI uri = SystemUtilities.getLocalIndexHtml();
-
 				browse(Objects.requireNonNull(uri).toString());
-
 			}
-
 		};
 
 		showHelp.putValue(Action.NAME, "showHelp");
