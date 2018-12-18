@@ -27,24 +27,34 @@
 				<b>Windows:</b> deux programmes d'installation sont disponible et l'installation devrait être assez directe. Un paquet est livré avec un JRE à base du OpenJDK 1.8, l'autre sans. Cet avec JRE peut seulement etre utilisé avec des versions de Windows de
 				64bit.
 			<p>
-				<b>Linux:</b> extraisez le fichier TGZ. Rendez le script <code>setup.sh</code> exécutable (<code>chmod +x</code>)  et exécutez-le. La location du JRE/JDK installé va être détecté automatiquement. Il n'est pas livré dans le tgz. Si, pour quelque raison que ce soit, il ne
+				<b>Linux:</b> extraisez le fichier TGZ. Exécutez le script <code>setup.sh</code>. La location du JRE/JDK installé va être détecté automatiquement. Il n'est pas livré dans le tgz. Si, pour quelque raison que ce soit, il ne
 				le fasse pas, vous pouvez configurez <code>JAVA_HOME</code> dans (<code>bin/dayon_run.sh</code>) manuellement. Notez que, j'ai testé ceci sur Debian et Ubuntu seulement.
 			<p>
-				<b>Mac OS/OS X:</b> extrayez le fichier TGZ à une location de votre choix. Pour plus de commodité, vous pouvez créer un alias pour bin/dayon_assisted et bin/dayon_assistant et les copier sur votre bureau. (JDK > 1.6 nécessaire)
+				<b>Mac OS/OS X:</b> extrayez le fichier TGZ à une location de votre choix. Pour plus de commodité, vous pouvez créer un alias pour bin/dayon_assisted et bin/dayon_assistant et les copier sur votre bureau. (JDK > 1.7 nécessaire)
 			<h2>Journal des modifications</h2>
-			<h3>Modifications pour Dayon! v1.5 Pendragon (5 mai 2017)</h3>
+			<h3>Modifications pour Dayon! v1.6 Solenodon (19 decembre 2018) <span class="red">*</span></h3>
+			<ul>
+				<li>Nouveau look and feel
+				<li>Nouveau installeur
+				<li>Désinstalleur amélioré
+				<li>Icônes Windows haute résolution
+				<li>Bibliothèques mises à jour
+				<li>JRE actualisé
+				<li>Le projet peut être construit avec <a href="http://ant.apache.org/">Ant</a> ou <a href="https://maven.apache.org/">Maven</a
+			</ul>
+			<h3>Modifications pour Dayon! v1.5 Pendragon (5 mai 2017) <span class="red">*</span></h3>
 			<ul>
 				<li>Support IPv6
 				<li>OS X compatible scripts
 				<li>JRE actualisé
 			</ul>
-			<h3>Modifications pour Dayon! v1.4 Skytale (3 janvier 2017)</h3>
+			<h3>Modifications pour Dayon! v1.4 Skytale (3 janvier 2017) <span class="red">*</span></h3>
 			<ul>
-				<li>Communication crypté entre l'assistant et l'assisté (<span class="red">v1.4 n'est pas compatible avec toutes les anciennes versions</span>)
+				<li>Communication crypté entre l'assistant et l'assisté
 				<li>Installeur pour Windows optimisé
 				<li>Localisation allemande
 			</ul>
-			<h3>Modifications pour Dayon! v1.3 Phoenix (10 décembre 2016)</h3>
+			<h3>Modifications pour Dayon! v1.3 Phoenix (10 décembre 2016) <span class="red">*</span></h3>
 			<ul>
 				<li>Résolu les problèmes avec Windows UAC-dialogues
 				<li>Supporte les résolutions d'écran énormes, qui causaient des erreurs fatales sur les versions précédentes
@@ -53,18 +63,18 @@
 				<li>Bibliothèques mises à jour
 				<li>GPLv3
 			</ul>
-			<h3>Modifications pour Dayon! v1.2 (3 janvier 2009)</h3>
+			<h3>Modifications pour Dayon! v1.2 (3 janvier 2009) <span class="red">*</span></h3>
 			<ul>
 				<li>Correction d'un écran noir possible (assistant) au démarrage
 				<li>Support de contrôle
-				<li>Java Web Start (<span class="red">n'est pas compatible avec v1.1 </span>) pour lancer l' assisté
+				<li>Java Web Start pour lancer l' assisté
 				<li>Service d'adresse IP publique (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>)
 				<li>Améliorations au guide de démarrage rapide
 				<li>Localisation française
 			</ul>
-			<h3>Modifications pour Dayon! v1.1 (24 decembre 2008)</h3>
+			<h3>Modifications pour Dayon! v1.1 (24 decembre 2008) <span class="red">*</span></h3>
 			<ul>
-				<li>Améliorations apportées au protocole (<span class="red">v1.1 n'est pas compatible avec v1.0</span>)
+				<li>Améliorations apportées au protocole
 				<li>Amélioré un peu l'utilisation du processeur
 				<li>Nettoyage de l'encodage initial de capture d'écran
 				<li>Nouvelles méthodes de compression: BZIP2, LZMA
@@ -75,6 +85,7 @@
 			<ul>
 				<li>Première version
 			</ul>
+			<span>* Les versions majeures ne sont pas compatibles entre elles</span>
 		</div>
 		<div id="footer"></div>
 	</div>

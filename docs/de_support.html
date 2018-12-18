@@ -20,17 +20,16 @@
 		<div id="content">
 			<h2>Hilfe</h2>
 			<p>
-				Benutzen Sie folgendes <a href="http://sourceforge.net/forum/?group_id=246651">Forum</a> um Fragen zu stellen oder erfassen Sie ein Issue auf <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+				Erfassen Sie ein Issue auf <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
 			<h3>Bekannte Einschränkungen</h3>
 			<ul>
-				<li>Auch mit Version 1.5 ist die Tastaturunterstützung noch immer ziemlich minimalistisch; Es gibt zZt. keine Möglichkeit gewisse Tastenkombinationen wie etwa (e.g., <code>CTRL-ALT-DEL</code>) an den entfernten Computer zu senden.
+				<li>Auch in Version 1.6 ist die Tastaturunterstützung noch immer ziemlich minimalistisch; Es gibt zZt. keine Möglichkeit gewisse Tastenkombinationen wie etwa (e.g., <code>CTRL-ALT-DEL</code>) an den entfernten Computer zu senden.
 				<li>Mauszeiger: technologisch (JAVA) bedingt, wird der Mauszeiger während dem Vergrössern oder Bewegen von Fenstern mitunter nicht sauber dargestellt.
 				<li>Wegen verschärften Sicherheitseinstellungen, funktioniert der <i>Java Web Start</i> der Applikation des <i>Assistierten</i> mit neueren JAVA Versionen (>1.7.45) leider nicht mehr.
 			</ul>
 			<h3>JAVA Prozess Eigenschaften</h3>
 			<p>
-				Unter Windows, können Sie den der JVM zugewiesenen Arbeitsspeicher anpassen, indem Sie die Werte von <code>Xms</code> und <code>Xmx</code> der Startverknüpfungen verändern - je nach Grösse des Puffers und der verwendeten Kompressionsmethode. (LZMA ist
-				auch in dieser Hinsicht etwas resourcenhungriger).
+				Unter Windows, können Sie den der JVM zugewiesenen Arbeitsspeicher anpassen, indem Sie die Werte von <code>Xms</code> und <code>Xmx</code> der Startverknüpfungen verändern - je nach Grösse des Puffers und der verwendeten Kompressionsmethode. (LZMA ist auch in dieser Hinsicht etwas resourcenhungriger).
 			<p>
 				Unter Linux sind diese Optionen im <code>dayon.sh</code> Skript konfigurierbar.
 			<h3>Dayon! Heimverzeichnis</h3>
@@ -51,10 +50,8 @@
 				<li>Netzwerkbandbreite
 				<li>Kompressionsverhältnis: wie oft der Inhalt der initial erfassten Kacheln (bloss Differenz) komprimiert wurde
 				<li>Anzahl Kacheln: Anzahl übermittelter Kacheln (inkl. Puffer-Treffer).
-				<li>Anzahl übersprungener Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche wegen eines zu kurzen Aktualisierungsintervall (für die entsprechende Hardware) übersprungen worden sind. Um diese Anzahl zu reduzieren, erhöhen Sie das
-					Erfassungsintervall.
-				<li>Anzahl kombinierter Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche vor der Übertragung kombiniert worden sind. Dies ist ein Anzeichen für ein zu kurzes Erfassungsintervall für die gewählte Komprimierungsmethode. Am einfachsten das
-					Erfassungsintervall erhöhen und/oder eine schnellere Kompressionsmethode wählen.
+				<li>Anzahl übersprungener Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche wegen eines zu kurzen Aktualisierungsintervall (für die entsprechende Hardware) übersprungen worden sind. Um diese Anzahl zu reduzieren, erhöhen Sie das Erfassungsintervall.
+				<li>Anzahl kombinierter Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche vor der Übertragung kombiniert worden sind. Dies ist ein Anzeichen für ein zu kurzes Erfassungsintervall für die gewählte Komprimierungsmethode. Am einfachsten das Erfassungsintervall erhöhen und/oder eine schnellere Kompressionsmethode wählen.
 			</ol>
 		</div>
 		<div id="footer"></div>
