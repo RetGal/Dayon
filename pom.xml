@@ -129,7 +129,7 @@
 							<mainClass>${dayon.mainClass}</mainClass>
 						</manifest>
 						<manifestEntries>
-							<ImplementationVersion>${project.version}</ImplementationVersion>
+							<Implementation-Version>${project.version}</Implementation-Version>
 							<Permissions>all-permissions</Permissions>
 							<Trusted-Library>true</Trusted-Library>
 							<Built-By>a computer</Built-By>
