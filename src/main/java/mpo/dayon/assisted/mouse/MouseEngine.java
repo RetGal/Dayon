@@ -42,6 +42,7 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 
 		Point previous = new Point(-1, -1);
 
+		//noinspection InfiniteLoopStatement
 		while (true) {
 			final Point current = MouseInfo.getPointerInfo().getLocation();
 

@@ -112,7 +112,8 @@ public class NetworkAssistedEngine extends NetworkEngine
 	}
 
 	private void receivingLoop() throws IOException {
-		while (true) {
+        //noinspection InfiniteLoopStatement
+        while (true) {
 			NetworkMessage.unmarshallMagicNumber(in);
 
 			final NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);

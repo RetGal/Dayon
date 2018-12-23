@@ -197,7 +197,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 			boolean introduced = false;
 
-			while (true) {
+            //noinspection InfiniteLoopStatement
+            while (true) {
 				NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
 
 				final NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);

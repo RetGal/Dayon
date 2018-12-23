@@ -64,11 +64,7 @@ public class StatusBar extends JPanel {
 
 		lbl.setToolTipText(counter.getShortDescription());
 
-		counter.addListener(new CounterListener() {
-			public void onInstantValueUpdated(Counter counter, Object value) {
-				lbl.setText(counter.formatInstantValue(value));
-			}
-		});
+		counter.addListener((CounterListener) (counter1, value) -> lbl.setText(counter1.formatInstantValue(value)));
 
 		add(lbl);
 	}

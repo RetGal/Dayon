@@ -3,6 +3,7 @@ package mpo.dayon.common.version;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Objects;
 
 public class Version {
 	private static final Version VERSION_NULL = new Version(null);
@@ -52,8 +53,7 @@ public class Version {
 	}
 
 	public boolean isLatesVersion() {
-		boolean latest = getLatestRelease().equals(version);
-		return latest;
+		return getLatestRelease().equals(version);
 	}
 
 	public String getLatestRelease() {
@@ -66,7 +66,7 @@ public class Version {
 			} catch (IOException e) {
 				// offline?
 			} finally {
-				conn.disconnect();
+				Objects.requireNonNull(conn).disconnect();
 			}
 
 			String latestLocation = conn.getHeaderField("Location");

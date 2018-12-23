@@ -51,7 +51,7 @@ public class NetworkSender {
 		//
 		// We're serializing access to the output stream (i.e., socket) (!)
 
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
 		executor.setThreadFactory(new DefaultThreadFactoryEx("NetworkSender"));
 
 		semaphore = new Semaphore(queueSize, true);
