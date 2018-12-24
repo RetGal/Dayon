@@ -32,7 +32,7 @@ public class SystemUtilitiesTest {
 	@Test
 	public void isValidIpAdressOrHostNameShouldReturnFalseForAnIncompleteIpv6Address() {
 		// given
-		String ipv6 = "fe10:0:0:0";
+		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:";
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv6));
 	}
@@ -40,16 +40,23 @@ public class SystemUtilitiesTest {
 	@Test
 	public void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv6Address() {
 		// given
-		String ipv6 = "fe10:0:0:0:dafc:11ff:fe4d:snafu";
+		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:snafu";
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv6));
 	}
 	
 	@Test
-	public void isValidIpAdressOrHostNameShouldReturnTrueFoValidIpv6Address() {
+	public void isValidIpAdressOrHostNameShouldReturnTrueForValidIpv6Address() {
 		// given
-		String ipv6 = "fe10:0:0:0:dafc:11ff:fe4d:a16f";
+		String ipv6 = "ac:0:0:0:0:0:0:dc";
 		// when, then
+		assertTrue(SystemUtilities.isValidIpAdressOrHostName(ipv6));
+	}
+	
+	@Test
+	public void isValidIpAdressOrHostNameShouldReturnTrueForCompressedValidIpv6Address() {
+		// given
+		String ipv6 = "ac::dc";
 		assertTrue(SystemUtilities.isValidIpAdressOrHostName(ipv6));
 	}
 	

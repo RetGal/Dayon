@@ -352,7 +352,7 @@ public abstract class SystemUtilities {
 	}
 
 	private static boolean isValidIpV6(String serverName) {
-		return serverName.matches("^([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}");
+		return serverName.matches("^([0-9a-fA-F]{1,4}:){1}([0-9a-fA-F]{0,4}:){0,6}[0-9a-fA-F]{1,4}$");
 	}
 
 	private static boolean isValidHostname(String serverName) {
