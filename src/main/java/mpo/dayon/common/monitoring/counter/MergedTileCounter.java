@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 public class MergedTileCounter extends AbsoluteValueCounter {
 	public MergedTileCounter(String uid, String shortDescription) {

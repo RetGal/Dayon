@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 public abstract class AverageValueCounter extends Counter<Double> {
 	private double instantWeight = 0;

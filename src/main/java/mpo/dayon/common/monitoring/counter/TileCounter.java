@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 public class TileCounter extends AbsoluteValueCounter {
 	public TileCounter(String uid, String shortDescription) {

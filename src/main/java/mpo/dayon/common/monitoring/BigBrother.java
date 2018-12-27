@@ -1,9 +1,9 @@
-package mpo.dayon.assistant.monitoring;
+package mpo.dayon.common.monitoring;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
-import mpo.dayon.assistant.monitoring.counter.Counter;
+import mpo.dayon.common.monitoring.counter.Counter;
 
 public class BigBrother {
 	private final static BigBrother INSTANCE = new BigBrother();

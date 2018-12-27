@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 import mpo.dayon.common.event.Listener;
 

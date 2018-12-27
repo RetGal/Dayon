@@ -1,4 +1,4 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 public class CaptureCompressionCounter extends AverageValueCounter {
 	public CaptureCompressionCounter(String uid, String shortDescription) {

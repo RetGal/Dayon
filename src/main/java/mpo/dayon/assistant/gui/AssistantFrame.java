@@ -31,7 +31,7 @@ import javax.swing.JScrollPane;
 
 import org.jetbrains.annotations.Nullable;
 
-import mpo.dayon.assistant.monitoring.counter.Counter;
+import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.event.Listeners;

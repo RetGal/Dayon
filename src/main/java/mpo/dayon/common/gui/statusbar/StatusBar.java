@@ -15,9 +15,9 @@ import javax.swing.border.EtchedBorder;
 
 import org.jetbrains.annotations.Nullable;
 
-import mpo.dayon.assistant.monitoring.BigBrother;
-import mpo.dayon.assistant.monitoring.counter.Counter;
-import mpo.dayon.assistant.monitoring.counter.CounterListener;
+import mpo.dayon.common.monitoring.BigBrother;
+import mpo.dayon.common.monitoring.counter.Counter;
+import mpo.dayon.common.monitoring.counter.CounterListener;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class StatusBar extends JPanel {

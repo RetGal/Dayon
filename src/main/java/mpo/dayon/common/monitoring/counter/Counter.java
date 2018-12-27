@@ -1,10 +1,10 @@
-package mpo.dayon.assistant.monitoring.counter;
+package mpo.dayon.common.monitoring.counter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
-import mpo.dayon.assistant.monitoring.BigBrother;
+import mpo.dayon.common.monitoring.BigBrother;
 
 public abstract class Counter<T> {
 	private final List<CounterListener<T>> listeners = new CopyOnWriteArrayList<>();
