@@ -6,12 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -347,12 +342,21 @@ public abstract class SystemUtilities {
 	}
 
 	private static boolean isValidIpV4(String serverName) {
-		return serverName.matches("^([\\d]{1,3}\\.){3}[\\d]{1,3}$")
-				&& Arrays.stream(serverName.split("\\.")).noneMatch(seg -> Integer.parseInt(seg) > 255);
+		try {
+			InetAddress inetAddress = InetAddress.getByName(serverName);
+			return inetAddress instanceof Inet4Address;
+		} catch (UnknownHostException e) {
+			return false;
+		}
 	}
 
 	private static boolean isValidIpV6(String serverName) {
-		return serverName.matches("^([0-9a-fA-F]{1,4}:){1}([0-9a-fA-F]{0,4}:){0,6}[0-9a-fA-F]{1,4}$");
+		try {
+			InetAddress inetAddress = InetAddress.getByName(serverName);
+			return inetAddress instanceof Inet6Address;
+		} catch (UnknownHostException e) {
+			return false;
+		}
 	}
 
 	private static boolean isValidHostname(String serverName) {
