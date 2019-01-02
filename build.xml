@@ -48,6 +48,7 @@
 	<target name="build" depends="compile">
 		<jar destfile="${dir.build}/dayon.jar">
 			<manifest>
+				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
 				<attribute name="Main-Class" value="${main.class}"/>
 				<attribute name="Permissions" value="all-permissions"/>

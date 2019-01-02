@@ -84,7 +84,7 @@
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.0.0-M1</version>
-			</plugin>		
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -129,6 +129,7 @@
 							<mainClass>${dayon.mainClass}</mainClass>
 						</manifest>
 						<manifestEntries>
+							<Application-Name>Dayon!</Application-Name>
 							<Implementation-Version>${project.version}</Implementation-Version>
 							<Permissions>all-permissions</Permissions>
 							<Trusted-Library>true</Trusted-Library>
