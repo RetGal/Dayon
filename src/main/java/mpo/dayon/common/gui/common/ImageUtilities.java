@@ -43,7 +43,7 @@ public abstract class ImageUtilities {
 		ImageIcon icon = cache.get(name);
 		if (icon == null) {
 			try {
-				icon = new ImageIcon(Class.class.getResource(rname));
+				icon = new ImageIcon(ImageUtilities.class.getResource(rname));
 			} catch (NullPointerException ex) {
 				throw new RuntimeException(String.format("Missing icon [%s].", rname));
 			}
