@@ -21,53 +21,39 @@ import mpo.dayon.common.log.Log;
 public abstract class SystemUtilities {
 	@Nullable
 	private static File getInstallRoot() {
+		String path = null;
 		try {
-			final ClassLoader cl = Thread.currentThread().getContextClassLoader();
-
-			if (cl instanceof URLClassLoader) {
-				final URLClassLoader ucl = (URLClassLoader) cl;
-				final URL[] urls = ucl.getURLs();
-				for (final URL url : urls) {
-					if ("file".equals(url.getProtocol())) {
-						final String path = url.toExternalForm();
-
-						if (path.contains("/out/idea/")) {
-							final int pos = path.indexOf("/out");
-							return new File(new URI(path.substring(0, pos)));
-						} else if (path.contains("/lib/dayon.jar")) {
-							final int pos = path.indexOf("/lib");
-							return new File(new URI(path.substring(0, pos)));
-						} else if (path.contains("/target/classes")) {
-							final int pos = path.indexOf("/classes");
-							return new File(new URI(path.substring(0, pos)));
-						}
-					}
-				}
-			}
-		} catch (URISyntaxException ex) {
-			throw new RuntimeException(ex); // unlikely (!)
+			path = new URI(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
+		} catch (URISyntaxException e) {
+			Log.warn("Failed to retrieve InstallRoot", e);
+		}
+		int pos = 0;
+		if (path.contains("/lib/dayon.jar")) {
+			pos = path.indexOf("/lib");
+		} else if (path.contains("/target/classes")) {
+			pos = path.indexOf("/classes");
+		} else if (path.contains("/out/idea/")) {
+			pos = path.indexOf("/out");
+		}
+		if (pos != 0) {
+			return new File(path.substring(0, pos));
 		}
 		return null;
 	}
 
 	@Nullable
 	public static File getDayonJarPath() {
-		final File root = SystemUtilities.getInstallRoot();
-		if (root == null) {
+		final File rootPath = getInstallRoot();
+		if (rootPath == null) {
 			return null;
 		}
 		
-		File path = new File(root, "dayon.jar");
+		File path = new File(rootPath, "dayon.jar");
 		if (path.exists() && path.isFile()) {
-			return root;
+			return rootPath;
 		}		
 
-		path = new File(root, "out/ant/jars");
-		if (path.exists() && path.isDirectory()) {
-			return path;
-		}
-
-		path = new File(root, "lib");
+		path = new File(rootPath, "lib");
 		if (path.exists() && path.isDirectory()) {
 			return path;
 		}
@@ -77,13 +63,15 @@ public abstract class SystemUtilities {
 	@Nullable
 	public static URI getLocalIndexHtml() {
 		@Nullable
-		final File rootPATH = getInstallRoot();
-
-		if (rootPATH != null) {
+		final File rootPath = getInstallRoot();
+		if (rootPath != null) {
 			// Anchor not supported : #assistant-setup
-			File quickStart = new File(rootPATH, "doc/html/" + Babylon.translate("quickstart.html"));
+			File quickStart = new File(rootPath, "doc/html/" + Babylon.translate("quickstart.html"));
 			if (!quickStart.isFile()) {
-				quickStart = new File(rootPATH, "../docs/" + Babylon.translate("quickstart.html"));
+				// Must be running inside an IDE
+				if (rootPath.getAbsolutePath().endsWith("/target")) {
+					quickStart = new File(rootPath.getParent(), "docs/" + Babylon.translate("quickstart.html"));
+				}
 			}
 			return quickStart.toURI();
 		}
@@ -92,9 +80,7 @@ public abstract class SystemUtilities {
 
 	@Nullable
 	private static synchronized File getOrCreateAppDir() {
-		final String homeDir = System.getProperty("user.home"); // *.log4j.xml
-																// are using
-																// that one (!)
+		final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
 		if (homeDir == null) {
 			Log.warn("Home directory [user.home] is null!");
 			return null;

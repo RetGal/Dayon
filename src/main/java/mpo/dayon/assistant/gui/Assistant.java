@@ -253,7 +253,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
                     try {
                         final URI uri = SystemUtilities.getLocalIndexHtml();
 
-                        if (uri != null && Desktop.isDesktopSupported()) {
+                        if (uri!= null && Desktop.isDesktopSupported()) {
                             final Desktop desktop = Desktop.getDesktop();
                             if (desktop.isSupported(Desktop.Action.BROWSE)) {
                                 desktop.browse(uri);

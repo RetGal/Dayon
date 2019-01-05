@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
-import java.util.Objects;
+import java.net.URISyntaxException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -184,10 +184,8 @@ public abstract class BaseFrame extends JFrame {
 
 	protected Action createShowHelpAction() {
 		final Action showHelp = new AbstractAction() {
-
 			public void actionPerformed(ActionEvent ev) {
-				final URI uri = SystemUtilities.getLocalIndexHtml();
-				browse(Objects.requireNonNull(uri).toString());
+                browse(SystemUtilities.getLocalIndexHtml());
 			}
 		};
 
@@ -197,13 +195,21 @@ public abstract class BaseFrame extends JFrame {
 
 		return showHelp;
 	}
-
+	
 	private static void browse(String url) {
+		try {
+			browse(new URI(url));
+		} catch (URISyntaxException ex) {
+			Log.warn(ex);
+		}
+	}
+	
+	private static void browse(URI uri) {
 		try {
 			if (Desktop.isDesktopSupported()) {
 				final Desktop desktop = Desktop.getDesktop();
 				if (desktop.isSupported(Desktop.Action.BROWSE)) {
-					desktop.browse(new URI(url));
+					desktop.browse(uri);
 				}
 			}
 		} catch (Exception ex) {
