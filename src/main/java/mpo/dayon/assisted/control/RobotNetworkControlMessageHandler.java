@@ -43,19 +43,19 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	public void handleMessage(NetworkEngine engine, NetworkMouseControlMessage message) {
 		if (message.isPressed()) {
 			if (message.isButton1()) {
-				robot.mousePress(InputEvent.BUTTON1_MASK);
+				robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
 			} else if (message.isButton2()) {
-				robot.mousePress(InputEvent.BUTTON2_MASK);
+				robot.mousePress(InputEvent.BUTTON2_DOWN_MASK);
 			} else if (message.isButton3()) {
-				robot.mousePress(InputEvent.BUTTON3_MASK);
+				robot.mousePress(InputEvent.BUTTON3_DOWN_MASK);
 			}
 		} else if (message.isReleased()) {
 			if (message.isButton1()) {
-				robot.mouseRelease(InputEvent.BUTTON1_MASK);
+				robot.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
 			} else if (message.isButton2()) {
-				robot.mouseRelease(InputEvent.BUTTON2_MASK);
+				robot.mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
 			} else if (message.isButton3()) {
-				robot.mouseRelease(InputEvent.BUTTON3_MASK);
+				robot.mouseRelease(InputEvent.BUTTON3_DOWN_MASK);
 			}
 		} else if (message.isWheel()) {
 			robot.mouseWheel(message.getRotations());
