@@ -1,28 +1,29 @@
 package mpo.dayon.common.utils;
 
 import java.awt.AWTException;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.Toolkit;
-import java.awt.peer.RobotPeer;
+import java.awt.image.BufferedImage;
 
 import mpo.dayon.common.capture.Gray8Bits;
-import sun.awt.ComponentFactory;
 
 public abstract class ScreenUtilities {
-	private static final RobotPeer robot;
+	private static final Robot robot;
 
 	private static final Rectangle SCREEN;
+
+	private static final int[] rgb;
+
+	private static final byte[] gray;
 
 	static {
 		try {
 			final Toolkit toolkit = Toolkit.getDefaultToolkit();
 			SCREEN = new Rectangle(0, 0, toolkit.getScreenSize().width, toolkit.getScreenSize().height);
-
-			final GraphicsDevice screen = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-			robot = ((ComponentFactory) toolkit).createRobot(new Robot(), screen);
+			rgb = new int[SCREEN.height * SCREEN.width];
+			gray = new byte[rgb.length];
+			robot = new Robot();
 		} catch (AWTException ex) {
 			throw new RuntimeException("Could not initialize the AWT robot!", ex);
 		}
@@ -33,7 +34,16 @@ public abstract class ScreenUtilities {
 	}
 
 	private static int[] captureRGB(Rectangle bounds) {
-		return robot.getRGBPixels(bounds);
+		BufferedImage image = robot.createScreenCapture(bounds);
+		int yPos = bounds.y;
+		int i = 0;
+		while (yPos < bounds.height) {
+			for (int xPos = bounds.x; xPos < bounds.width; xPos++) {
+				rgb[i++] = image.getRGB(xPos, yPos);
+			}
+			yPos++;
+		}
+		return rgb;
 	}
 
 	public static byte[] captureGray(Rectangle bounds, Gray8Bits quantization) {
@@ -41,15 +51,11 @@ public abstract class ScreenUtilities {
 	}
 
 	private static byte[] rgbToGray8(Gray8Bits quantization, int[] rgb) {
-		final byte[] gray = new byte[rgb.length];
-
-		doRgbToGray8(gray, quantization, rgb);
-
-		return gray;
+		return doRgbToGray8(quantization, rgb);
 	}
 
-	private static void doRgbToGray8(byte[] gray, Gray8Bits quantization, int[] rgb) {
-		final byte[] xlevels = grays[quantization.ordinal()];
+	private static byte[] doRgbToGray8(Gray8Bits quantization, int[] rgb) {
+		final byte[] xLevels = grays[quantization.ordinal()];
 
 		int prev_rgb = -1;
 		byte prev_gray = -1;
@@ -67,11 +73,12 @@ public abstract class ScreenUtilities {
 
 			final int level = (red_levels[red] + green_blue_levels[green_blue]) >> 7;
 
-			gray[idx] = xlevels[level];
+			gray[idx] = xLevels[level];
 
 			prev_rgb = pixel;
 			prev_gray = gray[idx];
 		}
+		return gray;
 	}
 
 	private static final short[] red_levels;
