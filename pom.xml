@@ -23,10 +23,10 @@
 		<dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
 		<javax.servlet.api.version>3.1.0</javax.servlet.api.version>
 		<jetty.version>9.4.14.v20181114</jetty.version>
-		<jetbrains.annotations.version>16.0.2</jetbrains.annotations.version>
+		<jetbrains.annotations.version>17.0.0</jetbrains.annotations.version>
 		<bzip2.version>0.9.1</bzip2.version>
 		<grizzly-lzma.version>1.9.65</grizzly-lzma.version>
-		<junit.jupiter.version>5.3.1</junit.jupiter.version>
+		<junit.jupiter.version>5.4.0-RC1</junit.jupiter.version>
 	</properties>
 
 	<dependencies>
@@ -83,7 +83,7 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M1</version>
+				<version>3.0.0-M3</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -121,7 +121,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.1.0</version>
+				<version>3.1.1</version>
 				<configuration>
 					<archive>
 						<addMavenDescriptor>false</addMavenDescriptor>
