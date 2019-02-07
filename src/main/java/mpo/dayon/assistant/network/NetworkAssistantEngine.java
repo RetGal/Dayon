@@ -68,9 +68,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	 */
 	private NetworkSender sender;
 
-	private ServerSocket server;
+	private volatile ServerSocket server;
 
-	private Socket connection;
+	private volatile Socket connection;
 
 	private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
@@ -98,10 +98,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	public void addListener(NetworkAssistantEngineListener listener) {
 		listeners.add(listener);
-	}
-
-	public void removeListener(NetworkAssistantEngineListener listener) {
-		listeners.remove(listener);
 	}
 
 	public int getPort() {
@@ -136,6 +132,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		if (https != null) {
 			https.cancel();
 			https = null;
+		}
+
+		//noinspection StatementWithEmptyBody
+		while (server == null && connection == null) {
+			// waiting for Godot (jetty may not have finished starting up)
 		}
 
 		SystemUtilities.safeClose(server);
@@ -184,7 +185,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 				connection = server.accept();
 
 				Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-			} while (!fireOnAccepted(connection));
+			} while (!fireOnAccepted(connection) && !cancelling.get());
 
 			server.close();
 			server = null;
