@@ -202,21 +202,20 @@ public class Assistant implements Configurable<AssistantConfiguration> {
                             JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
                                     JOptionPane.ERROR_MESSAGE);
                         } else {
-                            button.setText(network.__ipAddress = pip);
-
+                            button.setText(pip);
                         }
                     });
 					choices.add(menuItem);
 				} else {
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("ipAddressPublic", pip));
-					menuItem.addActionListener(ev15 -> button.setText(network.__ipAddress = pip));
+					menuItem.addActionListener(ev15 -> button.setText(pip));
 					choices.add(menuItem);
 				}
 
 				final List<String> addrs = NetworkUtilities.getInetAddresses();
 				for (String addr : addrs) {
 					final JMenuItem menuItem = new JMenuItem(addr);
-					menuItem.addActionListener(ev14 -> button.setText(network.__ipAddress = menuItem.getText()));
+					menuItem.addActionListener(ev14 -> button.setText(menuItem.getText()));
 					choices.add(menuItem);
 				}
 
@@ -287,7 +286,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 		};
 
 		ip.putValue(Action.NAME, "whatIsMyIpAddress");
-		ip.putValue("DISPLAY_NAME", network.__ipAddress); // always a selection
+		ip.putValue("DISPLAY_NAME", network.getLocalhost()); // always a selection
 															// ...
 		ip.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("ipAddress.msg1"));
 

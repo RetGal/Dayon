@@ -76,10 +76,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private NetworkAssistantHttpsEngine https;
 
-	/**
-	 * I've to cleanup that stuff ASAP (!)
-	 */
-	public String __ipAddress = "127.0.0.1";
+	private static final String LOCALHOST = "127.0.0.1";
 
 	public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler) {
 		this.captureMessageHandler = captureMessageHandler;
@@ -98,6 +95,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	public void addListener(NetworkAssistantEngineListener listener) {
 		listeners.add(listener);
+	}
+
+	public String getLocalhost() {
+		return LOCALHOST;
 	}
 
 	public int getPort() {
@@ -153,24 +154,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			Log.info(String.format("HTTPS server [port:%d]", port));
 			fireOnHttpStarting(port);
 
-			NetworkAssistantHttpsResources.setup(__ipAddress, port); // JNLP support (.html, .jnlp, .jar)
+			NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
 
 			https = new NetworkAssistantHttpsEngine(port);
 			https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
-			Log.info(String.format("Dayon! server [port:%d]", configuration.getPort()));
-			fireOnStarting(configuration.getPort());
+			Log.info(String.format("Dayon! server [port:%d]", port));
+			fireOnStarting(port);
 
-			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
-
-			KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-			SSLContext sslContext = SSLContext.getInstance("TLS");
-			sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
-			
-			SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
-			server = ssf.createServerSocket(port);
+			server = initServerSocket(port);
 
 			Log.info("Accepting ...");
 			fireOnAccepting(port);
@@ -282,6 +274,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		fireOnReady();
 	}
 
+	private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
+		SSLContext sslContext = SSLContext.getInstance("TLS");
+		sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
+
+		SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+		return ssf.createServerSocket(port);
+	}
+
 	private static boolean isProd(Version version, int major, int minor) {
 		return !(version.isNull() || (major == 0 && minor == 0));
 	}
@@ -357,15 +362,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	private boolean fireOnAccepted(Socket connection) {
 		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		boolean ok = true;
-
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			if (!xlistener.onAccepted(connection)) {
-				ok = false;
+				return false;
 			}
 		}
-
-		return ok;
+		return true;
 	}
 
 	private void fireOnConnected(Socket connection) {
