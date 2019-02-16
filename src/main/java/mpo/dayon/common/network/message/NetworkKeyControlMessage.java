@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * From the assistant to the assisted.
@@ -56,7 +54,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		return 11; // type (byte) + info (int) + keycode (int) + keychar (char)
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeInt(info);
@@ -64,7 +62,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		out.writeChar(keychar);
 	}
 
-	public static NetworkKeyControlMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkKeyControlMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int info = in.readInt();
 		final int keycode = in.readInt();
 		final char keychar = in.readChar();

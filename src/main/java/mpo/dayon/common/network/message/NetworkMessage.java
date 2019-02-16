@@ -1,11 +1,9 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public abstract class NetworkMessage {
-	private static final byte MAGIC_NUMBER = (byte) 170;
+	public static final byte MAGIC_NUMBER = (byte) 170;
 
 	NetworkMessage() {
 	}
@@ -18,13 +16,13 @@ public abstract class NetworkMessage {
 	 */
 	public abstract int getWireSize();
 
-	public abstract void marshall(DataOutputStream out) throws IOException;
+	public abstract void marshall(ObjectOutputStream out) throws IOException;
 
-	public static void marshallMagicNumber(DataOutputStream out) throws IOException {
+	public static void marshallMagicNumber(ObjectOutputStream out) throws IOException {
 		out.writeByte(NetworkMessage.MAGIC_NUMBER);
 	}
 
-	public static void unmarshallMagicNumber(DataInputStream in) throws IOException {
+	public static void unmarshallMagicNumber(ObjectInputStream in) throws IOException {
 		final int magicNumber = in.readByte();
 
 		if (magicNumber != NetworkMessage.MAGIC_NUMBER) {
@@ -36,11 +34,11 @@ public abstract class NetworkMessage {
 		}
 	}
 
-	static <T extends Enum<T>> void marshallEnum(DataOutputStream out, Class<T> enumClass, Enum<T> value) throws IOException {
+	static <T extends Enum<T>> void marshallEnum(ObjectOutputStream out, Class<T> enumClass, Enum<T> value) throws IOException {
 		out.write(value.ordinal());
 	}
 
-	public static <T extends Enum<T>> T unmarshallEnum(DataInputStream in, Class<T> enumClass) throws IOException {
+	public static <T extends Enum<T>> T unmarshallEnum(ObjectInputStream in, Class<T> enumClass) throws IOException {
 		final byte ordinal = in.readByte();
 
 		final T[] xenums = enumClass.getEnumConstants();

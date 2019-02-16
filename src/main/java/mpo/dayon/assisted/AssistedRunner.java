@@ -10,6 +10,7 @@ public class AssistedRunner {
 	public static void main(String[] args) {
 		try {
 			SystemUtilities.setApplicationName("dayon_assisted");
+			// System.setProperty("dayon.debug", "on");
 			
 			Zion.overrideLocale(args);
 

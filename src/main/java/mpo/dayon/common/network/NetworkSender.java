@@ -1,7 +1,9 @@
 package mpo.dayon.common.network;
 
 import java.awt.Point;
-import java.io.DataOutputStream;
+import java.io.File;
+import java.io.ObjectOutputStream;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -9,6 +11,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import mpo.dayon.common.network.message.*;
 import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
@@ -18,25 +21,17 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
 import mpo.dayon.common.error.FatalErrorHandler;
-import mpo.dayon.common.network.message.NetworkCaptureConfigurationMessage;
-import mpo.dayon.common.network.message.NetworkCaptureMessage;
-import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessage;
-import mpo.dayon.common.network.message.NetworkHelloMessage;
-import mpo.dayon.common.network.message.NetworkKeyControlMessage;
-import mpo.dayon.common.network.message.NetworkMessage;
-import mpo.dayon.common.network.message.NetworkMouseControlMessage;
-import mpo.dayon.common.network.message.NetworkMouseLocationMessage;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.version.Version;
 
 public class NetworkSender {
-	private final DataOutputStream out;
+	private final ObjectOutputStream out;
 
 	private ThreadPoolExecutor executor;
 
 	private Semaphore semaphore;
 
-	public NetworkSender(DataOutputStream out) {
+	public NetworkSender(ObjectOutputStream out) {
 		this.out = out;
 	}
 
@@ -139,6 +134,35 @@ public class NetworkSender {
 		send(true, message);
 	}
 
+	/**
+	 * Might block (!)
+	 * <p/>
+	 * Assistant 2 assisted .
+	 */
+	public void sendRemoteClipboardRequest() {
+		send(true, new NetworkClipboardRequestMessage());
+	}
+
+	/**
+	 * Might block (!)
+	 * <p/>
+	 * Assistant 2 assisted or vice versa.
+	 */
+	public void sendClipboardContentText(String text, int size) {
+		final NetworkMessage message = new NetworkClipboardTextMessage(text, size);
+		send(true, message);
+	}
+
+	/**
+	 * Might block (!)
+	 * <p/>
+	 * Assistant 2 assisted or vice versa.
+	 */
+	public void sendClipboardContentFiles(List<File> files, long size) {
+		final NetworkMessage message = new NetworkClipboardFilesMessage(files, size, "");
+		send(true, message);
+	}
+
 	private void send(boolean acquireSemaphore, NetworkMessage message) {
 		try {
 			if (acquireSemaphore) {
@@ -157,11 +181,11 @@ public class NetworkSender {
 	}
 
 	private static class MyExecutable extends Executable {
-		private final DataOutputStream out;
+		private final ObjectOutputStream out;
 
 		private final NetworkMessage message;
 
-		MyExecutable(ExecutorService executor, Semaphore semaphore, DataOutputStream out, NetworkMessage message) {
+		MyExecutable(ExecutorService executor, Semaphore semaphore, ObjectOutputStream out, NetworkMessage message) {
 			super(executor, semaphore);
 
 			this.out = out;

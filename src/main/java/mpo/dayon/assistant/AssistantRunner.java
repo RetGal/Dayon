@@ -21,7 +21,7 @@ public class AssistantRunner {
 			// ---------------------------------------------------------------------------------------------------------
 
 			SystemUtilities.setApplicationName("dayon_assistant");
-			// System.setProperty("dayon.debug", "on");
+			System.setProperty("dayon.debug", "on");
 			
 			Zion.overrideLocale(args);
 

@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.Gray8Bits;
@@ -30,14 +28,14 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 		return 6; // type (byte) + quantization (byte) + tick (int)
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		marshallEnum(out, Gray8Bits.class, configuration.getCaptureQuantization());
 		out.writeInt(configuration.getCaptureTick());
 	}
 
-	public static NetworkCaptureConfigurationMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
 		final int tick = in.readInt();
 
