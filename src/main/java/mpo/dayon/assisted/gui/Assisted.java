@@ -297,7 +297,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	 */
 	private void onClipboardRequested(NetworkAssistedEngine engine) {
 
-		Log.debug("Clipboard request received ");
+		Log.info("Clipboard transfer request received");
 
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable transferable = clipboard.getContents(this);
@@ -321,7 +321,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		} catch (IOException | UnsupportedFlavorException ex) {
 			Log.error("Clipboard error " + ex.getMessage());
 		}
-		return;
 	}
 
 	private class HostNameIgnorer implements HostnameVerifier {

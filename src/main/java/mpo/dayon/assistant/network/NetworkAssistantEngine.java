@@ -179,16 +179,18 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 			boolean introduced = false;
 
-			String fileName = new String();
-			long fileBytesLeft = 0;
+			NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement
             while (true) {
 
-				if (fileBytesLeft == 0) {
+				NetworkMessageType type;
+				if (filesHelper.isIdle()) {
 					NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+					type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+				} else {
+					type = NetworkMessageType.CLIPBOARD_FILES;
 				}
-				final NetworkMessageType type = fileBytesLeft == 0 ? NetworkMessage.unmarshallEnum(in, NetworkMessageType.class) : NetworkMessageType.CLIPBOARD_FILES;
 				Log.debug("Received " + type.name());
 
 				switch (type) {
@@ -254,12 +256,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 							throw new IOException("Unexpected message [CLIPBOARD_FILES]!");
 						}
 
-						final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, fileName, fileBytesLeft);
-						fileBytesLeft = clipboardFiles.getWireSize()-1;
-						fileName = fileBytesLeft > 0 ? clipboardFiles.getFileName() : "";
+						final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
 						fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
-						if (fileBytesLeft == 0) {
-							setClipboardContents(clipboardFiles.getFile(), clipboardOwner);
+						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1);
+
+						if (filesHelper.isIdle()) {
+							setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+							filesHelper = new NetworkClipboardFilesHelper();
+						} else {
+							filesHelper.setFiles(clipboardFiles.getFiles());
+							filesHelper.setFileNames(clipboardFiles.getFileNames());
+							filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+							filesHelper.setPosition(clipboardFiles.getPosition());
+							filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
 						}
 						break;
 

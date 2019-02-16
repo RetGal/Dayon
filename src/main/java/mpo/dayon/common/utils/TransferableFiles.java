@@ -12,7 +12,6 @@ import java.util.List;
 
 public class TransferableFiles implements Transferable {
 
-
     private final List<File> files;
     private static DataFlavor uriListFlavor;
     static {
@@ -40,8 +39,7 @@ public class TransferableFiles implements Transferable {
             return files;
         } else if (flavor.equals(uriListFlavor)) {
             // refer to RFC 2483 for the text/uri-list format
-            String data = files.get(0).toURI() + "\r\n";
-            return data;
+            return files.get(0).toURI() + "\r\n";
         } else {
             throw new UnsupportedFlavorException(flavor);
         }

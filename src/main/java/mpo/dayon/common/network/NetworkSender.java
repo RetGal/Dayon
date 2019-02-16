@@ -159,7 +159,7 @@ public class NetworkSender {
 	 * Assistant 2 assisted or vice versa.
 	 */
 	public void sendClipboardContentFiles(List<File> files, long size) {
-		final NetworkMessage message = new NetworkClipboardFilesMessage(files, size, "");
+		final NetworkMessage message = new NetworkClipboardFilesMessage(files, size);
 		send(true, message);
 	}
 

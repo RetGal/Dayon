@@ -37,7 +37,7 @@ public enum NetworkMessageType {
 	KEY_CONTROL,
 
 	/**
-	 * A remote clipboard request event.
+	 * A remote clipboard transfer request event.
 	 */
 	CLIPBOARD_REQUEST,
 

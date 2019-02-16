@@ -39,7 +39,6 @@ import mpo.dayon.assistant.control.ControlEngineConfiguration;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineConfiguration;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
-import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.common.monitoring.counter.BitCounter;
 import mpo.dayon.common.monitoring.counter.CaptureCompressionCounter;
 import mpo.dayon.common.monitoring.counter.MergedTileCounter;
@@ -379,8 +378,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	}
 
 	private void sendLocalClipboard() {
-		Log.info("set remote clipboard");
-
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable content = clipboard.getContents(this);
 
@@ -388,19 +385,18 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 		try {
 			if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				Log.info("Clipboard contains files");
+				Log.debug("Clipboard contains files");
 				clipboard.getAvailableDataFlavors();
 				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
-				long size = 0;
-				for (File file : files) {
-					size += file.length();
+				if (files.stream().anyMatch(File::isDirectory)) {
+					throw new IOException("directories not supported");
 				}
-				final long finalSize = size;
+				final long filesSize = files.stream().mapToInt(f -> Math.toIntExact(f.length())).sum();
 				// Ok as very few of that (!)
-				new Thread(() -> network.setRemoteClipboardFiles(files, finalSize), "setRemoteClipboardFiles").start();
+				new Thread(() -> network.setRemoteClipboardFiles(files, filesSize), "setRemoteClipboardFiles").start();
 			} else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
-                Log.info("Clipboard contains text: " + text);
+                Log.debug("Clipboard contains text: " + text);
 				// Ok as very few of that (!)
 				new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
 			}
@@ -413,7 +409,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	 * Should not block (!)
 	 */
 	private void sendRemoteClipboardRequest() {
-		Log.info("remote clipboard request");
+		Log.info("Requesting remote clipboard");
 		// Ok as very few of that (!)
 		new Thread(network::sendRemoteClipboardRequest, "RemoteClipboardRequest").start();
 	}

@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,8 +23,7 @@ public abstract class NetworkEngine {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
 	}
 
-	public void setClipboardContents(File file, ClipboardOwner clipboardOwner) {
-		List<File> files = Arrays.asList(file);
+	public void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
 		TransferableFiles transferableFiles = new TransferableFiles(files);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
 	}
