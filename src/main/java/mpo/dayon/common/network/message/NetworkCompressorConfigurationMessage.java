@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.squeeze.CompressionMethod;
@@ -31,7 +29,7 @@ public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 					// purge (int)
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		marshallEnum(out, CompressionMethod.class, configuration.getMethod());
@@ -41,7 +39,7 @@ public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 		out.writeInt(configuration.getCachePurgeSize());
 	}
 
-	public static NetworkCompressorConfigurationMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkCompressorConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final CompressionMethod method = unmarshallEnum(in, CompressionMethod.class);
 
 		final boolean useCase = in.readByte() == 1;

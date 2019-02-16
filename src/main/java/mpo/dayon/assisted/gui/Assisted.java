@@ -1,12 +1,15 @@
 package mpo.dayon.assisted.gui;
 
-import java.awt.GridLayout;
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -36,14 +39,11 @@ import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
-import mpo.dayon.common.network.message.NetworkCaptureConfigurationMessage;
-import mpo.dayon.common.network.message.NetworkCaptureConfigurationMessageHandler;
-import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessage;
-import mpo.dayon.common.network.message.NetworkCompressorConfigurationMessageHandler;
+import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class Assisted implements Subscriber {
+public class Assisted implements Subscriber, ClipboardOwner {
 	private AssistedFrame frame;
 
 	private NetworkAssistedEngineConfiguration configuration;
@@ -154,13 +154,24 @@ public class Assisted implements Subscriber {
 			}
 		};
 
+		final NetworkClipboardRequestMessageHandler clipboardRequestHandler= new NetworkClipboardRequestMessageHandler() {
+			/**
+			 * Should not block as called from the network incoming message
+			 * thread (!)
+			 * @param networkAssistedEngine
+			 */
+			public void handleClipboardRequest(NetworkAssistedEngine networkAssistedEngine) {
+				onClipboardRequested(networkAssistedEngine);
+			}
+		};
+
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
 
 		controlHandler.subscribe(this);
 
 		frame.onConnecting(configuration);
 
-		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler);
+		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
 
 		networkEngine.configure(configuration);
 		try {
@@ -171,6 +182,9 @@ public class Assisted implements Subscriber {
 		}
 		networkEngine.sendHello();
 	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {}
 
 	private boolean requestConnectionSettings() {
 		final JPanel pane = new JPanel();
@@ -275,6 +289,37 @@ public class Assisted implements Subscriber {
 
 		if (captureEngine != null) {
 			captureEngine.addListener(compressorEngine);
+		}
+	}
+
+	/**
+	 * Should not block as called from the network incoming message thread (!)
+	 */
+	private void onClipboardRequested(NetworkAssistedEngine engine) {
+
+		Log.info("Clipboard transfer request received");
+
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable transferable = clipboard.getContents(this);
+
+		if (transferable == null) return;
+
+		try {
+			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
+				long size = 0;
+				for (File file : files) {
+					size += file.length();
+				}
+				Log.debug("Clipboard contains files with size: " + size);
+				engine.sendClipboardFiles(files, size);
+			} else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
+				Log.debug("Clipboard contains text: " + text);
+				engine.sendClipboardText(text, text.getBytes().length);
+			}
+		} catch (IOException | UnsupportedFlavorException ex) {
+			Log.error("Clipboard error " + ex.getMessage());
 		}
 	}
 

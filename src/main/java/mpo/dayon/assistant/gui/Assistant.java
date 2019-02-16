@@ -7,14 +7,10 @@ import java.awt.GridLayout;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.Toolkit;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
@@ -68,7 +64,7 @@ import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Pair;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class Assistant implements Configurable<AssistantConfiguration> {
+public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
 
 	private final NetworkAssistantEngine network;
 
@@ -126,7 +122,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 
 		NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
 
-		network = new NetworkAssistantEngine(decompressor, mouseHandler);
+		network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
 
 		network.configure(networkConfiguration = new NetworkAssistantConfiguration());
 		network.addListener(new MyNetworkAssistantEngineListener());
@@ -138,6 +134,9 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 		captureEngineConfiguation = new CaptureEngineConfiguration();
 		compressorEngineConfiguation = new CompressorEngineConfiguration();
 	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {}
 
 	public void configure(AssistantConfiguration configuration) {
 		this.configuration = configuration;
@@ -153,7 +152,7 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 	public void start() {
 		frame = new AssistantFrame(new AssistantFrameConfiguration(), createWhatIsMyIpAction(), createNetworkAssistantConfigurationAction(),
 				createCaptureConfigurationAction(), createComressionConfigurationAction(), createResetAction(), createSwitchLookAndFeelAction(),
-				new AssistantStartAction(network), new AssistantStopAction(network), receivedBitCounter, captureCompressionCounter, receivedTileCounter,
+				createRemoteClipboardRequestAction(), createRemoteClipboardUpdateAction(), new AssistantStartAction(network), new AssistantStopAction(network), receivedBitCounter, captureCompressionCounter, receivedTileCounter,
 				skippedTileCounter, mergedTileCounter);
 
 		FatalErrorHandler.attachFrame(frame);
@@ -346,6 +345,73 @@ public class Assistant implements Configurable<AssistantConfiguration> {
 		exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
 
 		return exit;
+	}
+
+	private Action createRemoteClipboardRequestAction() {
+		final Action getRemoteClipboard = new AbstractAction() {
+
+			public void actionPerformed(ActionEvent ev) {
+				sendRemoteClipboardRequest();
+			}
+		};
+
+		getRemoteClipboard.putValue(Action.NAME, "getClipboard");
+		getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.getRemote"));
+		getRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.DOWN));
+
+		return getRemoteClipboard;
+	}
+
+	private Action createRemoteClipboardUpdateAction() {
+		final Action setRemoteClipboard = new AbstractAction() {
+
+			public void actionPerformed(ActionEvent ev) {
+				sendLocalClipboard();
+			}
+		};
+
+		setRemoteClipboard.putValue(Action.NAME, "setClipboard");
+		setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.setRemote"));
+		setRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.UP));
+
+		return setRemoteClipboard;
+	}
+
+	private void sendLocalClipboard() {
+		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+		Transferable content = clipboard.getContents(this);
+
+		if (content == null) return;
+
+		try {
+			if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+				Log.debug("Clipboard contains files");
+				clipboard.getAvailableDataFlavors();
+				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
+				if (files.stream().anyMatch(File::isDirectory)) {
+					throw new IOException("directories not supported");
+				}
+				final long filesSize = files.stream().mapToInt(f -> Math.toIntExact(f.length())).sum();
+				// Ok as very few of that (!)
+				new Thread(() -> network.setRemoteClipboardFiles(files, filesSize), "setRemoteClipboardFiles").start();
+			} else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
+                Log.debug("Clipboard contains text: " + text);
+				// Ok as very few of that (!)
+				new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
+			}
+		} catch (IOException | UnsupportedFlavorException ex) {
+			Log.error("Clipboard error " + ex.getMessage());
+		}
+	}
+
+	/**
+	 * Should not block (!)
+	 */
+	private void sendRemoteClipboardRequest() {
+		Log.info("Requesting remote clipboard");
+		// Ok as very few of that (!)
+		new Thread(network::sendRemoteClipboardRequest, "RemoteClipboardRequest").start();
 	}
 
 	private Action createCaptureConfigurationAction() {

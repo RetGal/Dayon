@@ -35,4 +35,24 @@ public enum NetworkMessageType {
 	 * A keyboard control event (i.e., assistant to assisted).
 	 */
 	KEY_CONTROL,
+
+	/**
+	 * A remote clipboard transfer request event.
+	 */
+	CLIPBOARD_REQUEST,
+
+	/**
+	 * A clipboard transfer text event.
+	 */
+	CLIPBOARD_TEXT,
+
+	/**
+	 * A clipboard transfer files event.
+	 */
+	CLIPBOARD_FILES,
+
+	/**
+	 * A ping.
+	 */
+	PING
 }

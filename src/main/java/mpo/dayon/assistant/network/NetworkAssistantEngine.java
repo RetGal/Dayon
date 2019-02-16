@@ -1,30 +1,5 @@
 package mpo.dayon.assistant.network;
 
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import java.security.UnrecoverableKeyException;
-import java.security.cert.CertificateException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.TrustManager;
-
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
 import mpo.dayon.assistant.network.https.NetworkAssistantHttpsResources;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
@@ -35,24 +10,36 @@ import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
-import mpo.dayon.common.network.message.NetworkCaptureMessage;
-import mpo.dayon.common.network.message.NetworkCaptureMessageHandler;
-import mpo.dayon.common.network.message.NetworkHelloMessage;
-import mpo.dayon.common.network.message.NetworkKeyControlMessage;
-import mpo.dayon.common.network.message.NetworkMessage;
-import mpo.dayon.common.network.message.NetworkMessageType;
-import mpo.dayon.common.network.message.NetworkMouseControlMessage;
-import mpo.dayon.common.network.message.NetworkMouseLocationMessage;
-import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
+import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
+
+import javax.net.ssl.KeyManagerFactory;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.TrustManager;
+import java.awt.datatransfer.ClipboardOwner;
+import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.security.*;
+import java.security.cert.CertificateException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import static mpo.dayon.common.network.message.NetworkMessage.MAGIC_NUMBER;
+import static mpo.dayon.common.network.message.NetworkMessageType.PING;
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
+import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
 	
 	private final NetworkCaptureMessageHandler captureMessageHandler;
 
 	private final NetworkMouseLocationMessageHandler mouseMessageHandler;
+
+	private final ClipboardOwner clipboardOwner;
 
 	private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>(NetworkAssistantEngineListener.class);
 
@@ -78,9 +65,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private static final String LOCALHOST = "127.0.0.1";
 
-	public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler) {
+	public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
 		this.captureMessageHandler = captureMessageHandler;
 		this.mouseMessageHandler = mouseMessageHandler;
+		this.clipboardOwner = clipboardOwner;
 
 		fireOnReady();
 	}
@@ -145,8 +133,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	}
 
 	private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
-		DataInputStream in = null;
-		DataOutputStream out = null;
+		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
 
 		try {
 			final int port = getPort();
@@ -182,19 +170,28 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			server.close();
 			server = null;
 
-			in = new DataInputStream(new BufferedInputStream(connection.getInputStream()));
-			out = new DataOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+			out = initObjectOutputStream(connection);
 
 			sender = new NetworkSender(out);
 			sender.start(8);
 
+			in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+
 			boolean introduced = false;
+
+			NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement
             while (true) {
-				NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
 
-				final NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+				NetworkMessageType type;
+				if (filesHelper.isIdle()) {
+					NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+					type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+				} else {
+					type = NetworkMessageType.CLIPBOARD_FILES;
+				}
+				Log.debug("Received " + type.name());
 
 				switch (type) {
 					case HELLO:
@@ -234,7 +231,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	
 					case MOUSE_LOCATION:
 						if (!introduced) {
-							throw new IOException("Unexpected message [CAPTURE]!");
+							throw new IOException("Unexpected message [MOUSE_LOCATION]!");
 						}
 	
 						final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
@@ -242,8 +239,43 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	
 						mouseMessageHandler.handleLocation(mouse);
 						break;
-	
-					default:
+
+					case CLIPBOARD_TEXT:
+						if (!introduced) {
+							throw new IOException("Unexpected message [CLIPBOARD_TEXT]!");
+						}
+
+						final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+						fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
+
+						setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+						break;
+
+					case CLIPBOARD_FILES:
+						if (!introduced) {
+							throw new IOException("Unexpected message [CLIPBOARD_FILES]!");
+						}
+
+						final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
+						fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
+						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1);
+
+						if (filesHelper.isIdle()) {
+							setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+							filesHelper = new NetworkClipboardFilesHelper();
+						} else {
+							filesHelper.setFiles(clipboardFiles.getFiles());
+							filesHelper.setFileNames(clipboardFiles.getFileNames());
+							filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+							filesHelper.setPosition(clipboardFiles.getPosition());
+							filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
+						}
+						break;
+
+                    case PING:
+                        break;
+
+                    default:
 						throw new IOException("Unsupported message type [" + type + "]!");
 				}
 			}
@@ -272,6 +304,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		}
 
 		fireOnReady();
+	}
+
+	private ObjectOutputStream initObjectOutputStream(Socket connection) throws IOException {
+		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+		out.writeByte(MAGIC_NUMBER);
+		out.writeByte(PING.ordinal());
+		out.flush();
+		return out;
 	}
 
 	private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
@@ -324,6 +364,33 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	public void sendKeyControl(NetworkKeyControlMessage message) {
 		if (sender != null) {
 			sender.sendKeyControl(message);
+		}
+	}
+
+	/**
+	 * Might be blocking if the sender queue is full (!)
+	 */
+	public void sendRemoteClipboardRequest() {
+		if (sender != null) {
+			sender.sendRemoteClipboardRequest();
+		}
+	}
+
+	/**
+	 * Might be blocking if the sender queue is full (!)
+	 */
+	public void setRemoteClipboardText(String text, int size) {
+		if (sender != null) {
+			sender.sendClipboardContentText(text, size);
+		}
+	}
+
+	/**
+	 * Might be blocking if the sender queue is full (!)
+	 */
+	public void setRemoteClipboardFiles(List<File> files, long size) {
+		if (sender != null) {
+			sender.sendClipboardContentFiles(files, size);
 		}
 	}
 

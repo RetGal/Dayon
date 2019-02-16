@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * From the assisted to the assistant.
@@ -37,14 +35,14 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 		return 5; // type (byte) + x (short) + y (short)
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeShort(x);
 		out.writeShort(y);
 	}
 
-	public static NetworkMouseLocationMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkMouseLocationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int x = in.readShort();
 		final int y = in.readShort();
 

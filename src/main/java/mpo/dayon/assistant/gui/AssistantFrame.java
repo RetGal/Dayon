@@ -63,6 +63,10 @@ class AssistantFrame extends BaseFrame {
 
 	private final Action lookAndFeelAction;
 
+	private final Action remoteClipboardRequestAction;
+
+	private final Action remoteClipboardSetAction;
+
 	private final Action startAction;
 
 	private final Action stopAction;
@@ -80,7 +84,7 @@ class AssistantFrame extends BaseFrame {
 
 	public AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
 			Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
-			AssistantStartAction startAction, AssistantStopAction stopAction, Counter<?>... counters) {
+			Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Counter<?>... counters) {
 		this.configuration = configuration;
 
 		setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
@@ -91,6 +95,8 @@ class AssistantFrame extends BaseFrame {
 		this.compressorEngineConfigurationAction = compressorEngineConfigurationAction;
 		this.resetAction = resetAction;
 		this.lookAndFeelAction = lookAndFeelAction;
+		this.remoteClipboardRequestAction = remoteClipboardRequestAction;
+		this.remoteClipboardSetAction= remoteClipboardSetAction;
 		this.startAction = startAction;
 		this.stopAction = stopAction;
 
@@ -224,6 +230,8 @@ class AssistantFrame extends BaseFrame {
 		toolbar.addAction(resetAction);
 		toolbar.addSeparator();
 		toolbar.addToggleAction(createToggleControlMode());
+		toolbar.addAction(remoteClipboardRequestAction);
+		toolbar.addAction(remoteClipboardSetAction);
 		toolbar.addSeparator();
 		toolbar.addAction(lookAndFeelAction);
 		toolbar.addSeparator();
@@ -282,6 +290,8 @@ class AssistantFrame extends BaseFrame {
 
 		captureEngineConfigurationAction.setEnabled(true);
 		resetAction.setEnabled(false);
+		remoteClipboardRequestAction.setEnabled(false);
+		remoteClipboardSetAction.setEnabled(false);
 		lookAndFeelAction.setEnabled(true);
 
 		statusBar.setMessage(Babylon.translate("ready"));
@@ -347,6 +357,8 @@ class AssistantFrame extends BaseFrame {
 		add(center = assistantPanelWrapper, BorderLayout.CENTER);
 
 		resetAction.setEnabled(true);
+		remoteClipboardRequestAction.setEnabled(true);
+		remoteClipboardSetAction.setEnabled(true);
 
 		validate();
 		repaint();
@@ -359,6 +371,8 @@ class AssistantFrame extends BaseFrame {
 		stopAction.setEnabled(false);
 
 		resetAction.setEnabled(false);
+		remoteClipboardRequestAction.setEnabled(false);
+		remoteClipboardSetAction.setEnabled(false);
 
 		removeCenter();
 

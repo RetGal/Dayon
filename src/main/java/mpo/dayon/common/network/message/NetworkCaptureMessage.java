@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -64,7 +62,7 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		}
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		// debugging info - might need it before decompressing the payload (!)
@@ -83,7 +81,7 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		out.write(payload.getInternal(), 0, payload.size());
 	}
 
-	public static NetworkCaptureMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkCaptureMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int id = in.readInt();
 		final CompressionMethod compressionMethod = unmarshallEnum(in, CompressionMethod.class);
 

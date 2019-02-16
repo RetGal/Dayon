@@ -1,8 +1,6 @@
 package mpo.dayon.common.network.message;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 
 public class NetworkHelloMessage extends NetworkMessage {
 	private final int major;
@@ -34,14 +32,14 @@ public class NetworkHelloMessage extends NetworkMessage {
 		return 9; // type (byte) + major (int) + minor (int)
 	}
 
-	public void marshall(DataOutputStream out) throws IOException {
+	public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeInt(major);
 		out.writeInt(minor);
 	}
 
-	public static NetworkHelloMessage unmarshall(DataInputStream in) throws IOException {
+	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
 
