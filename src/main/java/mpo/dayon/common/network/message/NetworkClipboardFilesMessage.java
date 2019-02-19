@@ -27,17 +27,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
 
-    private static int readIntoBuffer(ObjectInputStream in, byte[] buffer) throws IOException {
-        int chunk = 1024;
-        int read = in.read(buffer, 0, 1);
-        while (in.available() > 0 && read < buffer.length) {
-            chunk = chunk > buffer.length - read ? buffer.length - read : chunk;
-            chunk = chunk > in.available() ? in.available() : chunk;
-            read += in.read(buffer, read, chunk);
-        }
-        return read;
-    }
-
     public static NetworkClipboardFilesMessage unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper) throws IOException {
 
         try {
@@ -49,15 +38,17 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             }
             byte[] buffer;
             int position = helper.getPosition();
+            String fileName = helper.getFileNames().get(position);
+            Long fileSize = helper.getFileSizes().get(position);
             if (helper.getFiles().size() == position) {
-                buffer = new byte[Math.toIntExact(helper.getFileSizes().get(position))];
+                Log.debug("Received File/size: " + fileName + "/" + fileSize);
+                buffer = new byte[Math.toIntExact(fileSize)];
             } else {
-                Log.info("Total bytes/written: " + Math.toIntExact(helper.getFileSizes().get(position)) + "/" + helper.getFiles().get(position).length());
+                Log.info("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
                 buffer = new byte[Math.toIntExact(helper.getFileBytesLeft())];
             }
 
             int read = readIntoBuffer(in, buffer);
-            String fileName = helper.getFileNames().get(position);
             String tempFilePath = writeToTempFile(buffer, read, fileName);
 
             if (helper.getFiles().size() == position) {
@@ -67,7 +58,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             }
             long remainingFileSize = helper.getFileBytesLeft() - read;
             long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
-            Log.debug("Received File: " + fileName + " size/read/remaining/totalRemaining " + helper.getFileSizes().get(position) + "/" + read + "/" + remainingFileSize + "/" + remainingTotalFilesSize);
+
             if (remainingFileSize <= 0 && remainingTotalFilesSize > 0) {
                 position++;
                 remainingFileSize = helper.getFileSizes().get(position);
@@ -83,15 +74,33 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return new NetworkClipboardFilesMessage(helper);
     }
 
+    private static int readIntoBuffer(ObjectInputStream in, byte[] buffer) throws IOException {
+        int chunk = 1024;
+        int read = in.read(buffer, 0, 1);
+        while (in.available() > 0 && read < buffer.length) {
+            chunk = chunk > buffer.length - read ? buffer.length - read : chunk;
+            chunk = chunk > in.available() ? in.available() : chunk;
+            read += in.read(buffer, read, chunk);
+        }
+        return read;
+    }
+
     @NotNull
     private static String writeToTempFile(byte[] buffer, int length, String fileName) throws IOException {
         String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
 
-        try (FileOutputStream stream = new FileOutputStream(tempFilePath, true)) {
+        boolean append = appendFile(tempFilePath);
+
+        try (FileOutputStream stream = new FileOutputStream(tempFilePath, append)) {
             stream.write(copyOf(buffer, length));
             Log.debug("Bytes written: " + length);
         }
         return tempFilePath;
+    }
+
+    private static boolean appendFile(String tempFilePath) {
+        File existingFile = new File(tempFilePath);
+        return (existingFile.isFile() && existingFile.lastModified() > System.currentTimeMillis()-2000);
     }
 
     private NetworkClipboardFilesMessage(NetworkClipboardFilesHelper helper) {

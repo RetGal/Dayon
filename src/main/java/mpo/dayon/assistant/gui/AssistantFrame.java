@@ -200,10 +200,6 @@ class AssistantFrame extends BaseFrame {
 		listeners.add(listener);
 	}
 
-	public void removeListener(AssistantFrameListener listener) {
-		listeners.remove(listener);
-	}
-
 	private void onLocationUpdated(int x, int y) {
 		this.position.setX(x);
 		this.position.setY(y);
@@ -363,6 +359,26 @@ class AssistantFrame extends BaseFrame {
 		validate();
 		repaint();
 
+		return true;
+	}
+
+	public boolean onClipboardRequested() {
+		remoteClipboardRequestAction.setEnabled(false);
+		return true;
+	}
+
+	public boolean onClipboardSending() {
+		remoteClipboardSetAction.setEnabled(false);
+		return true;
+	}
+
+	public boolean onClipboardSent() {
+		remoteClipboardSetAction.setEnabled(true);
+		return true;
+	}
+
+	public boolean onClipboardReceived(int count) {
+		remoteClipboardRequestAction.setEnabled(true);
 		return true;
 	}
 

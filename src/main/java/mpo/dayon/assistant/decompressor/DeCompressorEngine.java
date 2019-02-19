@@ -37,6 +37,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	public DeCompressorEngine() {
 	}
 
+	@Override
 	public void configure(DeCompressorEngineConfiguration configuration) {
 	}
 
@@ -83,6 +84,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	/**
 	 * Should not block as called from the network incoming message thread (!)
 	 */
+	@Override
 	public void handleCapture(NetworkCaptureMessage capture) {
 		try {
 			semaphore.acquire();
@@ -115,6 +117,7 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 			this.message = message;
 		}
 
+		@Override
 		protected void execute() throws Exception {
 			try {
 				final Compressor compressor = Compressor.get(message.getCompressionMethod());

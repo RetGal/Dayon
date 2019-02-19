@@ -7,6 +7,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,17 +15,19 @@ public class TransferableFiles implements Transferable {
 
     private final List<File> files;
     private static DataFlavor uriListFlavor;
+    private static DataFlavor gnomeCopiedFilesFlavor;
+
     static {
         try {
-            uriListFlavor = new
-                    DataFlavor("text/uri-list;class=java.lang.String");
+            gnomeCopiedFilesFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
+            uriListFlavor = new DataFlavor("text/uri-list;class=java.lang.String");
         } catch (ClassNotFoundException e) {
-            Log.error(e.getMessage()); // can't happen
+            Log.error(e.getMessage()); // this should not happen
         }
     }
 
-    private static DataFlavor[] FLAVORS = new DataFlavor[] {
-            DataFlavor.javaFileListFlavor, uriListFlavor };
+    private static DataFlavor[] FLAVORS = new DataFlavor[]{
+            DataFlavor.javaFileListFlavor, gnomeCopiedFilesFlavor, uriListFlavor};
 
 
     public TransferableFiles(List<File> files) {
@@ -34,24 +37,41 @@ public class TransferableFiles implements Transferable {
     @NotNull
     @Override
     public Object getTransferData(DataFlavor flavor) throws
-            UnsupportedFlavorException, java.io.IOException {
+            UnsupportedFlavorException {
+        Log.debug("getTransferData " + flavor.toString());
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
             return files;
+        } else if (flavor.equals(gnomeCopiedFilesFlavor)) {
+            return toGnomeCopiedFilesFlavor();
         } else if (flavor.equals(uriListFlavor)) {
-            // refer to RFC 2483 for the text/uri-list format
-            return files.get(0).toURI() + "\r\n";
+            return toUriListFlavor();
         } else {
             throw new UnsupportedFlavorException(flavor);
         }
     }
 
+    @NotNull
+    private Object toUriListFlavor() {
+        final StringBuilder sb = new StringBuilder();
+        files.forEach(file -> sb.append(file.toURI()).append("\r\n"));
+        return sb.toString();
+    }
+
+    @NotNull
+    private Object toGnomeCopiedFilesFlavor() {
+        final StringBuilder sb = new StringBuilder("copy\n");
+        files.forEach(file -> sb.append(file.toURI()).append("\n"));
+        sb.delete(sb.length() - 1, sb.length());
+        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
+    }
+
     @Override
-    public DataFlavor[] getTransferDataFlavors(){
+    public DataFlavor[] getTransferDataFlavors() {
         return FLAVORS.clone();
     }
 
     @Override
-    public boolean isDataFlavorSupported(DataFlavor flavor){
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
         return Arrays.stream(FLAVORS).anyMatch(df -> df.equals(flavor));
     }
 

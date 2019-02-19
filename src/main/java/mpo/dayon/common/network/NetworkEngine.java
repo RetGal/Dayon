@@ -1,5 +1,6 @@
 package mpo.dayon.common.network;
 
+import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.TransferableFiles;
 
 import java.awt.*;
@@ -19,11 +20,13 @@ public abstract class NetworkEngine {
 	public abstract void start() throws IOException, NoSuchAlgorithmException, KeyManagementException;
 
 	public void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
+		Log.debug("setClipboardContents " + string);
 		StringSelection stringSelection = new StringSelection(string);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
 	}
 
 	public void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
+		Log.debug("setClipboardContents " + files.toString());
 		TransferableFiles transferableFiles = new TransferableFiles(files);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
 	}

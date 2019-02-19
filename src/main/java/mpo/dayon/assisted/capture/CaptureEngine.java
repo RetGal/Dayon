@@ -53,6 +53,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 		}, "CaptureEngine");
 	}
 
+	@Override
 	public void configure(CaptureEngineConfiguration configuration) {
 		synchronized (reconfigurationLOCK) {
 			this.configuration = configuration;
@@ -60,6 +61,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 		}
 	}
 
+	@Override
 	public void reconfigure(CaptureEngineConfiguration configuration) {
 		configure(configuration);
 	}

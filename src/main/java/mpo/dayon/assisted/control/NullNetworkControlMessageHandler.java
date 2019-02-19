@@ -11,12 +11,15 @@ public class NullNetworkControlMessageHandler implements NetworkControlMessageHa
 	private NullNetworkControlMessageHandler() {
 	}
 
+	@Override
 	public void handleMessage(NetworkEngine engine, NetworkMouseControlMessage message) {
 	}
 
+	@Override
 	public void handleMessage(NetworkEngine engine, NetworkKeyControlMessage message) {
 	}
-	
+
+	@Override
 	public void subscribe(Subscriber listener) {
 	}
 }

@@ -21,13 +21,10 @@ import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
-import java.net.Socket;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 
-import static mpo.dayon.common.network.message.NetworkMessage.MAGIC_NUMBER;
-import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
@@ -66,15 +63,30 @@ public class NetworkAssistedEngine extends NetworkEngine
         }, "NetworkReceiver");
     }
 
+    @Override
     public void configure(@Nullable NetworkAssistedEngineConfiguration configuration) {
         this.configuration = configuration;
     }
 
+    @Override
     public void start()
             throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
+        SSLSocket connection = initSocket();
 
+        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+
+        sender = new NetworkSender(out); // the active part (!)
+        sender.start(1);
+        sender.ping();
+
+        in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+
+        receiver.start();
+    }
+
+    private SSLSocket initSocket() throws NoSuchAlgorithmException, IOException, KeyManagementException {
         KeyStore keyStore;
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
@@ -89,24 +101,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
 
         SSLSocketFactory ssf = sslContext.getSocketFactory();
-        SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-
-        ObjectOutputStream out = initObjectOutputStream(connection);
-
-        sender = new NetworkSender(out); // the active part (!)
-        sender.start(1);
-
-        in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-
-        receiver.start();
-    }
-
-    private ObjectOutputStream initObjectOutputStream(Socket connection) throws IOException {
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-        out.writeByte(MAGIC_NUMBER);
-        out.writeByte(PING.ordinal());
-        out.flush();
-        return out;
+        return (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
     }
 
     private void receivingLoop() throws IOException {
@@ -166,8 +161,9 @@ public class NetworkAssistedEngine extends NetworkEngine
                     filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1);
 
                     if (filesHelper.isIdle()) {
-                        setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
                         filesHelper = new NetworkClipboardFilesHelper();
+                        sender.ping();
+                        setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
                     } else {
                         filesHelper.setFiles(clipboardFiles.getFiles());
                         filesHelper.setFileNames(clipboardFiles.getFileNames());
@@ -204,6 +200,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      * We're receiving a fully compressed (and ready to send over the network)
      * capture.
      */
+    @Override
     public void onCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
                              MemByteBuffer compressed) {
         if (sender != null) {
@@ -214,6 +211,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     /**
      * May block (!)
      */
+    @Override
     public boolean onLocationUpdated(Point location) {
         return sender == null || sender.sendMouseLocation(location);
     }

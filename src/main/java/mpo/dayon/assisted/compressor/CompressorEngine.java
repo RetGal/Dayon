@@ -38,6 +38,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 	public CompressorEngine() {
 	}
 
+	@Override
 	public void configure(CompressorEngineConfiguration configuration) {
 		synchronized (reconfigurationLOCK) {
 			this.configuration = configuration;
@@ -45,6 +46,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		}
 	}
 
+	@Override
 	public void reconfigure(CompressorEngineConfiguration configuration) {
 		configure(configuration);
 	}
@@ -121,10 +123,12 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 	 * Note that the current implementation should never block and never throw
 	 * any rejected exception.
 	 */
+	@Override
 	public void onCaptured(Capture capture) {
 		executor.execute(new MyExecutable(capture));
 	}
 
+	@Override
 	public void onRawCaptured(int id, byte[] grays) {
 	}
 
@@ -136,6 +140,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			this.capture = capture;
 		}
 
+		@Override
 		protected void execute() throws Exception {
 			try {
 				final CompressorEngineConfiguration xconfiguration;

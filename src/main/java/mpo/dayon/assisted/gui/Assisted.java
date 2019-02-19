@@ -184,7 +184,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	}
 
 	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable transferable) {}
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+		Log.error("Lost clipboard ownership");
+	}
 
 	private boolean requestConnectionSettings() {
 		final JPanel pane = new JPanel();

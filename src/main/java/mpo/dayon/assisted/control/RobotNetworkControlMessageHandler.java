@@ -29,6 +29,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		}
 	}
 
+	@Override
 	public void subscribe(Subscriber subscriber) {
 		subscribers.add(subscriber);
 	}
@@ -40,6 +41,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	/**
 	 * Should not block as called from the network incoming message thread (!)
 	 */
+	@Override
 	public void handleMessage(NetworkEngine engine, NetworkMouseControlMessage message) {
 		if (message.isPressed()) {
 			if (message.isButton1()) {
@@ -66,6 +68,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	/**
 	 * Should not block as called from the network incoming message thread (!)
 	 */
+	@Override
 	public void handleMessage(NetworkEngine engine, NetworkKeyControlMessage message) {
 		if (message.isPressed()) {
 			try {

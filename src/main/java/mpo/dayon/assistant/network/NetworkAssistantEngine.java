@@ -28,8 +28,6 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static mpo.dayon.common.network.message.NetworkMessage.MAGIC_NUMBER;
-import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
@@ -73,10 +71,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		fireOnReady();
 	}
 
+	@Override
 	public void configure(NetworkAssistantConfiguration configuration) {
 		this.configuration = configuration;
 	}
 
+	@Override
 	public void reconfigure(NetworkAssistantConfiguration configuration) {
 		this.configuration = configuration;
 	}
@@ -96,6 +96,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	/**
 	 * Possibly called from a GUI action => do not block the AWT thread (!)
 	 */
+	@Override
 	public void start() {
 		if (cancelling.get() || receiver != null) {
 			return;
@@ -170,10 +171,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 			server.close();
 			server = null;
 
-			out = initObjectOutputStream(connection);
+			out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 
 			sender = new NetworkSender(out);
 			sender.start(8);
+			sender.ping();
 
 			in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
 
@@ -247,7 +249,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 						final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
 						fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
-
+						fireOnClipboardReceived(0);
 						setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
 						break;
 
@@ -261,8 +263,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1);
 
 						if (filesHelper.isIdle()) {
-							setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+							fireOnClipboardReceived(clipboardFiles.getPosition() + 1);
 							filesHelper = new NetworkClipboardFilesHelper();
+							setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
 						} else {
 							filesHelper.setFiles(clipboardFiles.getFiles());
 							filesHelper.setFileNames(clipboardFiles.getFileNames());
@@ -273,6 +276,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 						break;
 
                     case PING:
+						fireOnClipboardSent();
                         break;
 
                     default:
@@ -304,14 +308,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		}
 
 		fireOnReady();
-	}
-
-	private ObjectOutputStream initObjectOutputStream(Socket connection) throws IOException {
-		ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-		out.writeByte(MAGIC_NUMBER);
-		out.writeByte(PING.ordinal());
-		out.flush();
-		return out;
 	}
 
 	private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
@@ -450,6 +446,22 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
 			xlistener.onByteReceived(count);
+		}
+	}
+
+	private void fireOnClipboardReceived(int count) {
+		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+
+		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+			xlistener.onClipboardReceived(count);
+		}
+	}
+
+	private void fireOnClipboardSent() {
+		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+
+		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+			xlistener.onClipboardSent();
 		}
 	}
 

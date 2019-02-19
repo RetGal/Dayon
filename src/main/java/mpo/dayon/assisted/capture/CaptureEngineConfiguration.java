@@ -80,6 +80,7 @@ public class CaptureEngineConfiguration extends Configuration {
 	 * @param clear
 	 *            allows for clearing properties from previous version
 	 */
+	@Override
 	protected void persist(boolean clear) {
 		final Preferences.Props props = new Preferences.Props();
 		{

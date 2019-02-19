@@ -135,9 +135,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		compressorEngineConfiguation = new CompressorEngineConfiguration();
 	}
 
-	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable transferable) {}
-
 	public void configure(AssistantConfiguration configuration) {
 		this.configuration = configuration;
 
@@ -160,6 +157,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 		frame.addListener(control);
 		frame.setVisible(true);
+	}
+
+	@Override
+	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+		Log.error("Lost clipboard ownership");
 	}
 
 	private Action createWhatIsMyIpAction() {
@@ -400,8 +402,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				// Ok as very few of that (!)
 				new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
 			}
+			frame.onClipboardSending();
 		} catch (IOException | UnsupportedFlavorException ex) {
 			Log.error("Clipboard error " + ex.getMessage());
+			frame.onClipboardSent();
 		}
 	}
 
@@ -410,6 +414,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	 */
 	private void sendRemoteClipboardRequest() {
 		Log.info("Requesting remote clipboard");
+		frame.onClipboardRequested();
 		// Ok as very few of that (!)
 		new Thread(network::sendRemoteClipboardRequest, "RemoteClipboardRequest").start();
 	}
@@ -708,6 +713,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onHttpStarting(int port) {
 			frame.onHttpStarting(port);
 
@@ -752,6 +758,20 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		 */
 		public void onByteReceived(int count) {
 			receivedBitCounter.add(8 * count);
+		}
+
+		/**
+		 * Should not block as called from the network receiving thread (!)
+		 */
+		public void onClipboardReceived(int count) {
+			frame.onClipboardReceived(count);
+		}
+
+		/**
+		 * Should not block as called from the network receiving thread (!)
+		 */
+		public void onClipboardSent() {
+			frame.onClipboardSent();
 		}
 
 		public void onIOError(IOException error) {

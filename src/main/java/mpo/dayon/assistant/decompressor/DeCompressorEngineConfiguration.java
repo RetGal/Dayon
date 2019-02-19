@@ -15,6 +15,7 @@ public class DeCompressorEngineConfiguration extends Configuration {
 	 * @param clear
 	 *            allows for clearing properties from previous version
 	 */
+	@Override
 	protected void persist(boolean clear) {
 	}
 }

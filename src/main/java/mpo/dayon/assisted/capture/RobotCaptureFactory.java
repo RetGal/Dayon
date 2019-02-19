@@ -17,14 +17,17 @@ public class RobotCaptureFactory extends CaptureFactory {
 		CAPTURE_HEIGHT = toolkit.getScreenSize().height;
 	}
 
+	@Override
 	public int getWidth() {
 		return CAPTURE_WIDTH;
 	}
 
+	@Override
 	public int getHeight() {
 		return CAPTURE_HEIGHT;
 	}
 
+	@Override
 	public byte[] captureGray(Gray8Bits quantization) {
 		return ScreenUtilities.captureGray(quantization);
 	}

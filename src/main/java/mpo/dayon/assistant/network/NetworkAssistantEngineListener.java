@@ -38,5 +38,15 @@ public interface NetworkAssistantEngineListener extends Listener {
 	 */
 	void onByteReceived(int count);
 
+	/**
+	 * Should not block as called from the network receiving thread (!)
+	 */
+	void onClipboardReceived(int count);
+
+	/**
+	 * Should not block as called from the network receiving thread (!)
+	 */
+	void onClipboardSent();
+
 	void onIOError(IOException error);
 }
