@@ -12,7 +12,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="jetty.version" value="9.4.14.v20181114"/>
+	<property name="jetty.version" value="9.4.15.v20190215"/>
 	<property name="version" value="1.6.1"/>
 
 	<path id="project.classpath">
