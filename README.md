@@ -22,9 +22,9 @@ With his permission I moved the code base to GitHub, where it can easier be main
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.6.1 - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.7.0 - released more than ten years after the initial release.
 
-This version comes with a refreshed look and feel, improved Windows installers and uses updated libraries, fully Java 9+ compatible.
+This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
 It is most likely the very last version which is boundled with a Java 8 based JRE.
 
