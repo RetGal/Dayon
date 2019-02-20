@@ -1,7 +1,9 @@
 .classpath
+.idea
 .project
 .settings
+dayon.iml
 /bin/
 /build/*.jar
-/dist/
-/target/
+/dist
+/target
