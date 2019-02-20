@@ -23,9 +23,9 @@
 				Vous pouvez poster une question ou ouvrir un issue sur <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
 			<h3>Problèmes Connus</h3>
 			<ul>
-				<li>Le support (version 1.6) du clavier est toujours plutôt minimal; il n'y pas moyen pour le moment d'envoyer des signaux et quelques combinaisons de touches ne sont pas supportées correctement (e.g., <code>CTRL-ALT-DEL</code>).
+				<li>Le support (version 1.7) du clavier est toujours plutôt minimal; il n'y pas moyen pour le moment d'envoyer des signaux et quelques combinaisons de touches ne sont pas supportées correctement (e.g., <code>Ctrl-Alt-Del</code>).
 				<li>Curseur de la souris: à cause de problème JAVA, le curseur de la souris n'est pas correctement dessiné pendant par example le déplacement des fenêtres..
-				<li>En raison des contraintes de sécurité plus rigides, Java Web Start de l'application assistée ne fonctionne pas avec les versions plus récentes de JAVA (>1.7.45) .
+				<li>En raison des contraintes de sécurité plus rigides, Java Web Start de l'application assistéee ne fonctionne pas avec les versions plus récentes de JAVA (>1.7.45) .
 			</ul>
 			<h3>Propriétés du processus JAVA</h3>
 			<p>
@@ -38,11 +38,11 @@
 				Le répertoire <code>.dayon</code> est créé dans le répertoire référencé par le JAVA Propriété <code>user.home</code> et contient les préférences utilisateur enregistrées et le journal par défaut fichiers.
 			<h3>Somme de contrôle CRC</h3>
 			<p>
-				Sur le côté de l'assisté, l'écran est divisé en différentes zones appelées <i>tuiles</i>. Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant. Pour déterminer si une tuile est différente, je suis en
+				Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <i>tuiles</i>. Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant. Pour déterminer si une tuile est différente, je suis en
 				train de calculer un code CRC (C'est-à-dire, une valeur entière unique représentant les pixels de la tuile) qui n'est pas parfaite Par souci de rapidité. Il se peut donc que certaines tuiles <i>changées</i> ne soient pas envoyées à l'assistant.
 			<p>
 				Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, Je n'ai rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer L'aide ou avant d'essayer l'action <code>reset</code>
-				(<b> l'icône orange de la foudre </b>) Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
+				(<b> l'icône poubelle</b>) Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
 			<h3>Compteurs de statistiques</h3>
 			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
 			<p>La barre d'état du cadre assistant affiche un ensemble de compteurs.

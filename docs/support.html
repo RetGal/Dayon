@@ -23,7 +23,7 @@
 				Post your question or open a new issue on <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
 			<h3>Known Limitations</h3>
 			<ul>
-				<li>As of version 1.6, the keyboard control support is still quite minimal; there's currently no way to send some signals and some key combinations are not properly supported (e.g., <code>CTRL-ALT-DEL</code>).
+				<li>As of version 1.7, the keyboard control support is still quite minimal; there's currently no way to send some signals and some key combinations are not properly supported (e.g., <code>Ctrl-Alt-Del</code>).
 				<li>Mouse cursor: due to JAVA limitations, the mouse cursor during for example the resize or the move of a window is not properly rendered.
 				<li>Due to more rigid security constraints, Java Web Start of the assisted application does not work with newer JAVA versions (>1.7.45).
 			</ul>
@@ -41,8 +41,7 @@
 				On the assisted side, the screen is divided into different areas called <i>tiles</i>. Only tiles that have changed from the previous capture are sent over the network to the assistant side. To determine if a tile is different I'm currently computing a
 				CRC code (i.e., a unique integer value representing the pixels of the tile) that is not perfect for the sake of speed. So it might happens that some <i>changed</i> tiles are not sent to the assistant.
 			<p>
-				Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed anything serious. But in case things are going mad you can then restart the assisted or before try the <code>reset</code> action (<b>the orange
-					lightning icon</b>) that should clear every cached data and resend a full screen capture from scratch.
+				Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed anything serious. But in case things are going mad you can then restart the assisted or before try the <code>reset</code> action (<b>trash bin icon</b>) that should clear every cached data and resend a full screen capture from scratch.
 			<h3>Statistics Counters</h3>
 			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
 			<p>The status bar of the assistant frame is displaying a set of counters.

@@ -31,7 +31,8 @@
 				Then you've to determine which <b>IP address</b> you want to give to the <i>assisted</i> to connect to the <i>assistant</i>; you should typically give your <b>public</b> IP address. But for testing within your local network you might want to use a
 				different one. You can retrieve your <b>public IP address</b> with the following menu:<br> <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
 			<p>
-				As you can see on the following picture, the menu contains an item to copy to the clipboard the actual <b>IP Address & Port Number</b>. It is then easy to <b>paste it into a chat session</b> (e.g., Skype) or into an email.<br>
+				As you can see on the following picture, the menu contains an item to copy to the clipboard the actual <b>IP Address & Port Number</b>. It is then easy to <b>paste it into a chat session</b> (e.g., Skype) or into an email.
+			<p>
 				<img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
 			<p>
 				<i>Note that this IP address is not required by the assistant application as it is listening on all the available network interfaces; but you need to communicate it to the assisted. (more on this later). </i>
@@ -39,17 +40,20 @@
 				That's it regarding the network configuration; you'll find more details <a href="#assistant-details">hereafter</a> in this page. But let's see first how to setup the <i>assisted</i> side.
 			<p>
 				<img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Setup the Assisted Computer</b></a>
-			<p>Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to setup.
 			<p>
-				Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i> application (you should have a shortcut on the desktop) and enter both the IP address and the port number as communicated by the <i>assistant</i>: <img
-					src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+				Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to setup.
+			<p>
+				Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i> application (you should have a shortcut on the desktop) and enter both the IP address and the port number as communicated by the <i>assistant</i>:
+			<p>
+				<img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
 			<p>
 				You'll then be shortly connected to the <i>assistant</i> that is monitoring your screen. Enjoy!
 			<p>
 				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>More on the Assistant Setup</b></a>
 			<p>
-				Use that form to setup how the <i>assisted</i> screen is going to be <b>captured</b>; you can configure the time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.<br> <img src="assistant_capture_settings.jpg"
-					alt="Dayon! Assistant: Capture Settings">
+				Use that form to setup how the <i>assisted</i> screen is going to be <b>captured</b>; you can configure the time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.
+			<p>
+				<img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
 			<p>
 				You can then setup the <b>compression</b> method; three methods are available: ZIP, BZIP2 and LZMA. BZIP2 and LZMA should give a better compression ratio but requires more CPU as they're much more complicated than ZIP and are currently implemented in
 				JAVA (ZIP is being implemented using some native code in the JDK).
@@ -74,6 +78,17 @@
 				You're now connected and monitoring the remote computer.
 			<p>
 				<img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+			<p>
+				By clicking on the up- or down button, the clipboard of the assistant can either be transferred to the assisted (up) or the clipboard of the assisted to the assistant (down).
+			<p>
+				<img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
+			<p>
+				Currently supported are:
+				<ul>
+					<li>Text: Select text locally or in the assisted window, copy (<code>Ctl + c</code>), click up or down. Subsequently, the transmitted text can be inserted in a local or remote application (<code>Ctrl + v</code>).
+					<li>Files: Select one or more files locally or in the window of the assisted person (<code>Ctl + c</code>), click up or down. Subsequently, the file(s) can be inserted at the destination.</li>
+				</ul>
+				<strong>Caution</strong>: Transferring directories (folders) is not supported. Furthermore, the function is very limited for the transmission of large files. On the one hand, the transmission speed is very modest and, on the other hand, the receiver can not receive commands or mouse movements until completion of the transmission.
 			<p>
 				That's all folk! You can find more information in the <a href="support.html">support</a> page.
 		</div>

@@ -20,16 +20,16 @@
 		<div id="content">
 			<h2>Premier Pas</h2>
 			<p>
-				Typiquement, l'<i>assistant</i> discute avec l'<i>assisté</i> en utilisant Skype, le téléphone, son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser en direct l'écran de l'ordinateur de l'<i>assisté</i>.
+				Typiquement, l'<i>assistant</i> discute avec l'<i>assistée</i> en utilisant Skype, le téléphone, son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser en direct l'écran de l'ordinateur de l'<i>assistée</i>.
 			<p>Notez que les images sur cette page correspondent à la version anglaise mais que l'application elle-même est complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre l'essentiel.
 			<p>
 				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup"><b>Mise en Route Coté Assistant</b></a>
 			<p>
-				Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assisté</i> va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur. La première chose à faire est de configurer le
+				Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assistée</i> va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur. La première chose à faire est de configurer le
 				numéro de <b>port d'écoute</b> comme indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans votre <b>parefeu</b> et sans doute configurer un service <b>NAT</b> sur votre routeur DSL.<br> <img src="assistant_network_settings.jpg"
 					alt="Dayon! Assistant: Network Settings">
 			<p>
-				Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assisté</i> pour qu'il se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <b>publique</b>. Mais pour un test sur votre réseau local (ou
+				Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assistée</i> pour qu'il se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <b>publique</b>. Mais pour un test sur votre réseau local (ou
 				sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP publique</b> avec le menu suivant: <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
 			<p>
 				Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi facile de coller dans une session Skype (ou autre) ou dans un message
@@ -37,24 +37,28 @@
 			</p>
 			<img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
 			<p>
-				<i> Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application écoute sur toutes les interfaces réseaux disponibles; mais la personne assisté va avoir besoin de ces informations.
+				<i> Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application écoute sur toutes les interfaces réseaux disponibles; mais la personne assistée va avoir besoin de ces informations.
 				</i>
 			</p>
 			<p>
-				C'est tout pour la configuration réseau; vous trouverez plus de détails <a href="#assistant-details">ci-desous</a>. Mais voyons tout d'abord comment mettre en place le côté <i>assisté</i>.
+				C'est tout pour la configuration réseau; vous trouverez plus de détails <a href="#assistant-details">ci-desous</a>. Mais voyons tout d'abord comment mettre en place le côté <i>assistée</i>.
 			<p>
-				<img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Mise en Route Coté Assisté</b></a>
-			<p>Dayon! Assisté se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de configuration réseau à faire.
+				<img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Mise en Route Coté assistée</b></a>
 			<p>
-				Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et ensuite démarrer l' <i>Dayon!</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et le numéro de port communiqué par l'<i>assistant</i>: <img
-					src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+				Dayon! assistée se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de configuration réseau à faire.
+			<p>
+				Il faut télécharger et installer Dayon! comme sur pour le côté assistant. Et ensuite démarrer l' <i>Dayon!</i> (vous devriez avoir un raccourci sur le bureau) et entrer l'addresse IP et le numéro de port communiqué par l'<i>assistant</i>:
+			<p>
+				<img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
 			<p>
 				Vous serez alors promptement connecté à l'<i>assistant</i> qui sera déjà en train de regarder votre écran. Bonne session!
 			<p>
 				<img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>Mise en Route Coté Assistant (La Suite)</b></a>
 			<p>
 				Cette forme vous permet de configurer la façon dont l'écran est <b>capturé</b>; vous pouvez configurer l'interval de temps (en milli-seconde) entre deux captures (aka. tic-tac) ainsi que le nombre de niveau de gris. Moins de niveaux veut dire moins
-				d'information à transmettre sur le réseau (au détriment de la qualité des images). <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
+				d'information à transmettre sur le réseau (au détriment de la qualité des images).
+			<p>
+				<img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
 			<p>
 				Vous pouvez ensuite configuer la méthode de <b>compression</b>; trois méthodes sont disponibles: ZIP, BZIP2 and LZMA. BZIP2 et LZMA devraient donner les meilleurs résultats mais demandent plus de CPU; elles sont bien plus compliquées que ZIP et sont de
 				plus implémentées en JAVA (ZIP étant implémenté en code natif dans le JDK).
@@ -72,13 +76,24 @@
 			<p>
 				<img src="assistant_start.jpg" alt="Dayon! Assistant : Start">
 			<p>
-				Vous pouvez maintenant demander à l'<i>assisté</i> de se connecter. Vous serez alors promptement requis d'accepter une nouvelle connexion:
+				Vous pouvez maintenant demander à l'<i>assistée</i> de se connecter. Vous serez alors promptement requis d'accepter une nouvelle connexion:
 			<p>
 				<img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
 			<p>
 				Vous voila connecté visualisant l'ordinateur à distance.
 			<p>
-				<img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+				<img src="assistant_connected.jpg" alt="Dayon! Assistent : Running">
+			<p>
+				En cliquant sur le bouton haut ou bas, le presse-papiers de l’assistant peut être transféré vers l’assistée (haut) ou le presse-papiers de l’assistée vers l’assistant (bas).
+			<p>
+				<img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
+			<p>
+				Actuellement pris en charge sont:
+				<ul>
+					<li>Texte: sélectionnez du texte localement ou dans la fenêtre assistée, copiez (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite, le texte transmis peut être inséré dans une application locale ou distante (<code>Ctrl + v</code>).
+					<li>Fichiers: sélectionnez un ou plusieurs fichiers localement ou dans la fenêtre de la personne assistée (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite, le ou les fichiers peuvent être insérés à la destination.
+				</ul>
+				<strong>Attention</strong>: Le transfert de répertoires (dossiers) n'est pas pris en charge. De plus, la fonction est très limitée pour la transmission de gros fichiers. D'une part, la vitesse de transmission est très modeste et, d'autre part, le récepteur ne peut pas recevoir de commandes ni de mouvements de souris avant la fin de la transmission.
 			<p>
 				That's all folk! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
 		</div>

@@ -30,11 +30,14 @@
 				geöffnet. In den meisten Fällen wird es notwendig sein, diesen Port via <b>NAT</b> auf dem <b>Router</b> an den entsprechenden Rechner weiter zu leiten. Bebilderte Schritt-für-Schritt-Anleitungen für das Einrichten von Portweiterleitungen für die
 				gängigsten Router Modelle finden Sie <a href="https://portforward.com/router.htm">hier</a><br> <img src="assistant_network_settings.jpg" alt="Dayon! Assistent: Network Settings">
 			<p>
-				Um die öffentliche <b>IP-Adresse</b> ihres Rechners zu ermitteln, mit welchem sich der <i>Assistierte</i> verbinden wird, klicken Sie auf <b>Ermittle meine IP-Adresse (öffentlich)</b>. Fürs Testen im LAN genügt hingegen die private IP-Adresse:<br>
+				Um die öffentliche <b>IP-Adresse</b> ihres Rechners zu ermitteln, mit welchem sich der <i>Assistierte</i> verbinden wird, klicken Sie auf <b>Ermittle meine IP-Adresse (öffentlich)</b>. Fürs Testen im LAN genügt hingegen die private IP-Adresse:
+			<p>
 				<img src="assistant_network_addresses.jpg" alt="Dayon! Assistent: Network IP-Adressees">
 			<p>
 				Wie Sie im nächsten Bild erkennen, enthält das Menü auch eine Rubrik <b>Kopiere IP-Adresse & Portnummer</b>, welche die IP-Adresse und die zuvor konfigurierte Portnummer in die Zwischenablage kopiert. So können Sie diese Informationen beispielsweise
-				einfach in ihre <b>Chat-Sitzung</b> (z.B. Skype) oder in eine E-Mail einfügen.<br> <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistent: Network IP-Adresse Actions">
+				einfach in ihre <b>Chat-Sitzung</b> (z.B. Skype) oder in eine E-Mail einfügen.
+			<p>
+				<img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistent: Network IP-Adresse Actions">
 			<p>
 				<i>Beachten Sie dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen verfügbaren Netzwerkschnittstellen horcht; Sie benötigen diese Angaben jedoch um sie dem Assistierten zu kommunizieren. (mehr zu diesem Thema
 					später). </i>
@@ -42,7 +45,8 @@
 				Das wär's bezüglich Netzwerkkonfiguration; Sie finden weitere Details <a href="#assistant-details">weiter unten</a>. Lassen Sie uns zuerst einen Blick auf die Konfiguration des <i>Assistierten</i> werfen.
 			<p>
 				<img src="assisted.png" alt="Assistierter"> &nbsp; <a name="assistant-setup"><b>Konfiguration Assistierter</b></a>
-			<p>Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen allfällige Netzwerkkonfigurationen auf dieser Seite.
+			<p>
+				Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen allfällige Netzwerkkonfigurationen auf dieser Seite.
 			<p>
 				Dayon! herunter laden und installieren (identisch wie beim Assistenten). Danach die <i>Dayon!</i> Applikation starten (Sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) und die vom <i>Assistenten</i> mitgeteilte IP-Adresse und
 				Portnummer eintragen:<br> <img src="assisted_start.jpg" alt="Dayon! Assistierter : Starting">
@@ -51,7 +55,8 @@
 			<p>
 				<img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-details"><b>Mehr zur Konfiguration des Assistenten</b></a>
 			<p>
-				Hier kann der <i>Assistent</i> definieren, wie der Bildschirm des <i>Assistierten</i> <b>erfasst</b> werden soll; Es kann sowohl der Intervall (in Millisekunden) zwischen zwei Aufnahmen (Tick), als auch die Anzahl Graustufen definiert werden.<br>
+				Hier kann der <i>Assistent</i> definieren, wie der Bildschirm des <i>Assistierten</i> <b>erfasst</b> werden soll; Es kann sowohl der Intervall (in Millisekunden) zwischen zwei Aufnahmen (Tick), als auch die Anzahl Graustufen definiert werden.
+			<p>
 				<img src="assistant_capture_settings.jpg" alt="Dayon! Assistent: Capture Settings">
 			<p>
 				Da kann die <b>Komprimierung</b> festgelegt werden; Es stehen drei verschiedene Methoden zur Auswahl: ZIP, BZIP2 und LZMA. BZIP2 und LZMA sollten für einen besseren Komprimierungsgrad sorgen, benötigen aber etwas mehr Rechenleistung (verursachen
@@ -77,6 +82,17 @@
 				Nun sind Sie mit dem entfernten Computer verbunden und sehen dessen Desktop:
 			<p>
 				<img src="assistant_connected.jpg" alt="Dayon! Assistent : Running">
+			<p>
+				Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des Assistenten an den Assistierten (Up) oder die Zwischenablage des Assistierten an den Assistenten (Down) übertragen werden.
+			<p>
+				<img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
+			<p>
+				Unterstützt werden zur Zeit:
+			    <ul>
+					<li>Text: Lokal oder im Fenster des Assistierten Text markieren, kopieren (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann der übertagene Text in einer lokalen oder entfernten Anwendung eingefügt werden (<code>ctrl + v</code>).
+					<li>Dateien: Lokal oder im Fenster des Assistierten eine oder mehrere Dateien markieren, kopieren (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die Datei/en am Zielort eingefügt werden.
+				</ul>
+				<strong>Achtung</strong>: Das Übertragen von Verzeichnissen (Ordnern) wird nicht unterstützt. Des weiteren eignet sich die Funktion nur sehr beschränkt für die Übertragung von grossen Dateien. Zum einen ist die Übertragungsgeschwindigkeit sehr bescheiden und zum anderen kann der Empfänger bis zum Abschluss der Übertragung keine Befehle oder Mausbewegungen empfangen.
 			<p>
 				Das ist alles! Weitere Informationen finden Sie auf der <a href="de_support.html">Support</a> Seite.
 		</div>
