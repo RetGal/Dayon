@@ -152,6 +152,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 case CLIPBOARD_TEXT: {
                     final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                    sender.ping();
                     setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
                     break;
                 }
