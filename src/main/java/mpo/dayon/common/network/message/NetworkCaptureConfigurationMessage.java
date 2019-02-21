@@ -12,7 +12,8 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 		this.configuration = configuration;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.CAPTURE_CONFIGURATION;
 	}
 
@@ -24,11 +25,13 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		return 6; // type (byte) + quantization (byte) + tick (int)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		marshallEnum(out, Gray8Bits.class, configuration.getCaptureQuantization());

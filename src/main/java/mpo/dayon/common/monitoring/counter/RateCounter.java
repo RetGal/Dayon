@@ -8,7 +8,8 @@ public abstract class RateCounter extends Counter<Double> {
 		super(uid, shortDescription);
 	}
 
-	public String formatInstantValue(Double value) {
+	@Override
+    public String formatInstantValue(Double value) {
 		return formatRate(value);
 	}
 
@@ -20,7 +21,8 @@ public abstract class RateCounter extends Counter<Double> {
 		}
 	}
 
-	public void computeAndResetInstantValue() {
+	@Override
+    public void computeAndResetInstantValue() {
 		double rate = Double.NaN;
 
 		synchronized (this) {

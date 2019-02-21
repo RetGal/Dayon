@@ -35,13 +35,16 @@ class AssistedFrame extends BaseFrame {
 		this.setSize(dimension.getWidth(), dimension.getHeight());
 
 		addWindowListener(new WindowAdapter() {
-			public void windowOpened(WindowEvent ev) {
+			@Override
+            public void windowOpened(WindowEvent ev) {
 				addComponentListener(new ComponentAdapter() {
-					public void componentResized(ComponentEvent ev) {
+					@Override
+                    public void componentResized(ComponentEvent ev) {
 						onSizeUpdated(getWidth(), getHeight());
 					}
 
-					public void componentMoved(ComponentEvent ev) {
+					@Override
+                    public void componentMoved(ComponentEvent ev) {
 						onLocationUpdated(getX(), getY());
 					}
 				});

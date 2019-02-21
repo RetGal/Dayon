@@ -15,13 +15,15 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 
 	public MouseEngine() {
 		this.thread = new Thread(new RunnableEx() {
-			protected void doRun() throws Exception {
+			@Override
+            protected void doRun() throws Exception {
 				MouseEngine.this.mainLoop();
 			}
 		}, "MouseEngine");
 	}
 
-	public void configure(MouseEngineConfiguration configuration) {
+	@Override
+    public void configure(MouseEngineConfiguration configuration) {
 	}
 
 	public void addListener(MouseEngineListener listener) {

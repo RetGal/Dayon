@@ -12,7 +12,8 @@ public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 		this.configuration = configuration;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.COMPRESSOR_CONFIGURATION;
 	}
 
@@ -24,12 +25,14 @@ public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		return 11; // type (byte) + method (byte) + useCase (byte) + max (int) +
 					// purge (int)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		marshallEnum(out, CompressionMethod.class, configuration.getMethod());

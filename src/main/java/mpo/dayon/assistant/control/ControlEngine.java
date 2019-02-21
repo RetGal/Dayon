@@ -24,7 +24,8 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		this.network = network;
 	}
 
-	public void configure(ControlEngineConfiguration configuration) {
+	@Override
+    public void configure(ControlEngineConfiguration configuration) {
 	}
 
 	public void start() {
@@ -32,17 +33,21 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("ControlEngine"));
 	}
 
-	public void onMouseMove(final int x, final int y) {
+	@Override
+    public void onMouseMove(final int x, final int y) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y));
 			}
 		});
 	}
 
-	public void onMousePressed(final int x, final int y, final int button) {
+	@Override
+    public void onMousePressed(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
@@ -51,9 +56,11 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		});
 	}
 	
-	public void onMouseReleased(final int x, final int y, final int button) {
+	@Override
+    public void onMouseReleased(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.RELEASED, xbutton));
@@ -75,9 +82,11 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		return NetworkMouseControlMessage.UNDEFINED;
 	}
 
-	public void onMouseWheeled(final int x, final int y, final int rotations) {
+	@Override
+    public void onMouseWheeled(final int x, final int y, final int rotations) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y, rotations));
 			}
 		});
@@ -96,9 +105,11 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	/**
 	 * From AWT thread (!)
 	 */
-	public void onKeyPressed(final int keycode, final char keychar) {
+	@Override
+    public void onKeyPressed(final int keycode, final char keychar) {
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 
 				pressedKeys.add(keycode);
 				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keycode, keychar));
@@ -109,7 +120,8 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	/**
 	 * From AWT thread (!)
 	 */
-	public void onKeyReleased(final int keycode, final char keychar) {
+	@Override
+    public void onKeyReleased(final int keycode, final char keychar) {
 		// -------------------------------------------------------------------------------------------------------------
 		// E.g., Windows + R : [Windows.PRESSED] and then the focus is LOST =>
 		// missing RELEASED events
@@ -128,7 +140,8 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 		}
 
 		executor.execute(new Executable(executor, null) {
-			protected void execute() {
+			@Override
+            protected void execute() {
 
 				pressedKeys.remove(keycode);
 				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keycode, keychar));

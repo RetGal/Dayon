@@ -43,7 +43,8 @@ public abstract class BaseFrame extends JFrame {
 		setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
 
 		addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent ev) {
+			@Override
+            public void windowClosing(WindowEvent ev) {
 				doExit();
 			}
 		});
@@ -70,7 +71,8 @@ public abstract class BaseFrame extends JFrame {
 	protected Action createExitAction() {
 		final Action exit = new AbstractAction() {
 
-			public void actionPerformed(ActionEvent ev) {
+			@Override
+            public void actionPerformed(ActionEvent ev) {
 				doExit();
 			}
 		};
@@ -89,7 +91,8 @@ public abstract class BaseFrame extends JFrame {
 	protected Action createShowInfoAction() {
 		final Action showSystemInfo = new AbstractAction() {
 
-			public void actionPerformed(ActionEvent ev) {
+			@Override
+            public void actionPerformed(ActionEvent ev) {
 				final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
 				props.setEditable(false);
 
@@ -184,7 +187,8 @@ public abstract class BaseFrame extends JFrame {
 
 	protected Action createShowHelpAction() {
 		final Action showHelp = new AbstractAction() {
-			public void actionPerformed(ActionEvent ev) {
+			@Override
+            public void actionPerformed(ActionEvent ev) {
                 browse(SystemUtilities.getLocalIndexHtml());
 			}
 		};

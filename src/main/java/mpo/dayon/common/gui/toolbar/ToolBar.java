@@ -49,6 +49,7 @@ public class ToolBar extends JToolBar {
 		add(button);
 	}
 
+	@Override
 	public void addSeparator() {
 		super.addSeparator();
 	}

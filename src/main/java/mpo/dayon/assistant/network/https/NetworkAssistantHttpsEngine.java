@@ -170,7 +170,8 @@ public class NetworkAssistantHttpsEngine {
 			setResourceBase(root);
 		}
 
-		public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		@Override
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 			Log.info("[HTTPS] Processing the request \n-----\n" + request + "\n-----");
 
 			if (target.contains("/hello")) {

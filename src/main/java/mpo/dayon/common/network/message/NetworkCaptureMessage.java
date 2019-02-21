@@ -27,7 +27,8 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		this.payload = payload;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.CAPTURE;
 	}
 
@@ -48,7 +49,8 @@ public class NetworkCaptureMessage extends NetworkMessage {
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		if (compressionConfiguration == null) {
 			return 11 + payload.size(); // type (byte) + capture-id (int) +
 										// compression (byte) +
@@ -62,7 +64,8 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		}
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		// debugging info - might need it before decompressing the payload (!)

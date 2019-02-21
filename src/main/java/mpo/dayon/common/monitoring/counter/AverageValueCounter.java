@@ -22,7 +22,8 @@ public abstract class AverageValueCounter extends Counter<Double> {
 		}
 	}
 
-	public void computeAndResetInstantValue() {
+	@Override
+    public void computeAndResetInstantValue() {
 		double value = Double.NaN;
 
 		synchronized (this) {

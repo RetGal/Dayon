@@ -12,7 +12,8 @@ public class NetworkHelloMessage extends NetworkMessage {
 		this.minor = minor;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.HELLO;
 	}
 
@@ -28,11 +29,13 @@ public class NetworkHelloMessage extends NetworkMessage {
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		return 9; // type (byte) + major (int) + minor (int)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeInt(major);

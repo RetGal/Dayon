@@ -5,14 +5,16 @@ public class CaptureCompressionCounter extends AverageValueCounter {
 		super(uid, shortDescription);
 	}
 
-	public String formatInstantValue(Double value) {
+	@Override
+    public String formatInstantValue(Double value) {
 		if (value == null || Double.isNaN(value)) {
 			return "-";
 		}
 		return String.format("%.2f", value);
 	}
 
-	public int getWidth() {
+	@Override
+    public int getWidth() {
 		return 60;
 	}
 }

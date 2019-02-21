@@ -7,14 +7,16 @@ public class BitCounter extends RateCounter {
 		super(uid, shortDescription);
 	}
 
-	public String formatRate(Double rate) {
+	@Override
+    public String formatRate(Double rate) {
 		if (rate == null || Double.isNaN(rate)) {
 			return "- bit/s";
 		}
 		return String.format("%s/s", UnitUtilities.toBitSize(rate));
 	}
 
-	public int getWidth() {
+	@Override
+    public int getWidth() {
 		return 100;
 	}
 }

@@ -154,7 +154,8 @@ public class Preferences {
 	 */
 	private static void setupPersister(final Preferences preferences) {
 		new Timer("PreferencesWriter").schedule(new TimerTask() {
-			public void run() {
+			@Override
+            public void run() {
 				if (preferences.isNull()) {
 					return;
 				}

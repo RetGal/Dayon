@@ -57,6 +57,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.clipboardOwner = clipboardOwner;
 
         this.receiver = new Thread(new RunnableEx() {
+            @Override
             protected void doRun() throws Exception {
                 NetworkAssistedEngine.this.receivingLoop();
             }

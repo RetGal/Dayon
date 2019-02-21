@@ -54,7 +54,8 @@ public class MemByteBuffer extends OutputStream {
 	 * byte to be written is the eight low-order bits of the argument
 	 * <code>b</code>. The 24 high-order bits of <code>b</code> are ignored.
 	 */
-	public void write(int val) {
+	@Override
+    public void write(int val) {
 		final int newcount = count + 1;
 
 		if (newcount > buffer.length) {
@@ -78,11 +79,13 @@ public class MemByteBuffer extends OutputStream {
 		buffer[count++] = (byte) val2;
 	}
 
-	public void write(@NotNull byte[] buffer) {
+	@Override
+    public void write(@NotNull byte[] buffer) {
 		write(buffer, 0, buffer.length);
 	}
 
-	public void write(@NotNull byte[] buffer, int off, int len) {
+	@Override
+    public void write(@NotNull byte[] buffer, int off, int len) {
 		if (len == 0) {
 			return;
 		}

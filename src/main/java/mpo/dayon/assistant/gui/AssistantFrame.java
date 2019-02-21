@@ -113,13 +113,16 @@ class AssistantFrame extends BaseFrame {
 		this.setSize(dimension.getWidth(), dimension.getHeight());
 
 		addWindowListener(new WindowAdapter() {
-			public void windowOpened(WindowEvent ev) {
+			@Override
+            public void windowOpened(WindowEvent ev) {
 				addComponentListener(new ComponentAdapter() {
-					public void componentResized(ComponentEvent ev) {
+					@Override
+                    public void componentResized(ComponentEvent ev) {
 						onSizeUpdated(getWidth(), getHeight());
 					}
 
-					public void componentMoved(ComponentEvent ev) {
+					@Override
+                    public void componentMoved(ComponentEvent ev) {
 						onLocationUpdated(getX(), getY());
 					}
 				});
@@ -143,13 +146,15 @@ class AssistantFrame extends BaseFrame {
 		});
 
 		assistantPanel.addMouseMotionListener(new MouseMotionListener() {
-			public void mouseDragged(MouseEvent ev) {
+			@Override
+            public void mouseDragged(MouseEvent ev) {
 				if (controlActivated.get()) {
 					fireOnMouseMove(ev.getX(), ev.getY());
 				}
 			}
 
-			public void mouseMoved(MouseEvent ev) {
+			@Override
+            public void mouseMoved(MouseEvent ev) {
 				if (controlActivated.get()) {
 					fireOnMouseMove(ev.getX(), ev.getY());
 				}
@@ -260,7 +265,8 @@ class AssistantFrame extends BaseFrame {
 	private Action createToggleControlMode() {
 		final Action showSystemInfo = new AbstractAction() {
 
-			public void actionPerformed(ActionEvent ev) {
+			@Override
+            public void actionPerformed(ActionEvent ev) {
 				controlActivated.set(!controlActivated.get());
 			}
 		};

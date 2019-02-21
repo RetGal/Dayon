@@ -103,6 +103,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 		}
 
 		receiver = new Thread(new RunnableEx() {
+			@Override
 			protected void doRun() throws Exception {
 				NetworkAssistantEngine.this.receivingLoop();
 			}

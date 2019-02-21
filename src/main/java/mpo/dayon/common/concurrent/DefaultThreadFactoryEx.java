@@ -19,7 +19,8 @@ public class DefaultThreadFactoryEx implements ThreadFactory {
 		namePrefix = name + "-";
 	}
 
-	public Thread newThread(@NotNull Runnable runnable) {
+	@Override
+    public Thread newThread(@NotNull Runnable runnable) {
 		final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
 
 		if (thread.isDaemon()) {

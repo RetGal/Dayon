@@ -76,7 +76,8 @@ public class RegularTileCache extends TileCache {
 		return tiles.size();
 	}
 
-	public void clear() {
+	@Override
+    public void clear() {
 		Log.info("Clearing the cache...");
 
 		tiles.clear();
@@ -91,7 +92,8 @@ public class RegularTileCache extends TileCache {
 	 * capture to keep references to cached tiles in the network messages
 	 * consistent - easier to debug this way I guess ...
 	 */
-	public void onCaptureProcessed() {
+	@Override
+    public void onCaptureProcessed() {
 		if (tiles.size() > 0 && tiles.size() >= maxSize) {
 			Log.info("Purging the cache...");
 

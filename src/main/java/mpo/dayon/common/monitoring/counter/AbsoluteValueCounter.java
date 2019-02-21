@@ -13,7 +13,8 @@ public abstract class AbsoluteValueCounter extends Counter<Long> {
 		instantValue.getAndAdd(value);
 	}
 
-	public void computeAndResetInstantValue() {
+	@Override
+    public void computeAndResetInstantValue() {
 		Long value = null;
 		
 		if (instantStart.get() != -1) {
@@ -24,7 +25,8 @@ public abstract class AbsoluteValueCounter extends Counter<Long> {
 		fireOnInstantValueUpdated(value);
 	}
 	
-	public String formatInstantValue(Long value) {
+	@Override
+    public String formatInstantValue(Long value) {
 		if (value == null) {
 			return "-";
 		}
@@ -32,7 +34,8 @@ public abstract class AbsoluteValueCounter extends Counter<Long> {
 		return String.format("%d", value);
 	}
 
-	public int getWidth() {
+	@Override
+    public int getWidth() {
 		return 40;
 	}
 

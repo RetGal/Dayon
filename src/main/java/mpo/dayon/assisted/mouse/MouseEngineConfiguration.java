@@ -15,6 +15,7 @@ public class MouseEngineConfiguration extends Configuration {
 	 * @param clear
 	 *            allows for clearing properties from previous version
 	 */
-	protected void persist(boolean clear) {
+	@Override
+    protected void persist(boolean clear) {
 	}
 }

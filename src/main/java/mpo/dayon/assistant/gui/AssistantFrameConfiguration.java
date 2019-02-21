@@ -84,7 +84,8 @@ public class AssistantFrameConfiguration extends Configuration {
 	 * @param clear
 	 *            allows for clearing properties from previous version
 	 */
-	protected void persist(boolean clear) {
+	@Override
+    protected void persist(boolean clear) {
 		final Preferences.Props props = new Preferences.Props();
 		{
 			props.set(PREF_VERSION, String.valueOf(1));

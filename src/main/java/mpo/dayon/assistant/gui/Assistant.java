@@ -135,6 +135,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		compressorEngineConfiguation = new CompressorEngineConfiguration();
 	}
 
+	@Override
 	public void configure(AssistantConfiguration configuration) {
 		this.configuration = configuration;
 
@@ -168,6 +169,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		final Action ip = new AbstractAction() {
 			private String pip;
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				final JButton button = (JButton) ev.getSource();
 
@@ -297,6 +299,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createNetworkAssistantConfigurationAction() {
 		final Action exit = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
@@ -352,6 +355,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createRemoteClipboardRequestAction() {
 		final Action getRemoteClipboard = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				sendRemoteClipboardRequest();
 			}
@@ -367,6 +371,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createRemoteClipboardUpdateAction() {
 		final Action setRemoteClipboard = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				sendLocalClipboard();
 			}
@@ -389,6 +394,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 			if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 				Log.debug("Clipboard contains files");
 				clipboard.getAvailableDataFlavors();
+				//noinspection unchecked,unchecked
 				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
 				if (files.stream().anyMatch(File::isDirectory)) {
 					throw new IOException("directories not supported");
@@ -397,6 +403,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				// Ok as very few of that (!)
 				new Thread(() -> network.setRemoteClipboardFiles(files, filesSize), "setRemoteClipboardFiles").start();
 			} else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+				//noinspection unchecked,unchecked
 				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
                 Log.debug("Clipboard contains text: " + text);
 				// Ok as very few of that (!)
@@ -422,6 +429,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createCaptureConfigurationAction() {
 		final Action configure = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
@@ -492,6 +500,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createComressionConfigurationAction() {
 		final Action configure = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
@@ -612,6 +621,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createResetAction() {
 		final Action configure = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				// Currently making a RESET within the assisted ...
 				sendCaptureConfiguration(captureEngineConfiguation);
@@ -628,6 +638,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	private Action createSwitchLookAndFeelAction() {
 		final Action exit = new AbstractAction() {
 
+			@Override
 			public void actionPerformed(ActionEvent ev) {
 				final JPopupMenu choices = new JPopupMenu();
 
@@ -683,6 +694,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		 * Called from within THE de-compressor engine thread => prevBuffer
 		 * usage (!)
 		 */
+		@Override
 		public void onDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
 			final Pair<BufferedImage, byte[]> image;
 
@@ -706,6 +718,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 	}
 
 	private class MyNetworkAssistantEngineListener implements NetworkAssistantEngineListener {
+		@Override
 		public void onReady() {
 			frame.onReady();
 		}
@@ -727,6 +740,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onStarting(int port) {
 			frame.onStarting(port);
 		}
@@ -734,6 +748,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onAccepting(int port) {
 			frame.onAccepting(port);
 		}
@@ -741,6 +756,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public boolean onAccepted(Socket connection) {
 			return frame.onAccepted(connection);
 		}
@@ -748,6 +764,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onConnected(Socket connection) {
 			sendCaptureConfiguration(captureEngineConfiguation);
 			sendCompressorConfiguration(compressorEngineConfiguation);
@@ -756,6 +773,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onByteReceived(int count) {
 			receivedBitCounter.add(8 * count);
 		}
@@ -763,6 +781,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onClipboardReceived(int count) {
 			frame.onClipboardReceived(count);
 		}
@@ -770,10 +789,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		/**
 		 * Should not block as called from the network receiving thread (!)
 		 */
+		@Override
 		public void onClipboardSent() {
 			frame.onClipboardSent();
 		}
 
+		@Override
 		public void onIOError(IOException error) {
 			frame.onIOError(error);
 		}

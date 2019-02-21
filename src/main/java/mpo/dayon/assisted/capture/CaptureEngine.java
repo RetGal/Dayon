@@ -47,7 +47,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 		resetPreviousCapture();
 
 		this.thread = new Thread(new RunnableEx() {
-			protected void doRun() throws Exception {
+			@Override
+            protected void doRun() throws Exception {
 				CaptureEngine.this.mainLoop();
 			}
 		}, "CaptureEngine");

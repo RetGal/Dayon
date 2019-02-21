@@ -36,7 +36,8 @@ public class FileAppender extends LogAppender {
 		setupFile(filename, true);
 	}
 
-	public synchronized void append(LogLevel level, @Nullable String message, @Nullable Throwable error) {
+	@Override
+    public synchronized void append(LogLevel level, @Nullable String message, @Nullable Throwable error) {
 		try {
 			final String info = format(level, message);
 

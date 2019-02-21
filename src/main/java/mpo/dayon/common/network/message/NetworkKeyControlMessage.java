@@ -30,7 +30,8 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		this.keychar = keychar;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.KEY_CONTROL;
 	}
 
@@ -50,11 +51,13 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		return (info & RELEASED) == RELEASED;
 	}
 
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		return 11; // type (byte) + info (int) + keycode (int) + keychar (char)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeInt(info);

@@ -122,7 +122,8 @@ public abstract class DialogFactory {
 		// --
 
 		dialog.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
+			@Override
+            public void windowClosing(WindowEvent e) {
 				dialog.setVisible(false);
 				dialog.dispose();
 			}
@@ -138,7 +139,8 @@ public abstract class DialogFactory {
 			final ActionMap actionMap = dialog.getRootPane().getActionMap();
 			actionMap.put("ESCAPE", new AbstractAction() {
 
-				public void actionPerformed(ActionEvent e) {
+				@Override
+                public void actionPerformed(ActionEvent e) {
 					dialog.setVisible(false);
 					dialog.dispose();
 				}

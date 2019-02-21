@@ -51,7 +51,8 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		this.rotations = rotations;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.MOUSE_CONTROL;
 	}
 
@@ -91,7 +92,8 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		return (info & WHEEL) == WHEEL;
 	}
 
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		if (isWheel()) {
 			return 13; // type (byte) + x (short) + y (short) + info (int) +
 						// rotations (int)
@@ -99,7 +101,8 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		return 9; // type (byte) + x (short) + y (short) + info (int)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeShort(x);

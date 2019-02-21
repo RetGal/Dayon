@@ -6,7 +6,8 @@ public abstract class RunnableEx implements Runnable {
 	public RunnableEx() {
 	}
 
-	public final void run() {
+	@Override
+    public final void run() {
 		try {
 			doRun();
 		} catch (Exception ex) {

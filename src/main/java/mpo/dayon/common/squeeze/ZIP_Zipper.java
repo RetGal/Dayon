@@ -14,7 +14,8 @@ public class ZIP_Zipper extends Zipper {
 	public ZIP_Zipper() {
 	}
 
-	public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
+	@Override
+    public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
 		final MemByteBuffer zipped = new MemByteBuffer();
 
 		final OutputStream zip = createZipOutputStream(zipped);
@@ -33,7 +34,8 @@ public class ZIP_Zipper extends Zipper {
 		return zip;
 	}
 
-	public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
+	@Override
+    public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
 		final MemByteBuffer unzipped = new MemByteBuffer();
 
 		final InputStream unzip = createZipInputStream(zipped);

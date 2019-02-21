@@ -12,7 +12,8 @@ public class LZMA_Zipper extends Zipper {
 	public LZMA_Zipper() {
 	}
 
-	public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
+	@Override
+    public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
 		final Encoder encoder = new Encoder();
 
 		final InputStream inStream = new ByteArrayInputStream(unzipped.getInternal(), 0, unzipped.size());
@@ -48,7 +49,8 @@ public class LZMA_Zipper extends Zipper {
 		return zipped;
 	}
 
-	public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
+	@Override
+    public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
 		final InputStream inStream = new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size());
 
 		final byte[] properties = new byte[5];

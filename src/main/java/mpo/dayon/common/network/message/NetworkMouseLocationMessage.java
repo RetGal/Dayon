@@ -15,7 +15,8 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 		this.y = y;
 	}
 
-	public NetworkMessageType getType() {
+	@Override
+    public NetworkMessageType getType() {
 		return NetworkMessageType.MOUSE_LOCATION;
 	}
 
@@ -31,11 +32,13 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
-	public int getWireSize() {
+	@Override
+    public int getWireSize() {
 		return 5; // type (byte) + x (short) + y (short)
 	}
 
-	public void marshall(ObjectOutputStream out) throws IOException {
+	@Override
+    public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, NetworkMessageType.class, getType());
 
 		out.writeShort(x);

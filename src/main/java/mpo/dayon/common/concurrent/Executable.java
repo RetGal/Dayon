@@ -26,7 +26,8 @@ public abstract class Executable extends RunnableEx {
 		this.semaphore = semaphore;
 	}
 
-	public final void doRun() throws Exception {
+	@Override
+    public final void doRun() throws Exception {
 		try {
 			if (semaphore != null) {
 				semaphore.release();

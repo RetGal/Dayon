@@ -23,7 +23,8 @@ class AssistantStopAction extends AbstractAction {
 		putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
 	}
 
-	public void actionPerformed(ActionEvent ev) {
+	@Override
+    public void actionPerformed(ActionEvent ev) {
 		networkEngine.cancel();
 	}
 
