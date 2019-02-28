@@ -9,9 +9,18 @@
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
 	<version>1.7.1</version>
+	<description>cross platform remote desktop solution</description>
+	<developers>
+		<developer>
+			<id>RetGal</id>
+			<name>Reto Galante</name>
+			<email>reto@galante.ch</email>
+		</developer>
+	</developers>
+	<inceptionYear>2019</inceptionYear>
 	<licenses>
 		<license>
-			<name>GNU General Public License Version 3</name>
+			<name>GPL-3</name>
 			<url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
 		</license>
 	</licenses>
@@ -232,6 +241,7 @@
 								<resource>
 									<directory>resources</directory>
 									<include>**/*</include>
+									<exclude>deb/</exclude>
 								</resource>
 							</resources>
 						</configuration>
@@ -324,6 +334,59 @@
 						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.aerse.maven</groupId>
+				<artifactId>deb-maven-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<id>package</id>
+						<phase>package</phase>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<unixUserId>root</unixUserId>
+					<unixGroupId>staff</unixGroupId>
+					<installDir>/usr/local/bin/</installDir>
+					<osDependencies>
+						<default-jre>>=2:1.8-58</default-jre>
+					</osDependencies>
+					<javaServiceWrapper>false</javaServiceWrapper>
+					<fileSets>
+						<fileSet>
+							<source>${basedir}/dist/dayon.png</source>
+							<target>dayon.png</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/dist/bin/dayon.sh</source>
+							<target>bin/dayon.sh</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/dist/bin/dayon_assistant.sh</source>
+							<target>bin/dayon_assistant.sh</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/dist/bin/dayon_assisted.sh</source>
+							<target>bin/dayon_assisted.sh</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/dist/doc/</source>
+							<target>doc</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/dist/lib/</source>
+							<target>lib</target>
+						</fileSet>
+						<fileSet>
+							<source>${basedir}/resources/deb/</source>
+							<target>deb</target>
+						</fileSet>
+					</fileSets>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
