@@ -6,7 +6,7 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class AssistedRunner {
+class AssistedRunner {
 	public static void main(String[] args) {
 		try {
 			SystemUtilities.setApplicationName("dayon_assisted");

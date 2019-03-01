@@ -93,11 +93,6 @@ public class ControlEngine implements Configurable<ControlEngineConfiguration>, 
 	}
 
 	/**
-	 * -- Keyboard : very experimental & incomplete
-	 * --------------------------------------------------------------------
-	 */
-
-	/**
 	 * Fix missing pair'd PRESSED event from RELEASED
 	 */
 	private final Set<Integer> pressedKeys = new HashSet<>();

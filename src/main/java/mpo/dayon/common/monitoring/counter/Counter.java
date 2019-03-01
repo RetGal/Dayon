@@ -24,10 +24,6 @@ public abstract class Counter<T> {
 		listeners.add(listener);
 	}
 
-	public void removeListener(CounterListener<T> listener) {
-		listeners.remove(listener);
-	}
-
 	public String getUid() {
 		return uid;
 	}

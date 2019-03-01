@@ -6,10 +6,10 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
-public class ZionTest {
+class ZionTest {
 	
 	@Test
-	public void shouldSetExpectedLocale() {
+	void shouldSetExpectedLocale() {
 		// given
 		String lang = "fr";
 		String before = Locale.getDefault().toLanguageTag();
@@ -24,7 +24,7 @@ public class ZionTest {
 	}
 	
 	@Test
-	public void shouldNotSetUnsuportedLanguage() {
+	void shouldNotSetUnsupportedLanguage() {
 		// given
 		String lang = "tr";
 		String before = Locale.getDefault().toLanguageTag();

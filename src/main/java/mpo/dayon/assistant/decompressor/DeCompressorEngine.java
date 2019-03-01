@@ -26,7 +26,7 @@ import mpo.dayon.common.squeeze.RegularTileCache;
 import mpo.dayon.common.squeeze.TileCache;
 
 public class DeCompressorEngine implements Configurable<DeCompressorEngineConfiguration>, NetworkCaptureMessageHandler {
-	private final Listeners<DeCompressorEngineListener> listeners = new Listeners<>(DeCompressorEngineListener.class);
+	private final Listeners<DeCompressorEngineListener> listeners = new Listeners<>();
 
 	private ThreadPoolExecutor executor;
 
@@ -43,10 +43,6 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 
 	public void addListener(DeCompressorEngineListener listener) {
 		listeners.add(listener);
-	}
-
-	public void removeListener(DeCompressorEngineListener listener) {
-		listeners.remove(listener);
 	}
 
 	public void start(int queueSize) {

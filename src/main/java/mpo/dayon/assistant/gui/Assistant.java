@@ -272,8 +272,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 				final Point where = MouseInfo.getPointerInfo().getLocation();
 
-				// *** HACK
-				// ********************************************************************************************
 				SwingUtilities.convertPointFromScreen(where, frame);
 				choices.show(frame, where.x, where.y);
 
@@ -658,9 +656,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				}
 
 				final Point where = MouseInfo.getPointerInfo().getLocation();
-
-				// *** HACK
-				// ********************************************************************************************
 				final JComponent caller = (JComponent) ev.getSource();
 
 				SwingUtilities.convertPointFromScreen(where, caller);

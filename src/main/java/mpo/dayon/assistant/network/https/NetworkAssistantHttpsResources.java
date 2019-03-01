@@ -39,12 +39,8 @@ public class NetworkAssistantHttpsResources {
 		}
 
 		try {
-			/**
-			 * I keep that .html file : can be bookmark'd - the .jnlp alone
-			 * cannot be.
-			 */
 
-			Log.warn("[HTTPS] JNLP resource : dayon.html");
+            Log.warn("[HTTPS] JNLP resource : dayon.html");
 			{
 				final int major = Version.get().getMajor();
 				final int minor = Version.get().getMinor();

@@ -23,7 +23,7 @@ import mpo.dayon.common.squeeze.RegularTileCache;
 import mpo.dayon.common.squeeze.TileCache;
 
 public class CompressorEngine implements ReConfigurable<CompressorEngineConfiguration>, CaptureEngineListener {
-	private final Listeners<CompressorEngineListener> listeners = new Listeners<>(CompressorEngineListener.class);
+	private final Listeners<CompressorEngineListener> listeners = new Listeners<>();
 
 	private ThreadPoolExecutor executor;
 
@@ -53,10 +53,6 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 	public void addListener(CompressorEngineListener listener) {
 		listeners.add(listener);
-	}
-
-	public void removeListener(CompressorEngineListener listener) {
-		listeners.remove(listener);
 	}
 
 	public void start(int queueSize) {

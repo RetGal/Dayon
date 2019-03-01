@@ -217,7 +217,7 @@ public class CaptureTile {
 		final int w;
 		final int h;
 
-		public XYWH(int x, int y, int w, int h) {
+		XYWH(int x, int y, int w, int h) {
 			this.x = x;
 			this.y = y;
 			this.w = w;

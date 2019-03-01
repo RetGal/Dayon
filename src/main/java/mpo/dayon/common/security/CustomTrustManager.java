@@ -1,5 +1,7 @@
 package mpo.dayon.common.security;
 
+import mpo.dayon.common.log.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.KeyStore;
@@ -41,8 +43,7 @@ public class CustomTrustManager implements X509TrustManager {
 			// get hold of the default trust manager
 			ownTm = getDefaultX509TrustManager(tmf);
 		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.error(e.getMessage());
 		}
 	}
 	

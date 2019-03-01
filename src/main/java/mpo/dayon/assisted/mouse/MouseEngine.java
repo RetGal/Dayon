@@ -9,7 +9,7 @@ import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.event.Listeners;
 
 public class MouseEngine implements Configurable<MouseEngineConfiguration> {
-	private final Listeners<MouseEngineListener> listeners = new Listeners<>(MouseEngineListener.class);
+	private final Listeners<MouseEngineListener> listeners = new Listeners<>();
 
 	private final Thread thread;
 
@@ -28,10 +28,6 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 
 	public void addListener(MouseEngineListener listener) {
 		listeners.add(listener);
-	}
-
-	public void removeListener(MouseEngineListener listener) {
-		listeners.remove(listener);
 	}
 
 	public void start() {

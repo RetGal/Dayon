@@ -8,7 +8,7 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class AssistantRunner {
+class AssistantRunner {
 	public static void main(String[] args) {
 		try {
 			// ---------------------------------------------------------------------------------------------------------

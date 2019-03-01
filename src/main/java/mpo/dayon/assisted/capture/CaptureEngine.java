@@ -21,7 +21,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
 	private final CaptureFactory captureFactory;
 
-	private final Listeners<CaptureEngineListener> listeners = new Listeners<>(CaptureEngineListener.class);
+	private final Listeners<CaptureEngineListener> listeners = new Listeners<>();
 
 	private final Thread thread;
 
@@ -77,10 +77,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 		synchronized (reconfigurationLOCK) {
 			this.reconfigured = true;
 		}
-	}
-
-	public void removeListener(CaptureEngineListener listener) {
-		listeners.remove(listener);
 	}
 
 	public void start() {

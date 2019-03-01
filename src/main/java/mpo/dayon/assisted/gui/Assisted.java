@@ -160,7 +160,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			/**
 			 * Should not block as called from the network incoming message
 			 * thread (!)
-			 * @param networkAssistedEngine
 			 */
 			@Override
 			public void handleClipboardRequest(NetworkAssistedEngine networkAssistedEngine) {

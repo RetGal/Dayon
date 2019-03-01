@@ -39,7 +39,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 	private final ClipboardOwner clipboardOwner;
 
-	private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>(NetworkAssistantEngineListener.class);
+	private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>();
 
 	private NetworkAssistantConfiguration configuration;
 

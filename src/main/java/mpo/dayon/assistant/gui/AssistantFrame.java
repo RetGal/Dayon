@@ -45,7 +45,7 @@ import mpo.dayon.common.version.Version;
 
 class AssistantFrame extends BaseFrame {
 
-	private final Listeners<AssistantFrameListener> listeners = new Listeners<>(AssistantFrameListener.class);
+	private final Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
 	private final JScrollPane assistantPanelWrapper;
 
@@ -368,24 +368,20 @@ class AssistantFrame extends BaseFrame {
 		return true;
 	}
 
-	public boolean onClipboardRequested() {
+	public void onClipboardRequested() {
 		remoteClipboardRequestAction.setEnabled(false);
-		return true;
 	}
 
-	public boolean onClipboardSending() {
+	public void onClipboardSending() {
 		remoteClipboardSetAction.setEnabled(false);
-		return true;
 	}
 
-	public boolean onClipboardSent() {
+	public void onClipboardSent() {
 		remoteClipboardSetAction.setEnabled(true);
-		return true;
 	}
 
-	public boolean onClipboardReceived(int count) {
+	public void onClipboardReceived(int count) {
 		remoteClipboardRequestAction.setEnabled(true);
-		return true;
 	}
 
 	public void onIOError(IOException error) {

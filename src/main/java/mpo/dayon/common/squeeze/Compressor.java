@@ -145,11 +145,6 @@ public class Compressor {
 
 		if (tile.getSingleLevel() != -1) {
 			final int val = tile.getSingleLevel() & 0xFF;
-
-			if (val > 255) {
-				throw new RuntimeException("Ouch!");
-			}
-
 			encoded.writeShort(val);
 			return;
 		}

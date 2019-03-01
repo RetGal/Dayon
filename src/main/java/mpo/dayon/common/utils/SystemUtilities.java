@@ -28,7 +28,7 @@ public abstract class SystemUtilities {
 			Log.warn("Failed to retrieve InstallRoot", e);
 		}
 		int pos = 0;
-		if (path.contains("/lib/dayon.jar")) {
+		if (Objects.requireNonNull(path).contains("/lib/dayon.jar")) {
 			pos = path.indexOf("/lib");
 		} else if (path.contains("/target/classes")) {
 			pos = path.indexOf("/classes");
