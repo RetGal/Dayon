@@ -8,20 +8,15 @@ import org.jetbrains.annotations.NotNull;
 public class DefaultThreadFactoryEx implements ThreadFactory {
 	private final AtomicInteger threadNumber = new AtomicInteger(1);
 
-	private final ThreadGroup group;
-
 	private final String namePrefix;
 
 	public DefaultThreadFactoryEx(String name) {
-		final SecurityManager sm = System.getSecurityManager();
-
-		group = (sm != null) ? sm.getThreadGroup() : Thread.currentThread().getThreadGroup();
 		namePrefix = name + "-";
 	}
 
 	@Override
     public Thread newThread(@NotNull Runnable runnable) {
-		final Thread thread = new Thread(group, runnable, namePrefix + threadNumber.getAndIncrement(), 0);
+		final Thread thread = new Thread(runnable, namePrefix + threadNumber.getAndIncrement());
 
 		if (thread.isDaemon()) {
 			thread.setDaemon(false);

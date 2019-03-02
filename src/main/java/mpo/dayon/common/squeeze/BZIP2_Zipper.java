@@ -34,20 +34,20 @@ public class BZIP2_Zipper extends Zipper {
 
 	@Override
     public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
-		final MemByteBuffer unzipped = new MemByteBuffer();
+		try (final MemByteBuffer unzipped = new MemByteBuffer()) {
+			final InputStream unzip = createBZip2InputStream(zipped);
 
-		final InputStream unzip = createBZip2InputStream(zipped);
+			final byte[] buffer = new byte[4096];
 
-		final byte[] buffer = new byte[4096];
+			int count;
+			while ((count = unzip.read(buffer)) > 0) {
+				unzipped.write(buffer, 0, count);
+			}
 
-		int count;
-		while ((count = unzip.read(buffer)) > 0) {
-			unzipped.write(buffer, 0, count);
+			unzip.close();
+
+			return unzipped;
 		}
-
-		unzip.close();
-
-		return unzipped;
 	}
 
 	private static InputStream createBZip2InputStream(MemByteBuffer zipped) {

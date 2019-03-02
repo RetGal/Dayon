@@ -36,20 +36,20 @@ public class ZIP_Zipper extends Zipper {
 
 	@Override
     public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
-		final MemByteBuffer unzipped = new MemByteBuffer();
+		try (final MemByteBuffer unzipped = new MemByteBuffer()) {
+			final InputStream unzip = createZipInputStream(zipped);
 
-		final InputStream unzip = createZipInputStream(zipped);
+			final byte[] buffer = new byte[4096];
 
-		final byte[] buffer = new byte[4096];
+			int count;
+			while ((count = unzip.read(buffer)) > 0) {
+				unzipped.write(buffer, 0, count);
+			}
 
-		int count;
-		while ((count = unzip.read(buffer)) > 0) {
-			unzipped.write(buffer, 0, count);
+			unzip.close();
+
+			return unzipped;
 		}
-
-		unzip.close();
-
-		return unzipped;
 	}
 
 	private static InputStream createZipInputStream(MemByteBuffer zipped) throws IOException {

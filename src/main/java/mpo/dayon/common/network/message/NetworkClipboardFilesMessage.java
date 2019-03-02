@@ -153,15 +153,16 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private void sendFile(File file, ObjectOutputStream out) throws IOException {
         long fileSize = file.length();
         byte[] buffer = new byte[Math.toIntExact(fileSize)];
-        InputStream input = new FileInputStream(file);
-        int read = 0;
-        int chunk = 1024;
-        while (input.available() > 0) {
-            chunk = chunk > input.available() ? input.available() : chunk;
-            read += input.read(buffer, read, chunk);
+        try (InputStream input = new FileInputStream(file)) {
+            int read = 0;
+            int chunk = 1024;
+            while (input.available() > 0) {
+                chunk = chunk > input.available() ? input.available() : chunk;
+                read += input.read(buffer, read, chunk);
+            }
+            Log.debug("Bytes sent: " + read);
+            out.write(buffer);
         }
-        Log.debug("Bytes sent: " + read);
-        out.write(buffer);
     }
 
     @Override

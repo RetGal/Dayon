@@ -34,6 +34,7 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
 		thread.start();
 	}
 
+	@java.lang.SuppressWarnings("squid:S2189")
 	private void mainLoop() throws InterruptedException {
 		long start = System.currentTimeMillis();
 		int captureCount = 0;
