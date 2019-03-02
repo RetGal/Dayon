@@ -16,52 +16,54 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
 public abstract class SeriousErrorHandler {
+    @Nullable
+    private static JFrame frame;
 
-	@Nullable
-	private static JFrame frame;
+    private SeriousErrorHandler() {
+    }
 
-	/**
-	 * Displays a self closing translated warning message
-	 */
-	public static void warn(final String message) {
+    /**
+     * Displays a self closing translated warning message
+     */
+    public static void warn(final String message) {
 
-		if (frame != null) {
-			final JLabel label = new JLabel();
-			int timerDelay = 1000;
-			new Timer(timerDelay, new ActionListener() {
-				int timeLeft = 4;
+        if (frame != null) {
+            final JLabel label = new JLabel();
+            int timerDelay = 1000;
+            new Timer(timerDelay, new ActionListener() {
+                int timeLeft = 4;
 
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					if (timeLeft > 0) {
-						StringBuilder sb = new StringBuilder("<html>");
-						sb.append(Babylon.translate("serious.error.msg1")).append("<br/>");
-						sb.append(Babylon.translate("serious.error.msg2", message)).append("<br/>");
-						sb.append(Babylon.translate("serious.error.msg3", message)).append("</html>");
-						label.setText(sb.toString());
-						--timeLeft;
-					} else {
-						((Timer) e.getSource()).stop();
-						Window win = SwingUtilities.getWindowAncestor(label);
-						win.setVisible(false);
-					}
-				}
-			}) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (timeLeft > 0) {
+                        StringBuilder sb = new StringBuilder("<html>");
+                        sb.append(Babylon.translate("serious.error.msg1")).append("<br/>");
+                        sb.append(Babylon.translate("serious.error.msg2", message)).append("<br/>");
+                        sb.append(Babylon.translate("serious.error.msg3", message)).append("</html>");
+                        label.setText(sb.toString());
+                        --timeLeft;
+                    } else {
+                        ((Timer) e.getSource()).stop();
+                        Window win = SwingUtilities.getWindowAncestor(label);
+                        win.setVisible(false);
+                    }
+                }
+            }) {
 
-				{
-					setInitialDelay(0);
-				}
-			}.start();
+                {
+                    setInitialDelay(0);
+                }
+            }.start();
 
-			JOptionPane.showMessageDialog(frame, label, Babylon.translate("serious.error"), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frame, label, Babylon.translate("serious.error"), JOptionPane.WARNING_MESSAGE);
 
-		} else {
-			Log.error("Unable to display error message " + message);
-		}
+        } else {
+            Log.error("Unable to display error message " + message);
+        }
 
-	}
+    }
 
-	public static void attachFrame(JFrame frame) {
-		SeriousErrorHandler.frame = frame;
-	}
+    public static void attachFrame(JFrame frame) {
+        SeriousErrorHandler.frame = frame;
+    }
 }

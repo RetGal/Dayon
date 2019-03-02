@@ -9,31 +9,34 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
 public abstract class FatalErrorHandler {
-	@Nullable
-	private static JFrame frame;
+    @Nullable
+    private static JFrame frame;
 
-	/**
-	 * Displays a translated error message and terminates
-	 */
-	public static void bye(String message, Throwable error) {
-		Log.fatal(message, error);
-		Log.fatal("Bye!");
+    private FatalErrorHandler() {
+    }
 
-		if (frame != null) {
-			String info = error.getMessage();
+    /**
+     * Displays a translated error message and terminates
+     */
+    public static void bye(String message, Throwable error) {
+        Log.fatal(message, error);
+        Log.fatal("Bye!");
 
-			if (info == null) {
-				info = Babylon.translate("fatal.error.msg3");
-			}
+        if (frame != null) {
+            String info = error.getMessage();
 
-			JOptionPane.showMessageDialog(frame, Babylon.translate("fatal.error.msg1") + "\n" + Babylon.translate("fatal.error.msg2", info),
-					Babylon.translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
-		}
+            if (info == null) {
+                info = Babylon.translate("fatal.error.msg3");
+            }
 
-		System.exit(-1);
-	}
+            JOptionPane.showMessageDialog(frame, Babylon.translate("fatal.error.msg1") + "\n" + Babylon.translate("fatal.error.msg2", info),
+                    Babylon.translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
+        }
 
-	public static void attachFrame(JFrame frame) {
-		FatalErrorHandler.frame = frame;
-	}
+        System.exit(-1);
+    }
+
+    public static void attachFrame(JFrame frame) {
+        FatalErrorHandler.frame = frame;
+    }
 }

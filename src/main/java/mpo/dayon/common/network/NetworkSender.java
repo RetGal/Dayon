@@ -181,6 +181,7 @@ public class NetworkSender {
             }
         } catch (InterruptedException ex) {
             FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is has been interrupted!", ex);
+            Thread.currentThread().interrupt();
         }
     }
 

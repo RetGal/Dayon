@@ -67,10 +67,9 @@ public class NetworkAssistantHttpsEngine {
 
 		try {
 			server.start();
+		} catch (IOException ex) {
+				throw ex;
 		} catch (Exception ex) {
-			if (ex instanceof IOException) {
-				throw (IOException) ex;
-			}
 			throw new RuntimeException(ex); // dunno (!)
 		}
 
@@ -192,6 +191,7 @@ public class NetworkAssistantHttpsEngine {
 						try {
 							__dayonLOCK.wait();
 						} catch (InterruptedException ignored) {
+							Log.info("[HTTPS] Swallowed an InterruptedException");
 						}
 					}
 				}
