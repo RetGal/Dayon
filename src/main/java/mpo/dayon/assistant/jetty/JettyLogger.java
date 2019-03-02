@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.stream.Collectors;
 
 public class JettyLogger implements Logger {
-    private final static String PREFIX = "[JETTY] ";
+    private static final String PREFIX = "[JETTY] ";
 
     @Override
     public Logger getLogger(String name) {
