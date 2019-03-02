@@ -9,8 +9,6 @@ import com.sun.grizzly.lzma.compression.lzma.Encoder;
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class LZMA_Zipper extends Zipper {
-	public LZMA_Zipper() {
-	}
 
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {

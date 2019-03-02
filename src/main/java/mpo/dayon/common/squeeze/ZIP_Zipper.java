@@ -11,8 +11,6 @@ import java.util.zip.ZipOutputStream;
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class ZIP_Zipper extends Zipper {
-	public ZIP_Zipper() {
-	}
 
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {

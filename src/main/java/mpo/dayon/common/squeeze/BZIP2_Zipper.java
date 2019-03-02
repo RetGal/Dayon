@@ -11,8 +11,6 @@ import org.itadaki.bzip2.BZip2OutputStream;
 import mpo.dayon.common.buffer.MemByteBuffer;
 
 public class BZIP2_Zipper extends Zipper {
-	public BZIP2_Zipper() {
-	}
 
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {

@@ -19,6 +19,9 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
 public abstract class SystemUtilities {
+
+	private SystemUtilities() {}
+
 	@Nullable
 	private static File getInstallRoot() {
 		String path = null;
@@ -67,13 +70,11 @@ public abstract class SystemUtilities {
 		if (rootPath != null) {
 			// Anchor not supported : #assistant-setup
 			File quickStart = new File(rootPath, "doc/html/" + Babylon.translate("quickstart.html"));
-			if (!quickStart.isFile()) {
-				// Must be running inside an IDE
-				if (rootPath.getAbsolutePath().endsWith("/target")) {
-					quickStart = new File(rootPath.getParent(), "docs/" + Babylon.translate("quickstart.html"));
-				}
+			// Must be running inside an IDE
+			if (!quickStart.isFile() && rootPath.getAbsolutePath().endsWith("/target")) {
+				quickStart = new File(rootPath.getParent(), "docs/" + Babylon.translate("quickstart.html"));
+				return quickStart.toURI();
 			}
-			return quickStart.toURI();
 		}
 		return null;
 	}
@@ -93,11 +94,9 @@ public abstract class SystemUtilities {
 		}
 
 		final File appDir = new File(home, ".dayon");
-		if (!appDir.exists()) {
-			if (!appDir.mkdir()) {
-				Log.warn("Could not create the application directory [" + appDir.getAbsolutePath() + "]!");
-				return null;
-			}
+		if (!appDir.exists() && !appDir.mkdir()) {
+			Log.warn("Could not create the application directory [" + appDir.getAbsolutePath() + "]!");
+			return null;
 		}
 		return appDir;
 	}
@@ -117,11 +116,9 @@ public abstract class SystemUtilities {
 			return null;
 		}
 
-		if (!dir.exists()) {
-			if (!dir.mkdir()) {
-				Log.warn("Could not create the application directory (3) [" + name + "]!");
-				return null;
-			}
+		if (!dir.exists() && !dir.mkdir()) {
+			Log.warn("Could not create the application directory (3) [" + name + "]!");
+			return null;
 		}
 		return dir;
 	}
@@ -211,7 +208,7 @@ public abstract class SystemUtilities {
 			return defaultValue;
 		}
 
-		final int ordinal = Integer.valueOf(prop);
+		final int ordinal = Integer.parseInt(prop);
 
 		return Arrays.stream(enums).filter(anEnum -> ordinal == anEnum.ordinal()).findFirst().orElse(defaultValue);
 	}
@@ -259,6 +256,7 @@ public abstract class SystemUtilities {
 			try {
 				in.close();
 			} catch (IOException ignored) {
+				Log.debug("Reader close failed");
 			}
 		}
 	}
@@ -268,6 +266,7 @@ public abstract class SystemUtilities {
 			try {
 				out.close();
 			} catch (IOException ignored) {
+				Log.debug("Writer close failed");
 			}
 		}
 	}
@@ -277,6 +276,7 @@ public abstract class SystemUtilities {
 			try {
 				in.close();
 			} catch (IOException ignored) {
+				Log.debug("InputStream close failed");
 			}
 		}
 	}
@@ -286,6 +286,7 @@ public abstract class SystemUtilities {
 			try {
 				out.close();
 			} catch (IOException ignored) {
+				Log.debug("OutputStream close failed");
 			}
 		}
 	}
@@ -295,6 +296,7 @@ public abstract class SystemUtilities {
 			try {
 				socket.close();
 			} catch (IOException ignored) {
+				Log.debug("ServerSocket close failed");
 			}
 		}
 	}
@@ -304,6 +306,7 @@ public abstract class SystemUtilities {
 			try {
 				socket.close();
 			} catch (IOException ignored) {
+				Log.debug("Socket close failed");
 			}
 		}
 	}
