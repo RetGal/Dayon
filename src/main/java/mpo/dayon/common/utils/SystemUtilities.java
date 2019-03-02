@@ -144,11 +144,11 @@ public abstract class SystemUtilities {
 	}
 
 	public static String getApplicationName() {
-		final String name = SystemUtilities.getStringProperty(null, "dayon.application.name");
-		if (name == null) {
+		try {
+			return SystemUtilities.getStringProperty(null, "dayon.application.name");
+		} catch (RuntimeException re) {
 			throw new RuntimeException("Missing application name!");
 		}
-		return name;
 	}
 
 	public static void setApplicationName(String name) {
@@ -219,7 +219,8 @@ public abstract class SystemUtilities {
 	public static List<String> getSystemProperties() {
 		final List<String> props = new ArrayList<>();
 		final List<String> propNames = System.getProperties().keySet().stream().map(Object::toString).collect(Collectors.toList());
-		int size = propNames.stream().max(Comparator.comparing(String::length)).get().length();
+		Optional<String> max = propNames.stream().max(Comparator.comparing(String::length));
+		int size = max.isPresent() ? max.get().length() : 0;
 
 		Collections.sort(propNames);
 

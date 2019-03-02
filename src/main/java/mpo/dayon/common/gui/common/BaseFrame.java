@@ -24,7 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -106,7 +105,6 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel info = new JLabel("<html>Dayon! : <a href=''>" + Babylon.translate("synopsys") + ".</a></html>");
 				info.setAlignmentX(Component.LEFT_ALIGNMENT);
-				// info.setAlignmentX(Component.CENTER_ALIGNMENT);
 				info.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -116,7 +114,6 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel version = new JLabel("<html>" + Babylon.translate("version.installed") + " : <a href=''>" + Version.get() + "</a></html>");
 				version.setAlignmentX(Component.LEFT_ALIGNMENT);
-				// version.setAlignmentX(Component.CENTER_ALIGNMENT);
 				version.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -126,7 +123,6 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel latest = new JLabel("<html>" + Babylon.translate("version.latest") + " : <a href=''>" + Version.get().getLatestRelease() + "</a></html>");
 				version.setAlignmentX(Component.LEFT_ALIGNMENT);
-				// version.setAlignmentX(Component.CENTER_ALIGNMENT);
 				latest.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -136,7 +132,6 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel support = new JLabel("<html>" + Babylon.translate("support") + " : <a href=''>" + HTTP_SUPPORT + "</a></html>");
 				support.setAlignmentX(Component.LEFT_ALIGNMENT);
-				// support.setAlignmentX(Component.CENTER_ALIGNMENT);
 				support.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
@@ -146,7 +141,6 @@ public abstract class BaseFrame extends JFrame {
 
 				final JLabel feedback = new JLabel("<html>" + Babylon.translate("feedback") + " : <a href=''>" + HTTP_FEEDBACK + "</a></html>");
 				feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
-				// feedback.setAlignmentX(Component.CENTER_ALIGNMENT);
 				feedback.addMouseListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {

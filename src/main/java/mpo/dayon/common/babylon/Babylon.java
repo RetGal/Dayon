@@ -45,6 +45,7 @@ public abstract class Babylon {
 		return value;
 	}
 
+	@java.lang.SuppressWarnings("squid:S4973")
 	public static String translateEnum(Enum<?> value) {
 		final String tag = "enum." + value.getClass().getSimpleName() + "." + value.name();
 		final String val = translate(tag);
@@ -63,6 +64,7 @@ public abstract class Babylon {
 	 * <code>toString</code> of the argument array is appended to the tag
 	 * value...
 	 */
+	@java.lang.SuppressWarnings("squid:S4973")
 	private static String formatValue(Locale locale, String tagValue, String tag, Object... arguments) {
 		String formattedTagValue;
 

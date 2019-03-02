@@ -135,7 +135,7 @@ public class Preferences {
 				final String pname = entry.getKey();
 				final String pvalue = entry.getValue();
 
-				if (Props.REMOVE == pvalue) {
+				if (Props.REMOVE.equals(pvalue)) {
 					this.props.remove(pname);
 				} else {
 					this.props.setProperty(pname, pvalue);
