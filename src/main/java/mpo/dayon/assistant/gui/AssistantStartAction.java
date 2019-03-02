@@ -11,7 +11,7 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.ImageUtilities;
 
 class AssistantStartAction extends AbstractAction {
-	private final NetworkAssistantEngine networkEngine;
+	private final transient NetworkAssistantEngine networkEngine;
 
 	public AssistantStartAction(NetworkAssistantEngine networkEngine) {
 		this.networkEngine = networkEngine;

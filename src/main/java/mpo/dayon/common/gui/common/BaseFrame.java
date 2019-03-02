@@ -103,7 +103,7 @@ public abstract class BaseFrame extends JFrame {
 
 				panel.setPreferredSize(new Dimension(500, 300));
 
-				final JLabel info = new JLabel("<html>Dayon! : <a href=''>" + Babylon.translate("synopsys") + ".</a></html>");
+				final JLabel info = new JLabel(composeLabelHtml("Dayon!",  Babylon.translate("synopsys")));
 				info.setAlignmentX(Component.LEFT_ALIGNMENT);
 				info.addMouseListener(new MouseAdapter() {
 					@Override
@@ -112,7 +112,7 @@ public abstract class BaseFrame extends JFrame {
 					}
 				});
 
-				final JLabel version = new JLabel("<html>" + Babylon.translate("version.installed") + " : <a href=''>" + Version.get() + "</a></html>");
+				final JLabel version = new JLabel(composeLabelHtml(Babylon.translate("version.installed"), Version.get().toString()));
 				version.setAlignmentX(Component.LEFT_ALIGNMENT);
 				version.addMouseListener(new MouseAdapter() {
 					@Override
@@ -121,7 +121,7 @@ public abstract class BaseFrame extends JFrame {
 					}
 				});
 
-				final JLabel latest = new JLabel("<html>" + Babylon.translate("version.latest") + " : <a href=''>" + Version.get().getLatestRelease() + "</a></html>");
+				final JLabel latest = new JLabel(composeLabelHtml(Babylon.translate("version.latest"), Version.get().getLatestRelease()));
 				version.setAlignmentX(Component.LEFT_ALIGNMENT);
 				latest.addMouseListener(new MouseAdapter() {
 					@Override
@@ -130,7 +130,7 @@ public abstract class BaseFrame extends JFrame {
 					}
 				});
 
-				final JLabel support = new JLabel("<html>" + Babylon.translate("support") + " : <a href=''>" + HTTP_SUPPORT + "</a></html>");
+				final JLabel support = new JLabel(composeLabelHtml(Babylon.translate("support"), HTTP_SUPPORT));
 				support.setAlignmentX(Component.LEFT_ALIGNMENT);
 				support.addMouseListener(new MouseAdapter() {
 					@Override
@@ -139,7 +139,7 @@ public abstract class BaseFrame extends JFrame {
 					}
 				});
 
-				final JLabel feedback = new JLabel("<html>" + Babylon.translate("feedback") + " : <a href=''>" + HTTP_FEEDBACK + "</a></html>");
+				final JLabel feedback = new JLabel(composeLabelHtml(Babylon.translate("feedback"), HTTP_FEEDBACK));
 				feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
 				feedback.addMouseListener(new MouseAdapter() {
 					@Override
@@ -177,6 +177,10 @@ public abstract class BaseFrame extends JFrame {
 		showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
 
 		return showSystemInfo;
+	}
+
+	private String composeLabelHtml(String label, String url) {
+		return "<html>" + label + " : <a href=''>" + url + "</a></html>";
 	}
 
 	protected Action createShowHelpAction() {

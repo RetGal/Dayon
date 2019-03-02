@@ -17,9 +17,9 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
 class AssistedFrame extends BaseFrame {
-		private AssistedFrameConfiguration configuration;
-		private final Position position;
-		private final Dimension dimension;
+		private transient AssistedFrameConfiguration configuration;
+		private final transient Position position;
+		private final transient Dimension dimension;
 
 	public AssistedFrame(AssistedFrameConfiguration configuration) {
 		this.configuration = configuration;

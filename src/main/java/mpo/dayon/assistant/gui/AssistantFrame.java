@@ -45,7 +45,7 @@ import mpo.dayon.common.version.Version;
 
 class AssistantFrame extends BaseFrame {
 
-    private final Listeners<AssistantFrameListener> listeners = new Listeners<>();
+    private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
     private final JScrollPane assistantPanelWrapper;
 
@@ -71,11 +71,11 @@ class AssistantFrame extends BaseFrame {
 
     private final transient Action stopAction;
 
-    private final Position position;
+    private final transient Position position;
 
-    private final Dimension dimension;
+    private final transient Dimension dimension;
 
-    private AssistantFrameConfiguration configuration;
+    private transient AssistantFrameConfiguration configuration;
 
     @Nullable
     private JComponent center;
