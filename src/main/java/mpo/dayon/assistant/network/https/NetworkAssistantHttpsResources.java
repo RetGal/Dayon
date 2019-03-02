@@ -74,17 +74,17 @@ public class NetworkAssistantHttpsResources {
 			Log.warn("[HTTPS] JNLP resource : favicon.ico");
 			{
 				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("favicon.ico");
-				final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"));
+				try (final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"))) {
 
-				final byte[] buffer = new byte[4096];
+					final byte[] buffer = new byte[4096];
 
-				int count;
-				while ((count = content.read(buffer)) != -1) {
-					out.write(buffer, 0, count);
+					int count;
+					while ((count = content.read(buffer)) != -1) {
+						out.write(buffer, 0, count);
+					}
+
+					out.flush();
 				}
-
-				out.flush();
-				out.close();
 			}
 
 			final String jarname = createJarName();
@@ -118,17 +118,17 @@ public class NetworkAssistantHttpsResources {
 				Log.warn("[HTTPS] JNLP resource : " + jarname);
 				{
 					final InputStream content = createJarInputStream("dayon.jar");
-					final OutputStream out = new FileOutputStream(jarfile);
+					try (final OutputStream out = new FileOutputStream(jarfile)) {
 
-					final byte[] buffer = new byte[4096];
+						final byte[] buffer = new byte[4096];
 
-					int count;
-					while ((count = content.read(buffer)) != -1) {
-						out.write(buffer, 0, count);
+						int count;
+						while ((count = content.read(buffer)) != -1) {
+							out.write(buffer, 0, count);
+						}
+
+						out.flush();
 					}
-
-					out.flush();
-					out.close();
 				}
 			} else {
 				Log.warn("[HTTPS] JNLP resource : " + jarname + " [ unchanged ]");

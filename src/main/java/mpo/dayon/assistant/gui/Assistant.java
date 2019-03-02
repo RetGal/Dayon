@@ -770,7 +770,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 		 */
 		@Override
 		public void onByteReceived(int count) {
-			receivedBitCounter.add(8 * count);
+			receivedBitCounter.add(8d * count);
 		}
 
 		/**

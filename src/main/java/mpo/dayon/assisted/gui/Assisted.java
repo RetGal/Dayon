@@ -48,9 +48,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 	private NetworkAssistedEngineConfiguration configuration;
 
-	private volatile CaptureEngine captureEngine;
+	private CaptureEngine captureEngine;
 
-	private volatile CompressorEngine compressorEngine;
+	private CompressorEngine compressorEngine;
 
 	public Assisted() {
 	}
@@ -332,7 +332,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	private class HostNameIgnorer implements HostnameVerifier {
 		@Override
 		public boolean verify(String hostname, SSLSession session) {
-			return true;
+			return session.isValid() && !hostname.isEmpty();
 		}
 
 	}

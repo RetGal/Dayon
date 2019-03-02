@@ -53,9 +53,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 	 */
 	private NetworkSender sender;
 
-	private volatile ServerSocket server;
+	private ServerSocket server;
 
-	private volatile Socket connection;
+	private Socket connection;
 
 	private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
@@ -261,7 +261,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
 						final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
 						fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
-						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1);
+						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1l);
 
 						if (filesHelper.isIdle()) {
 							fireOnClipboardReceived(clipboardFiles.getPosition() + 1);

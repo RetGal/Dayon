@@ -68,7 +68,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             helper.setPosition(position);
 
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            Log.error(e.getMessage());
         }
 
         return new NetworkClipboardFilesMessage(helper);
