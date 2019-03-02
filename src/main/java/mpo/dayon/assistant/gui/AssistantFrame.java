@@ -407,8 +407,8 @@ class AssistantFrame extends BaseFrame {
         }
     }
 
-    public void onCaptureUpdated(final int captureId, final BufferedImage captureImage) {
-        assistantPanel.onCaptureUpdated(captureId, captureImage);
+    public void onCaptureUpdated(final BufferedImage captureImage) {
+        assistantPanel.onCaptureUpdated(captureImage);
     }
 
     /**

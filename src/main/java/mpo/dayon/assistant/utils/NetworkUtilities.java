@@ -9,8 +9,8 @@ import java.util.List;
 
 import mpo.dayon.common.log.Log;
 
-public abstract class NetworkUtilities {
-	public static List<String> getInetAddresses() {
+public interface NetworkUtilities {
+	static List<String> getInetAddresses() {
 		final List<String> addresses = new ArrayList<>();
 
 		try {

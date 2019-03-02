@@ -702,7 +702,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				prevHeight = image.fst.getHeight();
 			}
 
-			frame.onCaptureUpdated(capture.getId(), image.fst);
+			frame.onCaptureUpdated(image.fst);
 
 			receivedTileCounter.add(capture.getDirtyTileCount(), cacheHits);
 			skippedTileCounter.add(capture.getSkipped());

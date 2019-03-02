@@ -22,7 +22,7 @@ class AssistantPanel extends JPanel {
 	private static final int MOUSE_CURSOR_HEIGHT = 20;
 
 	@Nullable
-	private BufferedImage captureImage;
+	private transient BufferedImage captureImage;
 
 	private int captureWidth = -1;
 
@@ -58,7 +58,7 @@ class AssistantPanel extends JPanel {
 	/**
 	 * Called from within the de-compressor engine thread (!)
 	 */
-	public void onCaptureUpdated(final int captureId, final BufferedImage captureImage) {
+	public void onCaptureUpdated(final BufferedImage captureImage) {
 		SwingUtilities.invokeLater(() -> {
             final int captureWidth = captureImage.getWidth();
             final int captureHeight = captureImage.getHeight();
