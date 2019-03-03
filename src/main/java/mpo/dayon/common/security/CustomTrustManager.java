@@ -16,8 +16,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class CustomTrustManager implements X509TrustManager {
 	
-	public final static String KEY_STORE_PATH = "/trust/X509";
-	public final static String KEY_STORE_PASS = "spasspass";
+	public static final String KEY_STORE_PATH = "/trust/X509";
+	public static final String KEY_STORE_PASS = "spasspass";
 
 	private X509TrustManager defaultTm;
 	private X509TrustManager ownTm;

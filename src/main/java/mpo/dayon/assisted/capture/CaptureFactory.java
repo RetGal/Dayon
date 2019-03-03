@@ -4,12 +4,11 @@ import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
-abstract class CaptureFactory {
-	public abstract int getWidth();
+interface CaptureFactory {
+	int getWidth();
 
-	public abstract int getHeight();
+	int getHeight();
 
-	@Nullable
-	public abstract byte[] captureGray(Gray8Bits quantization);
+	@Nullable byte[] captureGray(Gray8Bits quantization);
 
 }

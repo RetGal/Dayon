@@ -2,7 +2,7 @@ package mpo.dayon.common.squeeze;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
 
-public class PackBitsRunLengthEncoder extends RunLengthEncoder {
+public class PackBitsRunLengthEncoder implements RunLengthEncoder {
 	@Override
     public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) {
 		final byte[] xcapture = capture.getInternal();

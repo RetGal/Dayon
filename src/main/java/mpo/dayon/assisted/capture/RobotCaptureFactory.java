@@ -5,7 +5,7 @@ import java.awt.Toolkit;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.utils.ScreenUtilities;
 
-public class RobotCaptureFactory extends CaptureFactory {
+public class RobotCaptureFactory implements CaptureFactory {
 	private static final int CAPTURE_WIDTH;
 
 	private static final int CAPTURE_HEIGHT;

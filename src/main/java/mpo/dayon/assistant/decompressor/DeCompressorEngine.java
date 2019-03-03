@@ -97,14 +97,6 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 		}
 	}
 
-	private void fireOnDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
-		final List<DeCompressorEngineListener> xlisteners = listeners.getListeners();
-
-		for (final DeCompressorEngineListener xlistener : xlisteners) {
-			xlistener.onDeCompressed(capture, cacheHits, compressionRatio);
-		}
-	}
-
 	private class MyExecutable extends Executable {
 		private final NetworkCaptureMessage message;
 
@@ -139,6 +131,14 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 				if (cache != null) {
 					cache.onCaptureProcessed();
 				}
+			}
+		}
+
+		private void fireOnDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
+			final List<DeCompressorEngineListener> xlisteners = listeners.getListeners();
+
+			for (final DeCompressorEngineListener xlistener : xlisteners) {
+				xlistener.onDeCompressed(capture, cacheHits, compressionRatio);
 			}
 		}
 	}
