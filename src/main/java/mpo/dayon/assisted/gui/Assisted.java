@@ -52,9 +52,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 	private CompressorEngine compressorEngine;
 
-	public Assisted() {
-	}
-
 	public void configure() {
 		final String lnf = SystemUtilities.getDefaultLookAndFeel();
 		try {
