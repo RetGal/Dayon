@@ -34,7 +34,7 @@ import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.error.FatalErrorHandler;
-import mpo.dayon.common.error.SeriousErrorHandler;
+import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.log.Log;
@@ -68,7 +68,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		frame = new AssistedFrame(new AssistedFrameConfiguration());
 
 		FatalErrorHandler.attachFrame(frame);
-		SeriousErrorHandler.attachFrame(frame);
+		KeyboardErrorHandler.attachFrame(frame);
 
 		frame.setVisible(true);
 
@@ -339,7 +339,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 	@Override
 	public void digest(String message) {
-		SeriousErrorHandler.warn(String.valueOf(message));
+		KeyboardErrorHandler.warn(String.valueOf(message));
 	}
 
 }

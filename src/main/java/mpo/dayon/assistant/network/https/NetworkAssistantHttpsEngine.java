@@ -86,8 +86,9 @@ public class NetworkAssistantHttpsEngine {
 			while (!acceptor.acceptStopped) {
 				try {
 					acceptor.acceptlock.wait();
-				} catch (InterruptedException ignored) {
-					Log.info("[HTTPS] Swallowed an InterruptedException");
+				} catch (InterruptedException ex) {
+					Log.warn("[HTTPS] Experienced an InterruptedException");
+					Thread.currentThread().interrupt();
 				}
 			}
 		}
@@ -197,8 +198,9 @@ public class NetworkAssistantHttpsEngine {
 					while (!dayonStarted) {
 						try {
 							dayonLock.wait();
-						} catch (InterruptedException ignored) {
-							Log.info("[HTTPS] Swallowed an InterruptedException");
+						} catch (InterruptedException ex) {
+                            Log.warn("[HTTPS] Experienced an InterruptedException");
+                            Thread.currentThread().interrupt();
 						}
 					}
 				}
