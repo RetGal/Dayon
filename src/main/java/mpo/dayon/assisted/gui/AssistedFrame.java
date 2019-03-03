@@ -1,10 +1,5 @@
 package mpo.dayon.assisted.gui;
 
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-
 import javax.swing.Box;
 
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
@@ -34,34 +29,19 @@ class AssistedFrame extends BaseFrame {
 		this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
 		this.setSize(dimension.getWidth(), dimension.getHeight());
 
-		addWindowListener(new WindowAdapter() {
-			@Override
-            public void windowOpened(WindowEvent ev) {
-				addComponentListener(new ComponentAdapter() {
-					@Override
-                    public void componentResized(ComponentEvent ev) {
-						onSizeUpdated(getWidth(), getHeight());
-					}
-
-					@Override
-                    public void componentMoved(ComponentEvent ev) {
-						onLocationUpdated(getX(), getY());
-					}
-				});
-			}
-		});
-
 		onReady();
 	}
 
-	private void onLocationUpdated(int x, int y) {
+	@Override
+	protected void onLocationUpdated(int x, int y) {
 		this.position.setX(x);
 		this.position.setY(y);
 		configuration = new AssistedFrameConfiguration(position, dimension);
 		configuration.persist(false);
 	}
 
-	private void onSizeUpdated(int width, int height) {
+	@Override
+	protected void onSizeUpdated(int width, int height) {
 		dimension.setWidth(width);
 		dimension.setHeight(height);
 		configuration = new AssistedFrameConfiguration(position, dimension);

@@ -124,7 +124,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 		network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
 
-		network.configure(networkConfiguration = new NetworkAssistantConfiguration());
+		networkConfiguration = new NetworkAssistantConfiguration();
+		network.configure(networkConfiguration);
 		network.addListener(new MyNetworkAssistantEngineListener());
 
 		control = new ControlEngine(network);
@@ -225,7 +226,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				choices.addSeparator();
 				{
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg1"));
-					// menuItem.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.COPY));
 					menuItem.addActionListener(ev13 -> {
                         final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
 
@@ -237,7 +237,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				}
 				{
 					final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg2"));
-					// menuItem.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.COPY));
 					menuItem.addActionListener(ev12 -> {
                         final String url = button.getText() + " " + network.getPort();
 
@@ -250,7 +249,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 				choices.addSeparator();
 				final JMenuItem help = new JMenuItem(Babylon.translate("help"));
-				// help.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.INFO_SMALL));
 				help.addActionListener(ev1 -> {
                     try {
                         final URI uri = SystemUtilities.getLocalIndexHtml();
@@ -299,7 +297,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+				JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 
@@ -314,7 +312,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				pane.add(portNumberLbl);
 				pane.add(portNumberTextField);
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.network.settings"), pane, () -> {
+				final boolean ok = DialogFactory.showOkCancel(networkFrame, Babylon.translate("connection.network.settings"), pane, () -> {
                     final String portNumber = portNumberTextField.getText();
                     if (portNumber.isEmpty()) {
                         return Babylon.translate("connection.settings.emptyPortNumber");
@@ -429,7 +427,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+				JFrame captureFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 
@@ -451,7 +449,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				pane.add(grayLevelsLbl);
 				pane.add(grayLevelsCb);
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("capture.settings"), pane, () -> {
+				final boolean ok = DialogFactory.showOkCancel(captureFrame, Babylon.translate("capture.settings"), pane, () -> {
                     final String tick = tickTextField.getText();
                     if (tick.isEmpty()) {
                         return Babylon.translate("tick.msg1");
@@ -467,11 +465,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 });
 
 				if (ok) {
-					final CaptureEngineConfiguration configuration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
+					final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
 							(Gray8Bits) grayLevelsCb.getSelectedItem());
 
-					if (!configuration.equals(captureEngineConfiguation)) {
-						captureEngineConfiguation = configuration;
+					if (!newCaptureEngineConfiguration.equals(captureEngineConfiguation)) {
+						captureEngineConfiguation = newCaptureEngineConfiguration;
 						captureEngineConfiguation.persist();
 
 						sendCaptureConfiguration(captureEngineConfiguation);
@@ -500,7 +498,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
 			@Override
 			public void actionPerformed(ActionEvent ev) {
-				JFrame frame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+				JFrame compressionFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
 				final JPanel pane = new JPanel();
 				pane.setLayout(new GridLayout(4, 2, 10, 10));
@@ -545,7 +543,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 				purgeSizeLbl.setEnabled(useCacheCb.isSelected());
 				purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
-				final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("compression.settings"), pane, () -> {
+				final boolean ok = DialogFactory.showOkCancel(compressionFrame, Babylon.translate("compression.settings"), pane, () -> {
                     final String max = maxSizeTf.getText();
                     if (max.isEmpty()) {
                         return Babylon.translate("compression.cache.max.msg1");
@@ -588,11 +586,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 });
 
 				if (ok) {
-					final CompressorEngineConfiguration configuration = new CompressorEngineConfiguration((CompressionMethod) methodCb.getSelectedItem(),
+					final CompressorEngineConfiguration newCompressorEngineConfiguration = new CompressorEngineConfiguration((CompressionMethod) methodCb.getSelectedItem(),
 							useCacheCb.isSelected(), Integer.parseInt(maxSizeTf.getText()), Integer.parseInt(purgeSizeTf.getText()));
 
-					if (!configuration.equals(compressorEngineConfiguation)) {
-						compressorEngineConfiguation = configuration;
+					if (!newCompressorEngineConfiguration.equals(compressorEngineConfiguation)) {
+						compressorEngineConfiguation = newCompressorEngineConfiguration;
 						compressorEngineConfiguation.persist();
 
 						sendCompressorConfiguration(compressorEngineConfiguation);

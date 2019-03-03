@@ -5,11 +5,7 @@ import java.awt.Component;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -47,6 +43,7 @@ public abstract class BaseFrame extends JFrame {
 				doExit();
 			}
 		});
+		addSizeAndPositionListener();
 	}
 
 	private void doExit() {
@@ -178,6 +175,30 @@ public abstract class BaseFrame extends JFrame {
 
 		return showSystemInfo;
 	}
+
+	private void addSizeAndPositionListener() {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowOpened(WindowEvent ev) {
+				addComponentListener(new ComponentAdapter() {
+					@Override
+					public void componentResized(ComponentEvent ev) {
+						onSizeUpdated(getWidth(), getHeight());
+					}
+
+					@Override
+					public void componentMoved(ComponentEvent ev) {
+						onLocationUpdated(getX(), getY());
+					}
+				});
+			}
+		});
+	}
+
+	protected abstract void onSizeUpdated(int width, int height);
+
+	protected abstract void onLocationUpdated(int x, int y);
+
 
 	private String composeLabelHtml(String label, String url) {
 		return "<html>" + label + " : <a href=''>" + url + "</a></html>";

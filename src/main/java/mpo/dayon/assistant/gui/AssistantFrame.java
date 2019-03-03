@@ -112,23 +112,6 @@ class AssistantFrame extends BaseFrame {
         this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
         this.setSize(dimension.getWidth(), dimension.getHeight());
 
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowOpened(WindowEvent ev) {
-                addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(ComponentEvent ev) {
-                        onSizeUpdated(getWidth(), getHeight());
-                    }
-
-                    @Override
-                    public void componentMoved(ComponentEvent ev) {
-                        onLocationUpdated(getX(), getY());
-                    }
-                });
-            }
-        });
-
         assistantPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
@@ -205,14 +188,16 @@ class AssistantFrame extends BaseFrame {
         listeners.add(listener);
     }
 
-    private void onLocationUpdated(int x, int y) {
+    @Override
+    protected void onLocationUpdated(int x, int y) {
         this.position.setX(x);
         this.position.setY(y);
         configuration = new AssistantFrameConfiguration(position, dimension);
         configuration.persist(false);
     }
 
-    private void onSizeUpdated(int width, int height) {
+    @Override
+    protected void onSizeUpdated(int width, int height) {
         dimension.setWidth(width);
         dimension.setHeight(height);
         configuration = new AssistantFrameConfiguration(position, dimension);
@@ -356,7 +341,8 @@ class AssistantFrame extends BaseFrame {
         removeCenter();
 
         statusBar.setMessage(Babylon.translate("connection.incoming.msg2", connection.getInetAddress()));
-        add(center = assistantPanelWrapper, BorderLayout.CENTER);
+        center = assistantPanelWrapper;
+        add(center, BorderLayout.CENTER);
 
         resetAction.setEnabled(true);
         remoteClipboardRequestAction.setEnabled(true);
