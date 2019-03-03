@@ -320,8 +320,8 @@ class AssistantFrame extends BaseFrame {
                 g.drawImage(waiting.getImage(), x, y, this);
             }
         };
-
-        add(center = pane, BorderLayout.CENTER);
+        center = pane;
+        add(center, BorderLayout.CENTER);
 
         statusBar.setMessage(Babylon.translate("https.ready", port));
     }

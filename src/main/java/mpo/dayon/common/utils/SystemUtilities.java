@@ -216,8 +216,7 @@ public abstract class SystemUtilities {
 	public static List<String> getSystemProperties() {
 		final List<String> props = new ArrayList<>();
 		final List<String> propNames = System.getProperties().keySet().stream().map(Object::toString).collect(Collectors.toList());
-		Optional<String> max = propNames.stream().max(Comparator.comparing(String::length));
-		int size = max.isPresent() ? max.get().length() : 0;
+		int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
 
 		Collections.sort(propNames);
 

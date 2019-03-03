@@ -27,6 +27,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
+import org.jetbrains.annotations.NotNull;
 
 public class NetworkAssistantHttpsEngine {
 
@@ -34,32 +35,38 @@ public class NetworkAssistantHttpsEngine {
 
 	private final MyServerConnector acceptor;
 
-	private final MyHttpHandler handler;
+	private MyHttpHandler handler;
 
 	public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
 
 		this.server = new Server();
 
-		HttpConfiguration https_config = new HttpConfiguration();
-		https_config.setSecureScheme("https");
-		https_config.addCustomizer(new SecureRequestCustomizer());
+		HttpConfiguration httpsConfig = new HttpConfiguration();
+		httpsConfig.setSecureScheme("https");
+		httpsConfig.addCustomizer(new SecureRequestCustomizer());
 
 		this.acceptor = new MyServerConnector(server, createSslContextFactory(), port);
-		this.acceptor.addConnectionFactory(new HttpConnectionFactory(https_config));
+		this.acceptor.addConnectionFactory(new HttpConnectionFactory(httpsConfig));
 
 		this.server.setConnectors(new Connector[] { this.acceptor });
 
-		final HandlerList httpHandlers = new HandlerList();
-		{
-			final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
-			if (jnlp == null) {
-				throw new RuntimeException("No JNLP directory!");
-			}
-
-			httpHandlers.addHandler(handler = new MyHttpHandler(jnlp.getAbsolutePath()));
-		}
+		final HandlerList httpHandlers = getHandlerList();
 
 		this.server.setHandler(httpHandlers);
+	}
+
+	@NotNull
+	private HandlerList getHandlerList() {
+		final HandlerList httpHandlers = new HandlerList();
+
+		final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
+		if (jnlp == null) {
+			throw new RuntimeException("No JNLP directory!");
+		}
+		handler = new MyHttpHandler(jnlp.getAbsolutePath());
+		httpHandlers.addHandler(handler);
+
+		return httpHandlers;
 	}
 
 	public void start() throws IOException {
@@ -75,10 +82,10 @@ public class NetworkAssistantHttpsEngine {
 
 		Log.info("[HTTPS] The engine is waiting on its acceptor...");
 
-		synchronized (acceptor.__acceptLOCK) {
-			while (!acceptor.__acceptStopped) {
+		synchronized (acceptor.acceptlock) {
+			while (!acceptor.acceptStopped) {
 				try {
-					acceptor.__acceptLOCK.wait();
+					acceptor.acceptlock.wait();
 				} catch (InterruptedException ignored) {
 					Log.info("[HTTPS] Swallowed an InterruptedException");
 				}
@@ -99,9 +106,9 @@ public class NetworkAssistantHttpsEngine {
 	public void onDayonAccepting() {
 		Log.info("[HTTPS] engine.onDayonAccepting() received");
 
-		synchronized (handler.__dayonLOCK) {
-			handler.__dayonStarted = true;
-			handler.__dayonLOCK.notifyAll();
+		synchronized (handler.dayonLock) {
+			handler.dayonStarted = true;
+			handler.dayonLock.notifyAll();
 		}
 	}
 
@@ -118,10 +125,10 @@ public class NetworkAssistantHttpsEngine {
 	}
 
 	private class MyServerConnector extends ServerConnector {
-		private final Object __acceptLOCK = new Object();
+		private final Object acceptlock = new Object();
 
-		private boolean __acceptClosed;
-		private boolean __acceptStopped;
+		private boolean acceptClosed;
+		private boolean acceptStopped;
 
 		MyServerConnector(Server server, SslContextFactory contextFactory, int port) {
 			super(server, contextFactory);
@@ -136,12 +143,12 @@ public class NetworkAssistantHttpsEngine {
 
 			} finally {
 				Log.info("[HTTPS] The engine acceptor has accepted.");
-				synchronized (__acceptLOCK) {
-					if (__acceptClosed) {
+				synchronized (acceptlock) {
+					if (acceptClosed) {
 						Log.info("[HTTPS] The engine acceptor is stopping...");
 
-						__acceptStopped = true;
-						__acceptLOCK.notifyAll();
+						acceptStopped = true;
+						acceptlock.notifyAll();
 					}
 				}
 			}
@@ -149,8 +156,8 @@ public class NetworkAssistantHttpsEngine {
 
 		@Override
 		public void close() {
-			synchronized (__acceptLOCK) {
-				__acceptClosed = true;
+			synchronized (acceptlock) {
+				acceptClosed = true;
 			}
 			super.close();
 		}
@@ -161,9 +168,9 @@ public class NetworkAssistantHttpsEngine {
 	 * for JAVA WEB start.
 	 */
 	private class MyHttpHandler extends ResourceHandler {
-		private final Object __dayonLOCK = new Object();
+		private final Object dayonLock = new Object();
 
-		private boolean __dayonStarted;
+		private boolean dayonStarted;
 
 		MyHttpHandler(String root) {
 			setResourceBase(root);
@@ -186,10 +193,10 @@ public class NetworkAssistantHttpsEngine {
 				// coming from the assisted side).
 				Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
 
-				synchronized (__dayonLOCK) {
-					while (!__dayonStarted) {
+				synchronized (dayonLock) {
+					while (!dayonStarted) {
 						try {
-							__dayonLOCK.wait();
+							dayonLock.wait();
 						} catch (InterruptedException ignored) {
 							Log.info("[HTTPS] Swallowed an InterruptedException");
 						}
