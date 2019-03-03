@@ -4,6 +4,7 @@ import mpo.dayon.common.log.Log;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,16 +13,17 @@ import static java.util.Arrays.copyOf;
 public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private final List<File> files;
-    private final List<String> fileNames;
-    private final List<Long> fileSizes;
+    // ArrayList implements serializable, other List implementations might not..
+    private final ArrayList<String> fileNames;
+    private final ArrayList<Long> fileSizes;
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
-        this.fileNames = files.stream().map(File::getName).collect(Collectors.toList());
-        this.fileSizes = files.stream().map(File::length).collect(Collectors.toList());
+        this.fileNames = (ArrayList<String>) files.stream().map(File::getName).collect(Collectors.toList());
+        this.fileSizes = (ArrayList<Long>) files.stream().map(File::length).collect(Collectors.toList());
         this.position = 0;
         this.remainingFileSize = files.get(0).length();
         this.remainingTotalFilesSize = remainingTotalFilesSize;
@@ -31,8 +33,8 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
         try {
             if (helper.getFileNames().isEmpty()) {
-                helper.setFileNames((List) in.readObject());
-                helper.setFileSizes((List) in.readObject());
+                helper.setFileNames((ArrayList) in.readObject());
+                helper.setFileSizes((ArrayList) in.readObject());
                 helper.setFileBytesLeft(helper.getFileSizes().get(0));
                 helper.setTotalFileBytesLeft(helper.getFileSizes().stream().mapToInt(Long::intValue).sum());
             }
@@ -116,9 +118,9 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return files;
     }
 
-    public List<String> getFileNames() { return fileNames; }
+    public ArrayList<String> getFileNames() { return fileNames; }
 
-    public List<Long> getFileSizes() {
+    public ArrayList<Long> getFileSizes() {
         return fileSizes;
     }
 
