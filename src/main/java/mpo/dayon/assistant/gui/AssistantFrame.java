@@ -1,47 +1,23 @@
 package mpo.dayon.assistant.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Graphics;
-import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import mpo.dayon.common.babylon.Babylon;
+import mpo.dayon.common.event.Listeners;
+import mpo.dayon.common.gui.common.Dimension;
+import mpo.dayon.common.gui.common.*;
+import mpo.dayon.common.gui.statusbar.StatusBar;
+import mpo.dayon.common.gui.toolbar.ToolBar;
+import mpo.dayon.common.monitoring.counter.Counter;
+import mpo.dayon.common.version.Version;
+import org.jetbrains.annotations.Nullable;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
-import org.jetbrains.annotations.Nullable;
-
-import mpo.dayon.common.monitoring.counter.Counter;
-import mpo.dayon.common.gui.common.ImageNames;
-import mpo.dayon.common.babylon.Babylon;
-import mpo.dayon.common.event.Listeners;
-import mpo.dayon.common.gui.common.BaseFrame;
-import mpo.dayon.common.gui.common.Dimension;
-import mpo.dayon.common.gui.common.ImageUtilities;
-import mpo.dayon.common.gui.common.Position;
-import mpo.dayon.common.gui.statusbar.StatusBar;
-import mpo.dayon.common.gui.toolbar.ToolBar;
-import mpo.dayon.common.version.Version;
 
 class AssistantFrame extends BaseFrame {
 
