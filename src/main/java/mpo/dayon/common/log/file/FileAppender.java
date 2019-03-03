@@ -86,7 +86,7 @@ public class FileAppender extends LogAppender {
 
 		boolean renameSucceeded = deleteSurplus();
 
-		// Rename { .1, .2, ..., .MAX_BACKUP_INDEX-1 } to { .2., .3,...,.MAX_BACKUP_INDEX }
+		// Rename  .1, .2, ..., .MAX_BACKUP_INDEX-1  to  .2., .3, ..., .MAX_BACKUP_INDEX
 		for (int idx = MAX_BACKUP_INDEX - 1; idx >= 1 && renameSucceeded; idx--) {
 			final File file = new File(filename + "." + idx);
 			if (file.exists()) {
@@ -119,9 +119,11 @@ public class FileAppender extends LogAppender {
 		}
 	}
 
+	@java.lang.SuppressWarnings("squid:S4042")
 	private boolean deleteSurplus() {
 		final File file = new File(filename + '.' + MAX_BACKUP_INDEX);
 		if (file.exists()) {
+			// not interested in the cause
 			return file.delete();
 		}
 		return true;
