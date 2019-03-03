@@ -79,22 +79,14 @@ public class FileAppender extends LogAppender {
 		final File file = new File(filename);
 		count = file.length();
 	}
-
+	
+	@java.lang.SuppressWarnings("squid:S106")
 	private void rollOver() {
 		nextRolloverCount = count + MAX_FILE_SIZE;
 
-		boolean renameSucceeded = true;
+		boolean renameSucceeded = deleteSurplus();
 
-		// Delete the oldest file ...
-		{
-			final File file = new File(filename + '.' + MAX_BACKUP_INDEX);
-			if (file.exists()) {
-				renameSucceeded = file.delete();
-			}
-		}
-
-		// Rename { .1, .2, ..., .MAX_BACKUP_INDEX-1 } to { .2., .3,
-		// ...,.MAX_BACKUP_INDEX }
+		// Rename { .1, .2, ..., .MAX_BACKUP_INDEX-1 } to { .2., .3,...,.MAX_BACKUP_INDEX }
 		for (int idx = MAX_BACKUP_INDEX - 1; idx >= 1 && renameSucceeded; idx--) {
 			final File file = new File(filename + "." + idx);
 			if (file.exists()) {
@@ -125,6 +117,14 @@ public class FileAppender extends LogAppender {
 				ex.printStackTrace(System.err);
 			}
 		}
+	}
+
+	private boolean deleteSurplus() {
+		final File file = new File(filename + '.' + MAX_BACKUP_INDEX);
+		if (file.exists()) {
+			return file.delete();
+		}
+		return true;
 	}
 
 }

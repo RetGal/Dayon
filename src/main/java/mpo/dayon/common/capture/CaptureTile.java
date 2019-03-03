@@ -84,7 +84,7 @@ public class CaptureTile {
 		this.singleLevel = -1;
 
 		if (width * height != capture.size()) {
-			throw new RuntimeException("Ouch!");
+			throw new IllegalArgumentException("Ouch!");
 		}
 
 		this.fromCache = false;
@@ -136,7 +136,7 @@ public class CaptureTile {
 				: cached.capture; // sharing it (!)
 
 		if (width * height != capture.size()) {
-			throw new RuntimeException("Ouch!");
+			throw new IllegalArgumentException("Ouch!");
 		}
 
 		this.fromCache = true;
