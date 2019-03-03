@@ -81,16 +81,16 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		executor.setThreadFactory(new DefaultThreadFactoryEx("CompressorEngine"));
 
-		executor.setRejectedExecutionHandler((runnable, executor) -> {
-            if (!executor.isShutdown()) {
+		executor.setRejectedExecutionHandler((runnable, poolExecutor) -> {
+            if (!poolExecutor.isShutdown()) {
                 final List<Runnable> pendings = new ArrayList<>();
 
                 // pendings : oldest first (!)
-                executor.getQueue().drainTo(pendings);
+                poolExecutor.getQueue().drainTo(pendings);
 
                 final MyExecutable newer = (MyExecutable) runnable;
 
-                if (pendings.size() > 0) {
+                if (!pendings.isEmpty()) {
                     final Capture[] cpendings = new Capture[pendings.size()];
 
                     int pos = 0;
@@ -102,7 +102,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
                     newer.capture.mergeDirtyTiles(cpendings);
                 }
 
-                executor.execute(newer);
+                poolExecutor.execute(newer);
             }
         });
 	}
@@ -126,6 +126,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 	@Override
 	public void onRawCaptured(int id, byte[] grays) {
+		// debugging purpose (!)
 	}
 
 	private class MyExecutable extends Executable {
@@ -179,15 +180,16 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 				cache.onCaptureProcessed();
 			}
 		}
-	}
 
-	private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
-			MemByteBuffer compressed) {
-		final List<CompressorEngineListener> xlisteners = listeners.getListeners();
+		private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
+									  MemByteBuffer compressed) {
+			final List<CompressorEngineListener> xlisteners = listeners.getListeners();
 
-		for (final CompressorEngineListener xlistener : xlisteners) {
-			xlistener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
+			for (final CompressorEngineListener xlistener : xlisteners) {
+				xlistener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
+			}
 		}
+
 	}
 
 }
