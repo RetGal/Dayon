@@ -3,7 +3,7 @@ package mpo.dayon.common.squeeze;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
-public class NullTileCache extends TileCache {
+public class NullTileCache implements TileCache {
 	public NullTileCache() {
 		Log.info("NULL cache created");
 	}
@@ -15,6 +15,7 @@ public class NullTileCache extends TileCache {
 
 	@Override
 	public void add(CaptureTile tile) {
+		// noop
 	}
 
 	@Override
@@ -29,14 +30,17 @@ public class NullTileCache extends TileCache {
 
 	@Override
 	public void clear() {
+		// noop
 	}
 
 	@Override
 	public void onCaptureProcessed() {
+		// noop
 	}
 
 	@Override
 	public void clearHits() {
+		// noop
 	}
 
 	@Override

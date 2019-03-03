@@ -2,7 +2,7 @@ package mpo.dayon.common.squeeze;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
 
-public class NULL_Zipper extends Zipper {
+public class NULL_Zipper implements Zipper {
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) {
 		final MemByteBuffer zipped = new MemByteBuffer();

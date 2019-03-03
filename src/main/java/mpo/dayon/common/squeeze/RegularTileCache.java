@@ -7,7 +7,7 @@ import java.util.Map;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
-public class RegularTileCache extends TileCache {
+public class RegularTileCache implements TileCache {
 	/**
 	 * Maximum number of tiles; currently a tile is basically a 32x32 byte array
 	 * (i.e., 1K).

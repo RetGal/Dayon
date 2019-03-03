@@ -2,27 +2,25 @@ package mpo.dayon.common.squeeze;
 
 import mpo.dayon.common.capture.CaptureTile;
 
-public abstract class TileCache {
-	TileCache() {
-	}
+public interface TileCache {
 
-	public abstract int getCacheId(CaptureTile tile);
+	int getCacheId(CaptureTile tile);
 
-	public abstract void add(CaptureTile tile);
+	void add(CaptureTile tile);
 
-	public abstract CaptureTile get(int cachedId);
+	CaptureTile get(int cachedId);
 
-	public abstract int size();
+	int size();
 
-	public abstract void clear();
+	void clear();
 
 	/**
 	 * Called once a capture has been processed either in the assisted or in the
 	 * assistant side.
 	 */
-	public abstract void onCaptureProcessed();
+	void onCaptureProcessed();
 
-	public abstract void clearHits();
+	void clearHits();
 
-	public abstract int getHits();
+	int getHits();
 }

@@ -11,7 +11,7 @@ import mpo.dayon.common.log.Log;
 
 public class Compressor {
 	/**
-	 * NONE.
+	 * NONE. (testing only)
 	 */
 	// public static final Compressor NULL_COMPRESSOR = new
 	// Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new
@@ -45,24 +45,20 @@ public class Compressor {
 	}
 
 	public static Compressor get(CompressionMethod method) {
-		// if (NULL_COMPRESSOR.method == method)
-		// {
-		// return NULL_COMPRESSOR;
-		// }
 
-		if (ZIP_COMPRESSOR.method == method) {
-			return ZIP_COMPRESSOR;
+		switch (method) {
+			case ZIP:
+				return ZIP_COMPRESSOR;
+			case BZIP2:
+				return BZIP2_COMPRESSOR;
+			case LZMA:
+				return  LZMA_COMPRESSOR;
+//			case NULL:
+//				return NULL_COMPRESSOR;
+			default:
+				throw new IllegalArgumentException("Unsupported compressor configuration [" + method + "]!");
 		}
 
-		if (BZIP2_COMPRESSOR.method == method) {
-			return BZIP2_COMPRESSOR;
-		}
-
-		if (LZMA_COMPRESSOR.method == method) {
-			return LZMA_COMPRESSOR;
-		}
-
-		throw new RuntimeException("Unsupported compressor configuration [" + method + "]!");
 	}
 
 	public CompressionMethod getMethod() {
