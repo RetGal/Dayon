@@ -7,9 +7,8 @@ import java.util.List;
 public class NetworkClipboardFilesHelper {
 
     private List<File> files;
-    // ArrayList implements serializable, other List implementations might not..
-    private ArrayList<String> fileNames;
-    private ArrayList<Long> fileSizes;
+    private List<String> fileNames;
+    private List<Long> fileSizes;
     private int position;
     private long fileBytesLeft;
     private volatile long totalFileBytesLeft ;
@@ -31,19 +30,19 @@ public class NetworkClipboardFilesHelper {
         this.files = files;
     }
 
-    public ArrayList<String> getFileNames() {
+    public List<String> getFileNames() {
         return fileNames;
     }
 
-    public void setFileNames(ArrayList<String> fileNames) {
+    public void setFileNames(List<String> fileNames) {
         this.fileNames = fileNames;
     }
 
-    public ArrayList<Long> getFileSizes() {
+    public List<Long> getFileSizes() {
         return fileSizes;
     }
 
-    public void setFileSizes(ArrayList<Long> fileSizes) {
+    public void setFileSizes(List<Long> fileSizes) {
         this.fileSizes = fileSizes;
     }
 

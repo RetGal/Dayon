@@ -13,17 +13,16 @@ import static java.util.Arrays.copyOf;
 public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private final List<File> files;
-    // ArrayList implements serializable, other List implementations might not..
-    private final ArrayList<String> fileNames;
-    private final ArrayList<Long> fileSizes;
+    private final List<String> fileNames;
+    private final List<Long> fileSizes;
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
-        this.fileNames = (ArrayList<String>) files.stream().map(File::getName).collect(Collectors.toList());
-        this.fileSizes = (ArrayList<Long>) files.stream().map(File::length).collect(Collectors.toList());
+        this.fileNames = files.stream().map(File::getName).collect(Collectors.toList());
+        this.fileSizes = files.stream().map(File::length).collect(Collectors.toList());
         this.position = 0;
         this.remainingFileSize = files.get(0).length();
         this.remainingTotalFilesSize = remainingTotalFilesSize;
@@ -33,8 +32,8 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
         try {
             if (helper.getFileNames().isEmpty()) {
-                helper.setFileNames((ArrayList) in.readObject());
-                helper.setFileSizes((ArrayList) in.readObject());
+                helper.setFileNames((ArrayList<String>) in.readObject());
+                helper.setFileSizes((ArrayList<Long>) in.readObject());
                 helper.setFileBytesLeft(helper.getFileSizes().get(0));
                 helper.setTotalFileBytesLeft(helper.getFileSizes().stream().mapToInt(Long::intValue).sum());
             }
@@ -118,9 +117,9 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return files;
     }
 
-    public ArrayList<String> getFileNames() { return fileNames; }
+    public List<String> getFileNames() { return fileNames; }
 
-    public ArrayList<Long> getFileSizes() {
+    public List<Long> getFileSizes() {
         return fileSizes;
     }
 
@@ -145,8 +144,9 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     @Override
     public void marshall(ObjectOutputStream out) throws IOException {
         marshallEnum(out, NetworkMessageType.class, getType());
-        out.writeObject(this.fileNames);
-        out.writeObject(this.fileSizes);
+        // ArrayList implements serializable, other List implementations might not..
+        out.writeObject((ArrayList<String>) this.fileNames);
+        out.writeObject((ArrayList<Long>) this.fileSizes);
         for (File file : this.files) {
             sendFile(file, out);
         }
