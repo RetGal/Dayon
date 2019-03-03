@@ -1,6 +1,9 @@
 package mpo.dayon.common.gui.common;
 
 public abstract class ImageNames {
+	private ImageNames() {
+	}
+
 	public static final String APP = "app_32.png";
 
 	public static final String APP_LARGE = "app_48.png";
