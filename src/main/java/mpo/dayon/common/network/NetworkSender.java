@@ -45,10 +45,8 @@ public class NetworkSender {
         // THREAD = 1
         //
         // We're serializing access to the output stream (i.e., socket) (!)
-
         executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         executor.setThreadFactory(new DefaultThreadFactoryEx("NetworkSender"));
-
         semaphore = new Semaphore(queueSize, true);
     }
 
@@ -63,7 +61,6 @@ public class NetworkSender {
      */
     public void sendHello() {
         final Version version = Version.get();
-
         send(true, new NetworkHelloMessage(version.getMajor(), version.getMinor()));
     }
 
@@ -92,9 +89,7 @@ public class NetworkSender {
         if (!semaphore.tryAcquire()) {
             return false;
         }
-
         send(false, new NetworkMouseLocationMessage(location.x, location.y));
-
         return true;
     }
 
@@ -172,13 +167,10 @@ public class NetworkSender {
             if (acquireSemaphore) {
                 semaphore.acquire();
             }
-
-            try {
-                executor.execute(new MyExecutable(executor, semaphore, out, message));
-            } catch (RejectedExecutionException ex) {
-                semaphore.release(); // unlikely as we have an unbounded queue
-                // (!)
-            }
+            executor.execute(new MyExecutable(executor, semaphore, out, message));
+        } catch (RejectedExecutionException ex) {
+            semaphore.release(); // unlikely as we have an unbounded queue
+            // (!)
         } catch (InterruptedException ex) {
             FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is has been interrupted!", ex);
             Thread.currentThread().interrupt();
@@ -187,12 +179,10 @@ public class NetworkSender {
 
     private static class MyExecutable extends Executable {
         private final ObjectOutputStream out;
-
         private final NetworkMessage message;
 
         MyExecutable(ExecutorService executor, Semaphore semaphore, ObjectOutputStream out, NetworkMessage message) {
             super(executor, semaphore);
-
             this.out = out;
             this.message = message;
         }
@@ -203,6 +193,7 @@ public class NetworkSender {
             message.marshall(out);
             out.flush();
         }
+
     }
 
 }

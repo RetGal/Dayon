@@ -23,7 +23,6 @@ public class AssistantFrameConfiguration extends Configuration {
      */
     AssistantFrameConfiguration() {
         final Preferences prefs = Preferences.getPreferences();
-
         final int version = prefs.getIntPreference(PREF_VERSION, 0);
 
         if (!prefs.isNull() && version == 0) {
@@ -65,9 +64,7 @@ public class AssistantFrameConfiguration extends Configuration {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         final AssistantFrameConfiguration that = (AssistantFrameConfiguration) o;
-
         return dimension.getHeight() == that.dimension.getHeight() && dimension.getWidth() == that.dimension.getWidth() && position.getX() == that.position.getX() && position.getY() == that.position.getY();
     }
 

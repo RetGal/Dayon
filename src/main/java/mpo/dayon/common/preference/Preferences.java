@@ -62,7 +62,6 @@ public class Preferences {
 
         try {
             final Preferences xpreferences;
-
             final File file = SystemUtilities.getOrCreateAppFile(name + ".properties");
 
             if (file != null) {
@@ -76,13 +75,13 @@ public class Preferences {
                 Log.info("Preferences [null]");
                 xpreferences = NULL;
             }
-
             setupPersister(xpreferences);
-
-            return preferences = xpreferences;
+            preferences = xpreferences;
         } catch (Exception ex) {
             Log.warn("Preferences get/create error!", ex);
-            return preferences = NULL;
+            preferences = NULL;
+        } finally {
+            return preferences;
         }
     }
 
@@ -135,7 +134,6 @@ public class Preferences {
                     this.props.setProperty(pname, pvalue);
                 }
             }
-
             dirty = true;
         }
     }
@@ -156,14 +154,12 @@ public class Preferences {
 
                 try {
                     Properties cloned = null;
-
                     synchronized (preferences.cloneLOCK) {
                         if (preferences.dirty) {
                             cloned = (Properties) preferences.props.clone();
                             preferences.dirty = false;
                         }
                     }
-
                     if (cloned != null) {
                         Log.info("Writing the preferences [" + preferences.file.getAbsolutePath() + "]...");
                         try (PrintWriter out = new PrintWriter(preferences.file)) {
@@ -171,7 +167,6 @@ public class Preferences {
                             out.flush();
                         }
                     }
-
                 } catch (IOException ex) {
                     Log.warn("Preferences write error!", ex);
                     preferences.writeError.set(true);
