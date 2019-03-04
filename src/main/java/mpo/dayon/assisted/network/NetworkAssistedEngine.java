@@ -15,6 +15,7 @@ import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.*;
@@ -122,68 +123,65 @@ public class NetworkAssistedEngine extends NetworkEngine
             Log.debug("Received " + type.name());
 
             switch (type) {
-                case CAPTURE_CONFIGURATION: {
-                    final NetworkCaptureConfigurationMessage configuration = NetworkCaptureConfigurationMessage.unmarshall(in);
-                    captureConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, configuration);
+                case CAPTURE_CONFIGURATION:
+                    final NetworkCaptureConfigurationMessage captureConfigurationMessage = NetworkCaptureConfigurationMessage.unmarshall(in);
+                    captureConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, captureConfigurationMessage);
                     break;
-                }
 
-                case COMPRESSOR_CONFIGURATION: {
-                    final NetworkCompressorConfigurationMessage configuration = NetworkCompressorConfigurationMessage.unmarshall(in);
-                    compressorConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, configuration);
+                case COMPRESSOR_CONFIGURATION:
+                    final NetworkCompressorConfigurationMessage compressorConfigurationMessage = NetworkCompressorConfigurationMessage.unmarshall(in);
+                    compressorConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, compressorConfigurationMessage);
                     break;
-                }
 
-                case MOUSE_CONTROL: {
-                    final NetworkMouseControlMessage message = NetworkMouseControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(this, message);
+                case MOUSE_CONTROL:
+                    final NetworkMouseControlMessage mouseControlMessagee = NetworkMouseControlMessage.unmarshall(in);
+                    controlHandler.handleMessage(this, mouseControlMessagee);
                     break;
-                }
 
-                case KEY_CONTROL: {
-                    final NetworkKeyControlMessage message = NetworkKeyControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(this, message);
+                case KEY_CONTROL:
+                    final NetworkKeyControlMessage keyControlMessage = NetworkKeyControlMessage.unmarshall(in);
+                    controlHandler.handleMessage(this, keyControlMessage);
                     break;
-                }
 
-                case CLIPBOARD_REQUEST: {
+                case CLIPBOARD_REQUEST:
                     clipboardRequestHandler.handleClipboardRequest(this);
                     break;
-                }
 
-                case CLIPBOARD_TEXT: {
+                case CLIPBOARD_TEXT:
                     final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                     sender.ping();
                     setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
                     break;
-                }
 
-                case CLIPBOARD_FILES: {
+                case CLIPBOARD_FILES:
                     final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-                    filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()- 1L);
-
-                    if (filesHelper.isIdle()) {
-                        filesHelper = new NetworkClipboardFilesHelper();
-                        sender.ping();
-                        setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
-                    } else {
-                        filesHelper.setFiles(clipboardFiles.getFiles());
-                        filesHelper.setFileNames(clipboardFiles.getFileNames());
-                        filesHelper.setFileSizes(clipboardFiles.getFileSizes());
-                        filesHelper.setPosition(clipboardFiles.getPosition());
-                        filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
-                    }
+                    filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles);
                     break;
-                }
 
-                case PING: {
+                case PING:
                     break;
-                }
 
                 default:
-                    throw new IOException("Unsupported message type [" + type + "]!");
+                    throw new IllegalArgumentException("Unsupported message type [" + type + "]!");
             }
         }
+    }
+
+    @NotNull
+    private NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, NetworkClipboardFilesMessage clipboardFiles) {
+        filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
+        if (filesHelper.isIdle()) {
+            filesHelper = new NetworkClipboardFilesHelper();
+            sender.ping();
+            setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+        } else {
+            filesHelper.setFiles(clipboardFiles.getFiles());
+            filesHelper.setFileNames(clipboardFiles.getFileNames());
+            filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+            filesHelper.setPosition(clipboardFiles.getPosition());
+            filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
+        }
+        return filesHelper;
     }
 
     /**

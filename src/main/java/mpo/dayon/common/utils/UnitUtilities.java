@@ -1,7 +1,7 @@
 package mpo.dayon.common.utils;
 
 public abstract class UnitUtilities {
-    private final static String DEC_UNIT = "%.2f %s";
+    private static final String DEC_UNIT = "%.2f %s";
 
     public enum BitUnit {
         Kbit("Kbit", "kilo", Math.pow(10, 3)),
@@ -62,7 +62,7 @@ public abstract class UnitUtilities {
         return toByteSize(bytes, true);
     }
 
-    public static String toByteSize(double bytes, boolean withDecimal) {
+    static String toByteSize(double bytes, boolean withDecimal) {
         final ByteUnit[] units = ByteUnit.values();
 
         for (int idx = units.length - 1; idx >= 0; idx--) {
