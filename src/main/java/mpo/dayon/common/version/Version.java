@@ -9,20 +9,20 @@ public class Version {
 	private static final Version VERSION_NULL = new Version(null);
 	public static final String RELEASE_LOCATION = "https://github.com/retgal/dayon/releases/";
 
-	private final String version;
+	private final String numericVersion;
 	private String latestVersion;
 
 	private final int major;
 	private final int minor;
 
-	private Version(String version) {
-		this.version = version == null ? "0.0.0" : version;
+	private Version(String numericVersion) {
+		this.numericVersion = numericVersion == null ? "0.0.0" : numericVersion;
 
-		final int firstDotPos = this.version.indexOf('.');
-		final int lastDotPos = this.version.lastIndexOf('.');
+		final int firstDotPos = this.numericVersion.indexOf('.');
+		final int lastDotPos = this.numericVersion.lastIndexOf('.');
 
-		this.major = Integer.valueOf(this.version.substring(0, firstDotPos));
-		this.minor = Integer.valueOf(this.version.substring(firstDotPos + 1, lastDotPos));
+		this.major = Integer.valueOf(this.numericVersion.substring(0, firstDotPos));
+		this.minor = Integer.valueOf(this.numericVersion.substring(firstDotPos + 1, lastDotPos));
 	}
 
 	public static Version get() {
@@ -49,11 +49,11 @@ public class Version {
 
 	@Override
 	public String toString() {
-		return 'v' + version;
+		return 'v' + numericVersion;
 	}
 
 	boolean isLatestVersion() {
-		return getLatestRelease().equals(version);
+		return getLatestRelease().equals(numericVersion);
 	}
 
 	public String getLatestRelease() {
