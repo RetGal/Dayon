@@ -7,7 +7,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class TransferableFiles implements Transferable {
         final StringBuilder sb = new StringBuilder("copy\n");
         files.forEach(file -> sb.append(file.toURI()).append("\n"));
         sb.delete(sb.length() - 1, sb.length());
-        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
+        return new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override

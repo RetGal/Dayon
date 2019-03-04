@@ -49,10 +49,10 @@ public class Version {
 
 	@Override
 	public String toString() {
-		return "v" + version;
+		return 'v' + version;
 	}
 
-	public boolean isLatesVersion() {
+	boolean isLatestVersion() {
 		return getLatestRelease().equals(version);
 	}
 
@@ -71,7 +71,7 @@ public class Version {
 
 			String latestLocation = conn.getHeaderField("Location");
 			if (latestLocation != null) {
-				latestVersion = latestLocation.substring(latestLocation.lastIndexOf("v"));
+				latestVersion = latestLocation.substring(latestLocation.lastIndexOf('v'));
 			}
 		}
 		return latestVersion;

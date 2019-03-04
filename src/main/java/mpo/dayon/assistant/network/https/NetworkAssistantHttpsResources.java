@@ -25,6 +25,9 @@ public class NetworkAssistantHttpsResources {
 
     private static int prevPort = -1;
 
+    private NetworkAssistantHttpsResources() {
+    }
+
     public static void setup(String ipAddress, int port) {
         final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
         if (jnlp == null) {

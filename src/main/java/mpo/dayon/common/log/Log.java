@@ -17,6 +17,9 @@ public class Log {
 
 	private static LogAppender out;
 
+	private Log() {
+	}
+
 	static {
 		final String mode = SystemUtilities.getStringProperty(null, "dayon.log", "console");
 

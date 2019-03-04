@@ -77,10 +77,10 @@ public class Preferences {
             }
             setupPersister(xpreferences);
             preferences = xpreferences;
+            return preferences;
         } catch (Exception ex) {
             Log.warn("Preferences get/create error!", ex);
             preferences = NULL;
-        } finally {
             return preferences;
         }
     }

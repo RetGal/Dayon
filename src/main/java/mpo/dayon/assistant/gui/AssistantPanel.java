@@ -32,7 +32,7 @@ class AssistantPanel extends JPanel {
 
 	private int mouseY = -1;
 
-	public AssistantPanel() {
+	AssistantPanel() {
 		setOpaque(true);
 	}
 
@@ -58,18 +58,18 @@ class AssistantPanel extends JPanel {
 	/**
 	 * Called from within the de-compressor engine thread (!)
 	 */
-	public void onCaptureUpdated(final BufferedImage captureImage) {
+	void onCaptureUpdated(final BufferedImage captureImage) {
 		SwingUtilities.invokeLater(() -> {
-            final int captureWidth = captureImage.getWidth();
-            final int captureHeight = captureImage.getHeight();
+            final int captureImageWidth = captureImage.getWidth();
+            final int captureImageHeight = captureImage.getHeight();
 
-            if (AssistantPanel.this.captureWidth != captureWidth || AssistantPanel.this.captureHeight != captureHeight) {
+            if (AssistantPanel.this.captureWidth != captureImageWidth || AssistantPanel.this.captureHeight != captureImageHeight) {
                 AssistantPanel.this.captureImage = null;
 
-                AssistantPanel.this.captureWidth = captureWidth;
-                AssistantPanel.this.captureHeight = captureHeight;
+                AssistantPanel.this.captureWidth = captureImageWidth;
+                AssistantPanel.this.captureHeight = captureImageHeight;
 
-                final Dimension size = new Dimension(captureWidth, captureHeight);
+                final Dimension size = new Dimension(captureImageWidth, captureImageHeight);
 
                 setSize(size);
                 setPreferredSize(size);
@@ -81,7 +81,7 @@ class AssistantPanel extends JPanel {
         });
 	}
 
-	public void onMouseLocationUpdated(final int x, final int y) {
+	void onMouseLocationUpdated(final int x, final int y) {
 		SwingUtilities.invokeLater(() -> {
             if (AssistantPanel.this.mouseX != -1 && AssistantPanel.this.mouseY != -1) {
                 repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
