@@ -32,445 +32,445 @@ import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
-	
-	private final NetworkCaptureMessageHandler captureMessageHandler;
 
-	private final NetworkMouseLocationMessageHandler mouseMessageHandler;
+    private final NetworkCaptureMessageHandler captureMessageHandler;
 
-	private final ClipboardOwner clipboardOwner;
+    private final NetworkMouseLocationMessageHandler mouseMessageHandler;
 
-	private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>();
+    private final ClipboardOwner clipboardOwner;
 
-	private NetworkAssistantConfiguration configuration;
+    private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>();
 
-	/**
-	 * IN.
-	 */
-	private Thread receiver;
+    private NetworkAssistantConfiguration configuration;
 
-	/**
-	 * OUT.
-	 */
-	private NetworkSender sender;
+    /**
+     * IN.
+     */
+    private Thread receiver;
 
-	private ServerSocket server;
+    /**
+     * OUT.
+     */
+    private NetworkSender sender;
 
-	private Socket connection;
+    private ServerSocket server;
 
-	private final AtomicBoolean cancelling = new AtomicBoolean(false);
+    private Socket connection;
 
-	private NetworkAssistantHttpsEngine https;
+    private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-	private static final String LOCALHOST = "127.0.0.1";
+    private NetworkAssistantHttpsEngine https;
 
-	public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
-		this.captureMessageHandler = captureMessageHandler;
-		this.mouseMessageHandler = mouseMessageHandler;
-		this.clipboardOwner = clipboardOwner;
+    private static final String LOCALHOST = "127.0.0.1";
 
-		fireOnReady();
-	}
+    public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
+        this.captureMessageHandler = captureMessageHandler;
+        this.mouseMessageHandler = mouseMessageHandler;
+        this.clipboardOwner = clipboardOwner;
 
-	@Override
-	public void configure(NetworkAssistantConfiguration configuration) {
-		this.configuration = configuration;
-	}
+        fireOnReady();
+    }
 
-	@Override
-	public void reconfigure(NetworkAssistantConfiguration configuration) {
-		this.configuration = configuration;
-	}
+    @Override
+    public void configure(NetworkAssistantConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-	public void addListener(NetworkAssistantEngineListener listener) {
-		listeners.add(listener);
-	}
+    @Override
+    public void reconfigure(NetworkAssistantConfiguration configuration) {
+        this.configuration = configuration;
+    }
 
-	public String getLocalhost() {
-		return LOCALHOST;
-	}
+    public void addListener(NetworkAssistantEngineListener listener) {
+        listeners.add(listener);
+    }
 
-	public int getPort() {
-		return configuration.getPort();
-	}
+    public String getLocalhost() {
+        return LOCALHOST;
+    }
 
-	/**
-	 * Possibly called from a GUI action => do not block the AWT thread (!)
-	 */
-	@Override
-	public void start() {
-		if (cancelling.get() || receiver != null) {
-			return;
-		}
+    public int getPort() {
+        return configuration.getPort();
+    }
 
-		receiver = new Thread(new RunnableEx() {
-			@Override
-			protected void doRun() throws Exception {
-				NetworkAssistantEngine.this.receivingLoop();
-			}
-		}, "NetworkReceiver");
+    /**
+     * Possibly called from a GUI action => do not block the AWT thread (!)
+     */
+    @Override
+    public void start() {
+        if (cancelling.get() || receiver != null) {
+            return;
+        }
 
-		receiver.start();
-	}
+        receiver = new Thread(new RunnableEx() {
+            @Override
+            protected void doRun() throws Exception {
+                NetworkAssistantEngine.this.receivingLoop();
+            }
+        }, "NetworkReceiver");
 
-	/**
-	 * Possibly called from a GUI action => do not block the AWT thread (!)
-	 */
-	public void cancel() {
-		Log.info("Cancelling the network assistant engine...");
+        receiver.start();
+    }
 
-		cancelling.set(true);
+    /**
+     * Possibly called from a GUI action => do not block the AWT thread (!)
+     */
+    public void cancel() {
+        Log.info("Cancelling the network assistant engine...");
 
-		if (https != null) {
-			https.cancel();
-			https = null;
-		}
+        cancelling.set(true);
 
-		//noinspection StatementWithEmptyBody
-		while (server == null && connection == null) {
-			// waiting for Godot (jetty may not have finished starting up)
-		}
+        if (https != null) {
+            https.cancel();
+            https = null;
+        }
 
-		SystemUtilities.safeClose(server);
-		SystemUtilities.safeClose(connection);
-	}
+        //noinspection StatementWithEmptyBody
+        while (server == null && connection == null) {
+            // waiting for Godot (jetty may not have finished starting up)
+        }
 
-	private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
-		ObjectInputStream in = null;
-		ObjectOutputStream out = null;
+        SystemUtilities.safeClose(server);
+        SystemUtilities.safeClose(connection);
+    }
 
-		try {
-			final int port = getPort();
+    private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
+        ObjectInputStream in = null;
+        ObjectOutputStream out = null;
 
-			Log.info(String.format("HTTPS server [port:%d]", port));
-			fireOnHttpStarting(port);
+        try {
+            final int port = getPort();
 
-			NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
+            Log.info(String.format("HTTPS server [port:%d]", port));
+            fireOnHttpStarting(port);
 
-			https = new NetworkAssistantHttpsEngine(port);
-			https.start(); // blocking call until the HTTP-acceptor has been closed (!)
+            NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
 
-			Log.info(String.format("Dayon! server [port:%d]", port));
-			fireOnStarting(port);
+            https = new NetworkAssistantHttpsEngine(port);
+            https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
-			server = initServerSocket(port);
+            Log.info(String.format("Dayon! server [port:%d]", port));
+            fireOnStarting(port);
 
-			Log.info("Accepting ...");
-			fireOnAccepting(port);
+            server = initServerSocket(port);
 
-			if (https != null) {
-				https.onDayonAccepting();
-			}
+            Log.info("Accepting ...");
+            fireOnAccepting(port);
 
-			do {
-				SystemUtilities.safeClose(connection); // we might have refused the accepted connection (!)
+            if (https != null) {
+                https.onDayonAccepting();
+            }
 
-				connection = server.accept();
+            do {
+                SystemUtilities.safeClose(connection); // we might have refused the accepted connection (!)
+                connection = server.accept();
+                Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
+            } while (!fireOnAccepted(connection) && !cancelling.get());
 
-				Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-			} while (!fireOnAccepted(connection) && !cancelling.get());
+            server.close();
+            server = null;
 
-			server.close();
-			server = null;
+            out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 
-			out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+            sender = new NetworkSender(out);
+            sender.start(8);
+            sender.ping();
 
-			sender = new NetworkSender(out);
-			sender.start(8);
-			sender.ping();
+            in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
 
-			in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+            boolean introduced = false;
 
-			boolean introduced = false;
-
-			NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
+            NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement
             while (true) {
 
-				NetworkMessageType type;
-				if (filesHelper.isIdle()) {
-					NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
-					type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-				} else {
-					type = NetworkMessageType.CLIPBOARD_FILES;
-				}
-				Log.debug("Received " + type.name());
+                NetworkMessageType type;
+                if (filesHelper.isIdle()) {
+                    NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+                    type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+                } else {
+                    type = NetworkMessageType.CLIPBOARD_FILES;
+                }
+                Log.debug("Received " + type.name());
 
-				switch (type) {
-					case HELLO:
-						if (introduced) {
-							throw new IOException("Unexpected message [HELLO]!");
-						}
-	
-						if (https != null) {
-							https.cancel();
-							https = null;
-						}
-	
-						final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
-						fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
-	
-						final Version version = Version.get();
-						final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
-	
-						if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
-							throw new IOException("Version Error!");
-						}
-	
-						introduced = true;
-						fireOnConnected(connection);
-						break;
-	
-					case CAPTURE:
-						if (!introduced) {
-							throw new IOException("Unexpected message [CAPTURE]!");
-						}
-	
-						final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
-						fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
-	
-						captureMessageHandler.handleCapture(capture);
-						break;
-	
-					case MOUSE_LOCATION:
-						if (!introduced) {
-							throw new IOException("Unexpected message [MOUSE_LOCATION]!");
-						}
-	
-						final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
-						fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
-	
-						mouseMessageHandler.handleLocation(mouse);
-						break;
+                switch (type) {
+                    case HELLO:
+                        if (introduced) {
+                            throw new IOException("Unexpected message [HELLO]!");
+                        }
 
-					case CLIPBOARD_TEXT:
-						if (!introduced) {
-							throw new IOException("Unexpected message [CLIPBOARD_TEXT]!");
-						}
+                        if (https != null) {
+                            https.cancel();
+                            https = null;
+                        }
 
-						final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-						fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
-						fireOnClipboardReceived(0);
-						setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
-						break;
+                        final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
+                        fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
 
-					case CLIPBOARD_FILES:
-						if (!introduced) {
-							throw new IOException("Unexpected message [CLIPBOARD_FILES]!");
-						}
+                        final Version version = Version.get();
+                        final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
 
-						final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-						fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
-						filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1l);
+                        if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
+                            throw new IOException("Version Error!");
+                        }
 
-						if (filesHelper.isIdle()) {
-							fireOnClipboardReceived(clipboardFiles.getPosition() + 1);
-							filesHelper = new NetworkClipboardFilesHelper();
-							setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
-						} else {
-							filesHelper.setFiles(clipboardFiles.getFiles());
-							filesHelper.setFileNames(clipboardFiles.getFileNames());
-							filesHelper.setFileSizes(clipboardFiles.getFileSizes());
-							filesHelper.setPosition(clipboardFiles.getPosition());
-							filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
-						}
-						break;
+                        introduced = true;
+                        fireOnConnected(connection);
+                        break;
+
+                    case CAPTURE:
+                        if (!introduced) {
+                            throw new IOException("Unexpected message [CAPTURE]!");
+                        }
+
+                        final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
+                        fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
+
+                        captureMessageHandler.handleCapture(capture);
+                        break;
+
+                    case MOUSE_LOCATION:
+                        if (!introduced) {
+                            throw new IOException("Unexpected message [MOUSE_LOCATION]!");
+                        }
+
+                        final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
+                        fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
+
+                        mouseMessageHandler.handleLocation(mouse);
+                        break;
+
+                    case CLIPBOARD_TEXT:
+                        if (!introduced) {
+                            throw new IOException("Unexpected message [CLIPBOARD_TEXT]!");
+                        }
+
+                        final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                        fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
+                        fireOnClipboardReceived();
+                        setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                        break;
+
+                    case CLIPBOARD_FILES:
+                        if (!introduced) {
+                            throw new IOException("Unexpected message [CLIPBOARD_FILES]!");
+                        }
+
+                        final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
+                        fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
+                        filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
+
+                        if (filesHelper.isIdle()) {
+                            fireOnClipboardReceived();
+                            filesHelper = new NetworkClipboardFilesHelper();
+                            setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+                        } else {
+                            filesHelper.setFiles(clipboardFiles.getFiles());
+                            filesHelper.setFileNames(clipboardFiles.getFileNames());
+                            filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+                            filesHelper.setPosition(clipboardFiles.getPosition());
+                            filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
+                        }
+                        break;
 
                     case PING:
-						fireOnClipboardSent();
+                        fireOnClipboardSent();
                         break;
 
                     default:
-						throw new IOException("Unsupported message type [" + type + "]!");
-				}
-			}
-		} catch (IOException ex) {
-			
-			if (!cancelling.get()) {
-				Log.error("IO error (not cancelled)", ex);
-				fireOnIOError(ex);
-			} else {
-				Log.info("Stopped network receiver (cancelled)");
-			}
+                        throw new IOException("Unsupported message type [" + type + "]!");
+                }
+            }
+        } catch (IOException ex) {
+            if (!cancelling.get()) {
+                Log.error("IO error (not cancelled)", ex);
+                fireOnIOError(ex);
+            } else {
+                Log.info("Stopped network receiver (cancelled)");
+            }
+            closeConnection(in, out);
+        } catch (KeyManagementException | UnrecoverableKeyException e) {
+            Log.error("Fatal, can not init encryption", e);
+        }
 
-			if (sender != null) {
-				sender.cancel();
-			}
+        fireOnReady();
+    }
 
-			SystemUtilities.safeClose(in);
-			SystemUtilities.safeClose(out);
+    private void closeConnection(ObjectInputStream in, ObjectOutputStream out) {
+        if (sender != null) {
+            sender.cancel();
+        }
 
-			cancelling.set(false);
-			server = null;
-			connection = null;
-			receiver = null;
-		} catch (KeyManagementException | UnrecoverableKeyException e) {
-			Log.error("Fatal, can not init encryption", e);
-		}
+        SystemUtilities.safeClose(in);
+        SystemUtilities.safeClose(out);
 
-		fireOnReady();
-	}
+        cancelling.set(false);
+        server = null;
+        connection = null;
+        receiver = null;
+    }
 
-	private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
-		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-		keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+    private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 
-		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-		kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-		SSLContext sslContext = SSLContext.getInstance("TLS");
-		sslContext.init(kmf.getKeyManagers(), new TrustManager[] { new CustomTrustManager() }, new SecureRandom());
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+        kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
 
-		SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
-		return ssf.createServerSocket(port);
-	}
+        SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+        return ssf.createServerSocket(port);
+    }
 
-	private static boolean isProd(Version version, int major, int minor) {
-		return !(version.isNull() || (major == 0 && minor == 0));
-	}
+    private static boolean isProd(Version version, int major, int minor) {
+        return !(version.isNull() || (major == 0 && minor == 0));
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void sendCaptureConfiguration(CaptureEngineConfiguration configuration) {
-		if (sender != null) {
-			sender.sendCaptureConfiguration(configuration);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendCaptureConfiguration(CaptureEngineConfiguration configuration) {
+        if (sender != null) {
+            sender.sendCaptureConfiguration(configuration);
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void sendCompressorConfiguration(CompressorEngineConfiguration configuration) {
-		if (sender != null) {
-			sender.sendCompressorConfiguration(configuration);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendCompressorConfiguration(CompressorEngineConfiguration configuration) {
+        if (sender != null) {
+            sender.sendCompressorConfiguration(configuration);
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void sendMouseControl(NetworkMouseControlMessage message) {
-		if (sender != null) {
-			sender.sendMouseControl(message);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendMouseControl(NetworkMouseControlMessage message) {
+        if (sender != null) {
+            sender.sendMouseControl(message);
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void sendKeyControl(NetworkKeyControlMessage message) {
-		if (sender != null) {
-			sender.sendKeyControl(message);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendKeyControl(NetworkKeyControlMessage message) {
+        if (sender != null) {
+            sender.sendKeyControl(message);
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void sendRemoteClipboardRequest() {
-		if (sender != null) {
-			sender.sendRemoteClipboardRequest();
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendRemoteClipboardRequest() {
+        if (sender != null) {
+            sender.sendRemoteClipboardRequest();
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void setRemoteClipboardText(String text, int size) {
-		if (sender != null) {
-			sender.sendClipboardContentText(text, size);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void setRemoteClipboardText(String text, int size) {
+        if (sender != null) {
+            sender.sendClipboardContentText(text, size);
+        }
+    }
 
-	/**
-	 * Might be blocking if the sender queue is full (!)
-	 */
-	public void setRemoteClipboardFiles(List<File> files, long size) {
-		if (sender != null) {
-			sender.sendClipboardContentFiles(files, size);
-		}
-	}
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void setRemoteClipboardFiles(List<File> files, long size) {
+        if (sender != null) {
+            sender.sendClipboardContentFiles(files, size);
+        }
+    }
 
-	private void fireOnReady() {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnReady() {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onReady();
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onReady();
+        }
+    }
 
-	private void fireOnHttpStarting(int port) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnHttpStarting(int port) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onHttpStarting(port);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onHttpStarting(port);
+        }
+    }
 
-	private void fireOnStarting(int port) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnStarting(int port) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onStarting(port);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onStarting(port);
+        }
+    }
 
-	private void fireOnAccepting(int port) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnAccepting(int port) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onAccepting(port);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onAccepting(port);
+        }
+    }
 
-	private boolean fireOnAccepted(Socket connection) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private boolean fireOnAccepted(Socket connection) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			if (!xlistener.onAccepted(connection)) {
-				return false;
-			}
-		}
-		return true;
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            if (!xlistener.onAccepted(connection)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-	private void fireOnConnected(Socket connection) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnConnected(Socket connection) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onConnected(connection);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onConnected(connection);
+        }
+    }
 
-	private void fireOnByteReceived(int count) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnByteReceived(int count) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onByteReceived(count);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onByteReceived(count);
+        }
+    }
 
-	private void fireOnClipboardReceived(int count) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnClipboardReceived() {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onClipboardReceived(count);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onClipboardReceived();
+        }
+    }
 
-	private void fireOnClipboardSent() {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnClipboardSent() {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onClipboardSent();
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onClipboardSent();
+        }
+    }
 
-	private void fireOnIOError(IOException error) {
-		final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+    private void fireOnIOError(IOException error) {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
 
-		for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-			xlistener.onIOError(error);
-		}
-	}
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onIOError(error);
+        }
+    }
 }

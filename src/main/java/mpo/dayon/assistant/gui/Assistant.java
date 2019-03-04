@@ -782,8 +782,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onClipboardReceived(int count) {
-            frame.onClipboardReceived(count);
+        public void onClipboardReceived() {
+            frame.onClipboardReceived();
         }
 
         /**

@@ -58,7 +58,7 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
-    public AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
+    AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
                           Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
                           Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Counter<?>... counters) {
         this.configuration = configuration;
@@ -239,7 +239,7 @@ class AssistantFrame extends BaseFrame {
         return showSystemInfo;
     }
 
-    public void onReady() {
+    void onReady() {
         removeCenter();
 
         validate();
@@ -260,7 +260,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.setMessage(Babylon.translate("ready"));
     }
 
-    public void onHttpStarting(int port) {
+    void onHttpStarting(int port) {
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
 
@@ -269,25 +269,21 @@ class AssistantFrame extends BaseFrame {
 
         final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
 
-        JPanel pane = new JPanel() {
-
+        center = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-
                 final int x = (getWidth() - waiting.getIconWidth()) / 2;
                 final int y = (getHeight() - waiting.getIconHeight()) / 2;
-
                 g.drawImage(waiting.getImage(), x, y, this);
             }
         };
-        center = pane;
         add(center, BorderLayout.CENTER);
 
         statusBar.setMessage(Babylon.translate("https.ready", port));
     }
 
-    public void onStarting(int port) {
+    void onStarting(int port) {
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
 
@@ -297,7 +293,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.setMessage(Babylon.translate("starting", port));
     }
 
-    public void onAccepting(int port) {
+    void onAccepting(int port) {
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
 
@@ -307,7 +303,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.setMessage(Babylon.translate("accepting", port));
     }
 
-    public boolean onAccepted(Socket connection) {
+    boolean onAccepted(Socket connection) {
         if (JOptionPane.showConfirmDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress()),
                 Babylon.translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                 ImageUtilities.getOrCreateIcon(ImageNames.USERS)) != JOptionPane.OK_OPTION) {
@@ -330,23 +326,23 @@ class AssistantFrame extends BaseFrame {
         return true;
     }
 
-    public void onClipboardRequested() {
+    void onClipboardRequested() {
         remoteClipboardRequestAction.setEnabled(false);
     }
 
-    public void onClipboardSending() {
+    void onClipboardSending() {
         remoteClipboardSetAction.setEnabled(false);
     }
 
-    public void onClipboardSent() {
+    void onClipboardSent() {
         remoteClipboardSetAction.setEnabled(true);
     }
 
-    public void onClipboardReceived(int count) {
+    void onClipboardReceived() {
         remoteClipboardRequestAction.setEnabled(true);
     }
 
-    public void onIOError(IOException error) {
+    void onIOError(IOException error) {
         startAction.setEnabled(false);
         stopAction.setEnabled(false);
 
@@ -369,14 +365,14 @@ class AssistantFrame extends BaseFrame {
         }
     }
 
-    public void onCaptureUpdated(final BufferedImage captureImage) {
+    void onCaptureUpdated(final BufferedImage captureImage) {
         assistantPanel.onCaptureUpdated(captureImage);
     }
 
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    public void onMouseLocationUpdated(int x, int y) {
+    void onMouseLocationUpdated(int x, int y) {
         assistantPanel.onMouseLocationUpdated(x, y);
     }
 

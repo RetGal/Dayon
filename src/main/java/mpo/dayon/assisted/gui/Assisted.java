@@ -307,7 +307,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		try {
 			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				//noinspection unchecked,unchecked
+				// noinspection unchecked
 				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
 				long size = 0;
 				for (File file : files) {
@@ -316,7 +316,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 				Log.debug("Clipboard contains files with size: " + size);
 				engine.sendClipboardFiles(files, size);
 			} else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				//noinspection unchecked,unchecked
+				// noinspection unchecked
 				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
 				Log.debug("Clipboard contains text: " + text);
 				engine.sendClipboardText(text, text.getBytes().length);

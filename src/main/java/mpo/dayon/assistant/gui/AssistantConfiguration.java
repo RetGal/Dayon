@@ -4,6 +4,8 @@ import mpo.dayon.common.configuration.Configuration;
 import mpo.dayon.common.preference.Preferences;
 import mpo.dayon.common.utils.SystemUtilities;
 
+import static mpo.dayon.common.preference.Preferences.*;
+
 public class AssistantConfiguration extends Configuration {
 	private static final String PREF_VERSION = "assistant.version";
 
@@ -17,18 +19,16 @@ public class AssistantConfiguration extends Configuration {
 	 * @see mpo.dayon.common.preference.Preferences
 	 */
 	public AssistantConfiguration() {
-		final Preferences prefs = Preferences.getPreferences();
-
+		final Preferences prefs = getPreferences();
 		// Note: did not exist in version = 0 => no migration is required.
-
 		lookAndFeelClassName = prefs.getStringPreference(PREF_LOOK_AND_FEEL, SystemUtilities.getDefaultLookAndFeel());
 	}
 
-	public AssistantConfiguration(String lookAndFeelClassName) {
+	AssistantConfiguration(String lookAndFeelClassName) {
 		this.lookAndFeelClassName = lookAndFeelClassName;
 	}
 
-	public String getLookAndFeelClassName() {
+	String getLookAndFeelClassName() {
 		return lookAndFeelClassName;
 	}
 
@@ -40,9 +40,7 @@ public class AssistantConfiguration extends Configuration {
 		if (o == null || getClass() != o.getClass()) {
 			return false;
 		}
-
 		final AssistantConfiguration that = (AssistantConfiguration) o;
-
 		return lookAndFeelClassName.equals(that.lookAndFeelClassName);
 	}
 
@@ -57,13 +55,10 @@ public class AssistantConfiguration extends Configuration {
 	 */
 	@Override
     protected void persist(boolean clear) {
-		final Preferences.Props props = new Preferences.Props();
-		{
-			props.set(PREF_VERSION, String.valueOf(1));
-			props.set(PREF_LOOK_AND_FEEL, lookAndFeelClassName);
-		}
-
-		Preferences.getPreferences().update(props); // atomic (!)
+		final Props props = new Props();
+		props.set(PREF_VERSION, String.valueOf(1));
+		props.set(PREF_LOOK_AND_FEEL, lookAndFeelClassName);
+		getPreferences().update(props); // atomic (!)
 	}
 
 }

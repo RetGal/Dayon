@@ -160,7 +160,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 case CLIPBOARD_FILES: {
                     final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-                    filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()-1l);
+                    filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize()- 1L);
 
                     if (filesHelper.isIdle()) {
                         filesHelper = new NetworkClipboardFilesHelper();

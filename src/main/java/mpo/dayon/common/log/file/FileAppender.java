@@ -17,7 +17,7 @@ import mpo.dayon.common.log.console.ConsoleAppender;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class FileAppender extends LogAppender {
-	private static final long MAX_FILE_SIZE = 1024 * 1024l;
+	private static final long MAX_FILE_SIZE = 1024 * 1024L;
 
 	private static final int MAX_BACKUP_INDEX = 3;
 

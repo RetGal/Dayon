@@ -21,151 +21,139 @@ import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
 public class NetworkAssistantHttpsResources {
-	private static String prevIpAddress = null;
+    private static String prevIpAddress = null;
 
-	private static int prevPort = -1;
+    private static int prevPort = -1;
 
-	public static void setup(String ipAddress, int port) {
-		final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
-		if (jnlp == null) {
-			throw new RuntimeException("No JNLP directory!");
-		}
+    public static void setup(String ipAddress, int port) {
+        final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
+        if (jnlp == null) {
+            throw new RuntimeException("No JNLP directory!");
+        }
+        Log.info("[HTTPS] JNLP resource : [ip:" + ipAddress + "] [port:" + port + "] [path:" + jnlp.getAbsolutePath() + "]");
 
-		Log.warn("[HTTPS] JNLP resource : [ip:" + ipAddress + "] [port:" + port + "] [path:" + jnlp.getAbsolutePath() + "]");
+        if (ipAddress.equals(prevIpAddress) && port == prevPort) {
+            Log.debug("[HTTPS] JNLP resource : unchanged");
+            return;
+        }
 
-		if (ipAddress.equals(prevIpAddress) && port == prevPort) {
-			Log.warn("[HTTPS] JNLP resource : unchanged");
-			return;
-		}
+        try {
+            createHtml(jnlp);
+            createFavicon(jnlp);
+            final String jarname = createJarName();
+            createJnlp(ipAddress, port, jnlp, jarname);
+            final File jarfile = new File(jnlp, jarname);
 
-		try {
+            if (!jarfile.exists()) {
+                copyJar(jarname, jarfile);
+            } else {
+                Log.debug("[HTTPS] JNLP resource : " + jarname + " [ unchanged ]");
+            }
 
-            Log.warn("[HTTPS] JNLP resource : dayon.html");
-			{
-				final int major = Version.get().getMajor();
-				final int minor = Version.get().getMinor();
+            prevIpAddress = ipAddress;
+            prevPort = port;
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
-				final String clickMe = Babylon.translate("clickMe");
-				final String clickMeMsg = Babylon.translate("clickMe.msg");
+    private static void copyJar(String jarname, File jarfile) throws IOException {
+        Log.debug("[HTTPS] JNLP resource : " + jarname);
+        final InputStream content = createJarInputStream("dayon.jar");
+        try (final OutputStream out = new FileOutputStream(jarfile)) {
+            final byte[] buffer = new byte[4096];
+            int count;
+            while ((count = content.read(buffer)) != -1) {
+                out.write(buffer, 0, count);
+            }
+            out.flush();
+        }
+    }
 
-				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.html");
-				final BufferedReader in = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8));
+    private static void createJnlp(String ipAddress, int port, File jnlp, String jarname) throws IOException {
+        Log.debug("[HTTPS] JNLP resource : dayon.jnlp");
+        final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.jnlp");
+        final BufferedReader in = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8));
 
-				final String sb;
+        final String sb;
+        sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
+        in.close();
 
-				sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
+        String html = sb;
+        html = html.replace("${jarname}", jarname);
+        html = html.replace("${ipAddress}", ipAddress);
+        html = html.replace("${port}", String.valueOf(port));
 
-				in.close();
+        final PrintWriter printer = new PrintWriter(new File(jnlp, "dayon.jnlp"));
+        printer.print(html);
+        printer.flush();
+        printer.close();
+    }
 
-				String html = sb;
+    private static void createFavicon(File jnlp) throws IOException {
+        Log.debug("[HTTPS] JNLP resource : favicon.ico");
+        final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("favicon.ico");
+        try (final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"))) {
+            final byte[] buffer = new byte[4096];
+            int count;
+            while ((count = content.read(buffer)) != -1) {
+                out.write(buffer, 0, count);
+            }
+            out.flush();
+        }
+    }
 
-				html = html.replace("${major}", String.valueOf(major));
-				html = html.replace("${minor}", String.valueOf(minor));
+    private static void createHtml(File jnlp) throws IOException {
+        Log.debug("[HTTPS] JNLP resource : dayon.html");
+        final int major = Version.get().getMajor();
+        final int minor = Version.get().getMinor();
 
-				html = html.replace("${clickMe}", clickMe);
-				html = html.replace("${clickMeMsg}", clickMeMsg);
+        final String clickMe = Babylon.translate("clickMe");
+        final String clickMeMsg = Babylon.translate("clickMe.msg");
 
-				final PrintWriter printer = new PrintWriter(new File(jnlp, "dayon.html"));
-				printer.print(html);
-				printer.flush();
-				printer.close();
-			}
+        final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.html");
+        final BufferedReader in = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8));
 
-			Log.warn("[HTTPS] JNLP resource : favicon.ico");
-			{
-				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("favicon.ico");
-				try (final OutputStream out = new FileOutputStream(new File(jnlp, "favicon.ico"))) {
+        final String sb;
 
-					final byte[] buffer = new byte[4096];
+        sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
 
-					int count;
-					while ((count = content.read(buffer)) != -1) {
-						out.write(buffer, 0, count);
-					}
+        in.close();
 
-					out.flush();
-				}
-			}
+        String html = sb;
 
-			final String jarname = createJarName();
+        html = html.replace("${major}", String.valueOf(major));
+        html = html.replace("${minor}", String.valueOf(minor));
 
-			Log.warn("[HTTPS] JNLP resource : dayon.jnlp");
-			{
-				final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.jnlp");
-				final BufferedReader in = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8));
+        html = html.replace("${clickMe}", clickMe);
+        html = html.replace("${clickMeMsg}", clickMeMsg);
 
-				final String sb;
+        final PrintWriter printer = new PrintWriter(new File(jnlp, "dayon.html"));
+        printer.print(html);
+        printer.flush();
+        printer.close();
+    }
 
-				sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
+    private static String createJarName() {
+        final int major = Version.get().getMajor();
+        final int minor = Version.get().getMinor();
+        return "dayon." + major + "." + minor + ".jar";
+    }
 
-				in.close();
+    /**
+     * Handle a run from within IDEA (i.e., classes instead of JARs).
+     */
+    private static InputStream createJarInputStream(String path) throws FileNotFoundException {
+        @Nullable final File root = SystemUtilities.getDayonJarPath();
+        if (root == null) {
+            throw new IllegalArgumentException("Could not find the path [" + path + "]!");
+        }
 
-				String html = sb;
-
-				html = html.replace("${jarname}", jarname);
-
-				html = html.replace("${ipAddress}", ipAddress);
-				html = html.replace("${port}", String.valueOf(port));
-
-				final PrintWriter printer = new PrintWriter(new File(jnlp, "dayon.jnlp"));
-				printer.print(html);
-				printer.flush();
-				printer.close();
-			}
-
-			final File jarfile = new File(jnlp, jarname);
-			if (!jarfile.exists()) {
-				Log.warn("[HTTPS] JNLP resource : " + jarname);
-				{
-					final InputStream content = createJarInputStream("dayon.jar");
-					try (final OutputStream out = new FileOutputStream(jarfile)) {
-
-						final byte[] buffer = new byte[4096];
-
-						int count;
-						while ((count = content.read(buffer)) != -1) {
-							out.write(buffer, 0, count);
-						}
-
-						out.flush();
-					}
-				}
-			} else {
-				Log.warn("[HTTPS] JNLP resource : " + jarname + " [ unchanged ]");
-			}
-
-			prevIpAddress = ipAddress;
-			prevPort = port;
-		} catch (IOException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-
-	private static String createJarName() {
-		final int major = Version.get().getMajor();
-		final int minor = Version.get().getMinor();
-
-		return "dayon." + major + "." + minor + ".jar";
-	}
-
-	/**
-	 * Handle a run from within IDEA (i.e., classes instead of JARs).
-	 */
-	private static InputStream createJarInputStream(String path) throws FileNotFoundException {
-		@Nullable
-		final File root = SystemUtilities.getDayonJarPath();
-
-		if (root == null) {
-			throw new RuntimeException("Could not find the path [" + path + "]!");
-		}
-
-		final File file = new File(root, path);
-
-		if (!file.exists()) {
-			throw new RuntimeException("Path [" + path + "] not found [" + file.getAbsolutePath() + "]!");
-		}
-
-		return new FileInputStream(file);
-	}
+        final File file = new File(root, path);
+        if (!file.exists()) {
+            throw new IllegalArgumentException("Path [" + path + "] not found [" + file.getAbsolutePath() + "]!");
+        }
+        return new FileInputStream(file);
+    }
 
 }
