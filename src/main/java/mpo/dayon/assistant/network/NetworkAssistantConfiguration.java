@@ -61,17 +61,14 @@ public class NetworkAssistantConfiguration extends Configuration {
 	@Override
     protected void persist(boolean clear) {
 		final Preferences.Props props = new Preferences.Props();
+		props.set(PREF_VERSION, String.valueOf(1));
+		props.set(PREF_PORT_NUMBER, String.valueOf(port));
+
+		if (clear) // migration support (!)
 		{
-			props.set(PREF_VERSION, String.valueOf(1));
-			props.set(PREF_PORT_NUMBER, String.valueOf(port));
-
-			if (clear) // migration support (!)
-			{
-				props.clear("assistantPortNumber");
-				props.clear("assistantIpAddress");
-			}
+			props.clear("assistantPortNumber");
+			props.clear("assistantIpAddress");
 		}
-
 		Preferences.getPreferences().update(props); // atomic (!)
 	}
 

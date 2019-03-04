@@ -4,14 +4,14 @@ public abstract class UnitUtilities {
     private static final String DEC_UNIT = "%.2f %s";
 
     public enum BitUnit {
-        Kbit("Kbit", "kilo", Math.pow(10, 3)),
-        Mbit("Mbit", "mega", Math.pow(10, 6)),
-        Gbit("Gbit", "giga", Math.pow(10, 9)),
-        Tbit("Tbit", "tera", Math.pow(10, 12)),
-        Pbit("Pbit", "peta", Math.pow(10, 15)),
-        Ebit("Ebit", "exa", Math.pow(10, 18)),
-        Zbit("Zbit", "zetta", Math.pow(10, 21)),
-        Ybit("Ybit", "yotta", Math.pow(10, 24));
+        KBIT("Kbit", "kilo", Math.pow(10, 3)),
+        MBIT("Mbit", "mega", Math.pow(10, 6)),
+        GBIT("Gbit", "giga", Math.pow(10, 9)),
+        TBIT("Tbit", "tera", Math.pow(10, 12)),
+        PBIT("Pbit", "peta", Math.pow(10, 15)),
+        EBIT("Ebit", "exa", Math.pow(10, 18)),
+        ZBIT("Zbit", "zetta", Math.pow(10, 21)),
+        YBIT("Ybit", "yotta", Math.pow(10, 24));
 
         private final String symbol;
         private final String name;
