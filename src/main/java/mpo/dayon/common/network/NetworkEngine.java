@@ -1,6 +1,8 @@
 package mpo.dayon.common.network;
 
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.network.message.NetworkClipboardFilesHelper;
+import mpo.dayon.common.network.message.NetworkClipboardFilesMessage;
 import mpo.dayon.common.utils.TransferableFiles;
 
 import java.awt.*;
@@ -25,10 +27,25 @@ public abstract class NetworkEngine {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
 	}
 
-	protected void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
+	private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
 		Log.debug("setClipboardContents " + files.toString());
 		TransferableFiles transferableFiles = new TransferableFiles(files);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
+	}
+
+	protected NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, NetworkClipboardFilesMessage clipboardFiles, ClipboardOwner clipboardOwner) {
+		filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
+		if (filesHelper.isIdle()) {
+			filesHelper = new NetworkClipboardFilesHelper();
+			setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
+		} else {
+			filesHelper.setFiles(clipboardFiles.getFiles());
+			filesHelper.setFileNames(clipboardFiles.getFileNames());
+			filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+			filesHelper.setPosition(clipboardFiles.getPosition());
+			filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
+		}
+		return filesHelper;
 	}
 
 }

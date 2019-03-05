@@ -15,7 +15,6 @@ import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.*;
@@ -149,13 +148,16 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 case CLIPBOARD_TEXT:
                     final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-                    sender.ping();
                     setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                    sender.ping();
                     break;
 
                 case CLIPBOARD_FILES:
                     final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-                    filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles);
+                    filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
+                    if (filesHelper.isIdle()) {
+                        sender.ping();
+                    }
                     break;
 
                 case PING:
@@ -165,23 +167,6 @@ public class NetworkAssistedEngine extends NetworkEngine
                     throw new IllegalArgumentException("Unsupported message type [" + type + "]!");
             }
         }
-    }
-
-    @NotNull
-    private NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, NetworkClipboardFilesMessage clipboardFiles) {
-        filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
-        if (filesHelper.isIdle()) {
-            filesHelper = new NetworkClipboardFilesHelper();
-            sender.ping();
-            setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
-        } else {
-            filesHelper.setFiles(clipboardFiles.getFiles());
-            filesHelper.setFileNames(clipboardFiles.getFileNames());
-            filesHelper.setFileSizes(clipboardFiles.getFileSizes());
-            filesHelper.setPosition(clipboardFiles.getPosition());
-            filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
-        }
-        return filesHelper;
     }
 
     /**

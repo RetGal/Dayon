@@ -200,21 +200,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                             throw new IOException("Unexpected message [HELLO]!");
                         }
 
-                        if (https != null) {
-                            https.cancel();
-                            https = null;
-                        }
-
-                        final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
-                        fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
-
-                        final Version version = Version.get();
-                        final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
-
-                        if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
-                            throw new IOException("Version Error!");
-                        }
-
+                        introduce(in);
                         introduced = true;
                         fireOnConnected(connection);
                         break;
@@ -226,7 +212,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                         final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
                         fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
-
                         captureMessageHandler.handleCapture(capture);
                         break;
 
@@ -237,7 +222,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                         final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
                         fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
-
                         mouseMessageHandler.handleLocation(mouse);
                         break;
 
@@ -248,8 +232,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                         final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                         fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
-                        fireOnClipboardReceived();
                         setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                        fireOnClipboardReceived();
                         break;
 
                     case CLIPBOARD_FILES:
@@ -259,18 +243,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                         final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
                         fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
-                        filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
-
+                        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
                         if (filesHelper.isIdle()) {
                             fireOnClipboardReceived();
-                            filesHelper = new NetworkClipboardFilesHelper();
-                            setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
-                        } else {
-                            filesHelper.setFiles(clipboardFiles.getFiles());
-                            filesHelper.setFileNames(clipboardFiles.getFileNames());
-                            filesHelper.setFileSizes(clipboardFiles.getFileSizes());
-                            filesHelper.setPosition(clipboardFiles.getPosition());
-                            filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
                         }
                         break;
 
@@ -295,6 +270,23 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
 
         fireOnReady();
+    }
+
+    private void introduce(ObjectInputStream in) throws IOException {
+        if (https != null) {
+            https.cancel();
+            https = null;
+        }
+
+        final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
+        fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
+
+        final Version version = Version.get();
+        final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
+
+        if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
+            throw new IOException("Version Error!");
+        }
     }
 
     private void closeConnection(ObjectInputStream in, ObjectOutputStream out) {
