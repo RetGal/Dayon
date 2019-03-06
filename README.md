@@ -12,7 +12,7 @@ It consists of two parts - one for the assistant and one for the assisted. Both 
 - encrypted communication (TLS)
 - cross-platform
 - open source
-- free
+- free (as in free beer)
 
 ## History
 
@@ -22,11 +22,11 @@ With his permission I moved the code base to GitHub, where it can easier be main
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.7.1 - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.7.2 - released more than ten years after the initial release.
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
-It is most likely the very last version which is boundled with a Java 8 based JRE.
+It is most likely the very last version which is bundled with a Java 8 based JRE.
 
 ## Website
 
@@ -41,3 +41,27 @@ It is most likely the very last version which is boundled with a Java 8 based JR
 ## Trivia
 
 Dayon! means "Come in!" in Visayas - a local Philippine dialect. 
+
+## Developers
+
+The project can be built with Maven:
+
+``mvn clean package``
+
+or with Ant:
+
+``ant clean build``
+
+Have a look at ``pom.xml`` or ``build.xml`` for details and advanced options.
+ 
+## Contributors
+ 
+Any feedback and contributions are very welcome. 
+
+You don't have to be a programmer!
+
+For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/java/mpo/dayon/common/babylon/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/java/mpo/dayon/common/babylon/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
+
+Some additional testing, especially on Mac OS would also be highly appreciated.
+
+ 
