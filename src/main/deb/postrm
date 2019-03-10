@@ -1,2 +1,2 @@
-rm -f /usr/share/applications/dayon_assistant.sh
-rm -f /usr/share/applications/dayon_assisted.sh
+rm -f /usr/share/applications/dayon_assistant.desktop
+rm -f /usr/share/applications/dayon_assisted.desktop
