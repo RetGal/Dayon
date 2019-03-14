@@ -32,16 +32,14 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
-		marshallEnum(out, Gray8Bits.class, configuration.getCaptureQuantization());
+		marshallEnum(out, getType());
+		marshallEnum(out, configuration.getCaptureQuantization());
 		out.writeInt(configuration.getCaptureTick());
 	}
 
 	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
 		final int tick = in.readInt();
-
 		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization));
 	}
 

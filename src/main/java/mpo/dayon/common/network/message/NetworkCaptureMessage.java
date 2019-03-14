@@ -66,20 +66,15 @@ public class NetworkCaptureMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
+		marshallEnum(out, getType());
 		// debugging info - might need it before decompressing the payload (!)
 		out.writeInt(id);
-
 		// allows for decompressing on the other side ...
-		marshallEnum(out, CompressionMethod.class, compressionMethod);
-
+		marshallEnum(out, compressionMethod);
 		out.writeByte(compressionConfiguration != null ? 1 : 0);
-
 		if (compressionConfiguration != null) {
 			new NetworkCompressorConfigurationMessage(compressionConfiguration).marshall(out);
 		}
-
 		out.writeInt(payload.size());
 		out.write(payload.getInternal(), 0, payload.size());
 	}
@@ -100,14 +95,11 @@ public class NetworkCaptureMessage extends NetworkMessage {
 
 		final int len = in.readInt();
 		final byte[] data = new byte[len];
-
 		int offset = 0;
 		int count;
-
 		while ((count = in.read(data, offset, data.length - offset)) > 0) {
 			offset += count;
 		}
-
 		return new NetworkCaptureMessage(id, compressionMethod, compressionConfiguration, new MemByteBuffer(data));
 	}
 

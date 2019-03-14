@@ -36,8 +36,7 @@ public class NetworkHelloMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
+		marshallEnum(out, getType());
 		out.writeInt(major);
 		out.writeInt(minor);
 	}
@@ -45,7 +44,6 @@ public class NetworkHelloMessage extends NetworkMessage {
 	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
-
 		return new NetworkHelloMessage(major, minor);
 	}
 

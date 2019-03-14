@@ -39,8 +39,7 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
+		marshallEnum(out, getType());
 		out.writeShort(x);
 		out.writeShort(y);
 	}
@@ -48,7 +47,6 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 	public static NetworkMouseLocationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int x = in.readShort();
 		final int y = in.readShort();
-
 		return new NetworkMouseLocationMessage(x, y);
 	}
 

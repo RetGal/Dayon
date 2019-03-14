@@ -143,7 +143,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     @Override
     public void marshall(ObjectOutputStream out) throws IOException {
-        marshallEnum(out, NetworkMessageType.class, getType());
+        marshallEnum(out, getType());
         // ArrayList implements serializable, other List implementations might not..
         out.writeObject((ArrayList<String>) this.fileNames);
         out.writeObject((ArrayList<Long>) this.fileSizes);

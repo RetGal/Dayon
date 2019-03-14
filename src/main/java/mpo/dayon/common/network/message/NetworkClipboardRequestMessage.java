@@ -18,7 +18,7 @@ public class NetworkClipboardRequestMessage extends NetworkMessage {
 
     @Override
     public void marshall(ObjectOutputStream out) throws IOException {
-        marshallEnum(out, NetworkMessageType.class, getType());
+        marshallEnum(out, getType());
     }
 
     @Override

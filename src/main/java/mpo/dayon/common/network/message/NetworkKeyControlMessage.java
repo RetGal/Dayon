@@ -58,8 +58,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
+		marshallEnum(out, getType());
 		out.writeInt(info);
 		out.writeInt(keycode);
 		out.writeChar(keychar);
@@ -69,7 +68,6 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		final int info = in.readInt();
 		final int keycode = in.readInt();
 		final char keychar = in.readChar();
-
 		return new NetworkKeyControlMessage(info, keycode, keychar);
 	}
 
@@ -85,7 +83,6 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 		if (isReleased()) {
 			return "RELEASED";
 		}
-
 		return "";
 	}
 

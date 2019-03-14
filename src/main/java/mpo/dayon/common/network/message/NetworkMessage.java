@@ -24,7 +24,6 @@ public abstract class NetworkMessage {
 
 	public static void unmarshallMagicNumber(ObjectInputStream in) throws IOException {
 		final int magicNumber = in.readByte();
-
 		if (magicNumber != NetworkMessage.MAGIC_NUMBER) {
 			if (magicNumber == 0) // possibly the v.0 HELLO message ...
 			{
@@ -34,22 +33,19 @@ public abstract class NetworkMessage {
 		}
 	}
 
-	static <T extends Enum<T>> void marshallEnum(ObjectOutputStream out, Class<T> enumClass, Enum<T> value) throws IOException {
+	static <T extends Enum<T>> void marshallEnum(ObjectOutputStream out, Enum<T> value) throws IOException {
 		out.write(value.ordinal());
 	}
 
 	public static <T extends Enum<T>> T unmarshallEnum(ObjectInputStream in, Class<T> enumClass) throws IOException {
 		final byte ordinal = in.readByte();
-
 		final T[] xenums = enumClass.getEnumConstants();
-
 		for (final T xenum : xenums) {
 			if (xenum.ordinal() == ordinal) {
 				return xenum;
 			}
 		}
-
-		throw new RuntimeException("Unknown " + enumClass.getSimpleName() + " [" + ordinal + "] enum!");
+		throw new IllegalArgumentException("Unknown " + enumClass.getSimpleName() + " [" + ordinal + "] enum!");
 	}
 
 	@Override

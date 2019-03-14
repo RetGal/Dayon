@@ -103,13 +103,10 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, NetworkMessageType.class, getType());
-
+		marshallEnum(out, getType());
 		out.writeShort(x);
 		out.writeShort(y);
-
 		out.writeInt(info);
-
 		if (isWheel()) {
 			out.writeInt(rotations);
 		}
@@ -118,9 +115,7 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 	public static NetworkMouseControlMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int x = in.readShort();
 		final int y = in.readShort();
-
 		final int info = in.readInt();
-
 		final int rotations;
 
 		if ((info & WHEEL) == WHEEL) {
@@ -128,7 +123,6 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		} else {
 			rotations = 0;
 		}
-
 		return new NetworkMouseControlMessage(x, y, info, rotations);
 	}
 
@@ -143,11 +137,9 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		if (isPressed()) {
 			return "PRESSED";
 		}
-
 		if (isReleased()) {
 			return "RELEASED";
 		}
-
 		return "";
 	}
 
@@ -155,15 +147,12 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 		if (isButton1()) {
 			return "BUTTON1";
 		}
-
 		if (isButton2()) {
 			return "BUTTON2";
 		}
-
 		if (isButton3()) {
 			return "BUTTON3";
 		}
-
 		return "";
 	}
 }
