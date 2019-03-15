@@ -38,50 +38,40 @@ public class NetworkAssistantHttpsEngine {
 	private MyHttpHandler handler;
 
 	public NetworkAssistantHttpsEngine(int port) throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-
 		this.server = new Server();
-
 		HttpConfiguration httpsConfig = new HttpConfiguration();
 		httpsConfig.setSecureScheme("https");
 		httpsConfig.addCustomizer(new SecureRequestCustomizer());
 
 		this.acceptor = new MyServerConnector(server, createSslContextFactory(), port);
 		this.acceptor.addConnectionFactory(new HttpConnectionFactory(httpsConfig));
-
 		this.server.setConnectors(new Connector[] { this.acceptor });
-
 		final HandlerList httpHandlers = getHandlerList();
-
 		this.server.setHandler(httpHandlers);
 	}
 
 	@NotNull
 	private HandlerList getHandlerList() {
 		final HandlerList httpHandlers = new HandlerList();
-
 		final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
 		if (jnlp == null) {
-			throw new RuntimeException("No JNLP directory!");
+			throw new IllegalStateException("No JNLP directory!");
 		}
 		handler = new MyHttpHandler(jnlp.getAbsolutePath());
 		httpHandlers.addHandler(handler);
-
 		return httpHandlers;
 	}
 
 	public void start() throws IOException {
 		Log.info("[HTTPS] The engine is starting...");
-
 		try {
 			server.start();
 		} catch (IOException ex) {
 				throw ex;
 		} catch (Exception ex) {
-			throw new RuntimeException(ex); // dunno (!)
+			throw new IllegalStateException(ex); // dunno (!)
 		}
-
 		Log.info("[HTTPS] The engine is waiting on its acceptor...");
-
 		synchronized (acceptor.acceptlock) {
 			while (!acceptor.acceptStopped) {
 				try {
@@ -92,7 +82,6 @@ public class NetworkAssistantHttpsEngine {
 				}
 			}
 		}
-
 		Log.info("[HTTPS] The engine is done - bye!");
 	}
 
@@ -106,7 +95,6 @@ public class NetworkAssistantHttpsEngine {
 
 	public void onDayonAccepting() {
 		Log.info("[HTTPS] engine.onDayonAccepting() received");
-
 		synchronized (handler.dayonLock) {
 			handler.dayonStarted = true;
 			handler.dayonLock.notifyAll();
@@ -127,7 +115,6 @@ public class NetworkAssistantHttpsEngine {
 
 	private class MyServerConnector extends ServerConnector {
 		private final Object acceptlock = new Object();
-
 		private boolean acceptClosed;
 		private boolean acceptStopped;
 
@@ -170,7 +157,6 @@ public class NetworkAssistantHttpsEngine {
 	 */
 	private class MyHttpHandler extends ResourceHandler {
 		private final Object dayonLock = new Object();
-
 		private boolean dayonStarted;
 
 		MyHttpHandler(String root) {
@@ -183,17 +169,14 @@ public class NetworkAssistantHttpsEngine {
 
 			if (target.contains("/hello")) {
 				Log.info("[HTTPS] The handler is processing the /hello request");
-
 				// That keeps all the connections open => then I can reply to
 				// this request ...
 				acceptor.close();
-
 				// Wait for the start of the Dayon! acceptor before replying to
 				// this HTTP request
 				// (I want to ensure we're now ready to receive a Dayon! message
 				// coming from the assisted side).
 				Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
-
 				synchronized (dayonLock) {
 					while (!dayonStarted) {
 						try {
@@ -204,11 +187,9 @@ public class NetworkAssistantHttpsEngine {
 						}
 					}
 				}
-
 				// Currently do not care about the actual response (!)
 				Log.info("[HTTPS] The handler is replying to the /hello message [404]...");
 			}
-
 			super.handle(target, baseRequest, request, response);
 			Log.info("[HTTPS] Response \n-----\n" + response + "\n-----");
 		}

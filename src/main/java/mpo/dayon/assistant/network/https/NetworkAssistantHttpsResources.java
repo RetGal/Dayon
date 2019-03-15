@@ -31,32 +31,28 @@ public class NetworkAssistantHttpsResources {
     public static void setup(String ipAddress, int port) {
         final File jnlp = SystemUtilities.getOrCreateAppDirectory("jnlp");
         if (jnlp == null) {
-            throw new RuntimeException("No JNLP directory!");
+            throw new IllegalStateException("No JNLP directory!");
         }
         Log.info("[HTTPS] JNLP resource : [ip:" + ipAddress + "] [port:" + port + "] [path:" + jnlp.getAbsolutePath() + "]");
-
         if (ipAddress.equals(prevIpAddress) && port == prevPort) {
             Log.debug("[HTTPS] JNLP resource : unchanged");
             return;
         }
-
         try {
             createHtml(jnlp);
             createFavicon(jnlp);
             final String jarname = createJarName();
             createJnlp(ipAddress, port, jnlp, jarname);
             final File jarfile = new File(jnlp, jarname);
-
             if (!jarfile.exists()) {
                 copyJar(jarname, jarfile);
             } else {
                 Log.debug("[HTTPS] JNLP resource : " + jarname + " [ unchanged ]");
             }
-
             prevIpAddress = ipAddress;
             prevPort = port;
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new IllegalArgumentException(ex);
         }
     }
 
@@ -110,24 +106,18 @@ public class NetworkAssistantHttpsResources {
         Log.debug("[HTTPS] JNLP resource : dayon.html");
         final int major = Version.get().getMajor();
         final int minor = Version.get().getMinor();
-
         final String clickMe = Babylon.translate("clickMe");
         final String clickMeMsg = Babylon.translate("clickMe.msg");
-
         final InputStream content = NetworkAssistantHttpsResources.class.getResourceAsStream("dayon.html");
         final BufferedReader in = new BufferedReader(new InputStreamReader(content, StandardCharsets.UTF_8));
 
         final String sb;
-
         sb = in.lines().map(line -> line + "\n").collect(Collectors.joining());
-
         in.close();
 
         String html = sb;
-
         html = html.replace("${major}", String.valueOf(major));
         html = html.replace("${minor}", String.valueOf(minor));
-
         html = html.replace("${clickMe}", clickMe);
         html = html.replace("${clickMeMsg}", clickMeMsg);
 
@@ -151,7 +141,6 @@ public class NetworkAssistantHttpsResources {
         if (root == null) {
             throw new IllegalArgumentException("Could not find the path [" + path + "]!");
         }
-
         final File file = new File(root, path);
         if (!file.exists()) {
             throw new IllegalArgumentException("Path [" + path + "] not found [" + file.getAbsolutePath() + "]!");

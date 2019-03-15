@@ -25,7 +25,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		try {
 			robot = new Robot();
 		} catch (AWTException ex) {
-			throw new RuntimeException(ex);
+			throw new IllegalStateException(ex);
 		}
 	}
 
