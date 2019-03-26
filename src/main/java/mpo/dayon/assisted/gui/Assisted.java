@@ -120,7 +120,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 			// Currently do not care about the response : returning a 404
 			// response (!)
-			throw new RuntimeException("[HTTPS-handshake] Missing expected /hello response!");
+			throw new IllegalStateException("[HTTPS-handshake] Missing expected /hello response!");
 		} catch (FileNotFoundException expected) {
 			// ignored
 		}

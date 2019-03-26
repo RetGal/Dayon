@@ -35,7 +35,7 @@
 		<jetbrains.annotations.version>17.0.0</jetbrains.annotations.version>
 		<bzip2.version>0.9.1</bzip2.version>
 		<grizzly-lzma.version>1.9.65</grizzly-lzma.version>
-		<junit.jupiter.version>5.4.0</junit.jupiter.version>
+		<junit.jupiter.version>5.5.0-M1</junit.jupiter.version>
 	</properties>
 
 	<dependencies>

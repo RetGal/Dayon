@@ -1,11 +1,6 @@
 package mpo.dayon.common.utils;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.net.*;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
@@ -216,12 +211,12 @@ public abstract class SystemUtilities {
             String propValue = System.getProperty(propName);
             // I want to display the actual content of the line separator...
             if (propName.equals("line.separator")) {
-                String hex = "";
+                StringBuilder hex = new StringBuilder();
                 for (int idx = 0; idx < propValue.length(); idx++) {
                     final int cc = propValue.charAt(idx);
-                    hex += "\\" + cc;
+                    hex.append("\\").append(cc);
                 }
-                propValue = hex;
+                propValue = hex.toString();
             }
             props.add(String.format("%" + size + "." + size + "s [%s]", propName, propValue));
         }
@@ -238,62 +233,12 @@ public abstract class SystemUtilities {
         return UnitUtilities.toByteSize(totalMG - freeMG, false) + " of " + UnitUtilities.toByteSize(totalMG, false);
     }
 
-    public static void safeClose(@Nullable Reader in) {
-        if (in != null) {
+    public static void safeClose(@Nullable Closeable open) {
+        if (open != null) {
             try {
-                in.close();
+                open.close();
             } catch (IOException ignored) {
-                Log.debug("Reader close failed");
-            }
-        }
-    }
-
-    public static void safeClose(@Nullable Writer out) {
-        if (out != null) {
-            try {
-                out.close();
-            } catch (IOException ignored) {
-                Log.debug("Writer close failed");
-            }
-        }
-    }
-
-    public static void safeClose(@Nullable InputStream in) {
-        if (in != null) {
-            try {
-                in.close();
-            } catch (IOException ignored) {
-                Log.debug("InputStream close failed");
-            }
-        }
-    }
-
-    public static void safeClose(@Nullable OutputStream out) {
-        if (out != null) {
-            try {
-                out.close();
-            } catch (IOException ignored) {
-                Log.debug("OutputStream close failed");
-            }
-        }
-    }
-
-    public static void safeClose(@Nullable ServerSocket socket) {
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException ignored) {
-                Log.debug("ServerSocket close failed");
-            }
-        }
-    }
-
-    public static void safeClose(@Nullable Socket socket) {
-        if (socket != null) {
-            try {
-                socket.close();
-            } catch (IOException ignored) {
-                Log.debug("Socket close failed");
+                Log.debug(open.getClass().getSimpleName() +" close failed");
             }
         }
     }
