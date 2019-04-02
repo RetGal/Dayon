@@ -38,13 +38,11 @@ public abstract class ScreenUtilities {
 
     private static int[] captureRGB(Rectangle bounds) {
         BufferedImage image = robot.createScreenCapture(bounds);
-        int yPos = bounds.y;
         int i = 0;
-        while (yPos < bounds.height) {
+        for (int yPos = bounds.y; yPos < bounds.height; yPos++) {
             for (int xPos = bounds.x; xPos < bounds.width; xPos++) {
                 rgb[i++] = image.getRGB(xPos, yPos);
             }
-            yPos++;
         }
         return rgb;
     }
@@ -73,7 +71,6 @@ public abstract class ScreenUtilities {
 
             final int red = (pixel & 0x00FF0000) >> 16;
             final int green_blue = pixel & 0x0000FFFF;
-
             final int level = (red_levels[red] + green_blue_levels[green_blue]) >> 7;
 
             gray[idx] = xLevels[level];

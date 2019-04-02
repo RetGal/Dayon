@@ -18,6 +18,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
+    private final static int MAX_BUFFER_CAPACITY = 20480; // 20KB
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
@@ -43,10 +44,10 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             Long fileSize = helper.getFileSizes().get(position);
             if (helper.getFiles().size() == position) {
                 Log.debug("Received File/size: " + fileName + "/" + fileSize);
-                buffer = new byte[Math.toIntExact(fileSize)];
+                buffer =  fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
             } else {
                 Log.info("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
-                buffer = new byte[Math.toIntExact(helper.getFileBytesLeft())];
+                buffer =  helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
             }
 
             int read = readIntoBuffer(in, buffer);
@@ -76,11 +77,10 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     private static int readIntoBuffer(ObjectInputStream in, byte[] buffer) throws IOException {
-        int chunk = 1024;
+        int chunk;
         int read = in.read(buffer, 0, 1);
         while (in.available() > 0 && read < buffer.length) {
-            chunk = chunk > buffer.length - read ? buffer.length - read : chunk;
-            chunk = chunk > in.available() ? in.available() : chunk;
+            chunk = in.available() > buffer.length - read ? buffer.length - read : in.available();
             read += in.read(buffer, read, chunk);
         }
         return read;

@@ -113,7 +113,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		Log.info("[HTTPS-handshake] Sending the /hello request...");
 
 		try {
-			final URL url = new URL("https://" + SystemUtilities.formatIPv6(configuration.getServerName()) + ":" + configuration.getServerPort() + "/hello");
+			final URL url = new URL(String.format("https://%s:%d/hello", SystemUtilities.formatIPv6(configuration.getServerName()), configuration.getServerPort()));
 			final URLConnection conn = url.openConnection();
 
 			conn.getInputStream();
