@@ -18,7 +18,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
-    private final static int MAX_BUFFER_CAPACITY = 20480; // 20KB
+    private final static int MAX_BUFFER_CAPACITY = 8192; // 8KB
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
@@ -157,13 +157,14 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         byte[] buffer = new byte[Math.toIntExact(fileSize)];
         try (InputStream input = new FileInputStream(file)) {
             int read = 0;
-            int chunk = 1024;
+            int chunk;
             while (input.available() > 0) {
-                chunk = chunk > input.available() ? input.available() : chunk;
+                chunk = input.available();
                 read += input.read(buffer, read, chunk);
             }
             Log.debug("Bytes sent: " + read);
             out.write(buffer);
+            out.flush();
         }
     }
 
