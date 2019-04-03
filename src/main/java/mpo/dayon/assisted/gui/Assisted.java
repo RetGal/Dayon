@@ -86,7 +86,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		configuration = new NetworkAssistedEngineConfiguration();
 
 		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-		final Integer port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+		final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
 		if (ip == null) {
 			if (!requestConnectionSettings()) {

@@ -26,7 +26,7 @@ public class TransferableFiles implements Transferable {
         }
     }
 
-    private static DataFlavor[] FLAVORS = new DataFlavor[]{
+    private static final DataFlavor[] FLAVORS = new DataFlavor[]{
             DataFlavor.javaFileListFlavor, gnomeCopiedFilesFlavor, uriListFlavor};
 
 

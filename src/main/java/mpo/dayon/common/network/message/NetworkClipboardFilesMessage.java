@@ -18,7 +18,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
-    private final static int MAX_BUFFER_CAPACITY = 8192; // 8KB
+    private static final int MAX_BUFFER_CAPACITY = 8192; // 8KB
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
