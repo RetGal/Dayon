@@ -18,7 +18,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
-    private static final int MAX_BUFFER_CAPACITY = 8192; // 8KB
+    private static final int MAX_BUFFER_CAPACITY = 7168;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
         this.files = files;
@@ -44,14 +44,15 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             Long fileSize = helper.getFileSizes().get(position);
             if (helper.getFiles().size() == position) {
                 Log.debug("Received File/size: " + fileName + "/" + fileSize);
-                buffer =  fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
+                buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
             } else {
                 Log.info("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
                 buffer =  helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
             }
 
             int read = readIntoBuffer(in, buffer);
-            String tempFilePath = writeToTempFile(buffer, read, fileName);
+            final boolean append = helper.getFileBytesLeft() != fileSize;
+            String tempFilePath = writeToTempFile(buffer, read, fileName, append);
 
             if (helper.getFiles().size() == position) {
                 helper.getFiles().add(new File(tempFilePath));
@@ -76,7 +77,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return new NetworkClipboardFilesMessage(helper);
     }
 
-    private static int readIntoBuffer(ObjectInputStream in, byte[] buffer) throws IOException {
+    private static int readIntoBuffer(InputStream in, byte[] buffer) throws IOException {
         int chunk;
         int read = in.read(buffer, 0, 1);
         while (in.available() > 0 && read < buffer.length) {
@@ -87,21 +88,13 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     @NotNull
-    private static String writeToTempFile(byte[] buffer, int length, String fileName) throws IOException {
+    private static String writeToTempFile(byte[] buffer, int length, String fileName, boolean append) throws IOException {
         String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
-
-        boolean append = appendFile(tempFilePath);
-
         try (FileOutputStream stream = new FileOutputStream(tempFilePath, append)) {
             stream.write(copyOf(buffer, length));
             Log.debug("Bytes written: " + length);
         }
         return tempFilePath;
-    }
-
-    private static boolean appendFile(String tempFilePath) {
-        File existingFile = new File(tempFilePath);
-        return (existingFile.isFile() && existingFile.lastModified() > System.currentTimeMillis()-2000);
     }
 
     private NetworkClipboardFilesMessage(NetworkClipboardFilesHelper helper) {
@@ -154,16 +147,15 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private void sendFile(File file, ObjectOutputStream out) throws IOException {
         long fileSize = file.length();
-        byte[] buffer = new byte[Math.toIntExact(fileSize)];
+        Log.debug("Total bytes to be sent: " + fileSize);
+        byte[] buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
         try (InputStream input = new FileInputStream(file)) {
-            int read = 0;
-            int chunk;
+            int read;
             while (input.available() > 0) {
-                chunk = input.available();
-                read += input.read(buffer, read, chunk);
+                read = readIntoBuffer(input, buffer);
+                out.write(copyOf(buffer, read));
+                Log.debug("Bytes sent: " + read);
             }
-            Log.debug("Bytes sent: " + read);
-            out.write(buffer);
             out.flush();
         }
     }
