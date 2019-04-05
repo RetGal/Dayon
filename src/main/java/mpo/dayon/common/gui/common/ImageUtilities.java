@@ -17,7 +17,7 @@ public abstract class ImageUtilities {
             try {
                 icon = new ImageIcon(ImageUtilities.class.getResource(rname));
             } catch (NullPointerException ex) {
-                throw new RuntimeException(String.format("Missing icon [%s].", rname));
+                throw new IllegalStateException(String.format("Missing icon [%s].", rname));
             }
             cache.put(rname, icon);
         }
