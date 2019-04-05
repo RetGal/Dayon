@@ -11,21 +11,16 @@ import mpo.dayon.assistant.gui.AssistantFrameListener;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
-import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 
-public class ControlEngine implements Configurable<ControlEngineConfiguration>, AssistantFrameListener {
+public class ControlEngine implements AssistantFrameListener {
 	private final NetworkAssistantEngine network;
 
 	private ThreadPoolExecutor executor;
 
 	public ControlEngine(NetworkAssistantEngine network) {
 		this.network = network;
-	}
-
-	@Override
-    public void configure(ControlEngineConfiguration configuration) {
 	}
 
 	public void start() {

@@ -35,7 +35,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import mpo.dayon.assistant.control.ControlEngine;
-import mpo.dayon.assistant.control.ControlEngineConfiguration;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
 import mpo.dayon.common.monitoring.counter.BitCounter;
@@ -127,7 +126,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         network.addListener(new MyNetworkAssistantEngineListener());
 
         control = new ControlEngine(network);
-        control.configure(new ControlEngineConfiguration());
         control.start();
 
         captureEngineConfiguation = new CaptureEngineConfiguration();
