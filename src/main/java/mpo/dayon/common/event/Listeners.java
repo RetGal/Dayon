@@ -7,9 +7,6 @@ public class Listeners<T extends Listener> {
 
 	private final List<T> listeners = new CopyOnWriteArrayList<>();
 
-	public Listeners() {
-	}
-
 	public List<T> getListeners() {
 		return listeners;
 	}

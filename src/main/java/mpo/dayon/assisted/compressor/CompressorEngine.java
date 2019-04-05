@@ -35,9 +35,6 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 	private boolean reconfigured;
 
-	public CompressorEngine() {
-	}
-
 	@Override
 	public void configure(CompressorEngineConfiguration configuration) {
 		synchronized (reconfigurationLOCK) {
