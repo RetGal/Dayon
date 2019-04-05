@@ -29,7 +29,6 @@ import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.control.RobotNetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngine;
-import mpo.dayon.assisted.mouse.MouseEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
@@ -255,8 +254,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		// Setup the mouse engine (no need before I guess)
 		final MouseEngine mouseEngine = new MouseEngine();
-
-		mouseEngine.configure(new MouseEngineConfiguration());
 		mouseEngine.addListener((NetworkAssistedEngine) engine);
 		mouseEngine.start();
 

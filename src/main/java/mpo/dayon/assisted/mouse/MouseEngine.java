@@ -5,10 +5,9 @@ import java.awt.Point;
 import java.util.List;
 
 import mpo.dayon.common.concurrent.RunnableEx;
-import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.event.Listeners;
 
-public class MouseEngine implements Configurable<MouseEngineConfiguration> {
+public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
 
     private final Thread thread;
@@ -20,11 +19,6 @@ public class MouseEngine implements Configurable<MouseEngineConfiguration> {
                 MouseEngine.this.mainLoop();
             }
         }, "MouseEngine");
-    }
-
-    @Override
-    public void configure(MouseEngineConfiguration configuration) {
-        // noop
     }
 
     public void addListener(MouseEngineListener listener) {
