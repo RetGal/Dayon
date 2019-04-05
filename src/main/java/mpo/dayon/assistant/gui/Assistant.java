@@ -37,7 +37,6 @@ import javax.swing.UIManager;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.control.ControlEngineConfiguration;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
-import mpo.dayon.assistant.decompressor.DeCompressorEngineConfiguration;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
 import mpo.dayon.common.monitoring.counter.BitCounter;
 import mpo.dayon.common.monitoring.counter.CaptureCompressionCounter;
@@ -116,8 +115,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         captureCompressionCounter.start(1000);
 
         DeCompressorEngine decompressor = new DeCompressorEngine();
-
-        decompressor.configure(new DeCompressorEngineConfiguration());
         decompressor.addListener(new MyDeCompressorEngineListener());
         decompressor.start(8);
 

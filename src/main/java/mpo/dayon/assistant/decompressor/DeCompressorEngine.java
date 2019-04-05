@@ -14,7 +14,6 @@ import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
-import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
@@ -25,7 +24,7 @@ import mpo.dayon.common.squeeze.NullTileCache;
 import mpo.dayon.common.squeeze.RegularTileCache;
 import mpo.dayon.common.squeeze.TileCache;
 
-public class DeCompressorEngine implements Configurable<DeCompressorEngineConfiguration>, NetworkCaptureMessageHandler {
+public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 	private final Listeners<DeCompressorEngineListener> listeners = new Listeners<>();
 
 	private ThreadPoolExecutor executor;
@@ -33,13 +32,6 @@ public class DeCompressorEngine implements Configurable<DeCompressorEngineConfig
 	private Semaphore semaphore;
 
 	private TileCache cache;
-
-	public DeCompressorEngine() {
-	}
-
-	@Override
-	public void configure(DeCompressorEngineConfiguration configuration) {
-	}
 
 	public void addListener(DeCompressorEngineListener listener) {
 		listeners.add(listener);
