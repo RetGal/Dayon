@@ -128,40 +128,21 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		// -------------------------------------------------------------------------------------------------------------
 
-		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = new NetworkCaptureConfigurationMessageHandler() {
-			/**
-			 * Should not block as called from the network incoming message
-			 * thread (!)
-			 */
-			@Override
-			public void handleConfiguration(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
-				onCaptureEngineConfigured(engine, configuration);
-				frame.onConnected();
-			}
+		// Should not block as called from the network incoming message thread (!)
+		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, configuration) -> {
+			onCaptureEngineConfigured(engine, configuration);
+			frame.onConnected();
 		};
 
-		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = new NetworkCompressorConfigurationMessageHandler() {
-			/**
-			 * Should not block as called from the network incoming message
-			 * thread (!)
-			 */
-			@Override
-			public void handleConfiguration(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
-				onCompressorEngineConfigured(engine, configuration);
-				frame.onConnected();
-			}
+		// Should not block as called from the network incoming message thread (!)
+		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = (engine, configuration) -> {
+			onCompressorEngineConfigured(engine, configuration);
+			frame.onConnected();
 		};
 
-		final NetworkClipboardRequestMessageHandler clipboardRequestHandler= new NetworkClipboardRequestMessageHandler() {
-			/**
-			 * Should not block as called from the network incoming message
-			 * thread (!)
-			 */
-			@Override
-			public void handleClipboardRequest(NetworkAssistedEngine networkAssistedEngine) {
-				onClipboardRequested(networkAssistedEngine);
-			}
-		};
+		// Should not block as called from the network incoming message thread (!)
+		final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
+
 
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
 
