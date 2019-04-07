@@ -129,14 +129,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		// -------------------------------------------------------------------------------------------------------------
 
 		// Should not block as called from the network incoming message thread (!)
-		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, configuration) -> {
-			onCaptureEngineConfigured(engine, configuration);
+		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, config) -> {
+			onCaptureEngineConfigured(engine, config);
 			frame.onConnected();
 		};
 
 		// Should not block as called from the network incoming message thread (!)
-		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = (engine, configuration) -> {
-			onCompressorEngineConfigured(engine, configuration);
+		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = (engine, config) -> {
+			onCompressorEngineConfigured(engine, config);
 			frame.onConnected();
 		};
 

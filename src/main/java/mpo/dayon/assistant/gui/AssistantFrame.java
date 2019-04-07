@@ -55,8 +55,6 @@ class AssistantFrame extends BaseFrame {
 
     private transient AssistantFrameConfiguration configuration;
 
-    private Long sessionStartTime;
-
     private Timer sessionTimer;
 
     @Nullable
@@ -351,7 +349,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onSessionStarted() {
-        sessionStartTime = Instant.now().toEpochMilli();
+        long sessionStartTime = Instant.now().toEpochMilli();
         sessionTimer = new Timer(1000, e -> {
             final long endTime = Instant.now().toEpochMilli();
             final long secondsCounter = (endTime - sessionStartTime) / 1000;
