@@ -16,7 +16,9 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.Instant;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 class AssistantFrame extends BaseFrame {
@@ -53,6 +55,10 @@ class AssistantFrame extends BaseFrame {
 
     private transient AssistantFrameConfiguration configuration;
 
+    private Long sessionStartTime;
+
+    private Timer sessionTimer;
+
     @Nullable
     private JComponent center;
 
@@ -60,7 +66,7 @@ class AssistantFrame extends BaseFrame {
 
     AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
                           Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
-                          Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Counter<?>... counters) {
+                          Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Set<Counter<?>> counters) {
         this.configuration = configuration;
 
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
@@ -208,7 +214,7 @@ class AssistantFrame extends BaseFrame {
         return toolbar;
     }
 
-    private StatusBar createStatusBar(Counter<?>[] counters) {
+    private StatusBar createStatusBar(Set<Counter<?>> counters) {
         final StatusBar statusBar = new StatusBar();
 
         for (Counter<?> counter : counters) {
@@ -218,6 +224,8 @@ class AssistantFrame extends BaseFrame {
 
         statusBar.addSeparator();
         statusBar.addRamInfo();
+        statusBar.addSeparator();
+        statusBar.addConnectionDuration();
         statusBar.add(Box.createHorizontalStrut(10));
 
         return statusBar;
@@ -342,6 +350,20 @@ class AssistantFrame extends BaseFrame {
         remoteClipboardRequestAction.setEnabled(true);
     }
 
+    void onSessionStarted() {
+        sessionStartTime = Instant.now().toEpochMilli();
+        sessionTimer = new Timer(1000, e -> {
+            final long endTime = Instant.now().toEpochMilli();
+            final long secondsCounter = (endTime - sessionStartTime) / 1000;
+            statusBar.setSessionDuration(String.format("%02d:%02d:%02d",(secondsCounter/3600), ((secondsCounter % 3600)/60), (secondsCounter % 60)));
+        });
+        sessionTimer.start();
+    }
+
+    void onDisconnecting() {
+        sessionTimer.stop();
+    }
+
     void onIOError(IOException error) {
         startAction.setEnabled(false);
         stopAction.setEnabled(false);
@@ -349,6 +371,8 @@ class AssistantFrame extends BaseFrame {
         resetAction.setEnabled(false);
         remoteClipboardRequestAction.setEnabled(false);
         remoteClipboardSetAction.setEnabled(false);
+
+        sessionTimer.stop();
 
         removeCenter();
 

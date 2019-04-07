@@ -5,14 +5,10 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.TimerTask;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
+import mpo.dayon.common.babylon.Babylon;
 import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.monitoring.BigBrother;
@@ -22,6 +18,7 @@ import mpo.dayon.common.utils.SystemUtilities;
 
 public class StatusBar extends JPanel {
 	private final JLabel message = new JLabel();
+	private final JLabel sessionDuration = new JLabel("00:00:00");
 
 	public StatusBar() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -54,6 +51,10 @@ public class StatusBar extends JPanel {
 		this.message.setText(message);
 	}
 
+	public void setSessionDuration(String sessionDuration) {
+		this.sessionDuration.setText(sessionDuration);
+	}
+
 	public void addCounter(Counter<?> counter, int width) {
 		final JLabel lbl = new JLabel(counter.getUid());
 
@@ -83,8 +84,19 @@ public class StatusBar extends JPanel {
 				lbl.setText(SystemUtilities.getRamInfo());
 			}
 		});
+		lbl.setToolTipText(Babylon.translate("memory.info" ));
 
 		add(lbl);
+	}
+
+	public void addConnectionDuration() {
+		sessionDuration.setHorizontalAlignment(SwingConstants.CENTER);
+
+		sessionDuration.setSize(new java.awt.Dimension(100, 5));
+		sessionDuration.setPreferredSize(new java.awt.Dimension(100, 5));
+		sessionDuration.setToolTipText(Babylon.translate("session.duration" ));
+
+		add(sessionDuration);
 	}
 
 	public void addSeparator() {

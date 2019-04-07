@@ -15,7 +15,10 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -37,11 +40,7 @@ import javax.swing.UIManager;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
-import mpo.dayon.common.monitoring.counter.BitCounter;
-import mpo.dayon.common.monitoring.counter.CaptureCompressionCounter;
-import mpo.dayon.common.monitoring.counter.MergedTileCounter;
-import mpo.dayon.common.monitoring.counter.SkippedTileCounter;
-import mpo.dayon.common.monitoring.counter.TileCounter;
+import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.assistant.network.NetworkAssistantConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
@@ -97,6 +96,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private int prevHeight = -1;
 
+    Set<Counter<?>> counters;
+
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", Babylon.translate("networkBandwidth"));
         receivedBitCounter.start(1000);
@@ -112,6 +113,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", Babylon.translate("captureCompression"));
         captureCompressionCounter.start(1000);
+
+        counters = new HashSet<>(Arrays.asList(receivedBitCounter,receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
 
         DeCompressorEngine decompressor = new DeCompressorEngine();
         decompressor.addListener(new MyDeCompressorEngineListener());
@@ -147,8 +150,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     public void start() {
         frame = new AssistantFrame(new AssistantFrameConfiguration(), createWhatIsMyIpAction(), createNetworkAssistantConfigurationAction(),
                 createCaptureConfigurationAction(), createComressionConfigurationAction(), createResetAction(), createSwitchLookAndFeelAction(),
-                createRemoteClipboardRequestAction(), createRemoteClipboardUpdateAction(), new AssistantStartAction(network), new AssistantStopAction(network), receivedBitCounter, captureCompressionCounter, receivedTileCounter,
-                skippedTileCounter, mergedTileCounter);
+                createRemoteClipboardRequestAction(), createRemoteClipboardUpdateAction(), new AssistantStartAction(network), new AssistantStopAction(network), counters);
 
         FatalErrorHandler.attachFrame(frame);
 
@@ -763,6 +765,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         public void onConnected(Socket connection) {
             sendCaptureConfiguration(captureEngineConfiguation);
             sendCompressorConfiguration(compressorEngineConfiguation);
+            frame.onSessionStarted();
         }
 
         /**
@@ -787,6 +790,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         @Override
         public void onClipboardSent() {
             frame.onClipboardSent();
+        }
+
+        /**
+         * Should not block as called from the network receiving thread (!)
+         */
+        @Override
+        public void onDisconnecting() {
+            frame.onDisconnecting();
         }
 
         @Override

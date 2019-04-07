@@ -68,6 +68,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         this.mouseMessageHandler = mouseMessageHandler;
         this.clipboardOwner = clipboardOwner;
 
+
         fireOnReady();
     }
 
@@ -132,6 +133,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         SystemUtilities.safeClose(server);
         SystemUtilities.safeClose(connection);
+        fireOnDisconnecting();
     }
 
     private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
@@ -455,6 +457,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         for (final NetworkAssistantEngineListener xlistener : xlisteners) {
             xlistener.onClipboardSent();
+        }
+    }
+
+    private void fireOnDisconnecting() {
+        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
+
+        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
+            xlistener.onDisconnecting();
         }
     }
 

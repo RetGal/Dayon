@@ -48,5 +48,10 @@ public interface NetworkAssistantEngineListener extends Listener {
 	 */
 	void onClipboardSent();
 
+	/**
+	 * Should not block as called from the network receiving thread (!)
+	 */
+	void onDisconnecting();
+
 	void onIOError(IOException error);
 }
