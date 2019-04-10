@@ -1,4 +1,6 @@
-# Dayon! [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RetGal_Dayon&metric=alert_status)](https://sonarcloud.io/dashboard?id=RetGal_Dayon)
+# Dayon! 
+[![Build Status](https://travis-ci.org/RetGal/Dayon.svg?branch=master)](https://travis-ci.org/RetGal/Dayon) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RetGal_Dayon&metric=alert_status)](https://sonarcloud.io/dashboard?id=RetGal_Dayon)
+
 Dayon! is an easy to use, cross-platform remote desktop assistance solution.
 
 It consists of two parts - one for the assistant and one for the assisted. Both are included in one single package.
