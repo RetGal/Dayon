@@ -222,18 +222,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 choices.add(getjMenuItemCopyIpAndPort(button));
 
                 choices.addSeparator();
-                final JMenuItem help = new JMenuItem(Babylon.translate("help"));
-                help.addActionListener(ev1 -> {
-                    final URI uri = SystemUtilities.getLocalIndexHtml();
-                    if (uri != null && Desktop.isDesktopSupported()) {
-                        final Desktop desktop = Desktop.getDesktop();
-                        try {
-                            desktop.browse(uri);
-                        } catch (IOException ex) {
-                            Log.warn("Help Error!", ex);
-                        }
-                    }
-                });
+                final JMenuItem help = getjMenuItemHelp();
                 choices.add(help);
 
                 // -- display the menu
@@ -261,6 +250,23 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         ip.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("ipAddress.msg1"));
 
         return ip;
+    }
+
+    @NotNull
+    private JMenuItem getjMenuItemHelp() {
+        final JMenuItem help = new JMenuItem(Babylon.translate("help"));
+        help.addActionListener(ev1 -> {
+            final URI uri = SystemUtilities.getLocalIndexHtml();
+            if (uri != null && Desktop.isDesktopSupported()) {
+                final Desktop desktop = Desktop.getDesktop();
+                try {
+                    desktop.browse(uri);
+                } catch (IOException ex) {
+                    Log.warn("Help Error!", ex);
+                }
+            }
+        });
+        return help;
     }
 
     @NotNull
