@@ -553,19 +553,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         return Babylon.translate("compression.cache.max.msg1");
                     }
 
-                    final int _max;
+                    final int maxValue;
 
                     try {
-                        _max = Integer.valueOf(max);
+                        maxValue = Integer.valueOf(max);
                     } catch (NumberFormatException ex) {
                         return Babylon.translate("compression.cache.max.msg2");
                     }
 
-                    if (_max <= 0) {
+                    if (maxValue <= 0) {
                         return Babylon.translate("compression.cache.max.msg3");
                     }
 
-                    return validatePurgeValue(purgeSizeTf, _max);
+                    return validatePurgeValue(purgeSizeTf, maxValue);
                 });
 
                 if (ok) {
@@ -590,26 +590,26 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     @Nullable
-    private String validatePurgeValue(JTextField purgeSizeTf, int _max) {
+    private String validatePurgeValue(JTextField purgeSizeTf, int maxValue) {
         final String purge = purgeSizeTf.getText();
         if (purge.isEmpty()) {
             return Babylon.translate("compression.cache.purge.msg1");
         }
 
-        final int _purge;
+        final int purgeValue;
 
         try {
-            _purge = Integer.valueOf(purge);
+            purgeValue = Integer.valueOf(purge);
         } catch (NumberFormatException ex) {
             return Babylon.translate("compression.cache.purge.msg2");
         }
 
 
-        if (_purge <= 0) {
+        if (purgeValue <= 0) {
             return Babylon.translate("compression.cache.purge.msg3");
         }
 
-        if (_purge >= _max) {
+        if (purgeValue >= maxValue) {
             return Babylon.translate("compression.cache.purge.msg4");
         }
 
