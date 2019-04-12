@@ -185,23 +185,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                             final InputStream in = conn.getInputStream();
 
                             try (final BufferedReader lines = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                                String line;
-                                while ((line = lines.readLine()) != null) {
-                                    publicIp = line;
-                                }
+                                publicIp = lines.readLine();
                             }
 
                             SystemUtilities.safeClose(in);
                         } catch (IOException ex) {
                             Log.error("What is my IP error!", ex);
+                            JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
+                                    JOptionPane.ERROR_MESSAGE);
                         } finally {
                             frame.setCursor(cursor);
                         }
 
-                        if (publicIp == null) {
-                            JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
-                                    JOptionPane.ERROR_MESSAGE);
-                        } else {
+                        if (publicIp != null) {
                             button.setText(publicIp);
                         }
                     });
@@ -228,17 +224,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 choices.addSeparator();
                 final JMenuItem help = new JMenuItem(Babylon.translate("help"));
                 help.addActionListener(ev1 -> {
-                    try {
-                        final URI uri = SystemUtilities.getLocalIndexHtml();
-
-                        if (uri != null && Desktop.isDesktopSupported()) {
-                            final Desktop desktop = Desktop.getDesktop();
-                            if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                                desktop.browse(uri);
-                            }
+                    final URI uri = SystemUtilities.getLocalIndexHtml();
+                    if (uri != null && Desktop.isDesktopSupported()) {
+                        final Desktop desktop = Desktop.getDesktop();
+                        try {
+                            desktop.browse(uri);
+                        } catch (IOException ex) {
+                            Log.warn("Help Error!", ex);
                         }
-                    } catch (IOException ex) {
-                        Log.warn("Help Error!", ex);
                     }
                 });
                 choices.add(help);
