@@ -61,6 +61,7 @@ import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Pair;
 import mpo.dayon.common.utils.SystemUtilities;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
 
@@ -560,32 +561,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         return Babylon.translate("compression.cache.max.msg2");
                     }
 
-                    final String purge = purgeSizeTf.getText();
-                    if (purge.isEmpty()) {
-                        return Babylon.translate("compression.cache.purge.msg1");
-                    }
-
-                    final int _purge;
-
-                    try {
-                        _purge = Integer.valueOf(purge);
-                    } catch (NumberFormatException ex) {
-                        return Babylon.translate("compression.cache.purge.msg2");
-                    }
-
                     if (_max <= 0) {
                         return Babylon.translate("compression.cache.max.msg3");
                     }
 
-                    if (_purge <= 0) {
-                        return Babylon.translate("compression.cache.purge.msg3");
-                    }
-
-                    if (_purge >= _max) {
-                        return Babylon.translate("compression.cache.purge.msg4");
-                    }
-
-                    return null;
+                    return validatePurgeValue(purgeSizeTf, _max);
                 });
 
                 if (ok) {
@@ -607,6 +587,33 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
 
         return configure;
+    }
+
+    @Nullable
+    private String validatePurgeValue(JTextField purgeSizeTf, int _max) {
+        final String purge = purgeSizeTf.getText();
+        if (purge.isEmpty()) {
+            return Babylon.translate("compression.cache.purge.msg1");
+        }
+
+        final int _purge;
+
+        try {
+            _purge = Integer.valueOf(purge);
+        } catch (NumberFormatException ex) {
+            return Babylon.translate("compression.cache.purge.msg2");
+        }
+
+
+        if (_purge <= 0) {
+            return Babylon.translate("compression.cache.purge.msg3");
+        }
+
+        if (_purge >= _max) {
+            return Babylon.translate("compression.cache.purge.msg4");
+        }
+
+        return null;
     }
 
     /**
