@@ -14,6 +14,7 @@ import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
+import org.jetbrains.annotations.NotNull;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
@@ -200,19 +201,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                     if (!type.equals(CLIPBOARD_FILES)) {
                         processIntroduced(type, in);
                     } else {
-                        final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-                        fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
-                        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
-                        if (filesHelper.isIdle()) {
-                            fireOnClipboardReceived();
-                        }
+                        filesHelper = processClipboardFiles(in, filesHelper);
                     }
                 } else {
                     introduced = processUnIntroduced(type, in);
                 }
             }
         } catch (IOException ex) {
-            handleIOException(in, out, ex);
+            handleIOException(ex);
+            closeConnection(in, out);
         } catch (KeyManagementException | UnrecoverableKeyException e) {
             Log.error("Fatal, can not init encryption", e);
         }
@@ -220,14 +217,23 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnReady();
     }
 
-    private void handleIOException(ObjectInputStream in, ObjectOutputStream out, IOException ex) {
+    private NetworkClipboardFilesHelper processClipboardFiles(ObjectInputStream in, NetworkClipboardFilesHelper filesHelper) throws IOException {
+        final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
+        fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
+        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
+        if (filesHelper.isIdle()) {
+            fireOnClipboardReceived();
+        }
+        return filesHelper;
+    }
+
+    private void handleIOException(IOException ex) {
         if (!cancelling.get()) {
             Log.error("IO error (not cancelled)", ex);
             fireOnIOError(ex);
         } else {
             Log.info("Stopped network receiver (cancelled)");
         }
-        closeConnection(in, out);
     }
 
     private void processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
