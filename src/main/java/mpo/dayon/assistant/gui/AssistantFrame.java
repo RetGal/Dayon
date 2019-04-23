@@ -92,6 +92,29 @@ class AssistantFrame extends BaseFrame {
         this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
         this.setSize(dimension.getWidth(), dimension.getHeight());
 
+        addMouseListeners();
+
+        // -------------------------------------------------------------------------------------------------------------
+        // Not really needed for the time being - allows for seeing
+        // the TAB with a regular KEY listener ...
+        setFocusTraversalKeysEnabled(false);
+
+        addKeyListeners();
+
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent ev) {
+                if (controlActivated.get()) {
+                    fireOnKeyReleased(-1, Character.MIN_VALUE);
+                }
+            }
+        });
+
+        onReady(); // the network has been before we've been registered as a
+        // listener ...
+    }
+
+    private void addMouseListeners() {
         assistantPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
@@ -129,12 +152,9 @@ class AssistantFrame extends BaseFrame {
                 fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
             }
         });
+    }
 
-        // -------------------------------------------------------------------------------------------------------------
-        // Not really needed for the time being - allows for seeing
-        // the TAB with a regular KEY listener ...
-        setFocusTraversalKeysEnabled(false);
-
+    private void addKeyListeners() {
         addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent ev) {
@@ -150,18 +170,6 @@ class AssistantFrame extends BaseFrame {
                 }
             }
         });
-
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent ev) {
-                if (controlActivated.get()) {
-                    fireOnKeyReleased(-1, Character.MIN_VALUE);
-                }
-            }
-        });
-
-        onReady(); // the network has been before we've been registered as a
-        // listener ...
     }
 
     public void addListener(AssistantFrameListener listener) {
