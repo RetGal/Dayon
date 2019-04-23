@@ -28,6 +28,7 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
@@ -67,8 +68,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         this.captureMessageHandler = captureMessageHandler;
         this.mouseMessageHandler = mouseMessageHandler;
         this.clipboardOwner = clipboardOwner;
-
-
         fireOnReady();
     }
 
@@ -192,71 +191,23 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                     NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                     type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
                 } else {
-                    type = NetworkMessageType.CLIPBOARD_FILES;
+                    type = CLIPBOARD_FILES;
                 }
                 Log.debug("Received " + type.name());
 
-                switch (type) {
-                    case HELLO:
-                        if (introduced) {
-                            throw new IOException("Unexpected message [HELLO]!");
-                        }
-
-                        introduce(in);
-                        introduced = true;
-                        fireOnConnected(connection);
-                        break;
-
-                    case CAPTURE:
-                        if (!introduced) {
-                            throw new IOException("Unexpected message [CAPTURE]!");
-                        }
-
-                        final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
-                        fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
-                        captureMessageHandler.handleCapture(capture);
-                        break;
-
-                    case MOUSE_LOCATION:
-                        if (!introduced) {
-                            throw new IOException("Unexpected message [MOUSE_LOCATION]!");
-                        }
-
-                        final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
-                        fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
-                        mouseMessageHandler.handleLocation(mouse);
-                        break;
-
-                    case CLIPBOARD_TEXT:
-                        if (!introduced) {
-                            throw new IOException("Unexpected message [CLIPBOARD_TEXT]!");
-                        }
-
-                        final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-                        fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
-                        setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
-                        fireOnClipboardReceived();
-                        break;
-
-                    case CLIPBOARD_FILES:
-                        if (!introduced) {
-                            throw new IOException("Unexpected message [CLIPBOARD_FILES]!");
-                        }
-
+                if (introduced) {
+                    if (!type.equals(CLIPBOARD_FILES)) {
+                        processIntroduced(type, in);
+                    } else {
                         final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
                         fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
                         filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
                         if (filesHelper.isIdle()) {
                             fireOnClipboardReceived();
                         }
-                        break;
-
-                    case PING:
-                        fireOnClipboardSent();
-                        break;
-
-                    default:
-                        throw new IOException("Unsupported message type [" + type + "]!");
+                    }
+                } else {
+                    introduced = processUnIntroduced(type, in);
                 }
             }
         } catch (IOException ex) {
@@ -272,6 +223,60 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
 
         fireOnReady();
+    }
+
+    private void processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+        switch (type) {
+            case CAPTURE:
+                final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
+                fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
+                captureMessageHandler.handleCapture(capture);
+                break;
+
+            case MOUSE_LOCATION:
+                final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
+                fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
+                mouseMessageHandler.handleLocation(mouse);
+                break;
+
+            case CLIPBOARD_TEXT:
+                final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
+                setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                fireOnClipboardReceived();
+                break;
+
+            case PING:
+                fireOnClipboardSent();
+                break;
+
+            case HELLO:
+                throw new IOException("Unexpected message [HELLO]!");
+
+            default:
+                throw new IOException("Unsupported message type [" + type + "]!");
+        }
+    }
+
+    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+            switch (type) {
+                case HELLO:
+                    introduce(in);
+                    fireOnConnected(connection);
+                    return true;
+
+                case PING:
+                    return false;
+
+                case CAPTURE:
+                case MOUSE_LOCATION:
+                case CLIPBOARD_TEXT:
+                case CLIPBOARD_FILES:
+                    throw new IOException("Unexpected message [" + type.name() + "]!");
+
+                default:
+                    throw new IOException("Unsupported message type [" + type + "]!");
+            }
     }
 
     private void introduce(ObjectInputStream in) throws IOException {
