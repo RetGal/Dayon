@@ -135,6 +135,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
+    @java.lang.SuppressWarnings("squid:S2189")
     private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
         ObjectInputStream in = null;
         ObjectOutputStream out = null;
@@ -211,18 +212,22 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 }
             }
         } catch (IOException ex) {
-            if (!cancelling.get()) {
-                Log.error("IO error (not cancelled)", ex);
-                fireOnIOError(ex);
-            } else {
-                Log.info("Stopped network receiver (cancelled)");
-            }
-            closeConnection(in, out);
+            handleIOException(in, out, ex);
         } catch (KeyManagementException | UnrecoverableKeyException e) {
             Log.error("Fatal, can not init encryption", e);
         }
 
         fireOnReady();
+    }
+
+    private void handleIOException(ObjectInputStream in, ObjectOutputStream out, IOException ex) {
+        if (!cancelling.get()) {
+            Log.error("IO error (not cancelled)", ex);
+            fireOnIOError(ex);
+        } else {
+            Log.info("Stopped network receiver (cancelled)");
+        }
+        closeConnection(in, out);
     }
 
     private void processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
