@@ -102,7 +102,7 @@ public class NetworkAssistantHttpsEngine {
 	}
 
 	private SslContextFactory createSslContextFactory() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-		SslContextFactory sslContextFactory = new SslContextFactory();
+		SslContextFactory sslContextFactory = new SslContextFactory.Server();
 		// contextFactory.setKeyStorePath() would be more intuitive - but it
 		// can't handle paths from within the jar..
 		KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
