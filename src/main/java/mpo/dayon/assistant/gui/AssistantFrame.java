@@ -367,7 +367,9 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onDisconnecting() {
-        sessionTimer.stop();
+        if (sessionTimer != null) {
+            sessionTimer.stop();
+        }
     }
 
     void onIOError(IOException error) {
