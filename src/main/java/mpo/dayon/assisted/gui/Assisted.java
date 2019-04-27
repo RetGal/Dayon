@@ -198,13 +198,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             if (portNumber.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyPortNumber");
             }
-
-            try {
-                Integer.valueOf(portNumber);
-            } catch (NumberFormatException ex) {
-                return Babylon.translate("connection.settings.invalidPortNumber");
-            }
-            return null;
+            return SystemUtilities.isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
         });
 
 		if (ok) {

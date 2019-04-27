@@ -238,7 +238,7 @@ public abstract class SystemUtilities {
             try {
                 open.close();
             } catch (IOException ignored) {
-                Log.debug(open.getClass().getSimpleName() +" close failed");
+                Log.debug(open.getClass().getSimpleName() + " close failed");
             }
         }
     }
@@ -250,6 +250,18 @@ public abstract class SystemUtilities {
             }
         }
         return MetalLookAndFeel.class.getName();
+    }
+
+    public static boolean isValidPortNumber(String portNumber) {
+        try {
+            Integer port = Integer.valueOf(portNumber);
+            if (port > 65535) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
     }
 
     public static String formatIPv6(String serverName) {
