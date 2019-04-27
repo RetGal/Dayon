@@ -213,21 +213,7 @@ public class Compressor {
                         dirty[tidx] = new CaptureTile(cId, tidx, xywh[tidx], cached);
                     } else // multi-level (not cached)
                     {
-                        final int tlen = -value;
-                        final byte[] tdata = new byte[tlen];
-
-                        int toffset = 0;
-                        int tcount;
-
-                        while ((tcount = in.read(tdata, toffset, tdata.length - toffset)) > 0) {
-                            toffset += tcount;
-                        }
-
-                        final MemByteBuffer out = new MemByteBuffer();
-                        rle.runLengthDecode(out, new MemByteBuffer(tdata));
-
-                        dirty[tidx] = new CaptureTile(cId, tidx, xywh[tidx], out);
-                        cache.add(dirty[tidx]);
+                        processUncached(cache, in, cId, xywh[tidx], dirty, tidx, value);
                     }
                 }
 
@@ -239,5 +225,23 @@ public class Compressor {
         }
 
         return new Capture(cId, cReset, cSkipped, cMerged, cWidth, cHeight, tWidth, tHeight, dirty);
+    }
+
+    private void processUncached(TileCache cache, DataInputStream in, int cId, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {
+        final int tlen = -value;
+        final byte[] tdata = new byte[tlen];
+
+        int toffset = 0;
+        int tcount;
+
+        while ((tcount = in.read(tdata, toffset, tdata.length - toffset)) > 0) {
+            toffset += tcount;
+        }
+
+        final MemByteBuffer out = new MemByteBuffer();
+        rle.runLengthDecode(out, new MemByteBuffer(tdata));
+
+        dirty[tidx] = new CaptureTile(cId, tidx, xywh, out);
+        cache.add(dirty[tidx]);
     }
 }

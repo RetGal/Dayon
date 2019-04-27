@@ -37,12 +37,16 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
                     out.write(prev);
                     ++pos;
                 } else {
-                    if (count > 0) {
-                        out.write(count);
-                    }
+                    writeNonZero(out, count);
                     break;
                 }
             }
+        }
+    }
+
+    private void writeNonZero(MemByteBuffer out, int count) {
+        if (count > 0) {
+            out.write(count);
         }
     }
 
