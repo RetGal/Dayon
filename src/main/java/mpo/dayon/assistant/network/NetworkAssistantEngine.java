@@ -136,7 +136,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     @java.lang.SuppressWarnings("squid:S2189")
-    private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException {
+    private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
         ObjectInputStream in = null;
         ObjectOutputStream out = null;
 
@@ -209,8 +209,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         } catch (IOException ex) {
             handleIOException(ex);
             closeConnection(in, out);
-        } catch (KeyManagementException | UnrecoverableKeyException e) {
-            Log.error("Fatal, can not init encryption", e);
         }
 
         fireOnReady();
@@ -269,24 +267,24 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
-            switch (type) {
-                case HELLO:
-                    introduce(in);
-                    fireOnConnected(connection);
-                    return true;
+        switch (type) {
+            case HELLO:
+                introduce(in);
+                fireOnConnected(connection);
+                return true;
 
-                case PING:
-                    return false;
+            case PING:
+                return false;
 
-                case CAPTURE:
-                case MOUSE_LOCATION:
-                case CLIPBOARD_TEXT:
-                case CLIPBOARD_FILES:
-                    throw new IOException("Unexpected message [" + type.name() + "]!");
+            case CAPTURE:
+            case MOUSE_LOCATION:
+            case CLIPBOARD_TEXT:
+            case CLIPBOARD_FILES:
+                throw new IOException("Unexpected message [" + type.name() + "]!");
 
-                default:
-                    throw new IOException("Unsupported message type [" + type + "]!");
-            }
+            default:
+                throw new IOException("Unsupported message type [" + type + "]!");
+        }
     }
 
     private void introduce(ObjectInputStream in) throws IOException {
@@ -325,12 +323,16 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-
-        SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
-        return ssf.createServerSocket(port);
+        try {
+            kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
+            SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
+            return ssf.createServerSocket(port);
+        } catch (KeyManagementException | UnrecoverableKeyException e) {
+            Log.error("Fatal, can not init encryption", e);
+            throw e;
+        }
     }
 
     private static boolean isProd(Version version, int major, int minor) {
