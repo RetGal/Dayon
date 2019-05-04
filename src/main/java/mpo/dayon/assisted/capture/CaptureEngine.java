@@ -1,5 +1,6 @@
 package mpo.dayon.assisted.capture;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,9 +16,8 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.UnitUtilities;
 
 public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration> {
-	private static final int TILE_WIDTH = 32;
 
-	private static final int TILE_HEIGHT = 32;
+	private static final Dimension TILE_DIMENSION = new Dimension(32, 32);
 
 	private final CaptureFactory captureFactory;
 
@@ -40,8 +40,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	public CaptureEngine(CaptureFactory captureFactory) {
 		this.captureFactory = captureFactory;
 
-		final int x = Math.round((float) captureFactory.getWidth() / TILE_WIDTH);
-		final int y = Math.round((float) captureFactory.getHeight() / TILE_HEIGHT);
+		final int x = Math.round((float) captureFactory.getDimension().width / TILE_DIMENSION.width);
+		final int y = Math.round((float) captureFactory.getDimension().height / TILE_DIMENSION.height);
 
 		this.previousCapture = new long[x * y + 200];
 		resetPreviousCapture();
@@ -139,11 +139,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 			fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
 
 			@Nullable
-			final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getWidth(), captureFactory.getHeight(), previousCapture);
+			final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension(), previousCapture);
 
 			if (dirty != null) {
-				final Capture capture = new Capture(captureId, reset, skipped, 0, captureFactory.getWidth(), captureFactory.getHeight(), TILE_WIDTH,
-						TILE_HEIGHT, dirty);
+				final Capture capture = new Capture(captureId, reset, skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
 				fireOnCaptured(capture); // might update the capture (i.e.,
 											// merging with previous not sent
 											// yet)
@@ -201,20 +200,20 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 	}
 
 	@Nullable
-	private static CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, int width, int height, long[] previousCapture) {
+	private static CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, Dimension captureDimension, long[] previousCapture) {
 		CaptureTile[] dirty = null;
 
 		int tileId = 0;
 
-		for (int ty = 0; ty < height; ty += TILE_HEIGHT) {
-			final int th = Math.min(height - ty, TILE_HEIGHT);
+		for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
+			final int th = Math.min(captureDimension.height - ty, TILE_DIMENSION.height);
 
-			for (int tx = 0; tx < width; tx += TILE_WIDTH) {
-				final int tw = Math.min(width - tx, TILE_WIDTH);
+			for (int tx = 0; tx < captureDimension.width; tx += TILE_DIMENSION.width) {
+				final int tw = Math.min(captureDimension.width - tx, TILE_DIMENSION.width);
 
-				final int offset = ty * width + tx;
+				final int offset = ty * captureDimension.width + tx;
 
-				final byte[] data = createTile(capture, width, offset, tw, th);
+				final byte[] data = createTile(capture, captureDimension.width, offset, tw, th);
 
 				final long cs = CaptureTile.computeChecksum(data, 0, data.length);
 

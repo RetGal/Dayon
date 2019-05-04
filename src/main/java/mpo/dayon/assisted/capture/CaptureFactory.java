@@ -4,10 +4,11 @@ import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
-interface CaptureFactory {
-	int getWidth();
+import java.awt.*;
 
-	int getHeight();
+interface CaptureFactory {
+
+	Dimension getDimension();
 
 	@Nullable byte[] captureGray(Gray8Bits quantization);
 

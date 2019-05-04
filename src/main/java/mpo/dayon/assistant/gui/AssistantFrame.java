@@ -2,7 +2,6 @@ package mpo.dayon.assistant.gui;
 
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.event.Listeners;
-import mpo.dayon.common.gui.common.Dimension;
 import mpo.dayon.common.gui.common.*;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -90,7 +89,7 @@ class AssistantFrame extends BaseFrame {
         this.position = new Position(configuration.getX(), configuration.getY());
         this.setLocation(position.getX(), position.getY());
         this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
-        this.setSize(dimension.getWidth(), dimension.getHeight());
+        this.setSize(dimension.width, dimension.height);
 
         addMouseListeners();
 
@@ -186,8 +185,7 @@ class AssistantFrame extends BaseFrame {
 
     @Override
     protected void onSizeUpdated(int width, int height) {
-        dimension.setWidth(width);
-        dimension.setHeight(height);
+        dimension.setSize(width, height);
         configuration = new AssistantFrameConfiguration(position, dimension);
         configuration.persist(false);
     }

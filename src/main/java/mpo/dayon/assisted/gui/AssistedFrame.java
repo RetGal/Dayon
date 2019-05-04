@@ -5,11 +5,12 @@ import javax.swing.Box;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.BaseFrame;
-import mpo.dayon.common.gui.common.Dimension;
 import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
+
+import java.awt.*;
 
 class AssistedFrame extends BaseFrame {
 		private transient AssistedFrameConfiguration configuration;
@@ -27,7 +28,7 @@ class AssistedFrame extends BaseFrame {
 		this.position = new Position(configuration.getX(), configuration.getY());
 		this.setLocation(position.getX(), position.getY());
 		this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
-		this.setSize(dimension.getWidth(), dimension.getHeight());
+		this.setSize(dimension.width, dimension.height);
 
 		onReady();
 	}
@@ -42,8 +43,7 @@ class AssistedFrame extends BaseFrame {
 
 	@Override
 	protected void onSizeUpdated(int width, int height) {
-		dimension.setWidth(width);
-		dimension.setHeight(height);
+		dimension.setSize(width, height);
 		configuration = new AssistedFrameConfiguration(position, dimension);
 		configuration.persist(false);
 	}

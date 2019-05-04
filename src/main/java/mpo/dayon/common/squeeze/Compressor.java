@@ -1,5 +1,6 @@
 package mpo.dayon.common.squeeze;
 
+import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -182,13 +183,10 @@ public class Compressor {
         final int cSkipped = in.readByte() & 0xFF;
         final int cMerged = in.readByte() & 0xFF;
 
-        final int cWidth = in.readShort();
-        final int cHeight = in.readShort();
+        final Dimension captureDimension = new Dimension(in.readShort(), in.readShort());
+        final Dimension tileDimension = new Dimension(in.readShort(), in.readShort());
 
-        final int tWidth = in.readShort();
-        final int tHeight = in.readShort();
-
-        final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(cWidth, cHeight, tWidth, tHeight);
+        final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(captureDimension.width, captureDimension.height, tileDimension.width, tileDimension.height);
 
         final CaptureTile[] dirty = new CaptureTile[xywh.length];
 
@@ -224,7 +222,7 @@ public class Compressor {
             }
         }
 
-        return new Capture(cId, cReset, cSkipped, cMerged, cWidth, cHeight, tWidth, tHeight, dirty);
+        return new Capture(cId, cReset, cSkipped, cMerged, captureDimension, tileDimension, dirty);
     }
 
     private void processUncached(TileCache cache, DataInputStream in, int cId, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {

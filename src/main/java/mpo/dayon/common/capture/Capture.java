@@ -1,6 +1,6 @@
 package mpo.dayon.common.capture;
 
-import java.awt.Transparency;
+import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
@@ -34,28 +34,21 @@ public class Capture {
 	 */
 	private final AtomicInteger merged;
 
-	private final int width;
+	private final Dimension captureDimension;
 
-	private final int height;
-
-	private final int tWidth;
-
-	private final int tHeight;
+	private final Dimension tileDimension;
 
 	private final CaptureTile[] dirty;
 
-	public Capture(int captureId, boolean reset, int skipped, int merged, int width, int height, int tWidth, int tHeight, CaptureTile[] dirty) {
+	public Capture(int captureId, boolean reset, int skipped, int merged, Dimension captureDimension, Dimension tileDimension, CaptureTile[] dirty) {
 		this.id = captureId;
 		this.reset = reset;
 
 		this.skipped = new AtomicInteger(skipped);
 		this.merged = new AtomicInteger(merged);
 
-		this.width = width;
-		this.height = height;
-
-		this.tWidth = tWidth;
-		this.tHeight = tHeight;
+		this.captureDimension = captureDimension;
+		this.tileDimension = tileDimension;
 
 		this.dirty = dirty;
 	}
@@ -104,19 +97,19 @@ public class Capture {
 	}
 
 	public int getWidth() {
-		return width;
+		return captureDimension.width;
 	}
 
 	public int getHeight() {
-		return height;
+		return captureDimension.height;
 	}
 
 	public int getTWidth() {
-		return tWidth;
+		return tileDimension.width;
 	}
 
 	public int getTHeight() {
-		return tHeight;
+		return tileDimension.height;
 	}
 
 	public int getDirtyTileCount() {
@@ -177,9 +170,9 @@ public class Capture {
 	 * Tile-rectangle buffer to screen-rectangle buffer.
 	 */
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(@Nullable byte[] prevBuffer, int prevWidth, int prevHeight) {
-		final byte[] buffer = new byte[width * height];
+		final byte[] buffer = new byte[captureDimension.width * captureDimension.height];
 
-		if (prevBuffer != null && width == prevWidth && height == prevHeight) {
+		if (prevBuffer != null && captureDimension.width == prevWidth && captureDimension.height == prevHeight) {
 			System.arraycopy(prevBuffer, 0, buffer, 0, buffer.length);
 		}
 
@@ -191,20 +184,20 @@ public class Capture {
 				final int tw = tile.getWidth();
 
 				int srcPos = 0;
-				int destPos = tile.getY() * width + tile.getX();
+				int destPos = tile.getY() * captureDimension.width + tile.getX();
 
 				while (srcPos < srcSize) {
 					System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tw);
 
 					srcPos += tw;
-					destPos += width;
+					destPos += captureDimension.width;
 				}
 			}
 		}
 
 		final DataBuffer dbuffer = new DataBufferByte(buffer, buffer.length);
 
-		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, width, height, width, // scanlineStride
+		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, captureDimension.width, captureDimension.height, captureDimension.width, // scanlineStride
 				1, // pixelStride
 				new int[] { 0 }, // bandOffsets
 				null);

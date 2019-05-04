@@ -1,9 +1,10 @@
 package mpo.dayon.assistant.gui;
 
 import mpo.dayon.common.configuration.Configuration;
-import mpo.dayon.common.gui.common.Dimension;
 import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.preference.Preferences;
+
+import java.awt.*;
 
 public class AssistantFrameConfiguration extends Configuration {
 
@@ -49,11 +50,11 @@ public class AssistantFrameConfiguration extends Configuration {
     }
 
     public int getWidth() {
-        return dimension.getWidth();
+        return dimension.width;
     }
 
     public int getHeight() {
-        return dimension.getHeight();
+        return dimension.height;
     }
 
     @Override
@@ -65,15 +66,15 @@ public class AssistantFrameConfiguration extends Configuration {
             return false;
         }
         final AssistantFrameConfiguration that = (AssistantFrameConfiguration) o;
-        return dimension.getHeight() == that.dimension.getHeight() && dimension.getWidth() == that.dimension.getWidth() && position.getX() == that.position.getX() && position.getY() == that.position.getY();
+        return dimension.height == that.dimension.height && dimension.width == that.dimension.width && position.getX() == that.position.getX() && position.getY() == that.position.getY();
     }
 
     @Override
     public int hashCode() {
         int result = position.getX();
         result = 31 * result + position.getY();
-        result = 31 * result + dimension.getWidth();
-        result = 31 * result + dimension.getHeight();
+        result = 31 * result + dimension.width;
+        result = 31 * result + dimension.height;
         return result;
     }
 
@@ -86,8 +87,8 @@ public class AssistantFrameConfiguration extends Configuration {
         props.set(PREF_VERSION, String.valueOf(1));
         props.set(PREF_X, String.valueOf(position.getX()));
         props.set(PREF_Y, String.valueOf(position.getY()));
-        props.set(PREF_WIDTH, String.valueOf(dimension.getWidth()));
-        props.set(PREF_HEIGHT, String.valueOf(dimension.getHeight()));
+        props.set(PREF_WIDTH, String.valueOf(dimension.width));
+        props.set(PREF_HEIGHT, String.valueOf(dimension.height));
 
         // migration support (!)
         if (clear) {
