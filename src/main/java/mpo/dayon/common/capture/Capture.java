@@ -9,6 +9,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
+import java.util.AbstractMap;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -17,7 +18,6 @@ import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.Pair;
 
 public class Capture {
 	private final int id;
@@ -176,7 +176,7 @@ public class Capture {
 	/**
 	 * Tile-rectangle buffer to screen-rectangle buffer.
 	 */
-	public Pair<BufferedImage, byte[]> createBufferedImage(@Nullable byte[] prevBuffer, int prevWidth, int prevHeight) {
+	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(@Nullable byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final byte[] buffer = new byte[width * height];
 
 		if (prevBuffer != null && width == prevWidth && height == prevHeight) {
@@ -212,6 +212,6 @@ public class Capture {
 		final ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[] { 8 }, false, false, Transparency.OPAQUE,
 				DataBuffer.TYPE_BYTE);
 
-		return new Pair<>(new BufferedImage(cm, raster, false, null), buffer);
+		return new AbstractMap.SimpleEntry<>(new BufferedImage(cm, raster, false, null), buffer);
 	}
 }

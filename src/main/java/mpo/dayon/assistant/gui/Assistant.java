@@ -15,10 +15,7 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -58,7 +55,6 @@ import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import mpo.dayon.common.utils.Pair;
 import mpo.dayon.common.utils.SystemUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -97,7 +93,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private int prevHeight = -1;
 
-    Set<Counter<?>> counters;
+    private final Set<Counter<?>> counters;
 
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", Babylon.translate("networkBandwidth"));
@@ -692,18 +688,18 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
          */
         @Override
         public void onDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
-            final Pair<BufferedImage, byte[]> image;
+            final AbstractMap.SimpleEntry<BufferedImage, byte[]> image;
 
             // synchronized because of the reset onStarting()
             synchronized (prevBufferLOCK) {
                 image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
 
-                prevBuffer = image.snd;
-                prevWidth = image.fst.getWidth();
-                prevHeight = image.fst.getHeight();
+                prevBuffer = image.getValue();
+                prevWidth = image.getKey().getWidth();
+                prevHeight = image.getKey().getHeight();
             }
 
-            frame.onCaptureUpdated(image.fst);
+            frame.onCaptureUpdated(image.getKey());
 
             receivedTileCounter.add(capture.getDirtyTileCount(), cacheHits);
             skippedTileCounter.add(capture.getSkipped());
