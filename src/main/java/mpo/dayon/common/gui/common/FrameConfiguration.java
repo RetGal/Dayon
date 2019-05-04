@@ -13,14 +13,11 @@ public class FrameConfiguration extends Configuration {
     private Position position;
     private Dimension dimension;
 
-    private String PREF_VERSION;
-    private String PREF_X;
-    private String PREF_Y;
-    private String PREF_WIDTH;
-    private String PREF_HEIGHT;
-
-    public FrameConfiguration() {
-    }
+    private String prefVersion;
+    private String prefX;
+    private String prefY;
+    private String prefWidth;
+    private String prefHeightT;
 
     public int getX() {
         return position.getX();
@@ -38,20 +35,19 @@ public class FrameConfiguration extends Configuration {
         return dimension.height;
     }
 
-
     public void assistantFrameConfiguration() {
         setAssistantPropertyKeys();
 
         final Preferences prefs = Preferences.getPreferences();
-        final int version = prefs.getIntPreference(PREF_VERSION, 0);
+        final int version = prefs.getIntPreference(prefVersion, 0);
 
         if (!prefs.isNull() && version == 0) {
             position = new Position(prefs.getIntPreference("assistantFrameX", 100), prefs.getIntPreference("assistantFrameY", 100));
             dimension = new Dimension(prefs.getIntPreference("assistantFrameWidth", 800), prefs.getIntPreference("assistantFrameHeight", 600));
             persist(true);
         } else {
-            position = new Position(prefs.getIntPreference(PREF_X, 100), prefs.getIntPreference(PREF_Y, 100));
-            dimension = new Dimension(prefs.getIntPreference(PREF_WIDTH, 800), prefs.getIntPreference(PREF_HEIGHT, 600));
+            position = new Position(prefs.getIntPreference(prefX, 100), prefs.getIntPreference(prefY, 100));
+            dimension = new Dimension(prefs.getIntPreference(prefWidth, 800), prefs.getIntPreference(prefHeightT, 600));
         }
     }
 
@@ -62,11 +58,11 @@ public class FrameConfiguration extends Configuration {
     }
 
     private void setAssistantPropertyKeys() {
-        PREF_VERSION = "assistant.frame.version";
-        PREF_X = "assistant.frame.x";
-        PREF_Y = "assistant.frame.y";
-        PREF_WIDTH = "assistant.frame.width";
-        PREF_HEIGHT = "assistant.frame.height";
+        prefVersion = "assistant.frame.version";
+        prefX = "assistant.frame.x";
+        prefY = "assistant.frame.y";
+        prefWidth = "assistant.frame.width";
+        prefHeightT = "assistant.frame.height";
     }
 
     public void assistedFrameConfiguration() {
@@ -74,15 +70,15 @@ public class FrameConfiguration extends Configuration {
 
         final Preferences prefs = Preferences.getPreferences();
 
-        final int version = prefs.getIntPreference(PREF_VERSION, 0);
+        final int version = prefs.getIntPreference(prefVersion, 0);
 
         if (!prefs.isNull() && version == 0) {
             position = new Position(prefs.getIntPreference("assistedFrameX", 100), prefs.getIntPreference("assistedFrameY", 100));
             dimension = new Dimension(prefs.getIntPreference("assistedFrameWidth", 400), prefs.getIntPreference("assistedFrameHeight", 200));
             persist(true);
         } else {
-            position = new Position(prefs.getIntPreference(PREF_X, 100), prefs.getIntPreference(PREF_Y, 100));
-            dimension = new Dimension(prefs.getIntPreference(PREF_WIDTH, 400), prefs.getIntPreference(PREF_HEIGHT, 200));
+            position = new Position(prefs.getIntPreference(prefX, 100), prefs.getIntPreference(prefY, 100));
+            dimension = new Dimension(prefs.getIntPreference(prefWidth, 400), prefs.getIntPreference(prefHeightT, 200));
         }
     }
 
@@ -93,11 +89,11 @@ public class FrameConfiguration extends Configuration {
     }
 
     private void setAssistedPropertyKeys() {
-        PREF_VERSION = "assisted.frame.version";
-        PREF_X = "assisted.frame.x";
-        PREF_Y = "assisted.frame.y";
-        PREF_WIDTH = "assisted.frame.width";
-        PREF_HEIGHT = "assisted.frame.height";
+        prefVersion = "assisted.frame.version";
+        prefX = "assisted.frame.x";
+        prefY = "assisted.frame.y";
+        prefWidth = "assisted.frame.width";
+        prefHeightT = "assisted.frame.height";
     }
 
     public boolean equals(Object o) {
@@ -127,11 +123,11 @@ public class FrameConfiguration extends Configuration {
     @Override
     public void persist(boolean clear) {
         final Preferences.Props props = new Preferences.Props();
-        props.set(PREF_VERSION, String.valueOf(1));
-        props.set(PREF_X, String.valueOf(getX()));
-        props.set(PREF_Y, String.valueOf(getY()));
-        props.set(PREF_WIDTH, String.valueOf(dimension.width));
-        props.set(PREF_HEIGHT, String.valueOf(dimension.height));
+        props.set(prefVersion, String.valueOf(1));
+        props.set(prefX, String.valueOf(getX()));
+        props.set(prefY, String.valueOf(getY()));
+        props.set(prefWidth, String.valueOf(dimension.width));
+        props.set(prefHeightT, String.valueOf(dimension.height));
 
         // migration support (!)
         if (clear) {
