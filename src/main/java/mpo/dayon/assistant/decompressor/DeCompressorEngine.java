@@ -76,16 +76,13 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 	public void handleCapture(NetworkCaptureMessage capture) {
 		try {
 			semaphore.acquire();
-
-			try {
-				executor.execute(new MyExecutable(executor, semaphore, capture));
-			} catch (RejectedExecutionException ex) {
-				semaphore.release(); // unlikely as we have an unbounded queue
-										// (!)
-			}
+			executor.execute(new MyExecutable(executor, semaphore, capture));
 		} catch (InterruptedException ex) {
 			FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is has been interrupted!", ex);
 			Thread.currentThread().interrupt();
+		} catch (RejectedExecutionException ex) {
+			semaphore.release(); // unlikely as we have an unbounded queue
+			// (!)
 		}
 	}
 
