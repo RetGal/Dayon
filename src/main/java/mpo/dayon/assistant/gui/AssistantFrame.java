@@ -27,26 +27,8 @@ class AssistantFrame extends BaseFrame {
     private final JScrollPane assistantPanelWrapper;
 
     private final AssistantPanel assistantPanel;
-
-    private final transient Action ipAddressAction;
-
-    private final transient Action networkConfigurationAction;
-
-    private final transient Action captureEngineConfigurationAction;
-
-    private final transient Action compressorEngineConfigurationAction;
-
-    private final transient Action resetAction;
-
-    private final transient Action lookAndFeelAction;
-
-    private final transient Action remoteClipboardRequestAction;
-
-    private final transient Action remoteClipboardSetAction;
-
-    private final transient Action startAction;
-
-    private final transient Action stopAction;
+    
+    private final transient AssistantActions actions;
 
     private final transient Position position;
 
@@ -63,23 +45,12 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
-    AssistantFrame(FrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
-                          Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
-                          Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Set<Counter<?>> counters) {
+    AssistantFrame(FrameConfiguration configuration, AssistantActions actions, Set<Counter<?>> counters) {
         this.configuration = configuration;
 
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
-
-        this.ipAddressAction = ipAddressAction;
-        this.networkConfigurationAction = networkConfigurationAction;
-        this.captureEngineConfigurationAction = captureEngineConfigurationAction;
-        this.compressorEngineConfigurationAction = compressorEngineConfigurationAction;
-        this.resetAction = resetAction;
-        this.lookAndFeelAction = lookAndFeelAction;
-        this.remoteClipboardRequestAction = remoteClipboardRequestAction;
-        this.remoteClipboardSetAction = remoteClipboardSetAction;
-        this.startAction = startAction;
-        this.stopAction = stopAction;
+        
+        this.actions = actions;
 
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
@@ -195,25 +166,25 @@ class AssistantFrame extends BaseFrame {
     private ToolBar createToolBar() {
         final ToolBar toolbar = new ToolBar();
 
-        toolbar.addAction(startAction);
-        toolbar.addAction(stopAction);
+        toolbar.addAction(actions.getStartAction());
+        toolbar.addAction(actions.getStopAction());
         toolbar.addSeparator();
-        toolbar.addAction(networkConfigurationAction);
-        toolbar.addAction(captureEngineConfigurationAction);
-        toolbar.addAction(compressorEngineConfigurationAction);
-        toolbar.addAction(resetAction);
+        toolbar.addAction(actions.getNetworkConfigurationAction());
+        toolbar.addAction(actions.getCaptureEngineConfigurationAction());
+        toolbar.addAction(actions.getCompressionEngineConfigurationAction());
+        toolbar.addAction(actions.getResetAction());
         toolbar.addSeparator();
         toolbar.addToggleAction(createToggleControlMode());
-        toolbar.addAction(remoteClipboardRequestAction);
-        toolbar.addAction(remoteClipboardSetAction);
+        toolbar.addAction(actions.getRemoteClipboardRequestAction());
+        toolbar.addAction(actions.getRemoteClipboardSetAction());
         toolbar.addSeparator();
-        toolbar.addAction(lookAndFeelAction);
+        toolbar.addAction(actions.getLookAndFeelAction());
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
         toolbar.addSeparator();
         toolbar.addAction(createShowHelpAction());
         toolbar.addGlue();
-        toolbar.addAction(ipAddressAction);
+        toolbar.addAction(actions.getIpAddressAction());
         toolbar.addSeparator();
         toolbar.addAction(createExitAction());
 
@@ -259,27 +230,27 @@ class AssistantFrame extends BaseFrame {
         validate();
         repaint();
 
-        startAction.setEnabled(true);
-        stopAction.setEnabled(false);
+        actions.getStartAction().setEnabled(true);
+        actions.getStopAction().setEnabled(false);
 
-        networkConfigurationAction.setEnabled(true);
-        ipAddressAction.setEnabled(true);
+        actions.getNetworkConfigurationAction().setEnabled(true);
+        actions.getIpAddressAction().setEnabled(true);
 
-        captureEngineConfigurationAction.setEnabled(true);
-        resetAction.setEnabled(false);
-        remoteClipboardRequestAction.setEnabled(false);
-        remoteClipboardSetAction.setEnabled(false);
-        lookAndFeelAction.setEnabled(true);
+        actions.getCaptureEngineConfigurationAction().setEnabled(true);
+        actions.getResetAction().setEnabled(false);
+        actions.getRemoteClipboardRequestAction().setEnabled(false);
+        actions.getRemoteClipboardSetAction().setEnabled(false);
+        actions.getLookAndFeelAction().setEnabled(true);
 
         statusBar.setMessage(Babylon.translate("ready"));
     }
 
     void onHttpStarting(int port) {
-        startAction.setEnabled(false);
-        stopAction.setEnabled(true);
+        actions.getStartAction().setEnabled(false);
+        actions.getStopAction().setEnabled(true);
 
-        networkConfigurationAction.setEnabled(false);
-        ipAddressAction.setEnabled(false);
+        actions.getNetworkConfigurationAction().setEnabled(false);
+        actions.getIpAddressAction().setEnabled(false);
 
         final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
 
@@ -298,21 +269,21 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onStarting(int port) {
-        startAction.setEnabled(false);
-        stopAction.setEnabled(true);
+        actions.getStartAction().setEnabled(false);
+        actions.getStopAction().setEnabled(true);
 
-        networkConfigurationAction.setEnabled(false);
-        ipAddressAction.setEnabled(false);
+        actions.getNetworkConfigurationAction().setEnabled(false);
+        actions.getIpAddressAction().setEnabled(false);
 
         statusBar.setMessage(Babylon.translate("starting", port));
     }
 
     void onAccepting(int port) {
-        startAction.setEnabled(false);
-        stopAction.setEnabled(true);
+        actions.getStartAction().setEnabled(false);
+        actions.getStopAction().setEnabled(true);
 
-        networkConfigurationAction.setEnabled(false);
-        ipAddressAction.setEnabled(false);
+        actions.getNetworkConfigurationAction().setEnabled(false);
+        actions.getIpAddressAction().setEnabled(false);
 
         statusBar.setMessage(Babylon.translate("accepting", port));
     }
@@ -330,9 +301,9 @@ class AssistantFrame extends BaseFrame {
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
 
-        resetAction.setEnabled(true);
-        remoteClipboardRequestAction.setEnabled(true);
-        remoteClipboardSetAction.setEnabled(true);
+        actions.getResetAction().setEnabled(true);
+        actions.getRemoteClipboardRequestAction().setEnabled(true);
+        actions.getRemoteClipboardSetAction().setEnabled(true);
 
         validate();
         repaint();
@@ -341,19 +312,19 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onClipboardRequested() {
-        remoteClipboardRequestAction.setEnabled(false);
+        actions.getRemoteClipboardRequestAction().setEnabled(false);
     }
 
     void onClipboardSending() {
-        remoteClipboardSetAction.setEnabled(false);
+        actions.getRemoteClipboardSetAction().setEnabled(false);
     }
 
     void onClipboardSent() {
-        remoteClipboardSetAction.setEnabled(true);
+        actions.getRemoteClipboardSetAction().setEnabled(true);
     }
 
     void onClipboardReceived() {
-        remoteClipboardRequestAction.setEnabled(true);
+        actions.getRemoteClipboardRequestAction().setEnabled(true);
     }
 
     void onSessionStarted() {
@@ -373,12 +344,12 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onIOError(IOException error) {
-        startAction.setEnabled(false);
-        stopAction.setEnabled(false);
+        actions.getStartAction().setEnabled(false);
+        actions.getStopAction().setEnabled(false);
 
-        resetAction.setEnabled(false);
-        remoteClipboardRequestAction.setEnabled(false);
-        remoteClipboardSetAction.setEnabled(false);
+        actions.getResetAction().setEnabled(false);
+        actions.getRemoteClipboardRequestAction().setEnabled(false);
+        actions.getRemoteClipboardSetAction().setEnabled(false);
 
         sessionTimer.stop();
 

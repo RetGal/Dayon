@@ -143,14 +143,27 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     public void start() {
-        frame = new AssistantFrame(new FrameConfiguration(FrameType.ASSISTANT), createWhatIsMyIpAction(), createNetworkAssistantConfigurationAction(),
-                createCaptureConfigurationAction(), createComressionConfigurationAction(), createResetAction(), createSwitchLookAndFeelAction(),
-                createRemoteClipboardRequestAction(), createRemoteClipboardUpdateAction(), new AssistantStartAction(network), new AssistantStopAction(network), counters);
+        frame = new AssistantFrame(new FrameConfiguration(FrameType.ASSISTANT), createAssistantActions(), counters);
 
         FatalErrorHandler.attachFrame(frame);
 
         frame.addListener(control);
         frame.setVisible(true);
+    }
+
+    private AssistantActions createAssistantActions() {
+        AssistantActions actions = new AssistantActions();
+        actions.setIpAddressAction(createWhatIsMyIpAction());
+        actions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction());
+        actions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
+        actions.setCompressionEngineConfigurationAction(createComressionConfigurationAction());
+        actions.setResetAction(createResetAction());
+        actions.setLookAndFeelAction(createSwitchLookAndFeelAction());
+        actions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
+        actions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
+        actions.setStartAction(new AssistantStartAction(network));
+        actions.setStopAction(new AssistantStopAction(network));
+        return actions;
     }
 
     @Override
