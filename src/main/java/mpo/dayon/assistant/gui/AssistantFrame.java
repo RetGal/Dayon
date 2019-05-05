@@ -52,7 +52,9 @@ class AssistantFrame extends BaseFrame {
 
     private final transient Dimension dimension;
 
-    private transient AssistantFrameConfiguration configuration;
+    private transient FrameConfiguration configuration;
+
+    private final static FrameType frameType = FrameType.ASSISTANT;
 
     private Timer sessionTimer;
 
@@ -61,7 +63,7 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
-    AssistantFrame(AssistantFrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
+    AssistantFrame(FrameConfiguration configuration, Action ipAddressAction, Action networkConfigurationAction,
                           Action captureEngineConfigurationAction, Action compressorEngineConfigurationAction, Action resetAction, Action lookAndFeelAction,
                           Action remoteClipboardRequestAction, Action remoteClipboardSetAction, AssistantStartAction startAction, AssistantStopAction stopAction, Set<Counter<?>> counters) {
         this.configuration = configuration;
@@ -179,15 +181,15 @@ class AssistantFrame extends BaseFrame {
     protected void onLocationUpdated(int x, int y) {
         this.position.setX(x);
         this.position.setY(y);
-        configuration = new AssistantFrameConfiguration(position, dimension);
-        configuration.persist(false);
+        configuration = new FrameConfiguration(position, dimension);
+        configuration.persist(frameType);
     }
 
     @Override
     protected void onSizeUpdated(int width, int height) {
         dimension.setSize(width, height);
-        configuration = new AssistantFrameConfiguration(position, dimension);
-        configuration.persist(false);
+        configuration = new FrameConfiguration(position, dimension);
+        configuration.persist(frameType);
     }
 
     private ToolBar createToolBar() {

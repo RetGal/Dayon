@@ -37,11 +37,11 @@ import javax.swing.UIManager;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
+import mpo.dayon.common.gui.common.*;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.assistant.network.NetworkAssistantConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
-import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.assistant.utils.NetworkUtilities;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
@@ -50,8 +50,6 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.error.FatalErrorHandler;
-import mpo.dayon.common.gui.common.DialogFactory;
-import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
@@ -145,7 +143,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     public void start() {
-        frame = new AssistantFrame(new AssistantFrameConfiguration(), createWhatIsMyIpAction(), createNetworkAssistantConfigurationAction(),
+        frame = new AssistantFrame(new FrameConfiguration(FrameType.ASSISTANT), createWhatIsMyIpAction(), createNetworkAssistantConfigurationAction(),
                 createCaptureConfigurationAction(), createComressionConfigurationAction(), createResetAction(), createSwitchLookAndFeelAction(),
                 createRemoteClipboardRequestAction(), createRemoteClipboardUpdateAction(), new AssistantStartAction(network), new AssistantStopAction(network), counters);
 

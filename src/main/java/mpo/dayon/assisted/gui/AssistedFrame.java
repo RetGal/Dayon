@@ -5,6 +5,8 @@ import javax.swing.Box;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.BaseFrame;
+import mpo.dayon.common.gui.common.FrameConfiguration;
+import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -13,11 +15,12 @@ import mpo.dayon.common.version.Version;
 import java.awt.*;
 
 class AssistedFrame extends BaseFrame {
-		private transient AssistedFrameConfiguration configuration;
+		private transient FrameConfiguration configuration;
 		private final transient Position position;
 		private final transient Dimension dimension;
+		private final static FrameType FRAME_TYPE = FrameType.ASSISTED;
 
-	public AssistedFrame(AssistedFrameConfiguration configuration) {
+	public AssistedFrame(FrameConfiguration configuration) {
 		this.configuration = configuration;
 
 		setTitle("Dayon! (" + Babylon.translate("assisted") + ") " + Version.get());
@@ -37,15 +40,15 @@ class AssistedFrame extends BaseFrame {
 	protected void onLocationUpdated(int x, int y) {
 		this.position.setX(x);
 		this.position.setY(y);
-		configuration = new AssistedFrameConfiguration(position, dimension);
-		configuration.persist(false);
+		configuration = new FrameConfiguration(position, dimension);
+		configuration.persist(FRAME_TYPE);
 	}
 
 	@Override
 	protected void onSizeUpdated(int width, int height) {
 		dimension.setSize(width, height);
-		configuration = new AssistedFrameConfiguration(position, dimension);
-		configuration.persist(false);
+		configuration = new FrameConfiguration(position, dimension);
+		configuration.persist(FRAME_TYPE);
 	}
 
 	private ToolBar createToolBar() {
