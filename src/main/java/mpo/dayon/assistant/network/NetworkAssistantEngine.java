@@ -403,42 +403,32 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void fireOnReady() {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onReady();
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onReady();
         }
     }
 
     private void fireOnHttpStarting(int port) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onHttpStarting(port);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onHttpStarting(port);
         }
     }
 
     private void fireOnStarting(int port) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onStarting(port);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onStarting(port);
         }
     }
 
     private void fireOnAccepting(int port) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onAccepting(port);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onAccepting(port);
         }
     }
 
     private boolean fireOnAccepted(Socket connection) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            if (!xlistener.onAccepted(connection)) {
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            if (!xListener.onAccepted(connection)) {
                 return false;
             }
         }
@@ -446,50 +436,38 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void fireOnConnected(Socket connection) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onConnected(connection);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onConnected(connection);
         }
     }
 
     private void fireOnByteReceived(int count) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onByteReceived(count);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onByteReceived(count);
         }
     }
 
     private void fireOnClipboardReceived() {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onClipboardReceived();
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onClipboardReceived();
         }
     }
 
     private void fireOnClipboardSent() {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onClipboardSent();
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onClipboardSent();
         }
     }
 
     private void fireOnDisconnecting() {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onDisconnecting();
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onDisconnecting();
         }
     }
 
     private void fireOnIOError(IOException error) {
-        final List<NetworkAssistantEngineListener> xlisteners = listeners.getListeners();
-
-        for (final NetworkAssistantEngineListener xlistener : xlisteners) {
-            xlistener.onIOError(error);
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onIOError(error);
         }
     }
 }

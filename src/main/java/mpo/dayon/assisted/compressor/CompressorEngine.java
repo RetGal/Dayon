@@ -181,10 +181,8 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
 									  MemByteBuffer compressed) {
-			final List<CompressorEngineListener> xlisteners = listeners.getListeners();
-
-			for (final CompressorEngineListener xlistener : xlisteners) {
-				xlistener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
+			for (final CompressorEngineListener xListener : listeners.getListeners()) {
+				xListener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);
 			}
 		}
 

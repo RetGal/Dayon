@@ -59,8 +59,8 @@ public abstract class Counter<T> {
 
 	void fireOnInstantValueUpdated(T value) {
 
-		for (final CounterListener<T> xlistener : listeners) {
-			xlistener.onInstantValueUpdated(this, value);
+		for (final CounterListener<T> xListener : listeners) {
+			xListener.onInstantValueUpdated(this, value);
 		}
 	}
 }

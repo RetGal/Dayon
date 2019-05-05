@@ -96,13 +96,13 @@ public class ControlEngine implements AssistantFrameListener {
 	 * From AWT thread (!)
 	 */
 	@Override
-    public void onKeyPressed(final int keycode, final char keychar) {
+    public void onKeyPressed(final int keyCode, final char keyChar) {
 		executor.execute(new Executable(executor, null) {
 			@Override
             protected void execute() {
 
-				pressedKeys.add(keycode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keycode, keychar));
+				pressedKeys.add(keyCode);
+				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keyCode, keyChar));
 			}
 		});
 	}
@@ -111,7 +111,7 @@ public class ControlEngine implements AssistantFrameListener {
 	 * From AWT thread (!)
 	 */
 	@Override
-    public void onKeyReleased(final int keycode, final char keychar) {
+    public void onKeyReleased(final int keyCode, final char keyChar) {
 		// -------------------------------------------------------------------------------------------------------------
 		// E.g., Windows + R : [Windows.PRESSED] and then the focus is LOST =>
 		// missing RELEASED events
@@ -120,21 +120,21 @@ public class ControlEngine implements AssistantFrameListener {
 		// sure I should send the
 		// [Windows] key and the like (e.g.,CTRL-ALT-DEL, etc...) at all ...
 		// -------------------------------------------------------------------------------------------------------------
-		if (keycode == -1) {
-			pressedKeys.forEach(pressedKey -> onKeyReleased(pressedKey, keychar));
+		if (keyCode == -1) {
+			pressedKeys.forEach(pressedKey -> onKeyReleased(pressedKey, keyChar));
 			return;
 		}
 
-		if (!pressedKeys.contains(keycode)) {
-			onKeyPressed(keycode, keychar);
+		if (!pressedKeys.contains(keyCode)) {
+			onKeyPressed(keyCode, keyChar);
 		}
 
 		executor.execute(new Executable(executor, null) {
 			@Override
             protected void execute() {
 
-				pressedKeys.remove(keycode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keycode, keychar));
+				pressedKeys.remove(keyCode);
+				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keyCode, keyChar));
 			}
 		});
 	}

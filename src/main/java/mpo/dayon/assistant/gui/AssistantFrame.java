@@ -16,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -352,50 +351,38 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void fireOnMouseMove(int x, int y) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onMouseMove(x, y);
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onMouseMove(x, y);
         }
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onMousePressed(x, y, button);
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onMousePressed(x, y, button);
         }
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onMouseReleased(x, y, button);
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onMouseReleased(x, y, button);
         }
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onMouseWheeled(x, y, rotations);
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onMouseWheeled(x, y, rotations);
         }
     }
 
-    private void fireOnKeyPressed(int keycode, char keychar) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onKeyPressed(keycode, keychar);
+    private void fireOnKeyPressed(int keyCode, char keyChar) {
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onKeyPressed(keyCode, keyChar);
         }
     }
 
-    private void fireOnKeyReleased(int keycode, char keychar) {
-        final List<AssistantFrameListener> xlisteners = listeners.getListeners();
-
-        for (final AssistantFrameListener xlistener : xlisteners) {
-            xlistener.onKeyReleased(keycode, keychar);
+    private void fireOnKeyReleased(int keyCode, char keyChar) {
+        for (final AssistantFrameListener xListener : listeners.getListeners()) {
+            xListener.onKeyReleased(keyCode, keyChar);
         }
     }
 

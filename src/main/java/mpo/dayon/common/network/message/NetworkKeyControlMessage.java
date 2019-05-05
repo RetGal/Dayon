@@ -16,18 +16,18 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 
 	private final int info;
 
-	private final int keycode;
+	private final int keyCode;
 	
-	private final char keychar;
+	private final char keyChar;
 
-	public NetworkKeyControlMessage(KeyState buttonState, int keycode, char keychar) {
-		this(buttonState == KeyState.PRESSED ? PRESSED : RELEASED, keycode, keychar);
+	public NetworkKeyControlMessage(KeyState buttonState, int keyCode, char keyChar) {
+		this(buttonState == KeyState.PRESSED ? PRESSED : RELEASED, keyCode, keyChar);
 	}
 
-	private NetworkKeyControlMessage(int info, int keycode, char keychar) {
+	private NetworkKeyControlMessage(int info, int keyCode, char keyChar) {
 		this.info = info;
-		this.keycode = keycode;
-		this.keychar = keychar;
+		this.keyCode = keyCode;
+		this.keyChar = keyChar;
 	}
 
 	@Override
@@ -36,11 +36,11 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 	}
 
 	public int getKeyCode() {
-		return keycode;
+		return keyCode;
 	}
 	
 	public char getKeyChar() {
-		return keychar;
+		return keyChar;
 	}
 
 	public boolean isPressed() {
@@ -53,26 +53,26 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 
 	@Override
     public int getWireSize() {
-		return 11; // type (byte) + info (int) + keycode (int) + keychar (char)
+		return 11; // type (byte) + info (int) + keyCode (int) + keyChar (char)
 	}
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, getType());
 		out.writeInt(info);
-		out.writeInt(keycode);
-		out.writeChar(keychar);
+		out.writeInt(keyCode);
+		out.writeChar(keyChar);
 	}
 
 	public static NetworkKeyControlMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int info = in.readInt();
-		final int keycode = in.readInt();
-		final char keychar = in.readChar();
-		return new NetworkKeyControlMessage(info, keycode, keychar);
+		final int keyCode = in.readInt();
+		final char keyChar = in.readChar();
+		return new NetworkKeyControlMessage(info, keyCode, keyChar);
 	}
 
 	public String toString() {
-		return String.format("%s [%d] [%s]", toStringPressed(), keycode, keychar);
+		return String.format("%s [%d] [%s]", toStringPressed(), keyCode, keyChar);
 	}
 
 	private String toStringPressed() {
