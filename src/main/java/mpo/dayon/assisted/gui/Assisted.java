@@ -53,7 +53,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 	private CompressorEngine compressorEngine;
 
-	private final static FrameType FRAME_TYPE = FrameType.ASSISTED;
+	private static final FrameType FRAME_TYPE = FrameType.ASSISTED;
 
 	public void configure() {
 		final String lnf = SystemUtilities.getDefaultLookAndFeel();

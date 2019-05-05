@@ -18,7 +18,7 @@ class AssistedFrame extends BaseFrame {
 		private transient FrameConfiguration configuration;
 		private final transient Position position;
 		private final transient Dimension dimension;
-		private final static FrameType FRAME_TYPE = FrameType.ASSISTED;
+		private static final FrameType FRAME_TYPE = FrameType.ASSISTED;
 
 	public AssistedFrame(FrameConfiguration configuration) {
 		this.configuration = configuration;

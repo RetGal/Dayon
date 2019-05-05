@@ -54,7 +54,7 @@ class AssistantFrame extends BaseFrame {
 
     private transient FrameConfiguration configuration;
 
-    private final static FrameType frameType = FrameType.ASSISTANT;
+    private static final FrameType frameType = FrameType.ASSISTANT;
 
     private Timer sessionTimer;
 
