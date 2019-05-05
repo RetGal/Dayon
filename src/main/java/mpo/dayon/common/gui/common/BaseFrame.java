@@ -29,11 +29,11 @@ import mpo.dayon.common.version.Version;
 
 public abstract class BaseFrame extends JFrame {
 
-	private Position position;
+	private transient FrameConfiguration configuration;
+
+	private transient Position position;
 
 	private Dimension dimension;
-
-	private FrameConfiguration configuration;
 
 	private FrameType frameType;
 
