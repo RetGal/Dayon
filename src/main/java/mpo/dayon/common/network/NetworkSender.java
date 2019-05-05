@@ -2,6 +2,7 @@ package mpo.dayon.common.network;
 
 import java.awt.Point;
 import java.io.File;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -188,7 +189,7 @@ public class NetworkSender {
         }
 
         @Override
-        protected void execute() throws Exception {
+        protected void execute() throws IOException {
             NetworkMessage.marshallMagicNumber(out);
             message.marshall(out);
             out.flush();

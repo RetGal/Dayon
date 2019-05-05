@@ -36,7 +36,7 @@ class AssistantFrame extends BaseFrame {
 
     private transient FrameConfiguration configuration;
 
-    private static final FrameType frameType = FrameType.ASSISTANT;
+    private static final FrameType FRAME_TYPE = FrameType.ASSISTANT;
 
     private Timer sessionTimer;
 
@@ -153,14 +153,14 @@ class AssistantFrame extends BaseFrame {
         this.position.setX(x);
         this.position.setY(y);
         configuration = new FrameConfiguration(position, dimension);
-        configuration.persist(frameType);
+        configuration.persist(FRAME_TYPE);
     }
 
     @Override
     protected void onSizeUpdated(int width, int height) {
         dimension.setSize(width, height);
         configuration = new FrameConfiguration(position, dimension);
-        configuration.persist(frameType);
+        configuration.persist(FRAME_TYPE);
     }
 
     private ToolBar createToolBar() {

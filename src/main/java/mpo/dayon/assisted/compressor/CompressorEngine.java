@@ -1,5 +1,6 @@
 package mpo.dayon.assisted.compressor;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -135,7 +136,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		}
 
 		@Override
-		protected void execute() throws Exception {
+		protected void execute() throws IOException {
 			try {
 				final CompressorEngineConfiguration xconfiguration;
 				final boolean xreconfigured;

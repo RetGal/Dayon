@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.decompressor;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -96,7 +97,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 		}
 
 		@Override
-		protected void execute() throws Exception {
+		protected void execute() throws IOException {
 			try {
 				final Compressor compressor = Compressor.get(message.getCompressionMethod());
 
