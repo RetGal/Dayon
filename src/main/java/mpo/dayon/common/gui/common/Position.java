@@ -1,6 +1,6 @@
 package mpo.dayon.common.gui.common;
 
-public class Position {
+class Position {
 	
 	private int x;
 	private int y;

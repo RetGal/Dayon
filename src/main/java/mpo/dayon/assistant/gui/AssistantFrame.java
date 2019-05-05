@@ -30,14 +30,6 @@ class AssistantFrame extends BaseFrame {
     
     private final transient AssistantActions actions;
 
-    private final transient Position position;
-
-    private final transient Dimension dimension;
-
-    private transient FrameConfiguration configuration;
-
-    private static final FrameType FRAME_TYPE = FrameType.ASSISTANT;
-
     private Timer sessionTimer;
 
     @Nullable
@@ -45,8 +37,8 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
-    AssistantFrame(FrameConfiguration configuration, AssistantActions actions, Set<Counter<?>> counters) {
-        this.configuration = configuration;
+    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
+        super.setFrameType(FrameType.ASSISTANT);
 
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
         
@@ -58,11 +50,6 @@ class AssistantFrame extends BaseFrame {
         assistantPanel = new AssistantPanel();
         assistantPanel.setFocusable(false);
         assistantPanelWrapper = new JScrollPane(assistantPanel);
-
-        this.position = new Position(configuration.getX(), configuration.getY());
-        this.setLocation(position.getX(), position.getY());
-        this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
-        this.setSize(dimension.width, dimension.height);
 
         addMouseListeners();
 
@@ -146,21 +133,6 @@ class AssistantFrame extends BaseFrame {
 
     public void addListener(AssistantFrameListener listener) {
         listeners.add(listener);
-    }
-
-    @Override
-    protected void onLocationUpdated(int x, int y) {
-        this.position.setX(x);
-        this.position.setY(y);
-        configuration = new FrameConfiguration(position, dimension);
-        configuration.persist(FRAME_TYPE);
-    }
-
-    @Override
-    protected void onSizeUpdated(int width, int height) {
-        dimension.setSize(width, height);
-        configuration = new FrameConfiguration(position, dimension);
-        configuration.persist(FRAME_TYPE);
     }
 
     private ToolBar createToolBar() {

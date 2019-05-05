@@ -36,8 +36,6 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
-import mpo.dayon.common.gui.common.FrameConfiguration;
-import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
@@ -53,8 +51,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 	private CompressorEngine compressorEngine;
 
-	private static final FrameType FRAME_TYPE = FrameType.ASSISTED;
-
 	public void configure() {
 		final String lnf = SystemUtilities.getDefaultLookAndFeel();
 		try {
@@ -65,7 +61,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	}
 
 	public void start() throws IOException {
-		frame = new AssistedFrame(new FrameConfiguration(FRAME_TYPE));
+		frame = new AssistedFrame();
 
 		FatalErrorHandler.attachFrame(frame);
 		KeyboardErrorHandler.attachFrame(frame);

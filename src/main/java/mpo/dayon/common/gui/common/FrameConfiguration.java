@@ -5,7 +5,7 @@ import mpo.dayon.common.preference.Preferences;
 import java.awt.*;
 import java.util.Objects;
 
-public class FrameConfiguration {
+class FrameConfiguration {
 
     private int version = 1;
     private final Position position;

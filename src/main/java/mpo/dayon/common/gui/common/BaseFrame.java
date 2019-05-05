@@ -29,6 +29,14 @@ import mpo.dayon.common.version.Version;
 
 public abstract class BaseFrame extends JFrame {
 
+	private Position position;
+
+	private Dimension dimension;
+
+	private FrameConfiguration configuration;
+
+	private FrameType frameType;
+
 	private ToolBar toolBar;
 
 	protected StatusBar statusBar;
@@ -52,6 +60,15 @@ public abstract class BaseFrame extends JFrame {
 			Log.info("Bye!");
 			System.exit(0);
 		}
+	}
+
+	protected void setFrameType(FrameType frameType) {
+		this.frameType = frameType;
+		this.configuration = new FrameConfiguration(frameType);
+		this.position = new Position(configuration.getX(), configuration.getY());
+		this.setLocation(position.getX(), position.getY());
+		this.dimension = new Dimension(configuration.getWidth(), configuration.getHeight());
+		this.setSize(dimension.width, dimension.height);
 	}
 
 	protected void setupToolBar(ToolBar toolBar) {
@@ -195,10 +212,18 @@ public abstract class BaseFrame extends JFrame {
 		});
 	}
 
-	protected abstract void onSizeUpdated(int width, int height);
+	private void onSizeUpdated(int width, int height) {
+		this.dimension.setSize(width, height);
+		configuration = new FrameConfiguration(position, dimension);
+		configuration.persist(frameType);
+	}
 
-	protected abstract void onLocationUpdated(int x, int y);
-
+	private void onLocationUpdated(int x, int y) {
+		this.position.setX(x);
+		this.position.setY(y);
+		configuration = new FrameConfiguration(position, dimension);
+		configuration.persist(frameType);
+	}
 
 	private String composeLabelHtml(String label, String url) {
 		return "<html>" + label + " : <a href=''>" + url + "</a></html>";

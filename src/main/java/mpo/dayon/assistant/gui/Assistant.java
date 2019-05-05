@@ -143,7 +143,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     public void start() {
-        frame = new AssistantFrame(new FrameConfiguration(FrameType.ASSISTANT), createAssistantActions(), counters);
+        frame = new AssistantFrame(createAssistantActions(), counters);
 
         FatalErrorHandler.attachFrame(frame);
 

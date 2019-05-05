@@ -45,5 +45,5 @@ public abstract class Executable extends RunnableEx {
 		}
 	}
 
-	protected abstract void execute() throws IOException, InterruptedException;
+	protected abstract void execute() throws IOException;
 }
