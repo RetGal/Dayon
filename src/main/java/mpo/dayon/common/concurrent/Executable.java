@@ -1,6 +1,5 @@
 package mpo.dayon.common.concurrent;
 
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
@@ -28,7 +27,7 @@ public abstract class Executable extends RunnableEx {
 	}
 
 	@Override
-    public final void doRun() throws IOException, InterruptedException {
+    public final void doRun() throws Exception {
 		try {
 			if (semaphore != null) {
 				semaphore.release();
@@ -45,5 +44,5 @@ public abstract class Executable extends RunnableEx {
 		}
 	}
 
-	protected abstract void execute() throws IOException;
+	protected abstract void execute() throws Exception;
 }
