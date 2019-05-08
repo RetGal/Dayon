@@ -5,6 +5,7 @@ import java.util.zip.Adler32;
 import java.util.zip.Checksum;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
+import mpo.dayon.common.gui.common.Position;
 
 public class CaptureTile {
 	public static final CaptureTile MISSING = new CaptureTile();
@@ -15,9 +16,7 @@ public class CaptureTile {
 
 	private final long checksum;
 
-	private final int x;
-
-	private final int y;
+	private final Position position;
 
 	private final int width;
 
@@ -39,8 +38,7 @@ public class CaptureTile {
 		this.captureId = -1;
 		this.id = -1;
 		this.checksum = -1;
-		this.x = -1;
-		this.y = -1;
+		this.position = new Position(-1, -1);
 		this.width = -1;
 		this.height = -1;
 		this.capture = null;
@@ -48,14 +46,12 @@ public class CaptureTile {
 		this.fromCache = false;
 	}
 
-	public CaptureTile(int captureId, int id, long checksum, int x, int y, int width, int height, byte[] capture) {
+	public CaptureTile(int captureId, int id, long checksum, Position position, int width, int height, byte[] capture) {
 		this.captureId = captureId;
 
 		this.id = id;
 		this.checksum = checksum;
-
-		this.x = x;
-		this.y = y;
+		this.position = position;
 		this.width = width;
 		this.height = height;
 
@@ -71,12 +67,8 @@ public class CaptureTile {
 		this.captureId = captureId;
 
 		this.id = id;
-		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache
-																					// usage
-																					// (!)
-
-		this.x = xywh.x;
-		this.y = xywh.y;
+		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
+		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
 
@@ -99,9 +91,7 @@ public class CaptureTile {
 
 		this.id = id;
 		this.checksum = -1;
-
-		this.x = xywh.x;
-		this.y = xywh.y;
+		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
 
@@ -122,17 +112,13 @@ public class CaptureTile {
 
 		this.id = id;
 		this.checksum = -1;
-
-		this.x = xywh.x;
-		this.y = xywh.y;
+		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
 
 		this.singleLevel = -1;
 
-		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black
-																							// image
-																							// (!)
+		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black image (!)
 				: cached.capture; // sharing it (!)
 
 		if (width * height != capture.size()) {
@@ -163,11 +149,11 @@ public class CaptureTile {
 	}
 
 	public int getX() {
-		return x;
+		return position.getX();
 	}
 
 	public int getY() {
-		return y;
+		return position.getY();
 	}
 
 	public int getWidth() {

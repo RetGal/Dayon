@@ -219,8 +219,7 @@ public abstract class BaseFrame extends JFrame {
 	}
 
 	private void onLocationUpdated(int x, int y) {
-		this.position.setX(x);
-		this.position.setY(y);
+		this.position = new Position(x, y);
 		configuration = new FrameConfiguration(position, dimension);
 		configuration.persist(frameType);
 	}
