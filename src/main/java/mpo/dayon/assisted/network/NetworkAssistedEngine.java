@@ -42,11 +42,11 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private final ClipboardOwner clipboardOwner;
 
-    private final Thread receiver;
+    private final Thread receiver; // in
+
+    private NetworkSender sender; // out
 
     private ObjectInputStream in;
-
-    private NetworkSender sender;
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler, NetworkControlMessageHandler controlHandler, NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
@@ -69,9 +69,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.configuration = configuration;
     }
 
-    @Override
-    public void start()
-            throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    public void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
         SSLSocket connection = initSocket();
@@ -134,12 +132,12 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 case MOUSE_CONTROL:
                     final NetworkMouseControlMessage mouseControlMessagee = NetworkMouseControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(this, mouseControlMessagee);
+                    controlHandler.handleMessage(mouseControlMessagee);
                     break;
 
                 case KEY_CONTROL:
                     final NetworkKeyControlMessage keyControlMessage = NetworkKeyControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(this, keyControlMessage);
+                    controlHandler.handleMessage(keyControlMessage);
                     break;
 
                 case CLIPBOARD_REQUEST:

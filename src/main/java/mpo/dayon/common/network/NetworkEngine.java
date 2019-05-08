@@ -8,9 +8,6 @@ import mpo.dayon.common.utils.TransferableFiles;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
-import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 /**
@@ -19,7 +16,6 @@ import java.util.List;
  * both the sending and the receiving sides.
  */
 public abstract class NetworkEngine {
-	public abstract void start() throws IOException, NoSuchAlgorithmException, KeyManagementException;
 
 	protected void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
 		Log.debug("setClipboardContents " + string);

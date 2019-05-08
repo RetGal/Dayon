@@ -12,7 +12,6 @@ import javax.swing.KeyStroke;
 
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 
@@ -42,7 +41,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Should not block as called from the network incoming message thread (!)
 	 */
 	@Override
-	public void handleMessage(NetworkEngine engine, NetworkMouseControlMessage message) {
+	public void handleMessage(NetworkMouseControlMessage message) {
 		if (message.isPressed()) {
 			if (message.isButton1()) {
 				robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -69,7 +68,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Should not block as called from the network incoming message thread (!)
 	 */
 	@Override
-	public void handleMessage(NetworkEngine engine, NetworkKeyControlMessage message) {
+	public void handleMessage(NetworkKeyControlMessage message) {
 		if (message.isPressed()) {
 			try {
 				robot.keyPress(message.getKeyCode());

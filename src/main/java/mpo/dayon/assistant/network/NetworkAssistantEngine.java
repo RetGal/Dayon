@@ -44,15 +44,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private NetworkAssistantConfiguration configuration;
 
-    /**
-     * IN.
-     */
-    private Thread receiver;
+    private Thread receiver; // in
 
-    /**
-     * OUT.
-     */
-    private NetworkSender sender;
+    private NetworkSender sender; // out
 
     private ServerSocket server;
 
@@ -94,9 +88,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     /**
-     * Possibly called from a GUI action => do not block the AWT thread (!)
+     * Called from a GUI action => do not block the AWT thread (!)
      */
-    @Override
     public void start() {
         if (cancelling.get() || receiver != null) {
             return;
@@ -113,7 +106,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     /**
-     * Possibly called from a GUI action => do not block the AWT thread (!)
+     * Called from a GUI action => do not block the AWT thread (!)
      */
     public void cancel() {
         Log.info("Cancelling the network assistant engine...");
