@@ -12,7 +12,6 @@ import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
-import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -29,8 +28,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
+import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
 
@@ -52,11 +53,29 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private Socket connection;
 
+    private ObjectInputStream in;
+
+    private ObjectOutputStream out;
+
+    private Thread fileReceiver; // file in
+
+    private NetworkSender fileSender; // file out
+
+    private ServerSocket fileServer;
+
+    private Socket fileConnection;
+
+    private ObjectInputStream fileIn;
+
+    private ObjectOutputStream fileOut;
+
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     private NetworkAssistantHttpsEngine https;
 
     private static final String LOCALHOST = "127.0.0.1";
+
+    private int port;
 
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
         this.captureMessageHandler = captureMessageHandler;
@@ -94,6 +113,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
+        port = configuration.getPort();
 
         receiver = new Thread(new RunnableEx() {
             @Override
@@ -103,6 +123,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }, "NetworkReceiver");
 
         receiver.start();
+
     }
 
     /**
@@ -123,19 +144,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             // waiting for Godot (jetty may not have finished starting up)
         }
 
-        SystemUtilities.safeClose(server);
-        SystemUtilities.safeClose(connection);
+        safeClose(server);
+        safeClose(connection);
+        safeClose(fileServer);
+        safeClose(fileConnection);
         fireOnDisconnecting();
     }
 
     @java.lang.SuppressWarnings("squid:S2189")
     private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
-        ObjectInputStream in = null;
-        ObjectOutputStream out = null;
+        in = null;
+        out = null;
 
         try {
-            final int port = getPort();
-
             Log.info(String.format("HTTPS server [port:%d]", port));
             fireOnHttpStarting(port);
 
@@ -157,13 +178,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
 
             do {
-                SystemUtilities.safeClose(connection); // we might have refused the accepted connection (!)
+                safeClose(connection); // we might have refused the accepted connection (!)
                 connection = server.accept();
                 Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
             } while (!fireOnAccepted(connection) && !cancelling.get());
 
             server.close();
             server = null;
+
+            startFileReceiver();
 
             out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
 
@@ -175,6 +198,57 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             boolean introduced = false;
 
+            //noinspection InfiniteLoopStatement
+            while (true) {
+
+                NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+                NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+                Log.debug("Received " + type.name());
+
+                if (introduced) {
+                    processIntroduced(type, in);
+                } else {
+                    introduced = processUnIntroduced(type, in);
+                }
+            }
+        } catch (IOException ex) {
+            handleIOException(ex);
+            closeConnections();
+        }
+
+        fireOnReady();
+    }
+
+    private void startFileReceiver() {
+        fileReceiver = new Thread(new RunnableEx() {
+            @Override
+            protected void doRun() throws Exception {
+                NetworkAssistantEngine.this.fileReceivingLoop();
+            }
+        }, "FileReceiver");
+
+        fileReceiver.start();
+    }
+
+    @java.lang.SuppressWarnings("squid:S2189")
+    private void fileReceivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+        fileIn = null;
+        fileOut = null;
+
+        try {
+            Log.info(String.format("Dayon! file server [port:%d]", port));
+
+            fileServer = initServerSocket(port);
+            fileConnection = fileServer.accept();
+
+            fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
+
+            fileSender = new NetworkSender(fileOut);
+            fileSender.start(8);
+            fileSender.ping();
+
+            fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+
             NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement
@@ -182,26 +256,23 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                 NetworkMessageType type;
                 if (filesHelper.isIdle()) {
-                    NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
-                    type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+                    Log.debug("Received " + type.name());
                 } else {
                     type = CLIPBOARD_FILES;
                 }
-                Log.debug("Received " + type.name());
 
-                if (introduced) {
-                    if (!type.equals(CLIPBOARD_FILES)) {
-                        processIntroduced(type, in);
-                    } else {
-                        filesHelper = processClipboardFiles(in, filesHelper);
-                    }
-                } else {
-                    introduced = processUnIntroduced(type, in);
+                if (type.equals(CLIPBOARD_FILES)) {
+                    filesHelper = processClipboardFiles(fileIn, filesHelper);
+                } else if (!type.equals(PING)) {
+                    throw new IllegalArgumentException("Unsupported message type [" + type + "]!");
                 }
+
             }
         } catch (IOException ex) {
             handleIOException(ex);
-            closeConnection(in, out);
+            closeConnections();
         }
 
         fireOnReady();
@@ -297,18 +368,32 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private void closeConnection(ObjectInputStream in, ObjectOutputStream out) {
+    private void closeConnections() {
         if (sender != null) {
             sender.cancel();
         }
+        if (fileSender != null) {
+            fileSender.cancel();
+        }
+        if (receiver != null) {
+            receiver.interrupt();
+            receiver = null;
+        }
+        if (fileReceiver != null) {
+            fileReceiver.interrupt();
+            fileReceiver = null;
+        }
 
-        SystemUtilities.safeClose(in);
-        SystemUtilities.safeClose(out);
+        safeClose(in);
+        safeClose(out);
+        safeClose(connection);
+        safeClose(server);
+        safeClose(fileIn);
+        safeClose(fileOut);
+        safeClose(fileConnection);
+        safeClose(fileServer);
 
         cancelling.set(false);
-        server = null;
-        connection = null;
-        receiver = null;
     }
 
     private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
@@ -390,8 +475,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
      * Might be blocking if the sender queue is full (!)
      */
     public void setRemoteClipboardFiles(List<File> files, long size) {
-        if (sender != null) {
-            sender.sendClipboardContentFiles(files, size);
+        if (fileSender != null) {
+            fileSender.sendClipboardContentFiles(files, size);
         }
     }
 

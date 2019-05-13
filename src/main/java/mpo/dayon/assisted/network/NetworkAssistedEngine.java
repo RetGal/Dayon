@@ -25,6 +25,8 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 
+import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
+import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 
@@ -48,6 +50,12 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private ObjectInputStream in;
 
+    private final Thread fileReceiver; // file in
+
+    private NetworkSender fileSender; // file out
+
+    private ObjectInputStream fileIn;
+
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler, NetworkControlMessageHandler controlHandler, NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
         this.captureConfigurationHandler = captureConfigurationHandler;
@@ -61,7 +69,14 @@ public class NetworkAssistedEngine extends NetworkEngine
             protected void doRun() throws Exception {
                 NetworkAssistedEngine.this.receivingLoop();
             }
-        }, "NetworkReceiver");
+        }, "CommandReceiver");
+
+        this.fileReceiver = new Thread(new RunnableEx() {
+            @Override
+            protected void doRun() throws Exception {
+                NetworkAssistedEngine.this.fileReceivingLoop();
+            }
+        }, "FileReceiver");
     }
 
     @Override
@@ -73,16 +88,20 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
         SSLSocket connection = initSocket();
-
         ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-
         sender = new NetworkSender(out); // the active part (!)
         sender.start(1);
         sender.ping();
-
         in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-
         receiver.start();
+
+        SSLSocket fileConnection = initSocket();
+        ObjectOutputStream fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
+        fileSender = new NetworkSender(fileOut); // the active part (!)
+        fileSender.start(1);
+        fileSender.ping();
+        fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+        fileReceiver.start();
     }
 
     private SSLSocket initSocket() throws NoSuchAlgorithmException, IOException, KeyManagementException {
@@ -105,18 +124,11 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void receivingLoop() throws IOException {
 
-        NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
-
         //noinspection InfiniteLoopStatement
         while (true) {
 
-            NetworkMessageType type;
-            if (filesHelper.isIdle()) {
-                NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
-                type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-            } else {
-                type = NetworkMessageType.CLIPBOARD_FILES;
-            }
+            NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+            NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
             Log.debug("Received " + type.name());
 
             switch (type) {
@@ -150,20 +162,41 @@ public class NetworkAssistedEngine extends NetworkEngine
                     sender.ping();
                     break;
 
-                case CLIPBOARD_FILES:
-                    final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-                    filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
-                    if (filesHelper.isIdle()) {
-                        sender.ping();
-                    }
-                    break;
-
                 case PING:
                     break;
 
                 default:
-                    throw new IllegalArgumentException("Unsupported message type [" + type + "]!");
+                    throw new IOException("Unsupported message type [" + type + "]!");
             }
+        }
+    }
+
+    private void fileReceivingLoop() throws IOException {
+
+        NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
+
+        //noinspection InfiniteLoopStatement
+        while (true) {
+
+            NetworkMessageType type;
+            if (filesHelper.isIdle()) {
+                NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+                type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+                Log.debug("Received " + type.name());
+            } else {
+                type = NetworkMessageType.CLIPBOARD_FILES;
+            }
+
+            if (type.equals(CLIPBOARD_FILES)) {
+                final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(fileIn, filesHelper);
+                filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
+                if (filesHelper.isIdle()) {
+                    sender.ping();
+                }
+            } else if (!type.equals(PING)) {
+                throw new IOException("Unsupported message type [" + type + "]!");
+            }
+
         }
     }
 
@@ -207,8 +240,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     public void sendClipboardFiles(List<File> files, long size) {
-        if (sender != null) {
-            sender.sendClipboardContentFiles(files, size);
+        if (fileSender != null) {
+            fileSender.sendClipboardContentFiles(files, size);
         }
 
     }

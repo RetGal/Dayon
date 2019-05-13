@@ -1,12 +1,12 @@
 package mpo.dayon.common.concurrent;
 
+import java.util.Random;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultThreadFactoryEx implements ThreadFactory {
-	private final AtomicInteger threadNumber = new AtomicInteger(1);
+	private final int threadNumber = new Random().nextInt(99);
 
 	private final String namePrefix;
 
@@ -16,7 +16,7 @@ public class DefaultThreadFactoryEx implements ThreadFactory {
 
 	@Override
     public Thread newThread(@NotNull Runnable runnable) {
-		final Thread thread = new Thread(runnable, namePrefix + threadNumber.getAndIncrement());
+		final Thread thread = new Thread(runnable, namePrefix + threadNumber);
 
 		if (thread.isDaemon()) {
 			thread.setDaemon(false);
