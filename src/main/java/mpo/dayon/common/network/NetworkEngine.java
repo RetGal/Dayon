@@ -17,6 +17,8 @@ import java.util.List;
  */
 public abstract class NetworkEngine {
 
+	protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
+
 	protected void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
 		Log.debug("setClipboardContents " + string);
 		StringSelection stringSelection = new StringSelection(string);

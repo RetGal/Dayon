@@ -166,7 +166,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                     break;
 
                 default:
-                    throw new IOException("Unsupported message type [" + type + "]!");
+                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
             }
         }
     }
@@ -194,7 +194,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                     sender.ping();
                 }
             } else if (!type.equals(PING)) {
-                throw new IOException("Unsupported message type [" + type + "]!");
+                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
             }
 
         }

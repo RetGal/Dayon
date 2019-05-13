@@ -266,7 +266,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 if (type.equals(CLIPBOARD_FILES)) {
                     filesHelper = processClipboardFiles(fileIn, filesHelper);
                 } else if (!type.equals(PING)) {
-                    throw new IllegalArgumentException("Unsupported message type [" + type + "]!");
+                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
                 }
 
             }
@@ -323,10 +323,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 break;
 
             case HELLO:
-                throw new IOException("Unexpected message [HELLO]!");
+                throw new IllegalArgumentException("Unexpected message [HELLO]!");
 
             default:
-                throw new IOException("Unsupported message type [" + type + "]!");
+                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
         }
     }
 
@@ -344,10 +344,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case MOUSE_LOCATION:
             case CLIPBOARD_TEXT:
             case CLIPBOARD_FILES:
-                throw new IOException("Unexpected message [" + type.name() + "]!");
+                throw new IllegalArgumentException("Unexpected message [" + type.name() + "]!");
 
             default:
-                throw new IOException("Unsupported message type [" + type + "]!");
+                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
         }
     }
 

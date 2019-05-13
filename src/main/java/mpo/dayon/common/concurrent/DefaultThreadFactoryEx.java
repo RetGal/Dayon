@@ -1,12 +1,12 @@
 package mpo.dayon.common.concurrent;
 
-import java.util.Random;
+import java.security.SecureRandom;
 import java.util.concurrent.ThreadFactory;
 
 import org.jetbrains.annotations.NotNull;
 
 public class DefaultThreadFactoryEx implements ThreadFactory {
-	private final int threadNumber = new Random().nextInt(99);
+	private final int threadNumber = new SecureRandom().nextInt(99);
 
 	private final String namePrefix;
 
