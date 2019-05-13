@@ -244,7 +244,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
 
             fileSender = new NetworkSender(fileOut);
-            fileSender.start(8);
+            fileSender.start(1);
             fileSender.ping();
 
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
