@@ -72,7 +72,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-    private transient NetworkAssistantHttpsEngine https;
+    private NetworkAssistantHttpsEngine https;
 
     private static final String LOCALHOST = "127.0.0.1";
 
@@ -152,23 +152,17 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         in = null;
         out = null;
 
+        Log.info(String.format("HTTPS server [port:%d]", port));
+        NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
+
         try {
-            Log.info(String.format("HTTPS server [port:%d]", port));
-
-
-            NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
-
             https = new NetworkAssistantHttpsEngine(port);
             fireOnHttpStarting(port);
             https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
             Log.info(String.format("Dayon! server [port:%d]", port));
-            //fireOnStarting(port);
-
             server = initServerSocket(port);
-
             Log.info("Accepting ...");
-            //fireOnAccepting(port);
 
             if (https != null) {
                 https.onDayonAccepting();
@@ -191,7 +185,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             startFileReceiver();
 
             out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-
             sender = new NetworkSender(out);
             sender.start(8);
             sender.ping();
@@ -202,7 +195,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             //noinspection InfiniteLoopStatement
             while (true) {
-
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
                 Log.debug("Received " + type.name());
@@ -238,14 +230,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fileIn = null;
         fileOut = null;
 
-        try {
-            Log.info(String.format("Dayon! file server [port:%d]", port));
+        Log.info(String.format("Dayon! file server [port:%d]", port));
 
+        try {
             fileServer = initServerSocket(port);
             fileConnection = fileServer.accept();
 
             fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
-
             fileSender = new NetworkSender(fileOut);
             fileSender.start(1);
             fileSender.ping();
@@ -256,7 +247,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             //noinspection InfiniteLoopStatement
             while (true) {
-
                 NetworkMessageType type;
                 if (filesHelper.isIdle()) {
                     NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
@@ -271,7 +261,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 } else if (!type.equals(PING)) {
                     throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
                 }
-
             }
         } catch (IOException ex) {
             closeConnections();
@@ -483,18 +472,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void fireOnHttpStarting(int port) {
         for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
             xListener.onHttpStarting(port);
-        }
-    }
-
-    private void fireOnStarting(int port) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onStarting(port);
-        }
-    }
-
-    private void fireOnAccepting(int port) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onAccepting(port);
         }
     }
 

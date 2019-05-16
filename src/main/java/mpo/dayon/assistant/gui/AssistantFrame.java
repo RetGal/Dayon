@@ -239,26 +239,6 @@ class AssistantFrame extends BaseFrame {
         statusBar.setMessage(Babylon.translate("https.ready", port));
     }
 
-    void onStarting(int port) {
-        actions.getStartAction().setEnabled(false);
-        actions.getStopAction().setEnabled(true);
-
-        actions.getNetworkConfigurationAction().setEnabled(false);
-        actions.getIpAddressAction().setEnabled(false);
-
-        statusBar.setMessage(Babylon.translate("starting", port));
-    }
-
-    void onAccepting(int port) {
-        actions.getStartAction().setEnabled(false);
-        actions.getStopAction().setEnabled(true);
-
-        actions.getNetworkConfigurationAction().setEnabled(false);
-        actions.getIpAddressAction().setEnabled(false);
-
-        statusBar.setMessage(Babylon.translate("accepting", port));
-    }
-
     boolean onAccepted(Socket connection) {
         if (JOptionPane.showConfirmDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress()),
                 Babylon.translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,

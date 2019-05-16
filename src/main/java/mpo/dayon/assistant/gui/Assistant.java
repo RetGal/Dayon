@@ -744,22 +744,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onStarting(int port) {
-            frame.onStarting(port);
-        }
-
-        /**
-         * Should not block as called from the network receiving thread (!)
-         */
-        @Override
-        public void onAccepting(int port) {
-            frame.onAccepting(port);
-        }
-
-        /**
-         * Should not block as called from the network receiving thread (!)
-         */
-        @Override
         public boolean onAccepted(Socket connection) {
             return frame.onAccepted(connection);
         }
