@@ -9,6 +9,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -73,7 +74,7 @@ public class NetworkAssistantHttpsEngine {
 		}
 		Log.info("[HTTPS] The engine is waiting on its acceptor...");
 		synchronized (acceptor.acceptlock) {
-			while (!acceptor.acceptStopped) {
+			while (!acceptor.acceptStopped.get()) {
 				try {
 					acceptor.acceptlock.wait();
 				} catch (InterruptedException ex) {
@@ -96,7 +97,7 @@ public class NetworkAssistantHttpsEngine {
 	public void onDayonAccepting() {
 		Log.info("[HTTPS] engine.onDayonAccepting() received");
 		synchronized (handler.dayonLock) {
-			handler.dayonStarted = true;
+			handler.dayonStarted.set(true);
 			handler.dayonLock.notifyAll();
 		}
 	}
@@ -115,8 +116,8 @@ public class NetworkAssistantHttpsEngine {
 
 	private class MyServerConnector extends ServerConnector {
 		private final Object acceptlock = new Object();
-		private boolean acceptClosed;
-		private boolean acceptStopped;
+		private final AtomicBoolean acceptClosed = new AtomicBoolean(false);
+		private final AtomicBoolean acceptStopped = new AtomicBoolean(false);
 
 		MyServerConnector(Server server, SslContextFactory contextFactory, int port) {
 			super(server, contextFactory);
@@ -132,10 +133,10 @@ public class NetworkAssistantHttpsEngine {
 			} finally {
 				Log.info("[HTTPS] The engine acceptor has accepted.");
 				synchronized (acceptlock) {
-					if (acceptClosed) {
+					if (acceptClosed.get()) {
 						Log.info("[HTTPS] The engine acceptor is stopping...");
 
-						acceptStopped = true;
+						acceptStopped.set(true);
 						acceptlock.notifyAll();
 					}
 				}
@@ -145,7 +146,7 @@ public class NetworkAssistantHttpsEngine {
 		@Override
 		public void close() {
 			synchronized (acceptlock) {
-				acceptClosed = true;
+				acceptClosed.set(true);
 			}
 			super.close();
 		}
@@ -157,7 +158,7 @@ public class NetworkAssistantHttpsEngine {
 	 */
 	private class MyHttpHandler extends ResourceHandler {
 		private final Object dayonLock = new Object();
-		private boolean dayonStarted;
+		private final AtomicBoolean dayonStarted = new AtomicBoolean(false);
 
 		MyHttpHandler(String root) {
 			setResourceBase(root);
@@ -178,7 +179,7 @@ public class NetworkAssistantHttpsEngine {
 				// coming from the assisted side).
 				Log.info("[HTTPS] The handler is waiting on Dayon! server start...");
 				synchronized (dayonLock) {
-					while (!dayonStarted) {
+					while (!dayonStarted.get()) {
 						try {
 							dayonLock.wait();
 						} catch (InterruptedException ex) {

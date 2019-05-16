@@ -244,6 +244,13 @@ public abstract class SystemUtilities {
         }
     }
 
+    public static Thread safeInterrupt(Thread thread) {
+        if (thread != null) {
+            thread.interrupt();
+        }
+        return null;
+    }
+
     public static String getDefaultLookAndFeel() {
         for (UIManager.LookAndFeelInfo lookAndFeelInfo : UIManager.getInstalledLookAndFeels()) {
             if (lookAndFeelInfo.getName().equals("Nimbus")) {

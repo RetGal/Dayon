@@ -32,6 +32,7 @@ import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
+import static mpo.dayon.common.utils.SystemUtilities.safeInterrupt;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
 
@@ -71,7 +72,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-    private NetworkAssistantHttpsEngine https;
+    private transient NetworkAssistantHttpsEngine https;
 
     private static final String LOCALHOST = "127.0.0.1";
 
@@ -139,11 +140,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             https = null;
         }
 
-        //noinspection StatementWithEmptyBody
-        while (server == null && connection == null) {
-            // waiting for Godot (jetty may not have finished starting up)
-        }
-
         safeClose(server);
         safeClose(connection);
         safeClose(fileServer);
@@ -158,23 +154,29 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         try {
             Log.info(String.format("HTTPS server [port:%d]", port));
-            fireOnHttpStarting(port);
+
 
             NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
 
             https = new NetworkAssistantHttpsEngine(port);
+            fireOnHttpStarting(port);
             https.start(); // blocking call until the HTTP-acceptor has been closed (!)
 
             Log.info(String.format("Dayon! server [port:%d]", port));
-            fireOnStarting(port);
+            //fireOnStarting(port);
 
             server = initServerSocket(port);
 
             Log.info("Accepting ...");
-            fireOnAccepting(port);
+            //fireOnAccepting(port);
 
             if (https != null) {
                 https.onDayonAccepting();
+            } else {
+                // stopped before https was ready
+                Log.info("https was null ");
+                cancelling.set(true);
+                cancel();
             }
 
             do {
@@ -213,10 +215,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
         } catch (IOException ex) {
             handleIOException(ex);
+        } finally {
             closeConnections();
+            fireOnReady();
         }
 
-        fireOnReady();
     }
 
     private void startFileReceiver() {
@@ -271,16 +274,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             }
         } catch (IOException ex) {
-            handleIOException(ex);
             closeConnections();
         }
 
-        fireOnReady();
     }
 
     private NetworkClipboardFilesHelper processClipboardFiles(ObjectInputStream in, NetworkClipboardFilesHelper filesHelper) throws IOException {
         final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-        fireOnByteReceived(1 + clipboardFiles.getWireSize()); // +1 : magic number (byte)
         filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
         if (filesHelper.isIdle()) {
             fireOnClipboardReceived();
@@ -372,22 +372,16 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (sender != null) {
             sender.cancel();
         }
-        if (fileSender != null) {
-            fileSender.cancel();
-        }
-        if (receiver != null) {
-            receiver.interrupt();
-            receiver = null;
-        }
-        if (fileReceiver != null) {
-            fileReceiver.interrupt();
-            fileReceiver = null;
-        }
-
+        receiver = safeInterrupt(receiver);
         safeClose(in);
         safeClose(out);
         safeClose(connection);
         safeClose(server);
+
+        if (fileSender != null) {
+            fileSender.cancel();
+        }
+        fileReceiver = safeInterrupt(fileReceiver);
         safeClose(fileIn);
         safeClose(fileOut);
         safeClose(fileConnection);

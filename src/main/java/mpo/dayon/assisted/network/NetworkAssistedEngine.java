@@ -236,13 +236,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (sender != null) {
             sender.sendClipboardContentText(text, size);
         }
-
     }
 
     public void sendClipboardFiles(List<File> files, long size) {
         if (fileSender != null) {
             fileSender.sendClipboardContentFiles(files, size);
         }
-
     }
 }
