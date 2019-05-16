@@ -43,11 +43,11 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             String fileName = helper.getFileNames().get(position);
             Long fileSize = helper.getFileSizes().get(position);
             if (helper.getFiles().size() == position) {
-                Log.debug("Received File/size: " + fileName + "/" + fileSize);
+                Log.info("Received File/size: " + fileName + "/" + fileSize);
                 buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
             } else {
-                Log.info("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
-                buffer =  helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
+                Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
+                buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
             }
 
             int read = readIntoBuffer(in, buffer);
@@ -110,7 +110,9 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return files;
     }
 
-    public List<String> getFileNames() { return fileNames; }
+    public List<String> getFileNames() {
+        return fileNames;
+    }
 
     public List<Long> getFileSizes() {
         return fileSizes;

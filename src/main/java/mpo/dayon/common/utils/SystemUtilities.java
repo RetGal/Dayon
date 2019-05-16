@@ -235,10 +235,11 @@ public abstract class SystemUtilities {
 
     public static void safeClose(@Nullable Closeable open) {
         if (open != null) {
+            Log.debug(open.getClass().getSimpleName() + " closing");
             try {
                 open.close();
             } catch (IOException ignored) {
-                Log.debug(open.getClass().getSimpleName() + " close failed");
+                Log.debug(open.getClass().getSimpleName() + " closing failed");
             }
         }
     }
