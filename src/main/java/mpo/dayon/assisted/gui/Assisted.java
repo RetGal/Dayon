@@ -85,11 +85,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
 		final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
-		if (ip == null || port == -1) {
-			if (!requestConnectionSettings()) {
-				Log.info("Bye!");
-				System.exit(0);
-			}
+		if ((ip == null || port == -1) && !requestConnectionSettings()) {
+			Log.info("Bye!");
+			System.exit(0);
 		}
 
 		Log.info("Configuration " + configuration);
@@ -120,11 +118,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		networkEngine.configure(configuration);
 		try {
 			networkEngine.start();
+		} catch (ConnectException ce) {
+			Log.error(ce.getMessage());
+			throw new IllegalStateException(ce.getMessage());
 		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
 			Log.error(e.getMessage());
-			if (e instanceof ConnectException) {
-				throw new IllegalStateException(e.getMessage());
-			}
 			System.exit(1);
 		}
 		networkEngine.sendHello();
