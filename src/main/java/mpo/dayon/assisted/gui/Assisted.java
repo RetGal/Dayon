@@ -58,7 +58,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		}
 	}
 
-	public void start() throws IOException {
+	public void start() {
 		frame = new AssistedFrame();
 
 		FatalErrorHandler.attachFrame(frame);
@@ -119,7 +119,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		try {
 			networkEngine.start();
 		} catch (ConnectException ce) {
-			Log.error(ce.getMessage());
 			throw new IllegalStateException(ce.getMessage());
 		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
 			Log.error(e.getMessage());
