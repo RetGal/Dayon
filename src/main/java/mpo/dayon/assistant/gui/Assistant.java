@@ -225,8 +225,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
                 choices.addSeparator();
 
-                choices.add(getjMenuItemCopyJavaWebStart(button));
-
                 choices.add(getjMenuItemCopyIpAndPort(button));
 
                 choices.addSeparator();
@@ -279,22 +277,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     @NotNull
     private JMenuItem getjMenuItemCopyIpAndPort(JButton button) {
-        final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg2"));
+        final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
             final String url = button.getText() + " " + network.getPort();
-
-            final StringSelection value = new StringSelection(url);
-            final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(value, value);
-        });
-        return menuItem;
-    }
-
-    @NotNull
-    private JMenuItem getjMenuItemCopyJavaWebStart(JButton button) {
-        final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg1"));
-        menuItem.addActionListener(ev13 -> {
-            final String url = "https://" + button.getText() + ":" + network.getPort() + "/dayon.html";
 
             final StringSelection value = new StringSelection(url);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -730,7 +715,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onHttpStarting(int port) {
+        public void onStarting(int port) {
             frame.onHttpStarting(port);
 
             synchronized (prevBufferLOCK) {

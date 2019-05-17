@@ -11,7 +11,7 @@ public interface NetworkAssistantEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onHttpStarting(int port);
+	void onStarting(int port);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)

@@ -49,10 +49,6 @@ class AssistedFrame extends BaseFrame {
 		statusBar.setMessage(Babylon.translate("ready"));
 	}
 
-	public void onHttpConnecting(NetworkAssistedEngineConfiguration configuration) {
-		statusBar.setMessage(Babylon.translate("https.handshake", configuration.getServerName(), configuration.getServerPort()));
-	}
-
 	public void onConnecting(NetworkAssistedEngineConfiguration configuration) {
 		statusBar.setMessage(Babylon.translate("connecting", configuration.getServerName(), configuration.getServerPort()));
 	}

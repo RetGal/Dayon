@@ -236,7 +236,7 @@ class AssistantFrame extends BaseFrame {
         };
         add(center, BorderLayout.CENTER);
 
-        statusBar.setMessage(Babylon.translate("https.ready", port));
+        statusBar.setMessage(Babylon.translate("listening", port));
     }
 
     boolean onAccepted(Socket connection) {

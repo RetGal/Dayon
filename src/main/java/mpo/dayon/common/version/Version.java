@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Version {
     private static final Version VERSION_NULL = new Version(null);
-    public static final String RELEASE_LOCATION = "https://github.com/retgal/dayon/releases/";
+    public static final String RELEASE_LOCATION = "https://github.com/retgal/Dayon/releases/";
 
     private final String numericVersion;
     private String latestVersion;

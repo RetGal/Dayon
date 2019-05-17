@@ -3,10 +3,8 @@ package mpo.dayon.assisted.gui;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.ConnectException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -87,46 +85,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
 		final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
-		if (ip == null) {
+		if (ip == null || port == -1) {
 			if (!requestConnectionSettings()) {
 				Log.info("Bye!");
 				System.exit(0);
 			}
-		} else // JNLP startup (!)
-		{
-			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(ip, port);
-			if (!xconfiguration.equals(configuration)) {
-				configuration = xconfiguration;
-				configuration.persist();
-			}
 		}
 
 		Log.info("Configuration " + configuration);
-
-		// -------------------------------------------------------------------------------------------------------------
-		// HTTP request to notify the assistant we're ready and starting : i.e.,
-		// JNLP stuff is done.
-
-		frame.onHttpConnecting(configuration);
-
-		Log.info("[HTTPS-handshake] Sending the /hello request...");
-
-		try {
-			final URL url = new URL(String.format("https://%s:%d/hello", SystemUtilities.formatIPv6(configuration.getServerName()), configuration.getServerPort()));
-			final URLConnection conn = url.openConnection();
-
-			conn.getInputStream();
-
-			// Currently do not care about the response : returning a 404
-			// response (!)
-			throw new IllegalStateException("[HTTPS-handshake] Missing expected /hello response!");
-		} catch (FileNotFoundException expected) {
-			// ignored
-		}
-
-		Log.info("[HTTPS-handshake] Expected response (404) received.");
-
-		// -------------------------------------------------------------------------------------------------------------
 
 		// Should not block as called from the network incoming message thread (!)
 		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, config) -> {
@@ -143,7 +109,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		// Should not block as called from the network incoming message thread (!)
 		final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
 
-
 		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
 
 		controlHandler.subscribe(this);
@@ -157,6 +122,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			networkEngine.start();
 		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
 			Log.error(e.getMessage());
+			if (e instanceof ConnectException) {
+				throw new IllegalStateException(e.getMessage());
+			}
 			System.exit(1);
 		}
 		networkEngine.sendHello();

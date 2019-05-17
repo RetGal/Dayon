@@ -1,6 +1,5 @@
 package mpo.dayon.assisted.network;
 
-import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
@@ -109,7 +108,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
             keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+            keyStore.load(NetworkAssistedEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
             kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
         } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
             Log.error("Fatal, can not init encryption", e);

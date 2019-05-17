@@ -1,7 +1,5 @@
 package mpo.dayon.assistant.network;
 
-import mpo.dayon.assistant.network.https.NetworkAssistantHttpsEngine;
-import mpo.dayon.assistant.network.https.NetworkAssistantHttpsResources;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -72,8 +70,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-    private NetworkAssistantHttpsEngine https;
-
     private static final String LOCALHOST = "127.0.0.1";
 
     private int port;
@@ -135,11 +131,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         cancelling.set(true);
 
-        if (https != null) {
-            https.cancel();
-            https = null;
-        }
-
         safeClose(server);
         safeClose(connection);
         safeClose(fileServer);
@@ -152,26 +143,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         in = null;
         out = null;
 
-        Log.info(String.format("HTTPS server [port:%d]", port));
-        NetworkAssistantHttpsResources.setup(LOCALHOST, port); // JNLP support (.html, .jnlp, .jar)
-
         try {
-            https = new NetworkAssistantHttpsEngine(port);
-            fireOnHttpStarting(port);
-            https.start(); // blocking call until the HTTP-acceptor has been closed (!)
+            fireOnStarting(port);
 
             Log.info(String.format("Dayon! server [port:%d]", port));
             server = initServerSocket(port);
             Log.info("Accepting ...");
-
-            if (https != null) {
-                https.onDayonAccepting();
-            } else {
-                // stopped before https was ready
-                Log.info("https was null ");
-                cancelling.set(true);
-                cancel();
-            }
 
             do {
                 safeClose(connection); // we might have refused the accepted connection (!)
@@ -341,11 +318,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void introduce(ObjectInputStream in) throws IOException {
-        if (https != null) {
-            https.cancel();
-            https = null;
-        }
-
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
 
@@ -381,7 +353,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(NetworkAssistantHttpsEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+        keyStore.load(NetworkAssistantEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
@@ -469,9 +441,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private void fireOnHttpStarting(int port) {
+    private void fireOnStarting(int port) {
         for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onHttpStarting(port);
+            xListener.onStarting(port);
         }
     }
 

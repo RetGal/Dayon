@@ -12,7 +12,6 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="jetty.version" value="9.4.18.v20190429"/>
 	<property name="version" value="1.7.5"/>
 
 	<path id="project.classpath">
@@ -60,11 +59,6 @@
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/jetty-http-${jetty.version}.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/jetty-io-${jetty.version}.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/jetty-server-${jetty.version}.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/jetty-util-${jetty.version}.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/javax.servlet-api-3.1.0.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/bzip2-0.9.1.jar" todir="${dir.dist}/lib"/>
 		<copy file="${dir.binfile}/lib/grizzly-lzma-1.9.65.jar" todir="${dir.dist}/lib"/>
 		<copy todir="${dir.dist}">

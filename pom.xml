@@ -30,8 +30,6 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
-		<javax.servlet.api.version>3.1.0</javax.servlet.api.version>
-		<jetty.version>9.4.18.v20190429</jetty.version>
 		<jetbrains.annotations.version>17.0.0</jetbrains.annotations.version>
 		<bzip2.version>0.9.1</bzip2.version>
 		<grizzly-lzma.version>1.9.65</grizzly-lzma.version>
@@ -39,31 +37,6 @@
 	</properties>
 
 	<dependencies>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>${javax.servlet.api.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-http</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-io</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-util</artifactId>
-			<version>${jetty.version}</version>
-		</dependency>
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
@@ -210,26 +183,6 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>copy-webstart</id>
-						<phase>compile</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/classes/mpo/dayon/assistant/network/https</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/java/mpo/dayon/assistant/network/https</directory>
-									<includes>
-										<include>*.html</include>
-										<include>*.jnlp</include>
-										<include>*.ico</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
 						<id>copy-resources</id>
 						<phase>package</phase>
 						<goals>
@@ -275,8 +228,6 @@
 									<directory>${basedir}/target</directory>
 									<include>lib/bzip*</include>
 									<include>lib/grizzly*</include>
-									<include>lib/javax*</include>
-									<include>lib/jetty*</include>
 								</resource>
 							</resources>
 						</configuration>
