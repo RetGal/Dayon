@@ -31,7 +31,7 @@ Running Dayon!
 
 Linux:
 
-  You might need to chmod +x setup.sh before executing it.
+  If you want to install from the tar archive, then you may need to chmod +x setup.sh before executing it.
 
 
 OSX/macOS:

@@ -8,6 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Dayon! - Remote assistance for your family and friends</title>
 <link rel="stylesheet" type="text/css" href="style.css">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 	<div id="container">
@@ -26,13 +27,19 @@
 			<p>
 				<b>Windows:</b> two installers are available and the installation should be straightforward. One package comes bundled with an OpenJDK 1.8 based JRE and one without. The one with included JRE is for 64bit versions of Windows only.
 			<p>
-				<b>Debian and Ubuntu Linux:</b> the <code>.deb</code> package can be installed using the software installer provided by your operating system. Alternatively you may install it by executing <code>sudo dpkg -i dayon*.deb</code>.
+				<b>Debian & Ubuntu:</b> the <code>.deb</code> package can be installed using the software installer provided by your operating system. Alternatively you may install it by executing <code>sudo dpkg -i dayon*.deb</code>.
 			<p>
 				<b>Linux:</b> you have to <code>tar xzvf</code> the package. Run the script <code>setup.sh</code>, located in the target directory. The location of the installed JRE/JDK is going to be detected automatically. It is not bundled in the tgz. If it should
 				for whatever reason fail to do so, then you can set the <code>JAVA_HOME</code> in (<code>bin/dayon_run.sh</code>) manually. Note that, I've been testing this on various Debian and Ubuntu releases only.
 			<p>
 				<b>Mac OS/OS X:</b> extract the package to a location of your choice. For more convenience you may want to create an alias for bin/dayon_assisted and bin/dayon_assistant and copy them to your desktop. (JDK 1.8  or greater required)
 			<h2>Change log</h2>
+			<h3>Changes in Dayon! v1.8 Truganini (May 18th, 2019) <span class="red">*</span></h3>
+			<ul>
+				<li>Improved file transfer
+				<li>Removed JAVA Web Start
+				<li>Removed Jetty dependencies
+			</ul>
 			<h3>Changes in Dayon! v1.7 Tesler (February 21th, 2019) <span class="red">*</span></h3>
 			<ul>
 				<li>Clipboard transfer

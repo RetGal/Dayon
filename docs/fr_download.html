@@ -8,6 +8,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
 <link rel="stylesheet" type="text/css" href="style.css">
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 	<div id="container">
@@ -27,13 +28,19 @@
 				<b>Windows:</b> deux programmes d'installation sont disponible et l'installation devrait être assez directe. Un paquet est livré avec un JRE à base du OpenJDK 1.8, l'autre sans. Cet avec JRE peut seulement etre utilisé avec des versions de Windows de
 				64bit.
 			<p>
-				<b>Debian et Ubuntu:</b> le paquet <code>.deb</code> peut être installé à l'aide du programme d'installation fourni par votre système d'exploitation. Sinon, vous pouvez l'installer en exécutant <code>sudo dpkg -i dayon*.deb</code>.
+				<b>Debian & Ubuntu:</b> le paquet <code>.deb</code> peut être installé à l'aide du programme d'installation fourni par votre système d'exploitation. Sinon, vous pouvez l'installer en exécutant <code>sudo dpkg -i dayon*.deb</code>.
 			<p>
 				<b>Linux:</b> extraisez le fichier TGZ. Exécutez le script <code>setup.sh</code>. La location du JRE/JDK installé va être détecté automatiquement. Il n'est pas livré dans le tgz. Si, pour quelque raison que ce soit, il ne
 				le fasse pas, vous pouvez configurez <code>JAVA_HOME</code> dans (<code>bin/dayon_run.sh</code>) manuellement. Notez que, j'ai testé ceci sur Debian et Ubuntu seulement.
 			<p>
 				<b>Mac OS/OS X:</b> extrayez le fichier TGZ à une location de votre choix. Pour plus de commodité, vous pouvez créer un alias pour bin/dayon_assisted et bin/dayon_assistant et les copier sur votre bureau. (JDK 1.8 nécessaire)
 			<h2>Journal des modifications</h2>
+			<h3>Modifications pour Dayon! v1.8 Truganini (18 Mai 2019) <span class="red">*</span></h3>
+			<ul>
+				<li>Transfert de fichier amélioré
+				<li>Enlevé JAVA Web Start
+				<li>Supprimé les dépendances Jetty
+			</ul>
 			<h3>Modifications pour Dayon! v1.7 Tesler (21 février 2019) <span class="red">*</span></h3>
 			<ul>
 				<li>Transfér du presse-papier
