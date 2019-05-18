@@ -14,17 +14,18 @@ It consists of two parts - one for the assistant and one for the assisted. Both 
 - encrypted communication (TLS)
 - cross-platform
 - open source
-- free (as in free beer)
+- free (as hugs)
 
 ## History
 
 Dayon! was originally developed by Marc Polizzi back in 2008.
 
-With his permission I moved the code base to GitHub, where it can easier be maintained.
+With his consent, I have taken over the maintenance and further development of this software in late 2016.
+I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.7.5 - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.8.0 - released more than ten years after the initial release.
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
@@ -64,6 +65,6 @@ You don't have to be a programmer!
 
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/java/mpo/dayon/common/babylon/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/java/mpo/dayon/common/babylon/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
-Some additional testing, especially on Mac OS would also be highly appreciated.
+Some additional testing, especially on macOS would also be highly appreciated.
 
  
