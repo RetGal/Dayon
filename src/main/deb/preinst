@@ -1,1 +1,1 @@
-mkdir ${config.installDir}/bin
+mkdir -p ${config.installDir}/bin
