@@ -14,9 +14,7 @@ public class Compressor {
     /**
      * NONE. (testing only)
      */
-    // public static final Compressor NULL_COMPRESSOR = new
-    // Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new
-    // NULL_Zipper());
+     public static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NULL_Zipper());
 
     /**
      * ZIP (with regular run-length-encoding).
@@ -54,8 +52,8 @@ public class Compressor {
                 return BZIP2_COMPRESSOR;
             case LZMA:
                 return LZMA_COMPRESSOR;
-//			case NULL:
-//				return NULL_COMPRESSOR;
+			case NONE:
+				return NULL_COMPRESSOR;
             default:
                 throw new IllegalArgumentException("Unsupported compressor configuration [" + method + "]!");
         }

@@ -1,6 +1,6 @@
 package mpo.dayon.common.squeeze;
 
 public enum CompressionMethod {
-	// NONE,
-	ZIP, BZIP2, LZMA,
+	NONE, // testing only
+	ZIP, BZIP2, LZMA
 }

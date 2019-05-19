@@ -16,6 +16,7 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -493,7 +494,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 pane.setLayout(new GridLayout(4, 2, 10, 10));
 
                 final JLabel methodLbl = new JLabel(Babylon.translate("compression.method"));
-                final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
+                // testing only: final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
+                final JComboBox<CompressionMethod> methodCb = new JComboBox<>(Stream.of(CompressionMethod.values()).filter(e -> !e.equals(CompressionMethod.NONE)).toArray(CompressionMethod[]::new));
                 methodCb.setSelectedItem(compressorEngineConfiguation.getMethod());
 
                 pane.add(methodLbl);
