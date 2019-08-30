@@ -81,7 +81,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         int chunk;
         int read = in.read(buffer, 0, 1);
         while (in.available() > 0 && read < buffer.length) {
-            chunk = in.available() > buffer.length - read ? buffer.length - read : in.available();
+            chunk = Math.min(in.available(), buffer.length - read);
             read += in.read(buffer, read, chunk);
         }
         return read;

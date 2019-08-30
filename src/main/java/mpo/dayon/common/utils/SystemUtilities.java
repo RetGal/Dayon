@@ -172,7 +172,7 @@ public abstract class SystemUtilities {
         if (prop == null) {
             return defaultValue;
         }
-        return Integer.valueOf(prop);
+        return Integer.parseInt(prop);
     }
 
     public static boolean getBooleanProperty(@Nullable Properties props, String name, boolean defaultValue) {
@@ -180,7 +180,7 @@ public abstract class SystemUtilities {
         if (prop == null) {
             return defaultValue;
         }
-        return Boolean.valueOf(prop);
+        return Boolean.parseBoolean(prop);
     }
 
     public static double getDoubleProperty(@Nullable Properties props, String name, double defaultValue) {
@@ -188,7 +188,7 @@ public abstract class SystemUtilities {
         if (prop == null) {
             return defaultValue;
         }
-        return Double.valueOf(prop);
+        return Double.parseDouble(prop);
     }
 
     public static <T extends Enum<T>> T getEnumProperty(@Nullable Properties props, String name, T defaultValue, T[] enums) {

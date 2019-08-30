@@ -168,7 +168,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
 		if (ok) {
 			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(),
-					Integer.valueOf(assistantPortNumberTextField.getText()));
+					Integer.parseInt(assistantPortNumberTextField.getText()));
 			if (!xconfiguration.equals(configuration)) {
 				configuration = xconfiguration;
 				configuration.persist();
@@ -263,7 +263,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		}
 	}
 
-	private class HostNameIgnorer implements HostnameVerifier {
+	private static class HostNameIgnorer implements HostnameVerifier {
 		@Override
 		public boolean verify(String hostname, SSLSession session) {
 			return session.isValid() && !hostname.isEmpty();

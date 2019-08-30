@@ -543,7 +543,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     final int maxValue;
 
                     try {
-                        maxValue = Integer.valueOf(max);
+                        maxValue = Integer.parseInt(max);
                     } catch (NumberFormatException ex) {
                         return Babylon.translate("compression.cache.max.msg2");
                     }
@@ -586,7 +586,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         final int purgeValue;
 
         try {
-            purgeValue = Integer.valueOf(purge);
+            purgeValue = Integer.parseInt(purge);
         } catch (NumberFormatException ex) {
             return Babylon.translate("compression.cache.purge.msg2");
         }
