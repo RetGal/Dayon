@@ -28,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.babylon.Babylon;
 
+import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
+
 public abstract class DialogFactory {
 	public interface Validator {
 		/**
@@ -117,7 +119,7 @@ public abstract class DialogFactory {
 
 		// dialog.setIconImage(ImageFactory.getOrCreateIcon("ladybug.png").getImage());
 		dialog.setContentPane(contentPane);
-		dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		dialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
 		// --
 

@@ -42,7 +42,7 @@ public abstract class BaseFrame extends JFrame {
 	protected StatusBar statusBar;
 
 	protected BaseFrame() {
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
 
 		addWindowListener(new WindowAdapter() {
