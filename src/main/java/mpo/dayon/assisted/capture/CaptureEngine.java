@@ -132,7 +132,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
             if (pixels == null) // testing purpose (!)
             {
-                Log.info("CaptureFactory has finisted!");
+                Log.info("CaptureFactory has finished!");
                 break;
             }
 
@@ -170,14 +170,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             if (capturePause < 0) {
                 ++delayedCaptureCount;
                 Log.warn("Skipping capture (" + (captureId + delayedCaptureCount) + ") " + UnitUtilities.toElapsedTime(-capturePause));
-                continue;
-            }
-
-            if (capturePause > 0) {
+            } else if (capturePause > 0) {
                 Thread.sleep(capturePause);
+                break;
             }
-
-            break;
         }
 
         return delayedCaptureCount;

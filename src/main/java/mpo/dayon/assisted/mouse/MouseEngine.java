@@ -61,14 +61,10 @@ public class MouseEngine {
 
             if (capturePause < 0) {
                 ++delayedCaptureCount;
-                continue;
-            }
-
-            if (capturePause > 0) {
+            } else if (capturePause > 0) {
                 Thread.sleep(capturePause);
+                break;
             }
-
-            break;
         }
 
         return delayedCaptureCount;
