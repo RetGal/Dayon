@@ -10,7 +10,7 @@ class SystemUtilitiesTest {
 		// given
 		String ipv4 = "10.0.";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv4));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv4));
 	}
 	
 	@Test
@@ -18,7 +18,7 @@ class SystemUtilitiesTest {
 		// given
 		String ipv4 = "2.5.6.256";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv4));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv4));
 	}
 	
 	@Test
@@ -26,7 +26,7 @@ class SystemUtilitiesTest {
 		// given
 		String ipv4 = "145.74.11.8";
 		// when, then
-		assertTrue(SystemUtilities.isValidIpAdressOrHostName(ipv4));
+		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv4));
 	}
 	
 	@Test
@@ -34,7 +34,7 @@ class SystemUtilitiesTest {
 		// given
 		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv6));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
 	
 	@Test
@@ -42,7 +42,7 @@ class SystemUtilitiesTest {
 		// given
 		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:snafu";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(ipv6));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
 	
 	@Test
@@ -50,14 +50,14 @@ class SystemUtilitiesTest {
 		// given
 		String ipv6 = "ac:0:0:0:0:0:0:dc";
 		// when, then
-		assertTrue(SystemUtilities.isValidIpAdressOrHostName(ipv6));
+		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
 	
 	@Test
 	void isValidIpAdressOrHostNameShouldReturnTrueForCompressedValidIpv6Address() {
 		// given
 		String ipv6 = "ac::dc";
-		assertTrue(SystemUtilities.isValidIpAdressOrHostName(ipv6));
+		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
 	
 	@Test
@@ -65,7 +65,7 @@ class SystemUtilitiesTest {
 		// given
 		String hostName = "snafu.example.";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(hostName));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
 	
 	@Test
@@ -73,7 +73,7 @@ class SystemUtilitiesTest {
 		// given
 		String hostName = "snafu..example.com";
 		// when, then
-		assertFalse(SystemUtilities.isValidIpAdressOrHostName(hostName));
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
 	
 	@Test
@@ -81,7 +81,7 @@ class SystemUtilitiesTest {
 		// given
 		String hostName = "snafu.example.com";
 		// when, then
-		assertTrue(SystemUtilities.isValidIpAdressOrHostName(hostName));
+		assertTrue(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
 	
 	@Test
@@ -89,7 +89,7 @@ class SystemUtilitiesTest {
 		// given
 		String hostName = "localhost";
 		// when, then
-		assertTrue(SystemUtilities.isValidIpAdressOrHostName(hostName));
+		assertTrue(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
 
 }

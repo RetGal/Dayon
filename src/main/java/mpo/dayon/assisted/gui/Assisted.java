@@ -155,7 +155,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");
-            } else if (!SystemUtilities.isValidIpAdressOrHostName(ipAddress)) {
+            } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress)) {
             	return Babylon.translate("connection.settings.invalidIpAddress");
             }
 

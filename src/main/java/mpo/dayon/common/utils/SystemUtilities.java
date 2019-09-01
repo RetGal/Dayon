@@ -203,7 +203,8 @@ public abstract class SystemUtilities {
     public static List<String> getSystemProperties() {
         final List<String> props = new ArrayList<>();
         final List<String> propNames = System.getProperties().keySet().stream().map(Object::toString).collect(Collectors.toList());
-        int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
+        final int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
+        final String pattern = "%" + size + "." + size + "s";
 
         Collections.sort(propNames);
 
@@ -218,7 +219,7 @@ public abstract class SystemUtilities {
                 }
                 propValue = hex.toString();
             }
-            props.add(String.format("%" + size + "." + size + "s [%s]", propName, propValue));
+            props.add(String.format(pattern + " [%s]", propName, propValue));
         }
         return props;
     }
@@ -279,7 +280,7 @@ public abstract class SystemUtilities {
         return serverName;
     }
 
-    public static boolean isValidIpAdressOrHostName(String serverName) {
+    public static boolean isValidIpAddressOrHostName(String serverName) {
         return isValidIpV4(serverName) || isValidIpV6(serverName) || isValidHostname(serverName);
     }
 
