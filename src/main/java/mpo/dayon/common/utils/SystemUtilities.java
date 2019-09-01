@@ -204,7 +204,7 @@ public abstract class SystemUtilities {
         final List<String> props = new ArrayList<>();
         final List<String> propNames = System.getProperties().keySet().stream().map(Object::toString).collect(Collectors.toList());
         final int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
-        final String pattern = "%" + size + "." + size + "s";
+        final String format = "%" + size + "." + size + "s [%s]";
 
         Collections.sort(propNames);
 
@@ -219,7 +219,7 @@ public abstract class SystemUtilities {
                 }
                 propValue = hex.toString();
             }
-            props.add(String.format(pattern + " [%s]", propName, propValue));
+            props.add(String.format(format, propName, propValue));
         }
         return props;
     }
