@@ -122,9 +122,9 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private ObjectInputStream  initInputStream(SSLSocket connection) throws IOException {
-        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
+        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
         ) {
-            return in;
+            return ois;
         } catch (StreamCorruptedException ex) {
             throw new IOException("version.wrong");
         }
