@@ -27,6 +27,8 @@ public abstract class FatalErrorHandler {
 
             if (info == null) {
                 info = Babylon.translate("fatal.error.msg3");
+            } else {
+                info = Babylon.translate(info);
             }
 
             JOptionPane.showMessageDialog(frame, Babylon.translate("fatal.error.msg1") + "\n" + Babylon.translate("fatal.error.msg2", info),

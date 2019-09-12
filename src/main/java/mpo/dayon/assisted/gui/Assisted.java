@@ -9,11 +9,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -54,7 +50,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		try {
 			UIManager.setLookAndFeel(lnf);
 		} catch (Exception ex) {
-			Log.warn("Cound not set the [" + lnf + "] L&F!", ex);
+			Log.warn("Could not set the [" + lnf + "] L&F!", ex);
 		}
 	}
 
@@ -121,8 +117,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		} catch (ConnectException ce) {
 			throw new IllegalStateException(ce.getMessage());
 		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
-			Log.error(e.getMessage());
-			System.exit(1);
+			FatalErrorHandler.bye(e.getMessage(), e);
 		}
 		networkEngine.sendHello();
 	}

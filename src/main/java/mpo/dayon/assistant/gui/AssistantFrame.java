@@ -289,9 +289,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onDisconnecting() {
-        if (sessionTimer != null) {
-            sessionTimer.stop();
-        }
+        stopSessionTimer();
     }
 
     void onIOError(IOException error) {
@@ -302,15 +300,21 @@ class AssistantFrame extends BaseFrame {
         actions.getRemoteClipboardRequestAction().setEnabled(false);
         actions.getRemoteClipboardSetAction().setEnabled(false);
 
-        sessionTimer.stop();
+        stopSessionTimer();
 
         removeCenter();
 
         validate();
         repaint();
 
-        JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", error.getMessage()), Babylon.translate("comm.error"),
+        JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void stopSessionTimer() {
+        if (sessionTimer != null) {
+            sessionTimer.stop();
+        }
     }
 
     private void removeCenter() {

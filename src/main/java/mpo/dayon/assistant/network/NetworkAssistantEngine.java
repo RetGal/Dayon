@@ -166,8 +166,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             sender.start(8);
             sender.ping();
 
-            in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-
+            in = initInputStream();
             boolean introduced = false;
 
             //noinspection InfiniteLoopStatement
@@ -189,6 +188,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             fireOnReady();
         }
 
+    }
+
+    private ObjectInputStream  initInputStream() throws IOException {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
+        ) {
+            return in;
+        } catch (StreamCorruptedException ex) {
+            throw new IOException("version.wrong");
+        }
     }
 
     private void startFileReceiver() {
@@ -325,7 +333,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
 
         if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
-            throw new IOException("Version Error!");
+            throw new IOException("version.wrong");
         }
     }
 

@@ -91,7 +91,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         sender = new NetworkSender(out); // the active part (!)
         sender.start(1);
         sender.ping();
-        in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+        in = initInputStream(connection);
         receiver.start();
 
         SSLSocket fileConnection = initSocket();
@@ -121,6 +121,15 @@ public class NetworkAssistedEngine extends NetworkEngine
         return (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
     }
 
+    private ObjectInputStream  initInputStream(SSLSocket connection) throws IOException {
+        try (ObjectInputStream in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
+        ) {
+            return in;
+        } catch (StreamCorruptedException ex) {
+            throw new IOException("version.wrong");
+        }
+    }
+
     private void receivingLoop() throws IOException {
 
         //noinspection InfiniteLoopStatement
@@ -142,8 +151,8 @@ public class NetworkAssistedEngine extends NetworkEngine
                     break;
 
                 case MOUSE_CONTROL:
-                    final NetworkMouseControlMessage mouseControlMessagee = NetworkMouseControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(mouseControlMessagee);
+                    final NetworkMouseControlMessage mouseControlMessage = NetworkMouseControlMessage.unmarshall(in);
+                    controlHandler.handleMessage(mouseControlMessage);
                     break;
 
                 case KEY_CONTROL:
