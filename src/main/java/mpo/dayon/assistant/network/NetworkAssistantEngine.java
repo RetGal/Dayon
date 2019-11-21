@@ -191,9 +191,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private ObjectInputStream  initInputStream() throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
-        ) {
-            return ois;
+        try {
+            return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {
             throw new IOException("version.wrong");
         }

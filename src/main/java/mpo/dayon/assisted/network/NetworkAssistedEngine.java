@@ -121,10 +121,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         return (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
     }
 
-    private ObjectInputStream  initInputStream(SSLSocket connection) throws IOException {
-        try (ObjectInputStream ois = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()))
-        ) {
-            return ois;
+    private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {
+        try {
+            return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {
             throw new IOException("version.wrong");
         }
