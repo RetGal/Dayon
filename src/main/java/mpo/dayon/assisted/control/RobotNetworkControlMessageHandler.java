@@ -132,7 +132,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	    // simulate a key press/release for each char
     	// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
 	    for (char c : charArray) {
-	        int code = (int) Character.toUpperCase(c);
+	        int code = Character.toUpperCase(c);
 	        robot.keyPress(code);
 	        robot.keyRelease(code);
 		}

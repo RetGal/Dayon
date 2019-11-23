@@ -1,17 +1,16 @@
 package mpo.dayon.common.utils;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
-import java.awt.Robot;
-import java.awt.Toolkit;
+import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
 public abstract class ScreenUtilities {
-    private static final Robot robot;
 
-    private static final Rectangle SCREEN;
+    public static final Rectangle SCREEN;
+
+    private static final Robot robot;
 
     private static final int[] rgb;
 
@@ -21,15 +20,25 @@ public abstract class ScreenUtilities {
     }
 
     static {
+        SCREEN = new Rectangle(getCombinedScreenSize());
+        rgb = new int[SCREEN.height * SCREEN.width];
+        gray = new byte[rgb.length];
         try {
-            final Toolkit toolkit = Toolkit.getDefaultToolkit();
-            SCREEN = new Rectangle(0, 0, toolkit.getScreenSize().width, toolkit.getScreenSize().height);
-            rgb = new int[SCREEN.height * SCREEN.width];
-            gray = new byte[rgb.length];
             robot = new Robot();
         } catch (AWTException ex) {
             throw new IllegalStateException("Could not initialize the AWT robot!", ex);
         }
+    }
+
+    private static Rectangle getCombinedScreenSize() {
+        Rectangle fullSize = new Rectangle();
+        GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        for (GraphicsDevice gd : environment.getScreenDevices()) {
+            for (GraphicsConfiguration graphicsConfiguration : gd.getConfigurations()) {
+                Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize);
+            }
+        }
+        return fullSize.getBounds();
     }
 
     public static byte[] captureGray(Gray8Bits quantization) {

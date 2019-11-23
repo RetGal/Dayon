@@ -58,9 +58,7 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 
     @Override
     public int hashCode() {
-        int result = serverName.hashCode();
-        result = 31 * result + serverPort;
-        return result;
+        return 31 * serverName.hashCode() + serverPort;
     }
 
     /**

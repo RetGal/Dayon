@@ -46,17 +46,17 @@ public class MouseEngine {
                 previous = current;
             }
 
-            final int delayedCaptureCount = syncOnTick(start, captureCount, 50);
+            final int delayedCaptureCount = syncOnTick(start, captureCount);
 
             captureCount += delayedCaptureCount;
         }
     }
 
-    private static int syncOnTick(final long start, final int captureCount, final long tick) throws InterruptedException {
+    private static int syncOnTick(final long start, final int captureCount) throws InterruptedException {
         int delayedCaptureCount = 0;
 
         while (true) {
-            final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * tick;
+            final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * (long) 50;
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
 
             if (capturePause < 0) {

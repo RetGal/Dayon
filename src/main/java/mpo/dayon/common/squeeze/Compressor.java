@@ -14,7 +14,7 @@ public class Compressor {
     /**
      * NONE. (testing only)
      */
-     public static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NULL_Zipper());
+     private static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NULL_Zipper());
 
     /**
      * ZIP (with regular run-length-encoding).
