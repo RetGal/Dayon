@@ -9,8 +9,7 @@ public class RobotCaptureFactory implements CaptureFactory {
 	private static final Dimension CAPTURE_DIMENSION;
 
 	static {
-		final Toolkit toolkit = Toolkit.getDefaultToolkit();
-		CAPTURE_DIMENSION = new Dimension(toolkit.getScreenSize().width, toolkit.getScreenSize().height);
+		CAPTURE_DIMENSION = ScreenUtilities.SCREEN.getSize();
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package mpo.dayon.assisted.capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.configuration.Configuration;
 import mpo.dayon.common.preference.Preferences;
-import org.jetbrains.annotations.NotNull;
 
 public class CaptureEngineConfiguration extends Configuration {
     private static final String PREF_VERSION = "assistant.capture.version";
@@ -72,9 +71,7 @@ public class CaptureEngineConfiguration extends Configuration {
 
     @Override
     public int hashCode() {
-        int result = captureTick;
-        result = 31 * result + (captureQuantization != null ? captureQuantization.hashCode() : 0);
-        return result;
+        return 31 * captureTick + (captureQuantization != null ? captureQuantization.hashCode() : 0);
     }
 
     /**
@@ -86,7 +83,6 @@ public class CaptureEngineConfiguration extends Configuration {
         Preferences.getPreferences().update(props); // atomic (!)
     }
 
-    @NotNull
     private Preferences.Props getProps(boolean clear) {
         final Preferences.Props props = new Preferences.Props();
 
