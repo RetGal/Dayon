@@ -12,7 +12,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="1.8.0"/>
+	<property name="version" value="1.9.0"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -30,8 +30,8 @@
 		<tstamp/>
 		<mkdir dir="${dir.bin}"/>
 		<mkdir dir="${dir.build}"/>
+		<mkdir dir="${dir.dist}/bin"/>
 		<mkdir dir="${dir.dist}/doc/html"/>
-		<mkdir dir="${dir.dist}/lib"/>
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
@@ -46,6 +46,7 @@
 
 	<target name="build" depends="compile">
 		<jar destfile="${dir.build}/dayon.jar">
+			<zipgroupfileset dir="${dir.binfile}/lib" includes="bzip2-0.9.1.jar,grizzly-lzma-1.9.65.jar"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
@@ -58,9 +59,7 @@
 	</target>
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/bzip2-0.9.1.jar" todir="${dir.dist}/lib"/>
-		<copy file="${dir.binfile}/lib/grizzly-lzma-1.9.65.jar" todir="${dir.dist}/lib"/>
+		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/bin"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
 				<exclude name="jre/"/>
@@ -84,7 +83,7 @@
 	</target>
 
 	<target name="sign" description="Signs the distribution project jar">
-		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/lib/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
+		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/bin/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
 	</target>
 
 	<target name="tar" description="Creates a gzipped tar archive of the distribution for Linux">

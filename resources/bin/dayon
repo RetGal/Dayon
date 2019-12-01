@@ -1,8 +1,8 @@
 #!/bin/sh
 DAYON_HOME=$(dirname "$0")/..
 JAVA_HOME=$(/usr/libexec/java_home)
-JAVA=$JAVA_HOME/bin/java
-JAVA_OPTS="-Xms64M -Xmx256M"
-CLASSPATH="$DAYON_HOME/lib/dayon.jar:$DAYON_HOME/lib/bzip2-0.9.1.jar:$DAYON_HOME/lib/grizzly-lzma-1.9.65.jar"
+JAVA=${JAVA_HOME}/bin/java
+JAVA_OPTS=""
+CLASSPATH="$DAYON_HOME/dayon.jar"
 
-$JAVA $JAVA_OPTS -Ddayon.log=file -cp $CLASSPATH $1 $2
+${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp ${CLASSPATH} $1 $2

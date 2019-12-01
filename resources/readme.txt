@@ -4,8 +4,7 @@ Contents:
 
   readme.txt   This file.
   doc/         More documentation.
-  bin/         Startup scripts and configuration files.
-  lib/         JAR files.
+  bin/         Startup scripts, configuration files and the dayon.jar
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
   

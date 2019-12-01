@@ -22,13 +22,13 @@ INSTALL_DIR=$(dirname "$0")
 if [ "$INSTALL_DIR" = "." ]; then
 	INSTALL_DIR=`pwd`
 fi
-chmod +x $INSTALL_DIR/bin/*.sh
+chmod +x ${INSTALL_DIR}/bin/*.sh
 
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
 Name=Dayon! Assistant
-Exec=$INSTALL_DIR/bin/dayon_assistant.sh
-Icon=$INSTALL_DIR/dayon.png
+Exec=${INSTALL_DIR}/bin/dayon_assistant.sh
+Icon=${INSTALL_DIR}/dayon.png
 Terminal=false
 Type=Application
 Categories=Network;X-Communication;
@@ -41,8 +41,8 @@ EOF
 cat <<EOF > /usr/share/applications/DayonAssisted.desktop
 [Desktop Entry]
 Name=Dayon! Assisted
-Exec=$INSTALL_DIR/bin/dayon_assisted.sh
-Icon=$INSTALL_DIR/dayon.png
+Exec=${INSTALL_DIR}/bin/dayon_assisted.sh
+Icon=${INSTALL_DIR}/dayon.png
 Terminal=false
 Type=Application
 Categories=Network;X-Communication;

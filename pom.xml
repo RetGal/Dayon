@@ -8,7 +8,7 @@
 	<url>https://github.com/retgal/dayon</url>
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
-	<version>1.8.0</version>
+	<version>1.9.0</version>
 	<description>cross platform remote desktop solution</description>
 	<developers>
 		<developer>
@@ -41,6 +41,7 @@
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
 			<version>${jetbrains.annotations.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.itadaki</groupId>
@@ -122,16 +123,36 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.1.1</version>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.2.1</version>
 				<executions>
 					<execution>
-						<phase>process-sources</phase>
+						<phase>package</phase>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>shade</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/target/lib</outputDirectory>
+							<minimizeJar>true</minimizeJar>
+							<filters>
+								<filter>
+									<artifact>org.jetbrains:annotations</artifact>
+									<excludes>
+										<exclude>**</exclude>
+									</excludes>
+								</filter>
+								<filter>
+									<artifact>com.sun.grizzly:grizzly-lzma</artifact>
+									<excludes>
+										<exclude>META-INF/**</exclude>
+									</excludes>
+								</filter>
+								<filter>
+									<artifact>org.itadaki:bzip2</artifact>
+									<excludes>
+										<exclude>META-INF/**</exclude>
+									</excludes>
+								</filter>
+							</filters>
 						</configuration>
 					</execution>
 				</executions>
@@ -216,34 +237,17 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>copy-libs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/dist</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/target</directory>
-									<include>lib/bzip*</include>
-									<include>lib/grizzly*</include>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
 						<id>copy-jar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>copy-resources</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${basedir}/dist/lib</outputDirectory>
+							<outputDirectory>${basedir}/dist/bin</outputDirectory>
 							<resources>
 								<resource>
 									<directory>${basedir}/target</directory>
-									<include>*.jar</include>
+									<include>dayon.jar</include>
 								</resource>
 							</resources>
 						</configuration>
@@ -313,6 +317,10 @@
 							<target>dayon.png</target>
 						</fileSet>
 						<fileSet>
+							<source>${basedir}/dist/bin/dayon.jar</source>
+							<target>bin/dayon.jar</target>
+						</fileSet>
+						<fileSet>
 							<source>${basedir}/dist/bin/dayon.sh</source>
 							<target>bin/dayon.sh</target>
 						</fileSet>
@@ -327,10 +335,6 @@
 						<fileSet>
 							<source>${basedir}/dist/doc/</source>
 							<target>doc</target>
-						</fileSet>
-						<fileSet>
-							<source>${basedir}/dist/lib/</source>
-							<target>lib</target>
 						</fileSet>
 						<fileSet>
 							<source>${basedir}/resources/deb/</source>
