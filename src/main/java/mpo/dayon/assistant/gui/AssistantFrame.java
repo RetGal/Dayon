@@ -68,8 +68,7 @@ class AssistantFrame extends BaseFrame {
             }
         });
 
-        onReady(); // the network has been before we've been registered as a
-        // listener ...
+        onReady(); // the network has been before we've been registered as a listener ...
     }
 
     private void addMouseListeners() {

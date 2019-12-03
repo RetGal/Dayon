@@ -263,8 +263,8 @@ public abstract class SystemUtilities {
 
     public static boolean isValidPortNumber(String portNumber) {
         try {
-            Integer port = Integer.valueOf(portNumber);
-            if (port > 65535) {
+            int port = Integer.parseInt(portNumber);
+            if (port < 1 || port > 65535) {
                 throw new NumberFormatException();
             }
         } catch (NumberFormatException ex) {
@@ -281,7 +281,7 @@ public abstract class SystemUtilities {
     }
 
     public static boolean isValidIpAddressOrHostName(String serverName) {
-        return isValidIpV4(serverName) || isValidIpV6(serverName) || isValidHostname(serverName);
+        return serverName != null && (isValidIpV4(serverName) || isValidIpV6(serverName) || isValidHostname(serverName));
     }
 
     private static boolean isValidIpV4(String serverName) {

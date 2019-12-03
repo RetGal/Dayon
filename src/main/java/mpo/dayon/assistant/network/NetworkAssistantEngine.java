@@ -455,12 +455,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private boolean fireOnAccepted(Socket connection) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            if (!xListener.onAccepted(connection)) {
-                return false;
-            }
-        }
-        return true;
+        return listeners.getListeners().stream().allMatch(xListener -> xListener.onAccepted(connection));
     }
 
     private void fireOnConnected(Socket connection) {

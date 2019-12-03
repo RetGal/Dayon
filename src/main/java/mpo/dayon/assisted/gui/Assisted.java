@@ -54,7 +54,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		}
 	}
 
-	public void start() {
+	public void start(String serverName, String portNumber) {
 		frame = new AssistedFrame();
 
 		FatalErrorHandler.attachFrame(frame);
@@ -74,16 +74,20 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
 		// accept own cert, avoid No name matching host found exception
-		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer()); //
+		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer());
 
-		configuration = new NetworkAssistedEngineConfiguration();
+		if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
+			configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
+		} else {
+			configuration = new NetworkAssistedEngineConfiguration();
 
-		final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-		final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+			final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
+			final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
 
-		if ((ip == null || port == -1) && !requestConnectionSettings()) {
-			Log.info("Bye!");
-			System.exit(0);
+			if ((ip == null || port == -1) && !requestConnectionSettings()) {
+				Log.info("Bye!");
+				System.exit(0);
+			}
 		}
 
 		Log.info("Configuration " + configuration);
@@ -241,10 +245,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 				// noinspection unchecked
 				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
-				long size = 0;
-				for (File file : files) {
-					size += file.length();
-				}
+				long size = files.stream().mapToLong(File::length).sum();
 				Log.debug("Clipboard contains files with size: " + size);
 				engine.sendClipboardFiles(files, size);
 			} else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
