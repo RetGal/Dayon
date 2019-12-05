@@ -15,7 +15,7 @@ class AssistedRunner implements Runner {
 
 			final Assisted assisted = new Assisted();
 			assisted.configure();
-			assisted.start(programArguments.get("assistantHost"), programArguments.get("assistantPort"));
+			assisted.start(programArguments.get("ah"), programArguments.get("ap"));
 
 		} catch (Exception ex) {
 			FatalErrorHandler.bye("The assisted is dead!", ex);
