@@ -5,6 +5,6 @@ JAVA_HOME=`ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/
 #JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre"
 JAVA=${JAVA_HOME}/bin/java
 JAVA_OPTS=""
-CLASSPATH="$DAYON_HOME/dayon.jar"
+CLASSPATH="$DAYON_HOME/bin/dayon.jar"
 
 ${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp ${CLASSPATH} $1 $2
