@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="build" name="Create runnable jar for project Dayon! with libraries in same folder">
+<project default="build" name="Create runnable jar for project Dayon!">
 	<property name="dir.binfile" value="."/>
 	<property name="dir.src" value="${dir.binfile}/src/main/java"/>
 	<property name="dir.jares" value="${dir.binfile}/src/main/resources"/>
@@ -44,7 +44,19 @@
 		</copy>
 	</target>
 
-	<target name="build" depends="compile">
+	<target name="compile-assisted" depends="init" description="Compile the sources">
+		<javac debug="true" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath">
+			<exclude name="**/assistant/" />
+		</javac>
+		<copy todir="${dir.bin}">
+			<fileset dir="${dir.src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+			<fileset dir="${dir.jares}"/>
+		</copy>
+	</target>
+
+	<target name="build">
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipgroupfileset dir="${dir.binfile}/lib" includes="bzip2-0.9.1.jar,grizzly-lzma-1.9.65.jar"/>
 			<manifest>
