@@ -43,34 +43,20 @@ public abstract class SystemUtilities {
     }
 
     @Nullable
-    public static File getDayonJarPath() {
-        final File rootPath = getInstallRoot();
-        if (rootPath == null) {
-            return null;
-        }
-
-        File path = new File(rootPath, "dayon.jar");
-        if (path.exists() && path.isFile()) {
-            return rootPath;
-        }
-
-        path = new File(rootPath, "lib");
-        if (path.exists() && path.isDirectory()) {
-            return path;
-        }
-        return null;
-    }
-
-    @Nullable
     public static URI getLocalIndexHtml() {
         @Nullable final File rootPath = getInstallRoot();
         if (rootPath != null) {
+            String quickStartDoc = Babylon.translate("quickstart.html");
             // Anchor not supported : #assistant-setup
-            File quickStart = new File(rootPath, "doc/html/" + Babylon.translate("quickstart.html"));
-            // Must be running inside an IDE
-            if (!quickStart.isFile() && rootPath.getAbsolutePath().endsWith("/target")) {
-                quickStart = new File(rootPath.getParent(), "docs/" + Babylon.translate("quickstart.html"));
-                return quickStart.toURI();
+            File quickStart = new File(rootPath, "doc/html/" + quickStartDoc);
+            // Must be running inside an IDE or from a quick launch version
+            if (!quickStart.isFile() || rootPath.getAbsolutePath().endsWith("/target")) {
+                quickStart = new File(rootPath.getParent(), "docs/" + quickStartDoc);
+                try {
+                    return quickStart.isFile() ? quickStart.toURI() : new URI("http://retgal.github.io/Dayon/" + quickStartDoc);
+                } catch(URISyntaxException e) {
+                    Log.warn("Swallowed an URISyntaxException");
+                }
             }
         }
         return null;
