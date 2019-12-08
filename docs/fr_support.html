@@ -1,63 +1,81 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="description" content="Assistance à distance pour votre famille et vos amis.">
-<meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
-<link rel="stylesheet" type="text/css" href="style.css">
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Assistance à distance pour votre famille et vos amis.">
+    <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-	<div id="container">
-		<div id="top">
-			<a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="support.html"><img src="great_britain.png" alt="English"></a>
-		</div>
-		<div id="menu">
-			<a href="fr_index.html">Accueil</a> <a href="fr_quickstart.html">Premiers Pas</a> <a href="fr_download.html">Télécharger</a> <a href="fr_support.html">Aide</a> <a href="fr_feedback.html">Réactions</a> <a href="https://github.com/retgal/dayon">GitHub</a>
-		</div>
-		<div id="content">
-			<h2>Aide</h2>
-			<p>
-				Vous pouvez poster une question ou ouvrir un issue sur <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
-			<h3>Problèmes Connus</h3>
-			<ul>
-				<li>En version 1.8, le support du clavier est toujours limité; il n'y pas moyen pour le moment d'envoyer des signaux et quelques combinaisons de touches ne sont pas supportées correctement (e.g., <code>Ctrl-Alt-Del</code>).
-				<li>Le transfert de répertoires (dossiers) n'est pas possible.
-				<li>La vitesse de transmission pour des gros fichiers est très modeste.
-			</ul>
-			<h3>Propriétés du processus JAVA</h3>
-			<p>
-				Sous Windows, vous pouvez personnaliser la mémoire allouée à la JVM en modifiant les valeurs <code>Xms</code> et <code>Xmx</code> des liens de démarrage.
-			<p>Vous pouvez par exemple configurer l'utilisation de la RAM JVM en tenant compte de la taille du cache et Si vous utilisez la méthode de compression LZMA (nécessite plus de RAM sur la côte de l'assistant).
-			<p>
-				Sous Unix, les mêmes options sont disponibles dans le script <code>dayon.sh</code> .
-			<h3>Répetoire d'accueil de Dayon!</h3>
-			<p>
-				Le répertoire <code>.dayon</code> est créé dans le répertoire référencé par le JAVA Propriété <code>user.home</code> et contient les préférences utilisateur enregistrées et le journal par défaut fichiers.
-			<h3>Somme de contrôle CRC</h3>
-			<p>
-				Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <i>tuiles</i>. Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant. Pour déterminer si une tuile est différente, je suis en
-				train de calculer un code CRC (C'est-à-dire, une valeur entière unique représentant les pixels de la tuile) qui n'est pas parfaite Par souci de rapidité. Il se peut donc que certaines tuiles <i>changées</i> ne soient pas envoyées à l'assistant.
-			<p>
-				Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, Je n'ai rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer L'aide ou avant d'essayer l'action <code>reset</code>
-				(<b> l'icône poubelle</b>) Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
-			<h3>Compteurs de statistiques</h3>
-			<img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
-			<p>La barre d'état du cadre assistant affiche un ensemble de compteurs.
-			<ol>
-				<li>Bande passante réseau
-				<li>Compression Ratio: combien de fois la capture initiale (diff only) a été comprimé
-				<li>Number of Tiles: le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
-				<li>Number of Skipped Capture: le nombre de captures d'écran qui ont été ignorées En raison d'un taux trop élevé (c'est-à-dire, une valeur de cotation faible) pour la CPU. Pour minimiser cette vous devez ralentir le taux de capture en utilisant
-					une valeur plus grande.
-				<li>Number of Merged Capture: le nombre de captures d'écran fusionnées avant d'être transmis. Ceci est dû à un taux de capture trop élevé pour le courant méthode de compression. Pour minimiser ce nombre, vous devez ralentir la capture taux et / ou
-					changer la méthode de compression en utilisant un plus rapide.
-			</ol>
-		</div>
-		<div id="footer"></div>
-	</div>
+<div id="container">
+    <div id="top">
+        <a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="support.html"><img src="great_britain.png" alt="English"></a>
+    </div>
+    <div id="menu">
+        <a href="fr_index.html">Accueil</a> <a href="fr_quickstart.html">Premiers Pas</a> <a href="fr_download.html">Télécharger</a>
+        <a href="fr_support.html">Aide</a> <a href="fr_feedback.html">Réactions</a> <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+        <h2>Aide</h2>
+        <p>
+            Vous pouvez poster une question ou ouvrir un issue sur <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+        <h3>Problèmes Connus</h3>
+        <ul>
+            <li>En version 1.9, le support du clavier est toujours limité; il n'y pas moyen pour le moment d'envoyer des
+                signaux et quelques combinaisons de touches ne sont pas supportées correctement (e.g., <code>Ctrl-Alt-Del</code>).
+            <li>Le transfert de répertoires (dossiers) n'est pas possible.
+            <li>La vitesse de transmission pour des gros fichiers n'est pas terrible.
+        </ul>
+        <h3>Connexion automatique de l’assistant</h3>
+        <p>
+            Le nom d'hôte ou l'adresse IP et le port de l'assistant peuvent être transmis via les paramètres de ligne de
+            commande:<br>
+            <code>./dayon_assisted.sh ah=example.com ah=4242</code> (Linux/Mac OS)<br>
+            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
+            ou pour la version «lancement rapide»:<br>
+            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            Si l'assistant est démarré avec ces paramètres, il se connecte directement à l'hôte donné sans interrogation
+            supplémentaire.
+        <h3>Dayon! Répertoire de base</h3>
+        <p>
+            Le répertoire <code>.dayon</code> est créé dans le répertoire de base par défaut de l'utilisateur connecté
+            ou dans le répertoire référencé par la propriété JAVA <code>user.home</code> et contient les préférences
+            utilisateur enregistrées et fichier(s) de journal par défaut.
+        <h3>Somme de contrôle CRC</h3>
+        <p>
+            Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <i>tuiles</i>. Seules les tuiles
+            qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant. Pour déterminer si
+            une tuile est différente, je suis en
+            train de calculer un code CRC (C'est-à-dire, une valeur entière unique représentant les pixels de la tuile)
+            qui n'est pas parfaite Par souci de rapidité. Il se peut donc que certaines tuiles <i>changées</i> ne soient
+            pas envoyées à l'assistant.
+        <p>
+            Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, Je n'ai
+            rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer L'aide ou avant
+            d'essayer l'action <code>reset</code>
+            (<b> l'icône poubelle</b>) Qui devrait effacer toutes les données en cache et renvoyer une capture plein
+            écran à partir de zéro.
+        <h3>Compteurs de statistiques</h3>
+        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
+        <p>La barre d'état du cadre assistant affiche un ensemble de compteurs.
+        <ol>
+            <li>Bande passante réseau
+            <li>Compression Ratio: combien de fois la capture initiale (diff only) a été comprimé
+            <li>Number of Tiles: le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
+            <li>Number of Skipped Capture: le nombre de captures d'écran qui ont été ignorées En raison d'un taux trop
+                élevé (c'est-à-dire, une valeur de cotation faible) pour la CPU. Pour minimiser cette vous devez
+                ralentir le taux de capture en utilisant
+                une valeur plus grande.
+            <li>Number of Merged Capture: le nombre de captures d'écran fusionnées avant d'être transmis. Ceci est dû à
+                un taux de capture trop élevé pour le courant méthode de compression. Pour minimiser ce nombre, vous
+                devez ralentir la capture taux et / ou changer la méthode de compression en utilisant un plus rapide.
+        </ol>
+    </div>
+    <div id="footer"></div>
+</div>
 </body>
 </html>

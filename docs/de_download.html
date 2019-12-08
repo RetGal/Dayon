@@ -1,108 +1,131 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<meta name="description" content="Remote Support für Familie und Freunde.">
-<meta name="keywords" content="fernwartung, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Dayon! - Fernwartung für Familie und Freunde</title>
-<link rel="stylesheet" type="text/css" href="style.css">
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Remote Support für Familie und Freunde.">
+    <meta name="keywords" content="fernwartung, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - Fernwartung für Familie und Freunde</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-	<div id="container">
-		<div id="top">
-			<a href="download.html"><img src="great_britain.png" alt="English"></a> <a href="fr_download.html"><img src="france.png" alt="Français"></a>
-		</div>
-		<div id="menu">
-			<a href="de_index.html">Home</a> <a href="de_quickstart.html">Schnellstart</a> <a href="de_download.html">Download</a> <a href="de_support.html">Support</a> <a href="de_feedback.html">Feedback</a> <a href="https://github.com/retgal/dayon">GitHub</a>
-		</div>
-		<div id="content">
-			<h2>Download</h2>
-			<p>
-				Auf der folgenden <a href="https://github.com/retgal/dayon/releases">Seite</a> finden Sie die aktuellsten Installationspakete für ihre Plattform.
-			<p>
-				Historische Versionen (v1.0 bis v1.2) finden Sie <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">da</a>.
-			<p>
-				<b>Windows:</b> es existieren zwei Installationspakete, die eigentliche Installation ist selbsterklärend. Sie haben die Wahl zwischen einem Installer mit oder ohne integrierter JRE (OpenJDK 1.8 basiert). Das Paket mit integrierter JRE eignet sich bloss für 64Bit Windows Varianten.
-			<p>
-				<b>Debian & Ubuntu:</b> das <code>.deb</code> Paket lässt sich am komfortabelsten mittels dem integrierten Software Installer installieren. Alternativ kann es via dem Befehl <code>sudo dpkg -i dayon*.deb</code> manuell installiert werden.
-			<p>
-				<b>Linux:</b> das .tgz-Paket mittels <code>tar xzvf</code> entpacken. Im Zielverzeichnis das Shellskript <code>setup.sh</code> ausführen. Die installierte JRE resp. JDK wird automatisch detektiert. Die JRE ist nicht im
-				.tgz-Paket enthalten. Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so überprüfen Sie das Vorhandensein einer JRE und definieren deren Pfad in der Variable <code>JAVA_HOME</code> im Skript (<code>bin/dayon.sh</code>). Beachten Sie, dass die
-				Skripte bloss auf diversen Debian und Ubuntu Versionen getestet worden sind.
-			<p>
-				<b>Mac OS/OS X:</b> das Paket an einen Ort ihrer Wahl entpacken. Ev. einen Alias für bin/dayon_assisted und bin/dayon_assistant erstellen und auf den Desktop kopieren. (Voraussetzung: installiertes JDK 1.8 oder neuer).
-			<h2>Changelog</h2>
-			<h3>Änderungen Dayon! v1.8 Truganini (18. Mai 2019) <span class="red">*</span></h3>
-			<ul>
-				<li>Verbesserter Datei Transfer
-				<li>JAVA Web Start entfernt
-				<li>Jetty Abhängigkeiten entfernt
-			</ul>
-			<h3>Änderungen Dayon! v1.7 Tesler (21. Februar 2019) <span class="red">*</span></h3>
-			<ul>
-				<li>Transfer der Zwischenablage
-				<li>Aktualisierte Bibliotheken
-				<li>Aktualisierte JRE
-			</ul>
-			<h3>Änderungen Dayon! v1.6 Solenodon (19. Dezember 2018) <span class="red">*</span></h3>
-			<ul>
-				<li>Neues Look and Feel
-				<li>Neuer Installer
-				<li>Verbesserter Uninstaller
-				<li>Hochauflösende Windows Icons
-				<li>Aktualisierte Bibliotheken
-				<li>Aktualisierte JRE
-				<li>Projekt kann mittels <a href="http://ant.apache.org/">Ant</a> oder <a href="https://maven.apache.org/">Maven</a> gebaut werden
-			</ul>
-			<h3>Änderungen Dayon! v1.5 Pendragon (5. Mai 2017) <span class="red">*</span></h3>
-			<ul>
-				<li>IPv6 Unterstützung
-				<li>Startskripte OS X kompatibel
-				<li>Aktualisierte JRE
-			</ul>
-			<h3>Änderungen Dayon! v1.4 Skytale (3. Januar 2017) <span class="red">*</span></h3>
-			<ul>
-				<li>Verschlüsselte Kommunikation zwischen dem Assistenten und dem Assistierten
-				<li>Windows-Installer optimiert
-				<li>Deutsche Lokalisierung (Oberfläche und Doku)
-			</ul>
-			<h3>Änderungen Dayon! v1.3 Phoenix (10. Dezember 2016) <span class="red">*</span></h3>
-			<ul>
-				<li>Probleme mit Windows UAC-Dialogen behoben
-				<li>Unterstützt hohe Bildschirmauflösungen, welche in früheren zu schwerwiegenden Fehlern geführt hatten
-				<li>Weniger manuelle Konfiguration unter Linux notwendig - die installierte JAVA-Version wird automatisch erkannt
-				<li>Neuer, verbesserter Installer für Windows, inklusive einer OpenJDK (1.8) basierten JRE
-				<li>Aktualisierte Bibliotheken
-				<li>GPLv3
-			</ul>
-			<h3>Änderungen Dayon! v1.2 (3. Januar 2009) <span class="red">*</span></h3>
-			<ul>
-				<li>Möglicher schwarzer Bildschirm beim Aufstarten (Assistent) behoben
-				<li>Unterstützung Kontrolle
-				<li>Java Web Start um die Unterstützten-App zu starten
-				<li>Öffentliche IP-Adresse-Dienst (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>)
-				<li>Detailliertere Schnellstart-Anleitung
-				<li>Französische Lokalisierung
-			</ul>
-			<h3>Änderungen Dayon! v1.1 (24. Dezember 2008) <span class="red">*</span></h3>
-			<ul>
-				<li>Protokollverbesserungen
-				<li>CPU-Belastung verbessert
-				<li>Initiale Bildschirmerfassungs-Enkodierung aufgeräumt
-				<li>Neue Kompressionsmethoden: BZIP2, LZMA
-				<li>Bitmap Puffer
-				<li>GUI etwas aufpolliert
-			</ul>
-			<h3>Änderungen Dayon! v1.0 (4. Dezember 2008)</h3>
-			<ul>
-				<li>Initiales Release.
-			</ul>
-			<span class="red">* Hauptversionen sind nicht untereinander kompatibel</span>
-		</div>
-		<div id="footer"></div>
-	</div>
+<div id="container">
+    <div id="top">
+        <a href="download.html"><img src="great_britain.png" alt="English"></a> <a href="fr_download.html"><img src="france.png" alt="Français"></a>
+    </div>
+    <div id="menu">
+        <a href="de_index.html">Home</a> <a href="de_quickstart.html">Schnellstart</a> <a href="de_download.html">Download</a>
+        <a href="de_support.html">Support</a> <a href="de_feedback.html">Feedback</a> <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+        <h2>Download</h2>
+        <p>
+            Auf der folgenden <a href="https://github.com/retgal/dayon/releases">Seite</a> finden Sie die aktuellsten
+            Installationspakete für ihre Plattform.
+        <p>
+            Historische Versionen (v1.0 bis v1.2) finden Sie <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">da</a>.
+        <p>
+            <b>Windows:</b> ab Version 1.9 existieren vier unterschiedliche Installationspakete, die eigentliche
+            Installation ist selbsterklärend. Sie haben die Wahl zwischen einem Installer mit oder ohne integrierter JRE
+            (OpenJDK 1.8 basiert). Das Paket mit integrierter JRE eignet sich bloss für 64Bit Windows Varianten.
+            Daneben existieren zwei separate "Quick Launch" Versionen für den Assistenten und de Assistierten. Diese
+            beiden portablen Versionen benötigen keine Installation. Um bei diesen Versionen möglichen Probleme mit der
+            Benutzerkontensteuerung zu vermeiden, wir empfohlen den Assistierten mit Administratorenrechten zu starten.
+        <p>
+            <b>Debian & Ubuntu:</b> das <code>.deb</code> Paket lässt sich am komfortabelsten mittels dem integrierten
+            Software Installer installieren. Alternativ kann es via dem Befehl <code>sudo dpkg -i dayon*.deb</code>
+            manuell installiert werden.
+        <p>
+            <b>Linux:</b> das .tgz-Paket mittels <code>tar xzvf</code> entpacken. Im Zielverzeichnis das Shellskript
+            <code>setup.sh</code> ausführen. Die installierte JRE resp. JDK wird automatisch detektiert. Die JRE ist
+            nicht im
+            .tgz-Paket enthalten. Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so überprüfen Sie das
+            Vorhandensein einer JRE und definieren deren Pfad in der Variable <code>JAVA_HOME</code> im Skript (<code>bin/dayon.sh</code>).
+            Beachten Sie, dass die
+            Skripte bloss auf diversen Debian und Ubuntu Versionen getestet worden sind.
+        <p>
+            <b>Mac OS/OS X:</b> das Paket an einen Ort ihrer Wahl entpacken. Ev. einen Alias für bin/dayon_assisted und
+            bin/dayon_assistant erstellen und auf den Desktop kopieren. (Voraussetzung: installiertes JDK 1.8 oder
+            neuer).
+        <h2>Changelog</h2>
+        <h3>Änderungen Dayon! v1.9 Promiscuous Potato (Dezember 2019) <span class="red">*</span></h3>
+        <ul>
+            <li>JAR ohne externe Abhängigkeiten
+            <li>Separate "Quick Launch" Versionen (nur für Windows)
+            <li>Updated JRE
+        </ul>
+        <h3>Änderungen Dayon! v1.8 Truganini (18. Mai 2019) <span class="red">*</span></h3>
+        <ul>
+            <li>Verbesserter Datei Transfer
+            <li>JAVA Web Start entfernt
+            <li>Jetty Abhängigkeiten entfernt
+        </ul>
+        <h3>Änderungen Dayon! v1.7 Tesler (21. Februar 2019) <span class="red">*</span></h3>
+        <ul>
+            <li>Transfer der Zwischenablage
+            <li>Aktualisierte Bibliotheken
+            <li>Aktualisierte JRE
+        </ul>
+        <h3>Änderungen Dayon! v1.6 Solenodon (19. Dezember 2018) <span class="red">*</span></h3>
+        <ul>
+            <li>Neues Look and Feel
+            <li>Neuer Installer
+            <li>Verbesserter Uninstaller
+            <li>Hochauflösende Windows Icons
+            <li>Aktualisierte Bibliotheken
+            <li>Aktualisierte JRE
+            <li>Projekt kann mittels <a href="http://ant.apache.org/">Ant</a> oder <a href="https://maven.apache.org/">Maven</a>
+                gebaut werden
+        </ul>
+        <h3>Änderungen Dayon! v1.5 Pendragon (5. Mai 2017) <span class="red">*</span></h3>
+        <ul>
+            <li>IPv6 Unterstützung
+            <li>Startskripte OS X kompatibel
+            <li>Aktualisierte JRE
+        </ul>
+        <h3>Änderungen Dayon! v1.4 Skytale (3. Januar 2017) <span class="red">*</span></h3>
+        <ul>
+            <li>Verschlüsselte Kommunikation zwischen dem Assistenten und dem Assistierten
+            <li>Windows-Installer optimiert
+            <li>Deutsche Lokalisierung (Oberfläche und Doku)
+        </ul>
+        <h3>Änderungen Dayon! v1.3 Phoenix (10. Dezember 2016) <span class="red">*</span></h3>
+        <ul>
+            <li>Probleme mit Windows UAC-Dialogen behoben
+            <li>Unterstützt hohe Bildschirmauflösungen, welche in früheren zu schwerwiegenden Fehlern geführt hatten
+            <li>Weniger manuelle Konfiguration unter Linux notwendig - die installierte JAVA-Version wird automatisch
+                erkannt
+            <li>Neuer, verbesserter Installer für Windows, inklusive einer OpenJDK (1.8) basierten JRE
+            <li>Aktualisierte Bibliotheken
+            <li>GPLv3
+        </ul>
+        <h3>Änderungen Dayon! v1.2 (3. Januar 2009) <span class="red">*</span></h3>
+        <ul>
+            <li>Möglicher schwarzer Bildschirm beim Aufstarten (Assistent) behoben
+            <li>Unterstützung Kontrolle
+            <li>Java Web Start um die Unterstützten-App zu starten
+            <li>Öffentliche IP-Adresse-Dienst (<a href="http://dayonhome.sourceforge.net/whatismyip.php">dayonhome.sourceforge.net/whatismyip.php</a>)
+            <li>Detailliertere Schnellstart-Anleitung
+            <li>Französische Lokalisierung
+        </ul>
+        <h3>Änderungen Dayon! v1.1 (24. Dezember 2008) <span class="red">*</span></h3>
+        <ul>
+            <li>Protokollverbesserungen
+            <li>CPU-Belastung verbessert
+            <li>Initiale Bildschirmerfassungs-Enkodierung aufgeräumt
+            <li>Neue Kompressionsmethoden: BZIP2, LZMA
+            <li>Bitmap Puffer
+            <li>GUI etwas aufpolliert
+        </ul>
+        <h3>Änderungen Dayon! v1.0 (4. Dezember 2008)</h3>
+        <ul>
+            <li>Initiales Release.
+        </ul>
+        <span class="red">* Hauptversionen sind nicht untereinander kompatibel</span>
+    </div>
+    <div id="footer"></div>
+</div>
 </body>
 </html>

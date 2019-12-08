@@ -33,16 +33,16 @@ img {
 }
 
 #menu a:link, #menu a:visited {
-	border-left:1px solid #cccccc;
+	border-left:1px solid #ccc;
 	font-size:150%;
-	padding:0 0.5em 0 0.5em;
+	padding:0 0.5em;
 	text-decoration:none;
-	color:#666666;
+	color:#666;
 }
 
 #menu a:hover {
 	font-size:150%;
-	padding:0 0.5em 0 0.5em;
+	padding:0 0.5em;
 	background-color:#307fe1;
 	color:#fff;
 }
@@ -90,19 +90,22 @@ img {
 }
 
 #features {
-	border:1px dashed #666666;
+	border:1px dashed #666;
 	border-radius:4px;
 	background-color:#f2f7fb;
-	padding-left:10px;
-	padding-right:10px;
+	padding:0 10px;
 }
 
 #footer {
-	padding:2.0em 0 2.0em 0;
+	padding:2.0em 0;
 	text-align:center;
 	background-color:#fff;
 }
 
 .red {
-	color: red;
+	color:red;
+}
+
+code {
+    font-weight:bolder;
 }
