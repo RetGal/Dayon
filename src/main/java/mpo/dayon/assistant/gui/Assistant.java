@@ -80,9 +80,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private NetworkAssistantConfiguration networkConfiguration;
 
-    private CaptureEngineConfiguration captureEngineConfiguation;
+    private CaptureEngineConfiguration captureEngineConfiguration;
 
-    private CompressorEngineConfiguration compressorEngineConfiguation;
+    private CompressorEngineConfiguration compressorEngineConfiguration;
 
     private final Object prevBufferLOCK = new Object();
 
@@ -110,7 +110,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", Babylon.translate("captureCompression"));
         captureCompressionCounter.start(1000);
 
-        counters = new HashSet<>(Arrays.asList(receivedBitCounter,receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
+        counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
 
         DeCompressorEngine decompressor = new DeCompressorEngine();
         decompressor.addListener(new MyDeCompressorEngineListener());
@@ -127,8 +127,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         control = new ControlEngine(network);
         control.start();
 
-        captureEngineConfiguation = new CaptureEngineConfiguration();
-        compressorEngineConfiguation = new CompressorEngineConfiguration();
+        captureEngineConfiguration = new CaptureEngineConfiguration();
+        compressorEngineConfiguration = new CompressorEngineConfiguration();
     }
 
     @Override
@@ -139,7 +139,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         try {
             UIManager.setLookAndFeel(lnf);
         } catch (Exception ex) {
-            Log.warn("Cound not set the [" + lnf + "] L&F!", ex);
+            Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
     }
 
@@ -427,14 +427,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 tickLbl.setToolTipText(Babylon.translate("tick.tooltip"));
 
                 final JTextField tickTextField = new JTextField();
-                tickTextField.setText(String.valueOf(captureEngineConfiguation.getCaptureTick()));
+                tickTextField.setText(String.valueOf(captureEngineConfiguration.getCaptureTick()));
 
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
                 final JLabel grayLevelsLbl = new JLabel(Babylon.translate("grays"));
                 final JComboBox<Gray8Bits> grayLevelsCb = new JComboBox<>(Gray8Bits.values());
-                grayLevelsCb.setSelectedItem(captureEngineConfiguation.getCaptureQuantization());
+                grayLevelsCb.setSelectedItem(captureEngineConfiguration.getCaptureQuantization());
 
                 pane.add(grayLevelsLbl);
                 pane.add(grayLevelsCb);
@@ -458,11 +458,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
                             (Gray8Bits) grayLevelsCb.getSelectedItem());
 
-                    if (!newCaptureEngineConfiguration.equals(captureEngineConfiguation)) {
-                        captureEngineConfiguation = newCaptureEngineConfiguration;
-                        captureEngineConfiguation.persist();
+                    if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
+                        captureEngineConfiguration = newCaptureEngineConfiguration;
+                        captureEngineConfiguration.persist();
 
-                        sendCaptureConfiguration(captureEngineConfiguation);
+                        sendCaptureConfiguration(captureEngineConfiguration);
                     }
                 }
             }
@@ -478,9 +478,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     /**
      * Should not block (!)
      */
-    private void sendCaptureConfiguration(final CaptureEngineConfiguration captureEngineConfiguation) {
+    private void sendCaptureConfiguration(final CaptureEngineConfiguration captureEngineConfiguration) {
         // Ok as very few of that (!)
-        new Thread(() -> network.sendCaptureConfiguration(captureEngineConfiguation), "CaptureEngineSettingsSender").start();
+        new Thread(() -> network.sendCaptureConfiguration(captureEngineConfiguration), "CaptureEngineSettingsSender").start();
     }
 
     private Action createComressionConfigurationAction() {
@@ -496,28 +496,28 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 final JLabel methodLbl = new JLabel(Babylon.translate("compression.method"));
                 // testing only: final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
                 final JComboBox<CompressionMethod> methodCb = new JComboBox<>(Stream.of(CompressionMethod.values()).filter(e -> !e.equals(CompressionMethod.NONE)).toArray(CompressionMethod[]::new));
-                methodCb.setSelectedItem(compressorEngineConfiguation.getMethod());
+                methodCb.setSelectedItem(compressorEngineConfiguration.getMethod());
 
                 pane.add(methodLbl);
                 pane.add(methodCb);
 
                 final JLabel useCacheLbl = new JLabel(Babylon.translate("compression.cache.usage"));
                 final JCheckBox useCacheCb = new JCheckBox();
-                useCacheCb.setSelected(compressorEngineConfiguation.useCache());
+                useCacheCb.setSelected(compressorEngineConfiguration.useCache());
 
                 pane.add(useCacheLbl);
                 pane.add(useCacheCb);
 
                 final JLabel maxSizeLbl = new JLabel(Babylon.translate("compression.cache.max"));
                 maxSizeLbl.setToolTipText(Babylon.translate("compression.cache.max.tooltip"));
-                final JTextField maxSizeTf = new JTextField(String.valueOf(compressorEngineConfiguation.getCacheMaxSize()));
+                final JTextField maxSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCacheMaxSize()));
 
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
                 final JLabel purgeSizeLbl = new JLabel(Babylon.translate("compression.cache.purge"));
                 purgeSizeLbl.setToolTipText(Babylon.translate("compression.cache.purge.tooltip"));
-                final JTextField purgeSizeTf = new JTextField(String.valueOf(compressorEngineConfiguation.getCachePurgeSize()));
+                final JTextField purgeSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCachePurgeSize()));
 
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
@@ -559,11 +559,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     final CompressorEngineConfiguration newCompressorEngineConfiguration = new CompressorEngineConfiguration((CompressionMethod) methodCb.getSelectedItem(),
                             useCacheCb.isSelected(), Integer.parseInt(maxSizeTf.getText()), Integer.parseInt(purgeSizeTf.getText()));
 
-                    if (!newCompressorEngineConfiguration.equals(compressorEngineConfiguation)) {
-                        compressorEngineConfiguation = newCompressorEngineConfiguration;
-                        compressorEngineConfiguation.persist();
+                    if (!newCompressorEngineConfiguration.equals(compressorEngineConfiguration)) {
+                        compressorEngineConfiguration = newCompressorEngineConfiguration;
+                        compressorEngineConfiguration.persist();
 
-                        sendCompressorConfiguration(compressorEngineConfiguation);
+                        sendCompressorConfiguration(compressorEngineConfiguration);
                     }
                 }
             }
@@ -617,7 +617,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             @Override
             public void actionPerformed(ActionEvent ev) {
                 // Currently making a RESET within the assisted ...
-                sendCaptureConfiguration(captureEngineConfiguation);
+                sendCaptureConfiguration(captureEngineConfiguration);
             }
         };
 
@@ -675,7 +675,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 configuration.persist();
             }
         } catch (Exception ex) {
-            Log.warn("Cound not set the L&F [" + lnf.getName() + "]", ex);
+            Log.warn("Could not set the L&F [" + lnf.getName() + "]", ex);
         }
     }
 
@@ -740,8 +740,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
          */
         @Override
         public void onConnected(Socket connection) {
-            sendCaptureConfiguration(captureEngineConfiguation);
-            sendCompressorConfiguration(compressorEngineConfiguation);
+            sendCaptureConfiguration(captureEngineConfiguration);
+            sendCompressorConfiguration(compressorEngineConfiguration);
             frame.onSessionStarted();
         }
 
