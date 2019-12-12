@@ -98,8 +98,8 @@ public abstract class BaseFrame extends JFrame {
 	}
 
 	private static final String HTTP_HOME = "https://github.com/retgal/dayon";
-	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/support" + Babylon.translate("language.suffix") + ".html";
-	private static final String HTTP_FEEDBACK = "https://github.com/retgal/dayon/issues";
+	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + Babylon.translate("language.suffix") + "support.html";
+	private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
 	protected Action createShowInfoAction() {
 		final Action showSystemInfo = new AbstractAction() {
