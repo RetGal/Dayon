@@ -65,10 +65,6 @@
 		<finalName>dayon</finalName>
 		<plugins>
 			<plugin>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M4</version>
-			</plugin>
-			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
 				<version>3.1.0</version>
@@ -141,13 +137,7 @@
 									</excludes>
 								</filter>
 								<filter>
-									<artifact>com.sun.grizzly:grizzly-lzma</artifact>
-									<excludes>
-										<exclude>META-INF/**</exclude>
-									</excludes>
-								</filter>
-								<filter>
-									<artifact>org.itadaki:bzip2</artifact>
+									<artifact>*</artifact>
 									<excludes>
 										<exclude>META-INF/**</exclude>
 									</excludes>
@@ -260,7 +250,7 @@
 				<version>1.6.0</version>
 				<executions>
 					<execution>
-						<id>chmod-bin</id>
+						<id>chmod</id>
 						<phase>package</phase>
 						<goals>
 							<goal>exec</goal>
@@ -271,19 +261,6 @@
 								<argument>+x</argument>
 								<argument>-R</argument>
 								<argument>${basedir}/dist/bin</argument>
-							</arguments>
-						</configuration>
-					</execution>
-					<execution>
-						<id>chmod-setup</id>
-						<phase>package</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>chmod</executable>
-							<arguments>
-								<argument>+x</argument>
 								<argument>${basedir}/dist/setup.sh</argument>
 							</arguments>
 						</configuration>
