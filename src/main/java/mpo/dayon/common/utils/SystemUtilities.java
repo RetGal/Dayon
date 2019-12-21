@@ -22,15 +22,16 @@ public abstract class SystemUtilities {
 
     @Nullable
     private static File getInstallRoot() {
-        String path = null;
+        String path;
         try {
             path = new URI(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
         } catch (URISyntaxException e) {
             Log.warn("Failed to retrieve InstallRoot", e);
+            return null;
         }
         int pos = 0;
-        if (Objects.requireNonNull(path).contains("/lib/dayon.jar")) {
-            pos = path.indexOf("/lib");
+        if (Objects.requireNonNull(path).contains("/bin/dayon.jar")) {
+            pos = path.indexOf("/bin");
         } else if (path.contains("/target/classes")) {
             pos = path.indexOf("/classes");
         } else if (path.contains("/out/idea/")) {
@@ -39,10 +40,9 @@ public abstract class SystemUtilities {
         if (pos != 0) {
             return new File(path.substring(0, pos));
         }
-        return null;
+        return new File(path);
     }
 
-    @Nullable
     public static URI getLocalIndexHtml() {
         @Nullable final File rootPath = getInstallRoot();
         if (rootPath != null) {
@@ -58,6 +58,7 @@ public abstract class SystemUtilities {
                     Log.warn("Swallowed an URISyntaxException");
                 }
             }
+            return quickStart.toURI();
         }
         return null;
     }
