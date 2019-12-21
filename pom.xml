@@ -8,7 +8,7 @@
 	<url>https://github.com/retgal/dayon</url>
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
-	<version>1.9.0</version>
+	<version>1.9.1</version>
 	<description>cross platform remote desktop solution</description>
 	<developers>
 		<developer>
@@ -137,7 +137,13 @@
 									</excludes>
 								</filter>
 								<filter>
-									<artifact>*</artifact>
+									<artifact>com.sun.grizzly:grizzly-lzma</artifact>
+									<excludes>
+										<exclude>META-INF/**</exclude>
+									</excludes>
+								</filter>
+								<filter>
+									<artifact>org.itadaki:bzip2</artifact>
 									<excludes>
 										<exclude>META-INF/**</exclude>
 									</excludes>
