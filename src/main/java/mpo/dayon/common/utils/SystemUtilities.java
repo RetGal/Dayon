@@ -30,12 +30,12 @@ public abstract class SystemUtilities {
             return null;
         }
         int pos = 0;
-        if (Objects.requireNonNull(path).contains("/bin/dayon.jar")) {
-            pos = path.indexOf("/bin");
-        } else if (path.contains("/target/classes")) {
-            pos = path.indexOf("/classes");
-        } else if (path.contains("/out/idea/")) {
-            pos = path.indexOf("/out");
+        if (Objects.requireNonNull(path).contains("bin" + File.separatorChar + "dayon.jar")) {
+            pos = path.indexOf(File.separatorChar + "bin");
+        } else if (path.contains("target" + File.separatorChar + "classes")) {
+            pos = path.indexOf(File.separatorChar + "classes");
+        } else if (path.contains("out" + File.separatorChar + "idea")) {
+            pos = path.indexOf(File.separatorChar + "out");
         }
         if (pos != 0) {
             return new File(path.substring(0, pos));
@@ -48,10 +48,10 @@ public abstract class SystemUtilities {
         if (rootPath != null) {
             String quickStartDoc = Babylon.translate("quickstart.html");
             // Anchor not supported : #assistant-setup
-            File quickStart = new File(rootPath, "doc/html/" + quickStartDoc);
+            File quickStart = new File(rootPath, "doc" + File.separatorChar + "html" + File.separatorChar + quickStartDoc);
             // Must be running inside an IDE or from a quick launch version
-            if (!quickStart.isFile() || rootPath.getAbsolutePath().endsWith("/target")) {
-                quickStart = new File(rootPath.getParent(), "docs/" + quickStartDoc);
+            if (!quickStart.isFile() || rootPath.getAbsolutePath().endsWith("target")) {
+                quickStart = new File(rootPath.getParent(), "docs" + File.separatorChar + quickStartDoc);
                 try {
                     return quickStart.isFile() ? quickStart.toURI() : new URI("http://retgal.github.io/Dayon/" + quickStartDoc);
                 } catch(URISyntaxException e) {
