@@ -34,7 +34,7 @@ public interface Runner {
 
     static void overrideLocale(String arg) {
         if (arg != null && (arg.equalsIgnoreCase("de") || arg.equalsIgnoreCase("en")
-                || arg.equalsIgnoreCase("fr"))) {
+                || arg.equalsIgnoreCase("es") || arg.equalsIgnoreCase("fr"))) {
             Locale.setDefault(new Locale(arg));
         }
     }
