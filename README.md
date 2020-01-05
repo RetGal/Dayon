@@ -26,7 +26,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.9.0 - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.9.1 - released more than ten years after the initial release.
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
