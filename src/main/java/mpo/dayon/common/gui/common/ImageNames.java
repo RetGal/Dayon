@@ -46,4 +46,6 @@ public abstract class ImageNames {
 
 	public static final String DOWN = "down.png";
 
+	public static final String WIN = "win.png";
+
 }

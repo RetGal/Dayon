@@ -10,10 +10,12 @@ class AssistantActions {
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
     private Action lookAndFeelAction;
+    private Action ToggleControlModeAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
     private Action startAction;
     private Action stopAction;
+    private Action sendWindowsKeyAction;
 
     public Action getIpAddressAction() {
         return ipAddressAction;
@@ -63,6 +65,14 @@ class AssistantActions {
         this.lookAndFeelAction = lookAndFeelAction;
     }
 
+    public Action getToggleControlModeAction() {
+        return ToggleControlModeAction;
+    }
+
+    public void setToggleControlModeAction(Action toggleControlModeAction) {
+        ToggleControlModeAction = toggleControlModeAction;
+    }
+
     public Action getRemoteClipboardRequestAction() {
         return remoteClipboardRequestAction;
     }
@@ -93,5 +103,13 @@ class AssistantActions {
 
     public void setStopAction(Action stopAction) {
         this.stopAction = stopAction;
+    }
+
+    public Action getSendWindowsKeyAction() {
+        return sendWindowsKeyAction;
+    }
+
+    public void setSendWindowsKeyAction(Action sendWindowsKeyAction) {
+        this.sendWindowsKeyAction = sendWindowsKeyAction;
     }
 }

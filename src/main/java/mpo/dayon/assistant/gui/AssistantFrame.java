@@ -19,6 +19,8 @@ import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.awt.event.KeyEvent.VK_WINDOWS;
+
 class AssistantFrame extends BaseFrame {
 
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
@@ -36,12 +38,16 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
+    private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
+
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         super.setFrameType(FrameType.ASSISTANT);
 
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
         
         this.actions = actions;
+        this.actions.setSendWindowsKeyAction(createSendWindowsKeyAction());
+        this.actions.setToggleControlModeAction(createToggleControlMode());
 
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
@@ -142,16 +148,15 @@ class AssistantFrame extends BaseFrame {
         toolbar.addAction(actions.getNetworkConfigurationAction());
         toolbar.addAction(actions.getCaptureEngineConfigurationAction());
         toolbar.addAction(actions.getCompressionEngineConfigurationAction());
+        toolbar.addAction(actions.getLookAndFeelAction());
         toolbar.addAction(actions.getResetAction());
         toolbar.addSeparator();
-        toolbar.addToggleAction(createToggleControlMode());
+        toolbar.addToggleAction(actions.getToggleControlModeAction());
         toolbar.addAction(actions.getRemoteClipboardRequestAction());
         toolbar.addAction(actions.getRemoteClipboardSetAction());
-        toolbar.addSeparator();
-        toolbar.addAction(actions.getLookAndFeelAction());
+        toolbar.addToggleAction(actions.getSendWindowsKeyAction());
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
-        toolbar.addSeparator();
         toolbar.addAction(createShowHelpAction());
         toolbar.addGlue();
         toolbar.addAction(actions.getIpAddressAction());
@@ -179,19 +184,40 @@ class AssistantFrame extends BaseFrame {
     }
 
     private Action createToggleControlMode() {
-        final Action showSystemInfo = new AbstractAction() {
+        final Action remoteControl = new AbstractAction() {
 
             @Override
             public void actionPerformed(ActionEvent ev) {
                 controlActivated.set(!controlActivated.get());
+                actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
             }
         };
 
-        showSystemInfo.putValue(Action.NAME, "toggleControlMode");
-        showSystemInfo.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("control.mode"));
-        showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.CONTROL));
+        remoteControl.putValue(Action.NAME, "toggleControlMode");
+        remoteControl.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("control.mode"));
+        remoteControl.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.CONTROL));
 
-        return showSystemInfo;
+        return remoteControl;
+    }
+
+    Action createSendWindowsKeyAction() {
+        final Action sendWindowsKey = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                if (windowsKeyActivated.get()) {
+                    fireOnKeyReleased(VK_WINDOWS, ' ');
+                } else {
+                    fireOnKeyPressed(VK_WINDOWS, ' ');
+                }
+                windowsKeyActivated.set(!windowsKeyActivated.get());
+            }
+        };
+
+        sendWindowsKey.putValue(Action.NAME, "sendWindowsKey");
+        sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("send.windowsKey"));
+        sendWindowsKey.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.WIN));
+
+        return sendWindowsKey;
     }
 
     void onReady() {
@@ -205,13 +231,11 @@ class AssistantFrame extends BaseFrame {
 
         actions.getNetworkConfigurationAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
-
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
-        actions.getResetAction().setEnabled(false);
-        actions.getRemoteClipboardRequestAction().setEnabled(false);
-        actions.getRemoteClipboardSetAction().setEnabled(false);
         actions.getLookAndFeelAction().setEnabled(true);
+        actions.getResetAction().setEnabled(false);
 
+        disableControls();
         statusBar.setMessage(Babylon.translate("ready"));
     }
 
@@ -252,8 +276,10 @@ class AssistantFrame extends BaseFrame {
         add(center, BorderLayout.CENTER);
 
         actions.getResetAction().setEnabled(true);
+        actions.getToggleControlModeAction().setEnabled(true);
         actions.getRemoteClipboardRequestAction().setEnabled(true);
         actions.getRemoteClipboardSetAction().setEnabled(true);
+        actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
 
         validate();
         repaint();
@@ -294,20 +320,24 @@ class AssistantFrame extends BaseFrame {
     void onIOError(IOException error) {
         actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(false);
-
         actions.getResetAction().setEnabled(false);
-        actions.getRemoteClipboardRequestAction().setEnabled(false);
-        actions.getRemoteClipboardSetAction().setEnabled(false);
 
         stopSessionTimer();
-
         removeCenter();
-
         validate();
         repaint();
 
         JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    private void disableControls() {
+        controlActivated.set(false);
+        windowsKeyActivated.set(false);
+        actions.getToggleControlModeAction().setEnabled(false);
+        actions.getRemoteClipboardRequestAction().setEnabled(false);
+        actions.getRemoteClipboardSetAction().setEnabled(false);
+        actions.getSendWindowsKeyAction().setEnabled(false);
     }
 
     private void stopSessionTimer() {
