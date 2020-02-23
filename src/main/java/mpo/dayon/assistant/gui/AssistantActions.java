@@ -10,7 +10,7 @@ class AssistantActions {
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
     private Action lookAndFeelAction;
-    private Action ToggleControlModeAction;
+    private Action toggleControlModeAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
     private Action startAction;
@@ -66,11 +66,11 @@ class AssistantActions {
     }
 
     public Action getToggleControlModeAction() {
-        return ToggleControlModeAction;
+        return toggleControlModeAction;
     }
 
     public void setToggleControlModeAction(Action toggleControlModeAction) {
-        ToggleControlModeAction = toggleControlModeAction;
+        this.toggleControlModeAction = toggleControlModeAction;
     }
 
     public Action getRemoteClipboardRequestAction() {
