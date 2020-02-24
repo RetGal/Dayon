@@ -3,6 +3,7 @@
 	<property name="dir.binfile" value="."/>
 	<property name="dir.src" value="${dir.binfile}/src/main/java"/>
 	<property name="dir.jares" value="${dir.binfile}/src/main/resources"/>
+	<property name="dir.docs" value="${dir.binfile}/docs"/>
 	<property name="dir.lib" value="${dir.binfile}/lib"/>
 	<property name="dir.res" value="${dir.binfile}/resources"/>
 	<property name="dir.bin" value="${dir.binfile}/bin"/>
@@ -76,6 +77,7 @@
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
+		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
 		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
 		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
@@ -84,6 +86,7 @@
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}"/>
 		</copy>
+		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
 	</target>
 
 	<target name="sign" description="Signs the distribution project jar">
@@ -102,6 +105,7 @@
 				<include name="**/*"/>
 				<exclude name="**/*.sh"/>
 				<exclude name="**/bin/*"/>
+				<exclude name="**/favicon.ico"/>
 			</tarfileset>
 			<tarfileset dir="${dir.dist}/tar" filemode="755">
 				<include name="**/*.sh"/>
