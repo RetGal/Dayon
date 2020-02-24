@@ -10,7 +10,7 @@ As quick launch versions for Windows, they are also available as individual bina
 
 - easy setup
 - no router or network configuration needed on the assisted side
-- friendly, trilingual user interface
+- friendly, multilingual user interface (de, en, es, fr)
 - assistant and assisted functionality in same packet
 - encrypted communication (TLS)
 - cross-platform
@@ -26,7 +26,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.9.1 - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.9.2 - released more than ten years after the initial release.
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
