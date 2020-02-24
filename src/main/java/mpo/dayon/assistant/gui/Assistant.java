@@ -263,7 +263,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private JMenuItem getjMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
-            final URI uri = SystemUtilities.getLocalIndexHtml();
+            final URI uri = SystemUtilities.getQuickStartURI();
             if (uri != null && Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 try {

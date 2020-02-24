@@ -10,8 +10,6 @@ import java.util.stream.Collectors;
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
@@ -20,50 +18,15 @@ public abstract class SystemUtilities {
     private SystemUtilities() {
     }
 
-    @Nullable
-    private static File getInstallRoot() {
-        String path;
+    public static URI getQuickStartURI() {
         try {
-            path = new URI(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getPath();
-        } catch (URISyntaxException e) {
-            Log.warn("Failed to retrieve InstallRoot", e);
-            return null;
-        }
-        int pos = 0;
-        if (Objects.requireNonNull(path).contains("bin" + File.separatorChar + "dayon.jar")) {
-            pos = path.indexOf(File.separatorChar + "bin");
-        } else if (path.contains("target" + File.separatorChar + "classes")) {
-            pos = path.indexOf(File.separatorChar + "classes");
-        } else if (path.contains("out" + File.separatorChar + "idea")) {
-            pos = path.indexOf(File.separatorChar + "out");
-        }
-        if (pos != 0) {
-            return new File(path.substring(0, pos));
-        }
-        return new File(path);
-    }
-
-    public static URI getLocalIndexHtml() {
-        @Nullable final File rootPath = getInstallRoot();
-        if (rootPath != null) {
-            String quickStartDoc = Babylon.translate("quickstart.html");
-            // Anchor not supported : #assistant-setup
-            File quickStart = new File(rootPath, "doc" + File.separatorChar + "html" + File.separatorChar + quickStartDoc);
-            // Must be running inside an IDE or from a quick launch version
-            if (!quickStart.isFile() || rootPath.getAbsolutePath().endsWith("target")) {
-                quickStart = new File(rootPath.getParent(), "docs" + File.separatorChar + quickStartDoc);
-                try {
-                    return quickStart.isFile() ? quickStart.toURI() : new URI("http://retgal.github.io/Dayon/" + quickStartDoc);
-                } catch(URISyntaxException e) {
-                    Log.warn("Swallowed an URISyntaxException");
-                }
-            }
-            return quickStart.toURI();
+            return new URI("http://retgal.github.io/Dayon/" + Babylon.translate("quickstart.html"));
+        } catch(URISyntaxException e) {
+            Log.warn("Swallowed an URISyntaxException");
         }
         return null;
     }
-
-    @Nullable
+    
     private static synchronized File getOrCreateAppDir() {
         final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
         if (homeDir == null) {
@@ -84,29 +47,7 @@ public abstract class SystemUtilities {
         }
         return appDir;
     }
-
-    @Nullable
-    public static File getOrCreateAppDirectory(String name) {
-        final File home = getOrCreateAppDir();
-        if (home == null) {
-            Log.warn("Could not create the application directory (1) [" + name + "]!");
-            return null;
-        }
-
-        final File dir = new File(home, name);
-        if (dir.exists() && !dir.isDirectory()) {
-            Log.warn("Could not create the application directory (2) [" + name + "]!");
-            return null;
-        }
-
-        if (!dir.exists() && !dir.mkdir()) {
-            Log.warn("Could not create the application directory (3) [" + name + "]!");
-            return null;
-        }
-        return dir;
-    }
-
-    @Nullable
+    
     public static File getOrCreateAppFile(String name) {
         final File home = getOrCreateAppDir();
         if (home == null) {
@@ -134,7 +75,7 @@ public abstract class SystemUtilities {
         System.setProperty("dayon.application.name", name);
     }
 
-    private static String getStringProperty(@Nullable Properties props, String name) {
+    private static String getStringProperty(Properties props, String name) {
         final String value = getStringProperty(props, name, null);
         if (value == null) {
             throw new InvalidParameterException(MessageFormat.format("Missing value for property {0}!", name));
@@ -142,7 +83,7 @@ public abstract class SystemUtilities {
         return value;
     }
 
-    public static String getStringProperty(@Nullable Properties props, String name, String defaultValue) {
+    public static String getStringProperty(Properties props, String name, String defaultValue) {
         if (props == null) {
             final String prop = System.getProperty(name);
 
@@ -154,7 +95,7 @@ public abstract class SystemUtilities {
         return props.getProperty(name, defaultValue);
     }
 
-    public static int getIntProperty(@Nullable Properties props, String name, int defaultValue) {
+    public static int getIntProperty(Properties props, String name, int defaultValue) {
         final String prop = getStringProperty(props, name, null);
         if (prop == null) {
             return defaultValue;
@@ -162,7 +103,7 @@ public abstract class SystemUtilities {
         return Integer.parseInt(prop);
     }
 
-    public static boolean getBooleanProperty(@Nullable Properties props, String name, boolean defaultValue) {
+    public static boolean getBooleanProperty(Properties props, String name, boolean defaultValue) {
         final String prop = getStringProperty(props, name, null);
         if (prop == null) {
             return defaultValue;
@@ -170,7 +111,7 @@ public abstract class SystemUtilities {
         return Boolean.parseBoolean(prop);
     }
 
-    public static double getDoubleProperty(@Nullable Properties props, String name, double defaultValue) {
+    public static double getDoubleProperty(Properties props, String name, double defaultValue) {
         final String prop = getStringProperty(props, name, null);
         if (prop == null) {
             return defaultValue;
@@ -178,7 +119,7 @@ public abstract class SystemUtilities {
         return Double.parseDouble(prop);
     }
 
-    public static <T extends Enum<T>> T getEnumProperty(@Nullable Properties props, String name, T defaultValue, T[] enums) {
+    public static <T extends Enum<T>> T getEnumProperty(Properties props, String name, T defaultValue, T[] enums) {
         final String prop = getStringProperty(props, name, null);
         if (prop == null) {
             return defaultValue;
@@ -221,7 +162,7 @@ public abstract class SystemUtilities {
         return UnitUtilities.toByteSize(totalMG - freeMG, false) + " of " + UnitUtilities.toByteSize(totalMG, false);
     }
 
-    public static void safeClose(@Nullable Closeable open) {
+    public static void safeClose(Closeable open) {
         if (open != null) {
             Log.debug(open.getClass().getSimpleName() + " closing");
             try {

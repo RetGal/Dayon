@@ -98,7 +98,7 @@ public abstract class BaseFrame extends JFrame {
 	}
 
 	private static final String HTTP_HOME = "https://github.com/retgal/dayon";
-	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + Babylon.translate("language.suffix") + "support.html";
+	private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + Babylon.translate("support.html");
 	private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
 	protected Action createShowInfoAction() {
@@ -232,7 +232,7 @@ public abstract class BaseFrame extends JFrame {
 		final Action showHelp = new AbstractAction() {
 			@Override
             public void actionPerformed(ActionEvent ev) {
-                browse(SystemUtilities.getLocalIndexHtml());
+                browse(SystemUtilities.getQuickStartURI());
 			}
 		};
 

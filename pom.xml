@@ -8,7 +8,7 @@
 	<url>https://github.com/retgal/dayon</url>
 	<groupId>mpo.dayon</groupId>
 	<artifactId>dayon</artifactId>
-	<version>1.9.1</version>
+	<version>1.9.2</version>
 	<description>cross platform remote desktop solution</description>
 	<developers>
 		<developer>
@@ -217,22 +217,6 @@
 						</configuration>
 					</execution>
 					<execution>
-						<id>copy-docs</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/dist/doc/html</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/docs</directory>
-									<include>*</include>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
 						<id>copy-jar</id>
 						<phase>package</phase>
 						<goals>
@@ -314,10 +298,6 @@
 						<fileSet>
 							<source>${basedir}/dist/bin/dayon_assisted.sh</source>
 							<target>bin/dayon_assisted.sh</target>
-						</fileSet>
-						<fileSet>
-							<source>${basedir}/dist/doc/</source>
-							<target>doc</target>
 						</fileSet>
 						<fileSet>
 							<source>${basedir}/resources/deb/</source>

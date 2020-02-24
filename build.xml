@@ -3,7 +3,6 @@
 	<property name="dir.binfile" value="."/>
 	<property name="dir.src" value="${dir.binfile}/src/main/java"/>
 	<property name="dir.jares" value="${dir.binfile}/src/main/resources"/>
-	<property name="dir.docs" value="${dir.binfile}/docs"/>
 	<property name="dir.lib" value="${dir.binfile}/lib"/>
 	<property name="dir.res" value="${dir.binfile}/resources"/>
 	<property name="dir.bin" value="${dir.binfile}/bin"/>
@@ -12,7 +11,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="1.9.1"/>
+	<property name="version" value="1.9.2"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -31,7 +30,6 @@
 		<mkdir dir="${dir.bin}"/>
 		<mkdir dir="${dir.build}"/>
 		<mkdir dir="${dir.dist}/bin"/>
-		<mkdir dir="${dir.dist}/doc/html"/>
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
@@ -78,9 +76,6 @@
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
-		<copy todir="${dir.dist}/doc/html">
-			<fileset dir="${dir.docs}"/>
-		</copy>
 		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
 		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
@@ -88,9 +83,6 @@
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}"/>
-		</copy>
-		<copy todir="${dir.dist}/doc/html">
-			<fileset dir="${dir.docs}"/>
 		</copy>
 	</target>
 

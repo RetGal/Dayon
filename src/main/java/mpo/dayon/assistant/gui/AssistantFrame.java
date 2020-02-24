@@ -149,8 +149,8 @@ class AssistantFrame extends BaseFrame {
         toolbar.addAction(actions.getCaptureEngineConfigurationAction());
         toolbar.addAction(actions.getCompressionEngineConfigurationAction());
         toolbar.addAction(actions.getLookAndFeelAction());
-        toolbar.addAction(actions.getResetAction());
         toolbar.addSeparator();
+        toolbar.addAction(actions.getResetAction());
         toolbar.addToggleAction(actions.getToggleControlModeAction());
         toolbar.addAction(actions.getRemoteClipboardRequestAction());
         toolbar.addAction(actions.getRemoteClipboardSetAction());
