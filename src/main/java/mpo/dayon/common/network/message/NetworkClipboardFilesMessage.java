@@ -1,74 +1,69 @@
 package mpo.dayon.common.network.message;
 
 import mpo.dayon.common.log.Log;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static java.util.Arrays.copyOf;
 
 public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private final List<File> files;
-    private final List<String> fileNames;
-    private final List<Long> fileSizes;
+    private final List<FileMetaData> fileMetaDatas;
     private final int position;
     private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
     private static final int MAX_BUFFER_CAPACITY = 7168;
 
-    public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize) {
+    public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize, String basePath) {
         this.files = files;
-        this.fileNames = files.stream().map(File::getName).collect(Collectors.toList());
-        this.fileSizes = files.stream().map(File::length).collect(Collectors.toList());
+        this.fileMetaDatas = getMetaData(files, basePath);
         this.position = 0;
-        this.remainingFileSize = files.get(0).length();
+        this.remainingFileSize = fileMetaDatas.get(0).getFileSize();
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
 
     public static NetworkClipboardFilesMessage unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper) throws IOException {
 
         try {
-            if (helper.getFileNames().isEmpty()) {
-                helper.setFileNames((ArrayList<String>) in.readObject());
-                helper.setFileSizes((ArrayList<Long>) in.readObject());
-                helper.setFileBytesLeft(helper.getFileSizes().get(0));
-                helper.setTotalFileBytesLeft(helper.getFileSizes().stream().mapToInt(Long::intValue).sum());
+            if (helper.getTransferId() == null) {
+                helper.setTransferId(UUID.randomUUID().toString());
+                helper.setFileMetadatas((ArrayList<FileMetaData>) in.readObject());
+                helper.setFileBytesLeft(helper.getFileMetadatas().get(0).getFileSize());
+                helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToInt(fileMetaData -> (int) fileMetaData.getFileSize()).sum());
             }
-            byte[] buffer;
             int position = helper.getPosition();
-            String fileName = helper.getFileNames().get(position);
-            Long fileSize = helper.getFileSizes().get(position);
-            if (helper.getFiles().size() == position) {
-                Log.info("Received File/size: " + fileName + "/" + fileSize);
-                buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
-            } else {
-                Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFiles().get(position).length());
-                buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
-            }
+            FileMetaData meta = helper.getFileMetadatas().get(position);
+
+            String fileName = meta.getFileName();
+            Long fileSize = meta.getFileSize();
+            byte[] buffer;
+            Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFileBytesLeft());
+            buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
 
             int read = readIntoBuffer(in, buffer);
             final boolean append = helper.getFileBytesLeft() != fileSize;
-            String tempFilePath = writeToTempFile(buffer, read, fileName, append);
-
-            if (helper.getFiles().size() == position) {
-                helper.getFiles().add(new File(tempFilePath));
-            } else {
-                helper.getFiles().set(position, new File(tempFilePath));
+            if (!append) {
+                Log.info("Received " + meta.getFileName());
             }
+            String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId() + File.separator + fileName.replaceAll("^[\\" + File.separator + "]", "");
+            writeToTempFile(buffer, read, tempFilePath, append);
+
             long remainingFileSize = helper.getFileBytesLeft() - read;
             long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
-
             if (remainingFileSize <= 0 && remainingTotalFilesSize > 0) {
                 position++;
-                remainingFileSize = helper.getFileSizes().get(position);
+                remainingFileSize = helper.getFileMetadatas().get(position).getFileSize();
             }
             helper.setFileBytesLeft(remainingFileSize);
             helper.setTotalFileBytesLeft(remainingTotalFilesSize);
             helper.setPosition(position);
+
+            if (remainingTotalFilesSize == 0) {
+                String rootPath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId();
+                helper.setFiles(Arrays.asList(new File(rootPath).listFiles()));
+            }
 
         } catch (ClassNotFoundException e) {
             Log.error(e.getMessage());
@@ -87,35 +82,46 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         return read;
     }
 
-    @NotNull
-    private static String writeToTempFile(byte[] buffer, int length, String fileName, boolean append) throws IOException {
-        String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + fileName;
-        try (FileOutputStream stream = new FileOutputStream(tempFilePath, append)) {
+    private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {
+        new File(tempFileName.substring(0, tempFileName.lastIndexOf(File.separatorChar))).mkdirs();
+        try (FileOutputStream stream = new FileOutputStream(tempFileName, append)) {
             stream.write(copyOf(buffer, length));
-            Log.debug("Bytes written: " + length);
         }
-        return tempFilePath;
     }
 
     private NetworkClipboardFilesMessage(NetworkClipboardFilesHelper helper) {
         this.files = helper.getFiles();
-        this.fileNames = helper.getFileNames();
-        this.fileSizes = helper.getFileSizes();
+        this.fileMetaDatas = helper.getFileMetadatas();
         this.position = helper.getPosition();
         this.remainingFileSize = helper.getFileBytesLeft();
         this.remainingTotalFilesSize = helper.getTotalFileBytesLeft();
+    }
+
+    private List<FileMetaData> getMetaData(List<File> files, String basePath) {
+        List<FileMetaData> fileMetaDatas = new ArrayList<>();
+        for (File file : files) {
+            extractFileMetaData(file, fileMetaDatas, basePath);
+        }
+        return fileMetaDatas;
+    }
+
+    private void extractFileMetaData(File node, List<FileMetaData> fileMetaDatas, String basePath) {
+        if (node.isFile()) {
+            fileMetaDatas.add(new FileMetaData(node.getPath(), node.length(), basePath));
+        }
+        if (node.isDirectory()) {
+            for (File file : Objects.requireNonNull(node.listFiles())) {
+                extractFileMetaData(file, fileMetaDatas, basePath);
+            }
+        }
     }
 
     public List<File> getFiles() {
         return files;
     }
 
-    public List<String> getFileNames() {
-        return fileNames;
-    }
-
-    public List<Long> getFileSizes() {
-        return fileSizes;
+    public List<FileMetaData> getFileMetaDatas() {
+        return fileMetaDatas;
     }
 
     public int getPosition() {
@@ -140,10 +146,23 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     public void marshall(ObjectOutputStream out) throws IOException {
         marshallEnum(out, getType());
         // ArrayList implements serializable, other List implementations might not..
-        out.writeObject((ArrayList<String>) this.fileNames);
-        out.writeObject((ArrayList<Long>) this.fileSizes);
+        out.writeObject((ArrayList<FileMetaData>) this.fileMetaDatas);
         for (File file : this.files) {
+            processFile(file, out);
+        }
+    }
+
+    private void processFile(File file, ObjectOutputStream out) throws IOException {
+        if (file.isFile()) {
             sendFile(file, out);
+        } else {
+            for (File node : Objects.requireNonNull(file.listFiles())) {
+                if (node.isFile()) {
+                    sendFile(node, out);
+                } else {
+                    processFile(node, out);
+                }
+            }
         }
     }
 

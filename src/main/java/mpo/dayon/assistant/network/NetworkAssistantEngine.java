@@ -436,9 +436,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     /**
      * Might be blocking if the sender queue is full (!)
      */
-    public void setRemoteClipboardFiles(List<File> files, long size) {
+    public void setRemoteClipboardFiles(List<File> files, long size, String basePath) {
         if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size);
+            fileSender.sendClipboardContentFiles(files, size, basePath);
         }
     }
 

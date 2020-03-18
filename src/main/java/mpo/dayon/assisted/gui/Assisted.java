@@ -5,6 +5,7 @@ import java.awt.datatransfer.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.nio.file.Files;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -34,6 +35,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
+import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class Assisted implements Subscriber, ClipboardOwner {
@@ -235,7 +237,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	private void onClipboardRequested(NetworkAssistedEngine engine) {
 
 		Log.info("Clipboard transfer request received");
-
 		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 		Transferable transferable = clipboard.getContents(this);
 
@@ -245,9 +246,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
 				// noinspection unchecked
 				List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
-				long size = files.stream().mapToLong(File::length).sum();
-				Log.debug("Clipboard contains files with size: " + size);
-				engine.sendClipboardFiles(files, size);
+				if (!files.isEmpty()) {
+					final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
+					Log.debug("Clipboard contains files with size: " + totalFilesSize );
+					engine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
+				}
 			} else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
 				// noinspection unchecked
 				String text = (String) clipboard.getData(DataFlavor.stringFlavor);

@@ -38,8 +38,7 @@ public abstract class NetworkEngine {
 			setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
 		} else {
 			filesHelper.setFiles(clipboardFiles.getFiles());
-			filesHelper.setFileNames(clipboardFiles.getFileNames());
-			filesHelper.setFileSizes(clipboardFiles.getFileSizes());
+			filesHelper.setFileMetadatas(clipboardFiles.getFileMetaDatas());
 			filesHelper.setPosition(clipboardFiles.getPosition());
 			filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
 		}

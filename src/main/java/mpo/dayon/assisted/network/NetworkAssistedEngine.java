@@ -245,9 +245,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public void sendClipboardFiles(List<File> files, long size) {
+    public void sendClipboardFiles(List<File> files, long size, String basePath) {
         if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size);
+            fileSender.sendClipboardContentFiles(files, size, basePath);
         }
     }
 }
