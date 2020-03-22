@@ -70,13 +70,16 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     private static int readIntoBuffer(InputStream in, byte[] buffer) throws IOException {
-        int chunk;
-        int read = in.read(buffer, 0, 1);
-        while (in.available() > 0 && read < buffer.length) {
-            chunk = Math.min(in.available(), buffer.length - read);
-            read += in.read(buffer, read, chunk);
+        if (buffer.length > 0) {
+            int chunk;
+            int read = in.read(buffer, 0, 1);
+            while (in.available() > 0 && read < buffer.length) {
+                chunk = Math.min(in.available(), buffer.length - read);
+                read += in.read(buffer, read, chunk);
+            }
+            return read;
         }
-        return read;
+        return 0;
     }
 
     private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {
@@ -87,11 +90,11 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     private List<FileMetaData> getMetaData(List<File> files, String basePath) {
-        List<FileMetaData> fileMetaDatas = new ArrayList<>();
+        List<FileMetaData> metas = new ArrayList<>();
         for (File file : files) {
-            extractFileMetaData(file, fileMetaDatas, basePath);
+            extractFileMetaData(file, metas, basePath);
         }
-        return fileMetaDatas;
+        return metas;
     }
 
     private void extractFileMetaData(File node, List<FileMetaData> fileMetaDatas, String basePath) {
