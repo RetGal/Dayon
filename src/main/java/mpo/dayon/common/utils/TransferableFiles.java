@@ -27,7 +27,7 @@ public class TransferableFiles implements Transferable {
     }
 
     private static final DataFlavor[] FLAVORS = new DataFlavor[]{
-            DataFlavor.javaFileListFlavor, gnomeCopiedFilesFlavor, uriListFlavor};
+            DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
 
 
     public TransferableFiles(List<File> files) {
@@ -36,18 +36,18 @@ public class TransferableFiles implements Transferable {
 
     @NotNull
     @Override
-    public Object getTransferData(DataFlavor flavor) throws
-            UnsupportedFlavorException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         Log.debug("getTransferData " + flavor.toString());
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
             return files;
-        } else if (flavor.equals(gnomeCopiedFilesFlavor)) {
-            return toGnomeCopiedFilesFlavor();
-        } else if (flavor.equals(uriListFlavor)) {
-            return toUriListFlavor();
-        } else {
-            throw new UnsupportedFlavorException(flavor);
         }
+        if (flavor.equals(uriListFlavor)) {
+            return toUriListFlavor();
+        }
+        if (flavor.equals(gnomeCopiedFilesFlavor)) {
+            return toGnomeCopiedFilesFlavor();
+        }
+        throw new UnsupportedFlavorException(flavor);
     }
 
     @NotNull
