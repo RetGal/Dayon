@@ -9,6 +9,10 @@ import java.util.stream.Stream;
 
 public class FileUtilities {
 
+    private FileUtilities() {
+        throw new IllegalStateException();
+    }
+
     public static long calculateTotalFileSize(List<File> files) throws IOException {
         long totalFilesSize = 0;
         for (File file : files) {
