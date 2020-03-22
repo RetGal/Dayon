@@ -3,7 +3,9 @@ package mpo.dayon.common.utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class FileUtilities {
 
@@ -19,10 +21,11 @@ public class FileUtilities {
         if (node.isFile()) {
             return node.length();
         }
-        return Files.walk(node.toPath())
-                .filter(p -> p.toFile().isFile())
-                .mapToLong(p -> p.toFile().length())
-                .sum();
+        try (Stream<Path> stream = Files.walk(node.toPath())) {
+            return stream.filter(p -> p.toFile().isFile())
+                    .mapToLong(p -> p.toFile().length())
+                    .sum();
+        }
     }
 
     public static String separatorsToSystem(String path) {
