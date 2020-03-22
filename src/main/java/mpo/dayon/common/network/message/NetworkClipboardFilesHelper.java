@@ -69,7 +69,7 @@ public class NetworkClipboardFilesHelper {
         this.totalFileBytesLeft = totalFileBytesLeft;
     }
 
-    public boolean isIdle() {
+    public boolean isDone() {
         return totalFileBytesLeft == 0;
     }
 }

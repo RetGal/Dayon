@@ -19,8 +19,8 @@ public class TransferableFiles implements Transferable {
 
     static {
         try {
-            gnomeCopiedFilesFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
             uriListFlavor = new DataFlavor("text/uri-list;class=java.lang.String");
+            gnomeCopiedFilesFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
         } catch (ClassNotFoundException e) {
             Log.error(e.getMessage()); // this should not happen
         }
@@ -28,7 +28,6 @@ public class TransferableFiles implements Transferable {
 
     private static final DataFlavor[] FLAVORS = new DataFlavor[]{
             DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
-
 
     public TransferableFiles(List<File> files) {
         this.files = files;

@@ -12,20 +12,16 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private final List<File> files;
     private final List<FileMetaData> fileMetaDatas;
-    private final int position;
-    private final Long remainingFileSize;
     private final Long remainingTotalFilesSize;
     private static final int MAX_BUFFER_CAPACITY = 7168;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize, String basePath) {
         this.files = files;
         this.fileMetaDatas = getMetaData(files, basePath);
-        this.position = 0;
-        this.remainingFileSize = fileMetaDatas.get(0).getFileSize();
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
 
-    public static NetworkClipboardFilesMessage unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper) throws IOException {
+    public static NetworkClipboardFilesHelper unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper) throws IOException {
 
         try {
             if (helper.getTransferId() == null) {
@@ -70,7 +66,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             Log.error(e.getMessage());
         }
 
-        return new NetworkClipboardFilesMessage(helper);
+        return helper;
     }
 
     private static int readIntoBuffer(InputStream in, byte[] buffer) throws IOException {
@@ -88,14 +84,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         try (FileOutputStream stream = new FileOutputStream(tempFileName, append)) {
             stream.write(copyOf(buffer, length));
         }
-    }
-
-    private NetworkClipboardFilesMessage(NetworkClipboardFilesHelper helper) {
-        this.files = helper.getFiles();
-        this.fileMetaDatas = helper.getFileMetadatas();
-        this.position = helper.getPosition();
-        this.remainingFileSize = helper.getFileBytesLeft();
-        this.remainingTotalFilesSize = helper.getTotalFileBytesLeft();
     }
 
     private List<FileMetaData> getMetaData(List<File> files, String basePath) {
@@ -119,18 +107,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     public List<File> getFiles() {
         return files;
-    }
-
-    public List<FileMetaData> getFileMetaDatas() {
-        return fileMetaDatas;
-    }
-
-    public int getPosition() {
-        return position;
-    }
-
-    public Long getRemainingFileSize() {
-        return remainingFileSize;
     }
 
     @Override

@@ -232,7 +232,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             //noinspection InfiniteLoopStatement
             while (true) {
                 NetworkMessageType type;
-                if (filesHelper.isIdle()) {
+                if (filesHelper.isDone()) {
                     NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
                     type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
                     Log.debug("Received " + type.name());
@@ -253,9 +253,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private NetworkClipboardFilesHelper processClipboardFiles(ObjectInputStream in, NetworkClipboardFilesHelper filesHelper) throws IOException {
-        final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
-        if (filesHelper.isIdle()) {
+        filesHelper = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
+        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardOwner);
+        if (filesHelper.isDone()) {
             fireOnClipboardReceived();
         }
         return filesHelper;

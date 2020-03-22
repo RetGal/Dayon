@@ -1,6 +1,7 @@
 package mpo.dayon.common.network.message;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class FileMetaData implements Serializable {
     private final String fileName;
@@ -27,7 +28,7 @@ public class FileMetaData implements Serializable {
         FileMetaData that = (FileMetaData) o;
 
         if (fileSize != that.fileSize) return false;
-        return fileName != null ? fileName.equals(that.fileName) : that.fileName == null;
+        return Objects.equals(fileName, that.fileName);
     }
 
     @Override
