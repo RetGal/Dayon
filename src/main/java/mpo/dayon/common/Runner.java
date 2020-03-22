@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface Runner {
-    @NotNull
     static void logAppInfo(String appName) {
         // System.setProperty("dayon.debug", "on");
         SystemUtilities.setApplicationName(appName);
