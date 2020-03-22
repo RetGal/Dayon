@@ -25,10 +25,13 @@
             Post your question or open a new issue on <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
         <h3>Known Limitations</h3>
         <ul>
-            <li>As of version 1.9, the keyboard control support is still limited; there's currently no way to send some
+            <li>As of version 1.10, the keyboard control support is still limited; there's currently no way to send some
                 signals and some key combinations are not properly supported (e.g., <code>Ctrl-Alt-Del</code>).
-            <li>Transferring of directories (folders) is not supported.
-            <li>Transmission speed of larger files is rather modest.
+            <li>Depending on the display/windows manager and JDK combination, the clipboard content
+                does not get copied into the recipients clipboard. So pasting (<code>Ctrl + v</code>) does have no effect.<br>
+                In most cases the content is nonetheless transferred - take a look at the <code>/tmp</code> directory and
+                look for a uuid folder (something like <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>). There you will find the
+                transferred clipboard files.
         </ul>
         <h3>Automatic connection of the assisted</h3>
         <p>

@@ -43,7 +43,8 @@
             se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <b>publique</b>. Mais pour
             un test sur votre réseau local (ou
             sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP
-            publique</b> avec le menu suivant: <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+            publique</b> avec le menu suivant:<br>
+            <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
         <p>
             Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de
             copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi facile de coller dans une
@@ -118,24 +119,41 @@
         <p>
             <img src="assistant_control.jpg" alt="Dayon! Assistant : Control Toggle">
         <p>
-            En cliquant sur le bouton haut ou bas, le presse-papiers de l’assistant peut être transféré vers l’assistée
-            (haut) ou le presse-papiers de l’assistée vers l’assistant (bas).
+        <h2>Fonctions avancées</h2>
+        <p>
+            Prérequis: Les fonctions suivantes nécessitent une connexion établie avec l'<i>assistée</i> .
+        <p>
+        <h3>Transfert de presse-papiers</h3>
+        <p>
+            En cliquant sur le bouton haut ou bas, le presse-papiers de l'assistant peut être transféré vers l'<i>assistée</i>
+            (haut) ou le presse-papiers de l'assistée vers l'assistant (bas).
         <p>
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
             Actuellement pris en charge sont:
         <ul>
-            <li>Texte: sélectionnez du texte localement ou dans la fenêtre assistée, copiez (<code>Ctl + c</code>),
+            <li>Texte: sélectionnez du texte localement ou dans la fenêtre <i>assistée</i> , copiez (<code>Ctl + c</code>),
                 cliquez vers le haut ou le bas. Ensuite, le texte transmis peut être inséré dans une application locale
                 ou distante (<code>Ctrl + v</code>).
-            <li>Fichiers: sélectionnez un ou plusieurs fichiers localement ou dans la fenêtre de la personne assistée
+            <li>Fichiers: sélectionnez un ou plusieurs fichiers localement ou dans la fenêtre de la personne <i>assistée</i>
                 (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite, le ou les fichiers peuvent être insérés
                 à la destination.
         </ul>
-        <strong>Attention</strong>: Le transfert de répertoires (dossiers) n'est pas pris en charge. De plus, la
-        fonction est très limitée pour la transmission de gros fichiers, la vitesse de transmission est très modeste.
         <p>
-            That's all folk! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
+            <strong>Attention</strong>: Selon le gestionnaire d'affichage / fenêtre et la combinaison JDK, le contenu du
+            presse-papiers n'est pas copié dans le presse-papiers des destinataires. Le collage (<code>Ctrl + v</code>) n'a donc aucun effet.
+            Dans la plupart des cas, le contenu a néanmoins été transféré - jetez un œil au répertoire <code>/tmp</code> et recherchez
+            un dossier uuid (similaire à <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>). Vous y trouverez les fichiers du presse-papiers transférés.
+        <p>
+        <h3>Transmettre la pression de la touche Windows</h3>
+        <p>
+            Pour transmettre la pression de la touche Windows, cliquez sur le symbole Windows dans le panneau de configuration
+            de l'<i>assistant</i>. La touche reste enfoncée jusqu'à ce que vous cliquiez à nouveau sur le symbole.
+            Cela vous permet d'envoyer des raccourcis clavier Windows.<br>
+            Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<i>assistée</i>, vous cliquez sur le symbole Windows,
+            appuyez sur la touche <code>M</code>, puis cliquez à nouveau sur le symbole Windows.
+        <p>
+            C'est tout! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
     </div>
     <div id="footer"></div>
 </div>

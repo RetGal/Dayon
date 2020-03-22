@@ -115,22 +115,39 @@
         <p>
             <img src="assistant_control.jpg" alt="Dayon! Assistent : Control Toggle">
         <p>
-            Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des Assistenten an den
-            Assistierten (Up) oder die Zwischenablage des Assistierten an den Assistenten (Down) übertragen werden.
+        <h2>Erweiterte Funktionen</h2>
+        <p>
+            Voraussetzung: Die folgenden Funktionen setzen eine bestehende Verbindung zum <i>Assistierten</i> voraus.
+        <p>
+        <h3>Übertragen der Zwischenablage</h3>
+        <p>
+            Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des <i>Assistenten</i> an den
+            Assistierten (Up) oder die Zwischenablage des <i>Assistierten</i> an den <i>Assistenten</i> (Down) übertragen werden.
         <p>
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
             Unterstützt werden zur Zeit:
         <ul>
-            <li>Text: Lokal oder im Fenster des Assistierten Text markieren, kopieren (<code>ctl + C</code>) Up oder
+            <li>Text: Lokal oder im Fenster des <i>Assistierten</i> Text markieren, kopieren (<code>ctl + C</code>) Up oder
                 Down klicken. Anschliessend kann der übertagene Text in einer lokalen oder entfernten Anwendung
                 eingefügt werden (<code>ctrl + v</code>).
-            <li>Dateien: Lokal oder im Fenster des Assistierten eine oder mehrere Dateien markieren, kopieren
+            <li>Dateien: Lokal oder im Fenster des <i>Assistierten</i> eine oder mehrere Dateien, resp. Ordner markieren, kopieren
                 (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die Datei/en am Zielort eingefügt werden.
         </ul>
-        <strong>Achtung</strong>: Das Übertragen von Verzeichnissen (Ordnern) wird nicht unterstützt. Des weiteren
-        eignet sich die Funktion nur beschränkt für die Übertragung von grossen Datenmengen, da die
-        Übertragungsgeschwindigkeit ziemlich bescheiden ist..
+        <p>
+            <strong>Achtung</strong>: Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
+            Zwischenablage nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>)
+            funktioniert in diesen Fällen nicht.
+            In den meisten Fällen wurde der Inhalt dennoch übertragen. Werfen sie einen Blick in das <code>/tmp</code>
+            Verzeichnis und suchen sie nach einem UUID-Ordner (ähnlich wie <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
+            Darin befinden sich die übertragenen Dateien.
+        <p>
+        <h3>Windowstastendruck übertragen</h3>
+        <p>
+            Um das Drücken der Windows-Taste zu übertragen, klicken sie in der Bedienleiste des <i>Assistenten</i> auf das Windows-Symbol.
+            Die Taste bleibt gedrückt, bis Sie erneut auf das Symbol klicken. Auf diese Weise können sie auch Windows-Tastenkombinationen senden.<br>
+            Wenn sie beispielsweise alle Fenster auf dem <i>Assistierten</i> minimieren möchten, klicken sie auf das Windows-Symbol,
+            danach drücken sie die <code>M</code> Taste und klicken schliesslich erneut auf das Windows-Symbol.
         <p>
             Das ist alles! Weitere Informationen finden Sie auf der <a href="de_support.html">Support</a> Seite.
     </div>

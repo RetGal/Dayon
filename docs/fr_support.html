@@ -25,10 +25,12 @@
             Vous pouvez poster une question ou ouvrir un issue sur <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
         <h3>Problèmes Connus</h3>
         <ul>
-            <li>En version 1.9, le support du clavier est toujours limité; il n'y pas moyen pour le moment d'envoyer des
+            <li>En version 1.10, le support du clavier est toujours limité; il n'y pas moyen pour le moment d'envoyer des
                 signaux et quelques combinaisons de touches ne sont pas supportées correctement (par example <code>Ctrl-Alt-Del</code>).
-            <li>Le transfert de répertoires (dossiers) n'est pas possible.
-            <li>La vitesse de transmission pour des gros fichiers n'est pas terrible.
+            <li>Selon le gestionnaire d'affichage / fenêtre et la combinaison JDK, le contenu du
+                presse-papiers n'est pas copié dans le presse-papiers des destinataires. Le collage (<code>Ctrl + v</code>) n'a donc aucun effet.
+                Dans la plupart des cas, le contenu a néanmoins été transféré - jetez un œil au répertoire <code>/tmp</code> et recherchez
+                un dossier uuid (similaire à <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>). Vous y trouverez les fichiers du presse-papiers transférés.
         </ul>
         <h3>Connexion automatique de l’assistant</h3>
         <p>

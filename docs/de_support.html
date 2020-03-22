@@ -25,11 +25,15 @@
             Posten Sie eine Frage oder erfassen Sie ein Issue auf <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
         <h3>Bekannte Einschränkungen</h3>
         <ul>
-            <li>Auch in Version 1.9 ist die Tastaturunterstützung noch immer limitiert; Es gibt zzt. keine Möglichkeit
+            <li>Auch in Version 1.10 ist die Tastaturunterstützung noch immer limitiert; Es gibt zzt. keine Möglichkeit
                 gewisse Tastenkombinationen wie etwa <code>Ctrl-Alt-Del</code> an den entfernten Computer zu
                 senden.
-            <li>Übertragen von Verzeichnissen (Ordnern) wird nicht unterstützt.
-            <li>Übertragungsgeschwindigkeit von grossen Dateien ist eher bescheiden.
+            <li>Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
+                Zwischenablage nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>)
+                funktioniert in diesen Fällen nicht.
+                In den meisten Fällen wurde der Inhalt dennoch übertragen. Werfen sie einen Blick in das <code>/tmp</code>
+                Verzeichnis und suchen sie nach einem UUID-Ordner (ähnlich wie <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
+                Darin befinden sich die übertragenen Dateien.
         </ul>
         <h3>Automatische Verbindung des Assistierten</h3>
         <p>
