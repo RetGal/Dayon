@@ -1,6 +1,7 @@
 package mpo.dayon.common.network.message;
 
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.utils.FileUtilities;
 
 import java.io.*;
 import java.util.*;
@@ -36,8 +37,8 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             int position = helper.getPosition();
             FileMetaData meta = helper.getFileMetadatas().get(position);
 
-            String fileName = meta.getFileName();
-            Long fileSize = meta.getFileSize();
+            String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
+            long fileSize = meta.getFileSize();
             byte[] buffer;
             Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFileBytesLeft());
             buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
@@ -47,7 +48,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             if (!append) {
                 Log.info("Received " + meta.getFileName());
             }
-            String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId() + File.separator + fileName.replaceAll("^[\\" + File.separator + "]", "");
+            String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId() + fileName;
             writeToTempFile(buffer, read, tempFilePath, append);
 
             long remainingFileSize = helper.getFileBytesLeft() - read;

@@ -3,8 +3,8 @@ package mpo.dayon.common.network.message;
 import java.io.Serializable;
 
 public class FileMetaData implements Serializable {
-    private String fileName;
-    private long fileSize;
+    private final String fileName;
+    private final long fileSize;
 
     public FileMetaData(String fileName, long fileSize, String basePath) {
         this.fileName = fileName.replace(basePath, "");
@@ -15,16 +15,8 @@ public class FileMetaData implements Serializable {
         return fileName;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
     public long getFileSize() {
         return fileSize;
-    }
-
-    public void setFileSize(long fileSize) {
-        this.fileSize = fileSize;
     }
 
     @Override
