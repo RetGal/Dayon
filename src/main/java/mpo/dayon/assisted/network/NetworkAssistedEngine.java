@@ -186,7 +186,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         while (true) {
 
             NetworkMessageType type;
-            if (filesHelper.isIdle()) {
+            if (filesHelper.isDone()) {
                 NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
                 type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
                 Log.debug("Received " + type.name());
@@ -195,9 +195,9 @@ public class NetworkAssistedEngine extends NetworkEngine
             }
 
             if (type.equals(CLIPBOARD_FILES)) {
-                final NetworkClipboardFilesMessage clipboardFiles = NetworkClipboardFilesMessage.unmarshall(fileIn, filesHelper);
-                filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardFiles, clipboardOwner);
-                if (filesHelper.isIdle()) {
+                filesHelper = NetworkClipboardFilesMessage.unmarshall(fileIn, filesHelper);
+                filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardOwner);
+                if (filesHelper.isDone()) {
                     sender.ping();
                 }
             } else if (!type.equals(PING)) {
@@ -245,9 +245,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public void sendClipboardFiles(List<File> files, long size) {
+    public void sendClipboardFiles(List<File> files, long size, String basePath) {
         if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size);
+            fileSender.sendClipboardContentFiles(files, size, basePath);
         }
     }
 }

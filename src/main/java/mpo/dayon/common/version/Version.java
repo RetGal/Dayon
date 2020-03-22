@@ -15,7 +15,7 @@ public class Version {
     private final int major;
     private final int minor;
 
-    private Version(String numericVersion) {
+    Version(String numericVersion) {
         this.numericVersion = numericVersion == null ? "0.0.0" : numericVersion;
 
         final int firstDotPos = this.numericVersion.indexOf('.');

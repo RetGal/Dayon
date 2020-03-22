@@ -277,9 +277,8 @@ class AssistantFrame extends BaseFrame {
 
         actions.getResetAction().setEnabled(true);
         actions.getToggleControlModeAction().setEnabled(true);
-        actions.getRemoteClipboardRequestAction().setEnabled(true);
-        actions.getRemoteClipboardSetAction().setEnabled(true);
         actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
+        enableTransferControlls();
 
         validate();
         repaint();
@@ -288,19 +287,19 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onClipboardRequested() {
-        actions.getRemoteClipboardRequestAction().setEnabled(false);
+        disableTransferControlls();
     }
 
     void onClipboardSending() {
-        actions.getRemoteClipboardSetAction().setEnabled(false);
+        disableTransferControlls();
     }
 
     void onClipboardSent() {
-        actions.getRemoteClipboardSetAction().setEnabled(true);
+        enableTransferControlls();
     }
 
     void onClipboardReceived() {
-        actions.getRemoteClipboardRequestAction().setEnabled(true);
+        enableTransferControlls();
     }
 
     void onSessionStarted() {
@@ -321,6 +320,7 @@ class AssistantFrame extends BaseFrame {
         actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(false);
         actions.getResetAction().setEnabled(false);
+        disableControls();
 
         stopSessionTimer();
         removeCenter();
@@ -335,9 +335,18 @@ class AssistantFrame extends BaseFrame {
         controlActivated.set(false);
         windowsKeyActivated.set(false);
         actions.getToggleControlModeAction().setEnabled(false);
-        actions.getRemoteClipboardRequestAction().setEnabled(false);
-        actions.getRemoteClipboardSetAction().setEnabled(false);
         actions.getSendWindowsKeyAction().setEnabled(false);
+        disableTransferControlls();
+    }
+
+    private void disableTransferControlls() {
+        actions.getRemoteClipboardSetAction().setEnabled(false);
+        actions.getRemoteClipboardRequestAction().setEnabled(false);
+    }
+
+    private void enableTransferControlls() {
+        actions.getRemoteClipboardSetAction().setEnabled(true);
+        actions.getRemoteClipboardRequestAction().setEnabled(true);
     }
 
     private void stopSessionTimer() {

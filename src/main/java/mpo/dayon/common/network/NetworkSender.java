@@ -154,8 +154,8 @@ public class NetworkSender {
      * <p/>
      * Assistant 2 assisted or vice versa.
      */
-    public void sendClipboardContentFiles(List<File> files, long size) {
-        final NetworkMessage message = new NetworkClipboardFilesMessage(files, size);
+    public void sendClipboardContentFiles(List<File> files, long size, String basePath) {
+        final NetworkMessage message = new NetworkClipboardFilesMessage(files, size, basePath);
         send(true, message);
     }
 

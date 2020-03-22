@@ -31,17 +31,10 @@ public abstract class NetworkEngine {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
 	}
 
-	protected NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, NetworkClipboardFilesMessage clipboardFiles, ClipboardOwner clipboardOwner) {
-		filesHelper.setTotalFileBytesLeft(clipboardFiles.getWireSize() - 1L);
-		if (filesHelper.isIdle()) {
+	protected NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
+		if (filesHelper.isDone()) {
+			setClipboardContents(filesHelper.getFiles(), clipboardOwner);
 			filesHelper = new NetworkClipboardFilesHelper();
-			setClipboardContents(clipboardFiles.getFiles(), clipboardOwner);
-		} else {
-			filesHelper.setFiles(clipboardFiles.getFiles());
-			filesHelper.setFileNames(clipboardFiles.getFileNames());
-			filesHelper.setFileSizes(clipboardFiles.getFileSizes());
-			filesHelper.setPosition(clipboardFiles.getPosition());
-			filesHelper.setFileBytesLeft(clipboardFiles.getRemainingFileSize());
 		}
 		return filesHelper;
 	}

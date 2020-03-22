@@ -7,16 +7,15 @@ import java.util.List;
 public class NetworkClipboardFilesHelper {
 
     private List<File> files;
-    private List<String> fileNames;
-    private List<Long> fileSizes;
-    private int position;
-    private long fileBytesLeft;
+    private List<FileMetaData> fileMetadatas;
+    private String transferId;
+    private volatile int position;
+    private volatile long fileBytesLeft;
     private volatile long totalFileBytesLeft ;
 
     public NetworkClipboardFilesHelper() {
         this.files = new ArrayList<>();
-        this.fileNames = new ArrayList<>();
-        this.fileSizes = new ArrayList<>();
+        this.fileMetadatas = new ArrayList<>();
         this.position = 0;
         this.fileBytesLeft = 0;
         this.totalFileBytesLeft = 0;
@@ -30,20 +29,20 @@ public class NetworkClipboardFilesHelper {
         this.files = files;
     }
 
-    public List<String> getFileNames() {
-        return fileNames;
+    public List<FileMetaData> getFileMetadatas() {
+        return fileMetadatas;
     }
 
-    public void setFileNames(List<String> fileNames) {
-        this.fileNames = fileNames;
+    public void setFileMetadatas(List<FileMetaData> fileMetadatas) {
+        this.fileMetadatas = fileMetadatas;
     }
 
-    public List<Long> getFileSizes() {
-        return fileSizes;
+    public String getTransferId() {
+        return transferId;
     }
 
-    public void setFileSizes(List<Long> fileSizes) {
-        this.fileSizes = fileSizes;
+    public void setTransferId(String transferId) {
+        this.transferId = transferId;
     }
 
     public int getPosition() {
@@ -70,7 +69,7 @@ public class NetworkClipboardFilesHelper {
         this.totalFileBytesLeft = totalFileBytesLeft;
     }
 
-    public boolean isIdle() {
+    public boolean isDone() {
         return totalFileBytesLeft == 0;
     }
 }

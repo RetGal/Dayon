@@ -19,16 +19,15 @@ public class TransferableFiles implements Transferable {
 
     static {
         try {
-            gnomeCopiedFilesFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
             uriListFlavor = new DataFlavor("text/uri-list;class=java.lang.String");
+            gnomeCopiedFilesFlavor = new DataFlavor("x-special/gnome-copied-files;class=java.io.InputStream");
         } catch (ClassNotFoundException e) {
             Log.error(e.getMessage()); // this should not happen
         }
     }
 
     private static final DataFlavor[] FLAVORS = new DataFlavor[]{
-            DataFlavor.javaFileListFlavor, gnomeCopiedFilesFlavor, uriListFlavor};
-
+            DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
 
     public TransferableFiles(List<File> files) {
         this.files = files;
@@ -36,18 +35,18 @@ public class TransferableFiles implements Transferable {
 
     @NotNull
     @Override
-    public Object getTransferData(DataFlavor flavor) throws
-            UnsupportedFlavorException {
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         Log.debug("getTransferData " + flavor.toString());
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
             return files;
-        } else if (flavor.equals(gnomeCopiedFilesFlavor)) {
-            return toGnomeCopiedFilesFlavor();
-        } else if (flavor.equals(uriListFlavor)) {
-            return toUriListFlavor();
-        } else {
-            throw new UnsupportedFlavorException(flavor);
         }
+        if (flavor.equals(uriListFlavor)) {
+            return toUriListFlavor();
+        }
+        if (flavor.equals(gnomeCopiedFilesFlavor)) {
+            return toGnomeCopiedFilesFlavor();
+        }
+        throw new UnsupportedFlavorException(flavor);
     }
 
     @NotNull

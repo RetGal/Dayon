@@ -54,6 +54,7 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
+import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -378,16 +379,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         try {
             if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                Log.debug("Clipboard contains files");
-                clipboard.getAvailableDataFlavors();
                 // noinspection unchecked
                 List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
-                if (files.stream().anyMatch(File::isDirectory)) {
-                    throw new IOException("directories not supported");
+                if (!files.isEmpty()) {
+                    final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
+                    Log.debug("Clipboard contains files with size: " + totalFilesSize );
+                    // Ok as very few of that (!)
+                    new Thread(() -> network.setRemoteClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "setRemoteClipboardFiles").start();
                 }
-                final long filesSize = files.stream().mapToInt(f -> Math.toIntExact(f.length())).sum();
-                // Ok as very few of that (!)
-                new Thread(() -> network.setRemoteClipboardFiles(files, filesSize), "setRemoteClipboardFiles").start();
             } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 // noinspection unchecked
                 String text = (String) clipboard.getData(DataFlavor.stringFlavor);

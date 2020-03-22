@@ -20,4 +20,17 @@ class VersionTest {
         assertTrue(latestRelease.startsWith("v"));
     }
 
+    @Test
+    void shouldParseVersion() {
+        // given
+        String versionString = "2.42.4";
+
+        // when
+        Version version = new Version(versionString);
+
+        // then
+        assertEquals(2, version.getMajor());
+        assertEquals(42, version.getMinor());
+    }
+
 }
