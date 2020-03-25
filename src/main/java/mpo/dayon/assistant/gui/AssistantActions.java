@@ -10,6 +10,7 @@ class AssistantActions {
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
     private Action lookAndFeelAction;
+    private Action toggleFitScreenAction;
     private Action toggleControlModeAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
@@ -63,6 +64,14 @@ class AssistantActions {
 
     public void setLookAndFeelAction(Action lookAndFeelAction) {
         this.lookAndFeelAction = lookAndFeelAction;
+    }
+
+    public Action getToggleFitScreenAction() {
+        return toggleFitScreenAction;
+    }
+
+    public void setToggleFitScreenAction(Action toggleFitScreenAction) {
+        this.toggleFitScreenAction = toggleFitScreenAction;
     }
 
     public Action getToggleControlModeAction() {

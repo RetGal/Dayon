@@ -1,14 +1,10 @@
 package mpo.dayon.assistant.gui;
 
-import java.awt.Component;
-import java.awt.Cursor;
-import java.awt.Desktop;
-import java.awt.GridLayout;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
@@ -16,6 +12,8 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -95,6 +93,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private final Set<Counter<?>> counters;
 
+    private final AtomicBoolean fitToScreenActivated  = new AtomicBoolean(false);
+
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", Babylon.translate("networkBandwidth"));
         receivedBitCounter.start(1000);
@@ -161,6 +161,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         actions.setCompressionEngineConfigurationAction(createComressionConfigurationAction());
         actions.setResetAction(createResetAction());
         actions.setLookAndFeelAction(createSwitchLookAndFeelAction());
+        actions.setToggleFitScreenAction(createToggleFixScreenAction());
         actions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         actions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
         actions.setStartAction(new AssistantStartAction(network));
@@ -627,6 +628,22 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         return configure;
     }
 
+    private Action createToggleFixScreenAction() {
+        final Action fitScreen = new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                fitToScreenActivated.set(!fitToScreenActivated.get());
+            }
+        };
+
+        fitScreen.putValue(Action.NAME, "toggleScreenMode");
+        fitScreen.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("toggle.screen.mode"));
+        fitScreen.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.FIT));
+
+        return fitScreen;
+    }
+
     private Action createSwitchLookAndFeelAction() {
         final Action exit = new AbstractAction() {
 
@@ -696,13 +713,27 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 prevHeight = image.getKey().getHeight();
             }
 
-            frame.onCaptureUpdated(image.getKey());
+            if (fitToScreenActivated.get()) {
+                Dimension frameDimension = frame.getContentPane().getSize();
+                frame.onCaptureUpdated(scaleImage(image.getKey(), frameDimension.width, frameDimension.height));
+
+            } else {
+                frame.onCaptureUpdated(image.getKey());
+            }
 
             receivedTileCounter.add(capture.getDirtyTileCount(), cacheHits);
             skippedTileCounter.add(capture.getSkipped());
             mergedTileCounter.add(capture.getMerged());
 
             captureCompressionCounter.add(capture.getDirtyTileCount(), compressionRatio);
+        }
+
+        private BufferedImage scaleImage(BufferedImage image, int width, int height) {
+            double scaleX = (double)width/image.getWidth();
+            double scaleY = (double)height/image.getHeight();
+            AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+            AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+            return bilinearScaleOp.filter(image, new BufferedImage(width, height, image.getType()));
         }
     }
 

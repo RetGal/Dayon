@@ -48,4 +48,6 @@ public abstract class ImageNames {
 
 	public static final String WIN = "win.png";
 
+	public static final String FIT = "fit.png";
+
 }
