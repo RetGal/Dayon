@@ -23,9 +23,9 @@ import static java.awt.event.KeyEvent.VK_WINDOWS;
 
 class AssistantFrame extends BaseFrame {
 
-    private final static int OFFSET = 9;
+    private static final int OFFSET = 9;
 
-    private final static int DEFAULT_FACTOR = 1;
+    private static final int DEFAULT_FACTOR = 1;
 
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
