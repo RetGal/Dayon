@@ -25,6 +25,8 @@ class AssistantFrame extends BaseFrame {
 
     private final static int OFFSET = 9;
 
+    private final static int DEFAULT_FACTOR = 1;
+
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
     private final JScrollPane assistantPanelWrapper;
@@ -41,6 +43,10 @@ class AssistantFrame extends BaseFrame {
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
+
+    private float xFactor = DEFAULT_FACTOR;
+
+    private float yFactor = DEFAULT_FACTOR;
 
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         super.setFrameType(FrameType.ASSISTANT);
@@ -281,7 +287,7 @@ class AssistantFrame extends BaseFrame {
         actions.getResetAction().setEnabled(true);
         actions.getToggleControlModeAction().setEnabled(true);
         actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
-        enableTransferControlls();
+        enableTransferControls();
 
         validate();
         repaint();
@@ -290,19 +296,19 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onClipboardRequested() {
-        disableTransferControlls();
+        disableTransferControls();
     }
 
     void onClipboardSending() {
-        disableTransferControlls();
+        disableTransferControls();
     }
 
     void onClipboardSent() {
-        enableTransferControlls();
+        enableTransferControls();
     }
 
     void onClipboardReceived() {
-        enableTransferControlls();
+        enableTransferControls();
     }
 
     void onSessionStarted() {
@@ -334,11 +340,18 @@ class AssistantFrame extends BaseFrame {
                 JOptionPane.ERROR_MESSAGE);
     }
 
-    Dimension getUsableSize() {
-        Dimension dimension = this.assistantPanelWrapper.getSize();
+    Dimension getUsableSize(int sourceWidth, int sourceHeight) {
+        Dimension dimension = assistantPanelWrapper.getSize();
         dimension.setSize(dimension.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
                 dimension.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
+        xFactor = (float) dimension.getWidth() / sourceWidth;
+        yFactor = (float) dimension.getHeight() / sourceHeight;
         return dimension;
+    }
+
+    void resetFactors() {
+        xFactor = DEFAULT_FACTOR;
+        yFactor = DEFAULT_FACTOR;
     }
 
     private void disableControls() {
@@ -346,15 +359,15 @@ class AssistantFrame extends BaseFrame {
         windowsKeyActivated.set(false);
         actions.getToggleControlModeAction().setEnabled(false);
         actions.getSendWindowsKeyAction().setEnabled(false);
-        disableTransferControlls();
+        disableTransferControls();
     }
 
-    private void disableTransferControlls() {
+    private void disableTransferControls() {
         actions.getRemoteClipboardSetAction().setEnabled(false);
         actions.getRemoteClipboardRequestAction().setEnabled(false);
     }
 
-    private void enableTransferControlls() {
+    private void enableTransferControls() {
         actions.getRemoteClipboardSetAction().setEnabled(true);
         actions.getRemoteClipboardRequestAction().setEnabled(true);
     }
@@ -379,30 +392,40 @@ class AssistantFrame extends BaseFrame {
      * Should not block as called from the network incoming message thread (!)
      */
     void onMouseLocationUpdated(int x, int y) {
-        assistantPanel.onMouseLocationUpdated(x, y);
+        int xs = Math.round(x * xFactor);
+        int ys = Math.round(y * yFactor);
+        assistantPanel.onMouseLocationUpdated(xs, ys);
     }
 
     private void fireOnMouseMove(int x, int y) {
+        int xs = Math.round(x / xFactor);
+        int ys = Math.round(y / yFactor);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseMove(x, y);
+            xListener.onMouseMove(xs, ys);
         }
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
+        int xs = Math.round(x / xFactor);
+        int ys = Math.round(y / yFactor);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMousePressed(x, y, button);
+            xListener.onMousePressed(xs, ys, button);
         }
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
+        int xs = Math.round(x / xFactor);
+        int ys = Math.round(y / yFactor);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseReleased(x, y, button);
+            xListener.onMouseReleased(xs, ys, button);
         }
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
+        int xs = Math.round(x / xFactor);
+        int ys = Math.round(y / yFactor);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseWheeled(x, y, rotations);
+            xListener.onMouseWheeled(xs, ys, rotations);
         }
     }
 

@@ -634,6 +634,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             @Override
             public void actionPerformed(ActionEvent ev) {
                 fitToScreenActivated.set(!fitToScreenActivated.get());
+                if (!fitToScreenActivated.get()) {
+                    frame.resetFactors();
+                }
+                frame.repaint();
             }
         };
 
@@ -714,7 +718,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
 
             if (fitToScreenActivated.get()) {
-                Dimension frameDimension = frame.getUsableSize();
+                Dimension frameDimension = frame.getUsableSize(prevWidth, prevHeight);
                 frame.onCaptureUpdated(scaleImage(image.getKey(), frameDimension.width, frameDimension.height));
             } else {
                 frame.onCaptureUpdated(image.getKey());

@@ -29,23 +29,23 @@ public class ControlEngine implements AssistantFrameListener {
 	}
 
 	@Override
-    public void onMouseMove(final int x, final int y) {
+    public void onMouseMove(final int xs, final int ys) {
 		executor.execute(new Executable(executor, null) {
 			@Override
             protected void execute() {
-				network.sendMouseControl(new NetworkMouseControlMessage(x, y));
+				network.sendMouseControl(new NetworkMouseControlMessage(xs, ys));
 			}
 		});
 	}
 
 	@Override
-    public void onMousePressed(final int x, final int y, final int button) {
+    public void onMousePressed(final int xs, final int ys, final int button) {
 		executor.execute(new Executable(executor, null) {
 			@Override
             protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
-					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
+					network.sendMouseControl(new NetworkMouseControlMessage(xs, ys, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
 				}
 			}
 		});
