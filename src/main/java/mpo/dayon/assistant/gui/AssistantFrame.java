@@ -23,6 +23,8 @@ import static java.awt.event.KeyEvent.VK_WINDOWS;
 
 class AssistantFrame extends BaseFrame {
 
+    private final static int OFFSET = 9;
+
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
     private final JScrollPane assistantPanelWrapper;
@@ -330,6 +332,13 @@ class AssistantFrame extends BaseFrame {
 
         JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
                 JOptionPane.ERROR_MESSAGE);
+    }
+
+    Dimension getUsableSize() {
+        Dimension dimension = this.assistantPanelWrapper.getSize();
+        dimension.setSize(dimension.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
+                dimension.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
+        return dimension;
     }
 
     private void disableControls() {

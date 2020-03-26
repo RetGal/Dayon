@@ -714,9 +714,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
 
             if (fitToScreenActivated.get()) {
-                Dimension frameDimension = frame.getContentPane().getSize();
+                Dimension frameDimension = frame.getUsableSize();
                 frame.onCaptureUpdated(scaleImage(image.getKey(), frameDimension.width, frameDimension.height));
-
             } else {
                 frame.onCaptureUpdated(image.getKey());
             }
