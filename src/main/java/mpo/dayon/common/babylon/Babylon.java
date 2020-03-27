@@ -11,7 +11,7 @@ import org.jetbrains.annotations.PropertyKey;
 import mpo.dayon.common.log.Log;
 
 public abstract class Babylon {
-    private static final String BUNDLE = "mpo.dayon.common.babylon.Babylon";
+    private static final String BUNDLE = "Babylon";
 
     private Babylon() {
     }

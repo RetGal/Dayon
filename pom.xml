@@ -182,24 +182,6 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>copy-properties</id>
-						<phase>process-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/target/classes/mpo/dayon/common/babylon</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${basedir}/src/main/java/mpo/dayon/common/babylon</directory>
-									<includes>
-										<include>**/*.properties</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
 						<id>copy-resources</id>
 						<phase>package</phase>
 						<goals>
