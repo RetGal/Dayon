@@ -70,9 +70,8 @@ public abstract class BaseFrame extends JFrame {
 		this.configuration = new FrameConfiguration(frameType);
 		this.position = new Position(configuration.getX(), configuration.getY());
 		this.setLocation(position.getX(), position.getY());
-		final int width = configuration.getWidth() > MIN_WIDTH ? configuration.getWidth() : MIN_WIDTH;
-		final int height = configuration.getHeight() > MIN_HEIGHT ? configuration.getHeight() : MIN_HEIGHT;
-		this.dimension = new Dimension(width, height);
+		this.dimension = new Dimension(Math.max(configuration.getWidth(), MIN_WIDTH),
+				Math.max(configuration.getHeight(), MIN_HEIGHT));
 		this.setSize(dimension.width, dimension.height);
 	}
 

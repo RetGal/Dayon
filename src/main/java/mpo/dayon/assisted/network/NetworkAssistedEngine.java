@@ -195,8 +195,8 @@ public class NetworkAssistedEngine extends NetworkEngine
             }
 
             if (type.equals(CLIPBOARD_FILES)) {
-                filesHelper = NetworkClipboardFilesMessage.unmarshall(fileIn, filesHelper);
-                filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardOwner);
+                filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+                        filesHelper), clipboardOwner);
                 if (filesHelper.isDone()) {
                     sender.ping();
                 }

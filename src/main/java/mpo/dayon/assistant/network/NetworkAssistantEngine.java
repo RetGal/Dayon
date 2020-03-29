@@ -253,8 +253,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private NetworkClipboardFilesHelper processClipboardFiles(ObjectInputStream in, NetworkClipboardFilesHelper filesHelper) throws IOException {
-        filesHelper = NetworkClipboardFilesMessage.unmarshall(in, filesHelper);
-        filesHelper = handleNetworkClipboardFilesHelper(filesHelper, clipboardOwner);
+        filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(in, filesHelper), clipboardOwner);
         if (filesHelper.isDone()) {
             fireOnClipboardReceived();
         }
