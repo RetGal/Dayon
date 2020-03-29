@@ -10,10 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.net.ssl.*;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.UIManager;
+import javax.swing.*;
 
 import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
@@ -77,6 +74,38 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		// accept own cert, avoid No name matching host found exception
 		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer());
 
+		// these should not block as they are called from the network incoming message thread (!)
+		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
+		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
+		final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
+		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
+
+		controlHandler.subscribe(this);
+
+		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
+
+		boolean connected = false;
+
+		while (!connected) {
+			configureConnection(serverName, portNumber);
+			frame.onConnecting(configuration);
+			networkEngine.configure(configuration);
+			try {
+				networkEngine.start();
+				connected = true;
+			} catch (ConnectException ce) {
+				frame.onRefused(configuration);
+				serverName = null;
+				portNumber = null;
+			} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
+				FatalErrorHandler.bye(e.getMessage(), e);
+			}
+		}
+		networkEngine.sendHello();
+		frame.onConnected();
+	}
+
+	private void configureConnection(String serverName, String portNumber) {
 		if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
 			configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
 		} else {
@@ -90,41 +119,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 				System.exit(0);
 			}
 		}
-
 		Log.info("Configuration " + configuration);
-
-		// Should not block as called from the network incoming message thread (!)
-		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = (engine, config) -> {
-			onCaptureEngineConfigured(engine, config);
-			frame.onConnected();
-		};
-
-		// Should not block as called from the network incoming message thread (!)
-		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = (engine, config) -> {
-			onCompressorEngineConfigured(engine, config);
-			frame.onConnected();
-		};
-
-		// Should not block as called from the network incoming message thread (!)
-		final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
-
-		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
-
-		controlHandler.subscribe(this);
-
-		frame.onConnecting(configuration);
-
-		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
-
-		networkEngine.configure(configuration);
-		try {
-			networkEngine.start();
-		} catch (ConnectException ce) {
-			throw new IllegalStateException(ce.getMessage());
-		} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
-			FatalErrorHandler.bye(e.getMessage(), e);
-		}
-		networkEngine.sendHello();
 	}
 
 	@Override
@@ -133,25 +128,25 @@ public class Assisted implements Subscriber, ClipboardOwner {
 	}
 
 	private boolean requestConnectionSettings() {
-		final JPanel pane = new JPanel();
+		JPanel connectionSettingsDialog = new JPanel();
 
-		pane.setLayout(new GridLayout(2, 2, 10, 10));
+		connectionSettingsDialog.setLayout(new GridLayout(3, 2, 10, 10));
 
 		final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
 		final JTextField assistantIpAddressTextField = new JTextField();
 		assistantIpAddressTextField.setText(configuration.getServerName());
 
-		pane.add(assistantIpAddress);
-		pane.add(assistantIpAddressTextField);
+		connectionSettingsDialog.add(assistantIpAddress);
+		connectionSettingsDialog.add(assistantIpAddressTextField);
 
 		final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
 		final JTextField assistantPortNumberTextField = new JTextField();
 		assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
 
-		pane.add(assistantPortNumberLbl);
-		pane.add(assistantPortNumberTextField);
+		connectionSettingsDialog.add(assistantPortNumberLbl);
+		connectionSettingsDialog.add(assistantPortNumberTextField);
 
-		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), pane, () -> {
+		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), connectionSettingsDialog, () -> {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");

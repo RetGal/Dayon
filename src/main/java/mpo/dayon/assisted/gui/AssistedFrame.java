@@ -49,11 +49,15 @@ class AssistedFrame extends BaseFrame {
 		statusBar.setMessage(Babylon.translate("ready"));
 	}
 
-	public void onConnecting(NetworkAssistedEngineConfiguration configuration) {
+	void onConnecting(NetworkAssistedEngineConfiguration configuration) {
 		statusBar.setMessage(Babylon.translate("connecting", configuration.getServerName(), configuration.getServerPort()));
 	}
 
-	public void onConnected() {
+	void onConnected() {
 		statusBar.setMessage(Babylon.translate("connected"));
+	}
+
+	void onRefused(NetworkAssistedEngineConfiguration configuration) {
+		statusBar.setMessage(Babylon.translate("refused",  configuration.getServerName(), configuration.getServerPort()));
 	}
 }
