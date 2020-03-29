@@ -29,8 +29,8 @@ import mpo.dayon.common.version.Version;
 
 public abstract class BaseFrame extends JFrame {
 
-	private final static int MIN_WIDTH = 450;
-	private final static int MIN_HEIGHT = 300;
+	private static final int MIN_WIDTH = 450;
+	private static final int MIN_HEIGHT = 300;
 
 	private transient FrameConfiguration configuration;
 
