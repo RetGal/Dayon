@@ -75,8 +75,8 @@ public class StatusBar extends JPanel {
 
 		lbl.setHorizontalAlignment(SwingConstants.CENTER);
 
-		lbl.setSize(new Dimension(100, 5));
-		lbl.setPreferredSize(new Dimension(100, 5));
+		lbl.setSize(new Dimension(110, 5));
+		lbl.setPreferredSize(new Dimension(110, 5));
 
 		BigBrother.get().registerRamInfo(new TimerTask() {
 			@Override
