@@ -38,25 +38,25 @@ public abstract class UnitUtilities {
     }
 
     public enum ByteUnit {
-        K("K", "kilo", Math.pow(2, 10), 0),
-        M("M", "mega", Math.pow(2, 20),0),
-        G("G", "giga", Math.pow(2, 30),1),
-        T("T", "tera", Math.pow(2, 40),1),
-        P("P", "peta", Math.pow(2, 50),2),
-        E("E", "exa", Math.pow(2, 60),2),
-        Z("Z", "zetta", Math.pow(2, 70), 3),
-        Y("Y", "yotta", Math.pow(2, 80), 3);
+        K("K", "kilo", Math.pow(2, 10), "%.0f K"),
+        M("M", "mega", Math.pow(2, 20),"%.0f M"),
+        G("G", "giga", Math.pow(2, 30),"%.1f G"),
+        T("T", "tera", Math.pow(2, 40),"%.1f T"),
+        P("P", "peta", Math.pow(2, 50),"%.2f P"),
+        E("E", "exa", Math.pow(2, 60),"%.2f E"),
+        Z("Z", "zetta", Math.pow(2, 70), "%.3f Z"),
+        Y("Y", "yotta", Math.pow(2, 80), "%.3f Y");
 
         private final String symbol;
         private final String name;
         private final double value;
-        private final int decimals;
+        private final String formatter;
 
-        ByteUnit(String symbol, String name, double value, int decimals) {
+        ByteUnit(String symbol, String name, double value, String formatter) {
             this.symbol = symbol;
             this.name = name;
             this.value = value;
-            this.decimals = decimals;
+            this.formatter = formatter;
         }
     }
 
@@ -74,7 +74,7 @@ public abstract class UnitUtilities {
                 if (withDecimal) {
                     return String.format(DEC_UNIT, bytes / unit.value, unit.symbol);
                 }
-                return String.format("%." + unit.decimals + "f %s", bytes / unit.value,  unit.symbol);
+                return String.format(unit.formatter, bytes / unit.value);
             }
         }
 
