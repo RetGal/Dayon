@@ -7,4 +7,4 @@ JAVA=${JAVA_HOME}/bin/java
 JAVA_OPTS=""
 CLASSPATH="$DAYON_HOME/bin/dayon.jar"
 
-${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp ${CLASSPATH} $1 $2
+${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp ${CLASSPATH} $1 $2 $3 $4
