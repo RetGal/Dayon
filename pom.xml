@@ -120,7 +120,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.2.1</version>
+				<version>3.2.3</version>
 				<executions>
 					<execution>
 						<phase>package</phase>
@@ -258,7 +258,7 @@
 			<plugin>
 				<groupId>com.aerse.maven</groupId>
 				<artifactId>deb-maven-plugin</artifactId>
-				<version>1.8</version>
+				<version>1.12</version>
 				<executions>
 					<execution>
 						<id>package</id>
@@ -276,6 +276,7 @@
 						<default-jre>>=2:1.8-58</default-jre>
 					</osDependencies>
 					<javaServiceWrapper>false</javaServiceWrapper>
+					<generateVersion>false</generateVersion>
 					<fileSets>
 						<fileSet>
 							<source>${basedir}/dist/dayon.png</source>

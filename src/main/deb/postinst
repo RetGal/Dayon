@@ -1,1 +1,2 @@
 cp ${config.installDir}/deb/*.desktop /usr/share/applications/
+chmod +x ${config.installDir}/bin/*.sh
