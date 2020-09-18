@@ -2,6 +2,8 @@ package mpo.dayon.assisted.gui;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.ConnectException;
@@ -135,6 +137,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
 		final JTextField assistantIpAddressTextField = new JTextField();
 		assistantIpAddressTextField.setText(configuration.getServerName());
+		assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
 
 		connectionSettingsDialog.add(assistantIpAddress);
 		connectionSettingsDialog.add(assistantIpAddressTextField);
@@ -142,6 +145,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
 		final JTextField assistantPortNumberTextField = new JTextField();
 		assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
+		assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
 
 		connectionSettingsDialog.add(assistantPortNumberLbl);
 		connectionSettingsDialog.add(assistantPortNumberTextField);
@@ -170,6 +174,17 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			}
 		}
 		return ok;
+	}
+
+	private MouseAdapter clearTextOnDoubleClick(JTextField textField) {
+		return new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					textField.setText(null);
+				}
+			}
+		};
 	}
 
 	/**
