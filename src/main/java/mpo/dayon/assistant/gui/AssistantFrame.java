@@ -272,9 +272,9 @@ class AssistantFrame extends BaseFrame {
     }
 
     boolean onAccepted(Socket connection) {
-        if (JOptionPane.showConfirmDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress()),
+        if (JOptionPane.showOptionDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress()),
                 Babylon.translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                ImageUtilities.getOrCreateIcon(ImageNames.USERS)) != JOptionPane.OK_OPTION) {
+                ImageUtilities.getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
             return false;
         }
 
