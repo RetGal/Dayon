@@ -13,7 +13,7 @@ As quick launch versions for Windows, they are also available as individual bina
 
 - easy setup
 - no router or network configuration needed on the assisted side
-- friendly, multilingual user interface (de, en, es, fr)
+- intuitive, multilingual user interface (de, en, es, fr, ru)
 - assistant and assisted functionality in same packet
 - encrypted communication (TLS)
 - cross-platform
@@ -39,8 +39,12 @@ It is most likely the very last version which is bundled with a Java 8 based JRE
 
 [Deutsch](https://retgal.github.io/Dayon/de_index.html)<br>
 [English](https://retgal.github.io/Dayon/index.html)<br>
-[Français](https://retgal.github.io/Dayon/fr_index.html)
+[Français](https://retgal.github.io/Dayon/fr_index.html)<br>
 
+currently there is no online documentation available for spanish and russian.
+Please refer to the [English](https://retgal.github.io/Dayon/index.html)
+ version.
+ 
 ## Screen
 
 ![Assistant connected](/docs/assistant_connected.jpg?raw=true "Assistant connected")
