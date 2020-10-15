@@ -41,7 +41,7 @@ It is most likely the very last version which is bundled with a Java 8 based JRE
 [English](https://retgal.github.io/Dayon/index.html)<br>
 [Français](https://retgal.github.io/Dayon/fr_index.html)<br>
 
-currently there is no online documentation available for spanish and russian.
+Currently there is no online documentation available for spanish and russian.
 Please refer to the [English](https://retgal.github.io/Dayon/index.html)
  version.
  
