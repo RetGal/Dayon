@@ -181,7 +181,7 @@ public abstract class BaseFrame extends JFrame {
                 final Object[] options = {Babylon.translate("ok")};
 
                 JOptionPane.showOptionDialog(BaseFrame.this, panel, Babylon.translate("system.info"),
-                        JOptionPane.INFORMATION_MESSAGE, JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
                         ImageUtilities.getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
 
             }
