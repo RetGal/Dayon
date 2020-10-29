@@ -91,9 +91,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private List<FileMetaData> getMetaData(List<File> files, String basePath) {
         List<FileMetaData> metas = new ArrayList<>();
-        for (File file : files) {
-            extractFileMetaData(file, metas, basePath);
-        }
+        files.forEach(file -> extractFileMetaData(file, metas, basePath));
         return metas;
     }
 
@@ -102,9 +100,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             fileMetaDatas.add(new FileMetaData(node.getPath(), node.length(), basePath));
         }
         if (node.isDirectory()) {
-            for (File file : Objects.requireNonNull(node.listFiles())) {
-                extractFileMetaData(file, fileMetaDatas, basePath);
-            }
+            Arrays.stream(Objects.requireNonNull(node.listFiles())).parallel().forEachOrdered(file -> extractFileMetaData(file, fileMetaDatas, basePath));
         }
     }
 

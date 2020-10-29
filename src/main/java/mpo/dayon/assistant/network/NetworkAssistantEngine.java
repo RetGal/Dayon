@@ -241,7 +241,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 }
 
                 if (type.equals(CLIPBOARD_FILES)) {
-                    filesHelper = processClipboardFiles(fileIn, filesHelper);
+                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+                            filesHelper), clipboardOwner);
+                    if (filesHelper.isDone()) {
+                        fireOnClipboardReceived();
+                    }
                 } else if (!type.equals(PING)) {
                     throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
                 }
@@ -250,14 +254,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             closeConnections();
         }
 
-    }
-
-    private NetworkClipboardFilesHelper processClipboardFiles(ObjectInputStream in, NetworkClipboardFilesHelper filesHelper) throws IOException {
-        filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(in, filesHelper), clipboardOwner);
-        if (filesHelper.isDone()) {
-            fireOnClipboardReceived();
-        }
-        return filesHelper;
     }
 
     private void handleIOException(IOException ex) {

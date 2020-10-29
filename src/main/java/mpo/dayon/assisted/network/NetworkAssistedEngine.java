@@ -184,7 +184,6 @@ public class NetworkAssistedEngine extends NetworkEngine
 
         //noinspection InfiniteLoopStatement
         while (true) {
-
             NetworkMessageType type;
             if (filesHelper.isDone()) {
                 NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
@@ -198,12 +197,12 @@ public class NetworkAssistedEngine extends NetworkEngine
                 filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
                         filesHelper), clipboardOwner);
                 if (filesHelper.isDone()) {
+                    // let the assistant know that we're done
                     sender.ping();
                 }
             } else if (!type.equals(PING)) {
                 throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
             }
-
         }
     }
 

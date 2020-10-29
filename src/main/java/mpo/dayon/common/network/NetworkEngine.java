@@ -33,7 +33,7 @@ public abstract class NetworkEngine {
 	protected NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
 		if (filesHelper.isDone()) {
 			setClipboardContents(filesHelper.getFiles(), clipboardOwner);
-			filesHelper = new NetworkClipboardFilesHelper();
+			return new NetworkClipboardFilesHelper();
 		}
 		return filesHelper;
 	}
