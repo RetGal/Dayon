@@ -398,35 +398,43 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void fireOnMouseMove(int x, int y) {
-        int xs = Math.round(x / xFactor);
-        int ys = Math.round(y / yFactor);
+        int xs = scaleXPosition(x);
+        int ys = scaleYPosition(y);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
             xListener.onMouseMove(xs, ys);
         }
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
-        int xs = Math.round(x / xFactor);
-        int ys = Math.round(y / yFactor);
+        int xs = scaleXPosition(x);
+        int ys = scaleYPosition(y);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
             xListener.onMousePressed(xs, ys, button);
         }
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
-        int xs = Math.round(x / xFactor);
-        int ys = Math.round(y / yFactor);
+        int xs = scaleXPosition(x);
+        int ys = scaleYPosition(y);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
             xListener.onMouseReleased(xs, ys, button);
         }
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
-        int xs = Math.round(x / xFactor);
-        int ys = Math.round(y / yFactor);
+        int xs = scaleXPosition(x);
+        int ys = scaleYPosition(y);
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
             xListener.onMouseWheeled(xs, ys, rotations);
         }
+    }
+
+    private int scaleYPosition(int y) {
+        return Math.round(y / yFactor);
+    }
+
+    private int scaleXPosition(int x) {
+        return Math.round(x / xFactor);
     }
 
     private void fireOnKeyPressed(int keyCode, char keyChar) {

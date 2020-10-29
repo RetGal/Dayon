@@ -381,7 +381,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         try {
             if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 // noinspection unchecked
-                List<File> files = (List) clipboard.getData(DataFlavor.javaFileListFlavor);
+                List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: " + totalFilesSize );
