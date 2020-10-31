@@ -3,7 +3,7 @@ package mpo.dayon.common.concurrent;
 import mpo.dayon.common.error.FatalErrorHandler;
 
 public abstract class RunnableEx implements Runnable {
-	public RunnableEx() {
+	protected RunnableEx() {
 	}
 
 	@Override
