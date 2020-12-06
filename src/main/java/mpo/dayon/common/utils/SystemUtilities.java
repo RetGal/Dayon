@@ -21,12 +21,12 @@ public abstract class SystemUtilities {
     public static URI getQuickStartURI() {
         try {
             return new URI("http://retgal.github.io/Dayon/" + Babylon.translate("quickstart.html"));
-        } catch(URISyntaxException e) {
+        } catch (URISyntaxException e) {
             Log.warn("Swallowed an URISyntaxException");
         }
         return null;
     }
-    
+
     private static synchronized File getOrCreateAppDir() {
         final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
         if (homeDir == null) {
@@ -47,7 +47,7 @@ public abstract class SystemUtilities {
         }
         return appDir;
     }
-    
+
     public static File getOrCreateAppFile(String name) {
         final File home = getOrCreateAppDir();
         if (home == null) {
@@ -226,7 +226,12 @@ public abstract class SystemUtilities {
     }
 
     private static boolean isValidHostname(String serverName) {
-        return serverName.length() < 256 && serverName.matches("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$");
+        return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
+                serverName.matches("^([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$");
+    }
+
+    private static boolean isLookingLikeAnIpV4(String serverName) {
+        return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("([0-9]{1,3})"));
     }
 
 }
