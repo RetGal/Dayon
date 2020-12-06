@@ -53,9 +53,12 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
-import mpo.dayon.common.utils.SystemUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import static mpo.dayon.common.utils.SystemUtilities.getQuickStartURI;
+import static mpo.dayon.common.utils.SystemUtilities.isValidPortNumber;
+import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
 
@@ -195,11 +198,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                             final URLConnection conn = url.openConnection();
                             final InputStream in = conn.getInputStream();
 
-                            try (final BufferedReader lines = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                            try (final BufferedReader lines = new BufferedReader(new InputStreamReader(in))) {
                                 publicIp = lines.readLine();
                             }
 
-                            SystemUtilities.safeClose(in);
+                            safeClose(in);
                         } catch (IOException ex) {
                             Log.error("What is my IP error!", ex);
                             JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
@@ -265,11 +268,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private JMenuItem getjMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
-            final URI uri = SystemUtilities.getQuickStartURI();
+            final URI uri = getQuickStartURI();
             if (uri != null && Desktop.isDesktopSupported()) {
-                final Desktop desktop = Desktop.getDesktop();
                 try {
-                    desktop.browse(uri);
+                    Desktop.getDesktop().browse(uri);
                 } catch (IOException ex) {
                     Log.warn("Help Error!", ex);
                 }
@@ -316,7 +318,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     if (portNumber.isEmpty()) {
                         return Babylon.translate("connection.settings.emptyPortNumber");
                     }
-                    return SystemUtilities.isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
+                    return isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
                 });
 
                 if (ok) {

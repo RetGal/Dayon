@@ -312,11 +312,10 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onSessionStarted() {
-        long sessionStartTime = Instant.now().toEpochMilli();
+        long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
-            final long endTime = Instant.now().toEpochMilli();
-            final long secondsCounter = (endTime - sessionStartTime) / 1000;
-            statusBar.setSessionDuration(String.format("%02d:%02d:%02d",(secondsCounter/3600), ((secondsCounter % 3600)/60), (secondsCounter % 60)));
+            final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
+            statusBar.setSessionDuration(String.format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
         });
         sessionTimer.start();
     }

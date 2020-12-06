@@ -47,7 +47,6 @@ public class RegularTileCache implements TileCache {
     public void add(CaptureTile tile) {
         if (tiles.size() < maxSize) {
             final Integer cacheId = getCacheId(tile);
-
             tiles.put(cacheId, tile);
             lru.addFirst(cacheId);
         }
@@ -90,8 +89,7 @@ public class RegularTileCache implements TileCache {
         if (tiles.size() > 0 && tiles.size() >= maxSize) {
             Log.info("Purging the cache...");
             while (tiles.size() > purgeSize) {
-                final Integer removed = lru.removeFirst();
-                tiles.remove(removed);
+                tiles.remove(lru.removeFirst());
             }
         }
     }

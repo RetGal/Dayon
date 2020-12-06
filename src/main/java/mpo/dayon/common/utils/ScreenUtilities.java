@@ -95,7 +95,7 @@ public abstract class ScreenUtilities {
     private static final short[] green_blue_levels;
 
     /**
-     * Cache the conversion from red/green/blue into gray levels.
+      Cache the conversion from red/green/blue into gray levels.
      */
     static {
         red_levels = new short[256];
@@ -116,7 +116,7 @@ public abstract class ScreenUtilities {
     private static final byte[][] grays;
 
     /**
-     * Cache the quantization of all the gray levels (256).
+      Cache the quantization of all the gray levels (256).
      */
     static {
         final Gray8Bits[] quantizations = Gray8Bits.values();

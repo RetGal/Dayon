@@ -36,11 +36,10 @@ class FrameConfiguration {
     public FrameConfiguration(FrameType type) {
         final Preferences prefs = Preferences.getPreferences();
         version = prefs.getIntPreference(type.getPrefix() + PREF_VERSION_SUFFIX, 0);
+        position = new Position(prefs.getIntPreference(type.getPrefix() + PREF_X_SUFFIX, 100), prefs.getIntPreference(type.getPrefix() + PREF_Y_SUFFIX, 100));
         if (type.equals(FrameType.ASSISTANT)) {
-            position = new Position(prefs.getIntPreference(type.getPrefix() + PREF_X_SUFFIX, 100), prefs.getIntPreference(type.getPrefix() + PREF_Y_SUFFIX, 100));
             dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 800), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 600));
         } else {
-            position = new Position(prefs.getIntPreference(type.getPrefix() + PREF_X_SUFFIX, 100), prefs.getIntPreference(type.getPrefix() + PREF_Y_SUFFIX, 100));
             dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 400), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 200));
         }
     }

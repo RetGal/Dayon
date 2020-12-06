@@ -92,18 +92,29 @@ public abstract class UnitUtilities {
 
         if (secs < 10.0) {
             return String.format("%dms", millis);
-        } else if (secs < 60) {
+        }
+        if (secs < 60) {
             return String.format("%.2fs", secs);
-        } else if (secs < 3600) {
-            // noinspection NumericCastThatLosesPrecision
-            return String.format("%dm%02ds", (int) Math.floor(secs / 60.0), Math.round(secs) % 60);
-        } else if (secs < 24 * 3600) {
-            // noinspection NumericCastThatLosesPrecision
-            return String.format("%dh%02dm%02ds", (int) Math.floor(secs / 3600.0), (int) Math.floor(secs / 60.0) % 60, Math.round(secs) % 60);
+        }
+        if (secs < 3600) {
+            return String.format("%dm%02ds", toMinutes(secs), Math.round(secs) % 60);
+        }
+        if (secs < 86400) {
+            return String.format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, Math.round(secs) % 60);
         }
         // noinspection NumericCastThatLosesPrecision
-        return String.format("%dd%02dh%02dm%02ds", (int) Math.floor(secs / 3600.0 / 24.0), (int) Math.floor(secs / 3600.0) % 24,
-                (int) Math.floor(secs / 60.0) % 60, Math.round(secs) % 60);
+        return String.format("%dd%02dh%02dm%02ds", (int) Math.floor(toHours(secs) / 24.0), toHours(secs) % 24,
+                toMinutes(secs) % 60, Math.round(secs) % 60);
+    }
+
+    private static int toMinutes(double seconds) {
+        // noinspection NumericCastThatLosesPrecision
+        return (int) Math.floor(seconds / 60.0);
+    }
+
+    private static int toHours(double seconds) {
+        // noinspection NumericCastThatLosesPrecision
+        return (int) Math.floor(seconds / 3600.0);
     }
 
     /**

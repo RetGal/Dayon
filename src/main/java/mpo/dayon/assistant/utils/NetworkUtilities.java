@@ -17,12 +17,8 @@ public interface NetworkUtilities {
 			InetAddress loopback = null;
 
 			final Enumeration<NetworkInterface> nintfs = NetworkInterface.getNetworkInterfaces();
-
 			while (nintfs.hasMoreElements()) {
-				final NetworkInterface nintf = nintfs.nextElement();
-
-				final Enumeration<InetAddress> inetAddresses = nintf.getInetAddresses();
-
+				final Enumeration<InetAddress> inetAddresses = nintfs.nextElement().getInetAddresses();
 				while (inetAddresses.hasMoreElements()) {
 					final InetAddress inetAddress = inetAddresses.nextElement();
 					if (!inetAddress.isLoopbackAddress()) {

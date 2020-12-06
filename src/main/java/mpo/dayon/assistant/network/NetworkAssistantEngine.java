@@ -130,11 +130,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.info("Cancelling the network assistant engine...");
 
         cancelling.set(true);
-
-        safeClose(server);
-        safeClose(connection);
-        safeClose(fileServer);
-        safeClose(fileConnection);
+        safeClose(server, connection, fileServer, fileConnection);
         fireOnDisconnecting();
     }
 
@@ -190,7 +186,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     }
 
-    private ObjectInputStream  initInputStream() throws IOException {
+    private ObjectInputStream initInputStream() throws IOException {
         try {
             return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {
@@ -336,19 +332,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             sender.cancel();
         }
         receiver = safeInterrupt(receiver);
-        safeClose(in);
-        safeClose(out);
-        safeClose(connection);
-        safeClose(server);
+        safeClose(in, out, connection, server);
 
         if (fileSender != null) {
             fileSender.cancel();
         }
         fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn);
-        safeClose(fileOut);
-        safeClose(fileConnection);
-        safeClose(fileServer);
+        safeClose(fileIn, fileOut, fileConnection, fileServer);
 
         cancelling.set(false);
     }

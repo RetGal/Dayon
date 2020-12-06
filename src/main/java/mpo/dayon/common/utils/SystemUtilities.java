@@ -85,12 +85,7 @@ public abstract class SystemUtilities {
 
     public static String getStringProperty(Properties props, String name, String defaultValue) {
         if (props == null) {
-            final String prop = System.getProperty(name);
-
-            if (prop == null) {
-                return System.getProperty("jnlp." + name, defaultValue);
-            }
-            return prop;
+            return System.getProperty(name);
         }
         return props.getProperty(name, defaultValue);
     }
@@ -162,15 +157,15 @@ public abstract class SystemUtilities {
         return UnitUtilities.toByteSize(totalMG - freeMG, false) + " of " + UnitUtilities.toByteSize(totalMG, false);
     }
 
-    public static void safeClose(Closeable open) {
-        if (open != null) {
+    public static void safeClose(Closeable... closeables) {
+        Arrays.stream(closeables).filter(Objects::nonNull).forEachOrdered(open -> {
             Log.debug(open.getClass().getSimpleName() + " closing");
             try {
                 open.close();
             } catch (IOException ignored) {
                 Log.debug(open.getClass().getSimpleName() + " closing failed");
             }
-        }
+        });
     }
 
     public static Thread safeInterrupt(Thread thread) {
