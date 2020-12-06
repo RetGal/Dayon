@@ -76,6 +76,14 @@ class SystemUtilitiesTest {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
+
+	@Test
+	void isValidIpAdressOrHostNameShouldReturnFalseForTooLongHostname() {
+		// given
+		String hostName = "snaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafu.com";
+		// when, then
+		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
+	}
 	
 	@Test
 	void isValidIpAdressOrHostNameShouldReturnTrueForValidHostname() {
