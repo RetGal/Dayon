@@ -6,7 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
+import java.net.SocketException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
@@ -95,7 +95,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 			try {
 				networkEngine.start();
 				connected = true;
-			} catch (ConnectException ce) {
+			} catch (SocketException e) {
 				frame.onRefused(configuration);
 				serverName = null;
 				portNumber = null;
