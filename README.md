@@ -29,7 +29,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10.0 (Lucky Lobster) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky Lobster) - released more than ten years after the initial release.
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
@@ -41,7 +41,7 @@ It is most likely the very last version which is bundled with a Java 8 based JRE
 [English](https://retgal.github.io/Dayon/index.html)<br>
 [Français](https://retgal.github.io/Dayon/fr_index.html)<br>
 
-Currently there is no online documentation available for spanish and russian.
+Currently, there is no online documentation available for Spanish and Russian.
 Please refer to the [English](https://retgal.github.io/Dayon/index.html)
  version.
  
