@@ -105,3 +105,9 @@ img {
 code {
     font-weight:bolder;
 }
+
+.no,
+.no * {
+    text-decoration:none !important;
+	color:#000 !important;
+}

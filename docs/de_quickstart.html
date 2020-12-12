@@ -24,10 +24,24 @@
         <p>
             Typischerweise kommuniziert der <i>Assistent</i> via Skype, telefonisch oder mittels eines
             Instant-Messengers mit dem <i>Assistierten</i>. Während Dayon! es dem <i>Assistenten</i> erlaubt, live den
-            Bildschirm des <i>Assistierten</i> zu sehen und dessen
-            Maus und Tastatur zu übernehmen.
+            Bildschirm des <i>Assistierten</i> zu sehen und die Kontrolle über dessen Maus und Tastatur zu übernehmen.
         <p>
-            <img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-setup"><b>Konfiguration Assistent</b></a>
+            Beachten sie bitte, dass für diese Dokumentation englischsprachge Screenshots verwende werden.
+            Die Applikation ist aber komplett auf Deutsch verfügbar und die Benutzeroberfläche wird aufgrund der
+            Anwendersprache lokalisiert. Die Symbole sind in allen Sprachen identisch.
+        <p>
+            <img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-setup" class="no"><b>Konfiguration Assistent</b></a>
+        <p>
+            Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen
+            allfällige Netzwerkkonfigurationen auf dieser Seite.
+        <p>
+            Dayon! herunter laden und installieren (identisch wie beim Assistenten). Danach die <i>Dayon!</i>
+            Applikation starten (sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) und die vom <i>Assistenten</i>
+            mitgeteilte IP-Adresse und Portnummer eintragen: (beide Eingabefelder können mittels Doppelklick geleert werden)
+        <p>
+            <img src="assisted_start.jpg" alt="Dayon! Assistierter : Starting">
+        <p>
+            Kurz nach dem Klick auf <i>OK</i> werden sie mit ihrem <i>Assistenten</i> verbunden sein. Viel Vergnügen!
         <p>
             Der Assistent (Dayon.Assistant) fungiert als eine typische Server-Anwendung (der <i>Assistierte</i>
             verbindet sich mit dieser). Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand von Nöten. Das
@@ -57,28 +71,17 @@
         <p>
             <i>Beachten sie dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen
                 verfügbaren Netzwerkschnittstellen horcht; Sie benötigen diese Angaben jedoch um sie dem Assistierten zu
-                kommunizieren. (mehr zu diesem Thema
-                später). </i>
+                kommunizieren. (mehr zu diesem Thema später).</i>
         <p>
-        Damit wäre die Netzwerkkonfiguration bereits abgeschlossen. <b>Für ungeduldige:</b>
-            <a href="#assistant-start">Hier</a> erfahren sie, wie sie den Assistenten <a href="#assistant-start">empfangsbereit</a>
-            schalten und <a href="#assistant-details">da</a> Details zu weiteren <a href="#assistant-details">Konfigurationsoptionen</a>.<br>
-            Ansonsten lassen sie uns zuerst einen Blick auf die Konfiguration des <i>Assistierten</i> werfen.
+            Damit wäre die Netzwerkkonfiguration bereits abgeschlossen.<br>
+            <b>Für ungeduldige:</b><a href="#assistant-start">Hier</a> erfahren sie, wie sie den Assistenten
+            <a href="#assistant-start">empfangsbereit machen</a>.
         <p>
-            <img src="assisted.png" alt="Assistierter"> &nbsp; <a name="assistant-setup"><b>Konfiguration Assistierter</b></a>
+            Ansonsten lassen sie uns zuerst einen Blick die erweiterten Konfigurationsmöglichkeiten des <i>Assistierten</i> werfen.
         <p>
-            Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen
-            allfällige Netzwerkkonfigurationen auf dieser Seite.
+            <img src="assisted.png" alt="Assistierter"> &nbsp; <a name="assistant-setup" class="no"><b>Konfiguration Assistierter</b></a>
         <p>
-            Dayon! herunter laden und installieren (identisch wie beim Assistenten). Danach die <i>Dayon!</i>
-            Applikation starten (sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) und die vom <i>Assistenten</i>
-            mitgeteilte IP-Adresse und Portnummer eintragen: (beide Eingabefelder können mittels Doppelklick geleert werden)
-        <p>
-            <img src="assisted_start.jpg" alt="Dayon! Assistierter : Starting">
-        <p>
-            Kurz nach dem Klick auf <i>OK</i> werden sie mit ihrem <i>Assistenten</i> verbunden sein. Viel Vergnügen!
-        <p>
-            <img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-details"><b>Mehr zur Konfiguration des Assistenten</b></a>
+            <img src="assistant.png" alt="Assistent"> &nbsp; <a name="assistant-details" class="no"><b>Mehr zur Konfiguration des Assistenten</b></a>
         <p>
             Hier kann der <i>Assistent</i> definieren, wie der Bildschirm des <i>Assistierten</i> <b>erfasst</b> werden
             soll; Es kann sowohl der Intervall (in Millisekunden) zwischen zwei Aufnahmen (Tick), als auch die Anzahl
@@ -100,7 +103,7 @@
         <p>
             <img src="assistant_compression_settings.jpg" alt="Dayon! Assistent : Compression Settings">
         <p>
-            <a name="assistant-start">Das wär's. Mit einem Klick auf den Play-Button (der erste von links) schalten sie
+            <a name="assistant-start" class="no">Das wär's. Mit einem Klick auf den Play-Button (der erste von links) schalten sie
             den <i>Assistent</i> auf empfangsbereit:</a>
         <p>
             <img src="assistant_start.jpg" alt="Dayon! Assistent : Start">
@@ -135,13 +138,13 @@
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
             Unterstützt werden zur Zeit:
-        <ul>
-            <li>Text: Lokal oder im Fenster des <i>Assistierten</i> Text markieren, kopieren (<code>ctl + C</code>) Up oder
-                Down klicken. Anschliessend kann der übertagene Text in einer lokalen oder entfernten Anwendung
-                eingefügt werden (<code>ctrl + v</code>).
-            <li>Dateien: Lokal oder im Fenster des <i>Assistierten</i> eine oder mehrere Dateien, resp. Ordner markieren, kopieren
-                (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die Datei/en am Zielort eingefügt werden.
-        </ul>
+            <ul>
+                <li>Text: Lokal oder im Fenster des <i>Assistierten</i> Text markieren, kopieren (<code>ctl + C</code>) Up oder
+                    Down klicken. Anschliessend kann der übertagene Text in einer lokalen oder entfernten Anwendung
+                    eingefügt werden (<code>ctrl + v</code>).
+                <li>Dateien: Lokal oder im Fenster des <i>Assistierten</i> eine oder mehrere Dateien, resp. Ordner markieren, kopieren
+                    (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die Datei/en am Zielort eingefügt werden.
+            </ul>
         <p>
             <strong>Achtung</strong>: Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
             Zwischenablage nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>)

@@ -26,7 +26,24 @@
             favorite IM, or whatever tool they like. Then starting Dayon! allows for watching live the <i>assisted</i>
             computer screen.
         <p>
-            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup">
+            In this documentation, the screenshot show the English localisation of the app.
+            The application itself is also completely localised in French, German, Spanish and Russian.
+            It will fall back to English, if the configured user language is none of the above.
+        <p>
+            <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup" class="no"><b>Setup the Assisted Computer</b></a>
+        <p>
+            Dayon! Assisted is acting as a client application calling the outside world and as such there's no network
+            configuration to setup.
+        <p>
+            Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i>
+            application (you should have a shortcut on the desktop) and enter both the IP address and the port number as
+            communicated by the <i>assistant</i>: (both input fields can be cleared by double clicking them)
+        <p>
+            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+        <p>
+            You'll then be shortly connected to the <i>assistant</i> that is monitoring your screen. Enjoy!
+        <p>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-setup" class="no">
             <b>Setup the Assistant Computer</b></a>
         <p>
             Dayon! Assistant is acting as a typical server application (the <i>assisted</i> is going to connect to) and
@@ -53,27 +70,15 @@
             <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
         <p>
             <i>Note that this IP address is not required by the assistant application as it is listening on all the
-                available network interfaces; but you need to communicate it to the assisted. (more on this later). </i>
+                available network interfaces; but you need to communicate it to the assisted. (more on this later).</i>
         <p>
-            That's it regarding the network configuration; <b>For the impatient:</b> <a href="#assistant-start">Here</a>
-            you'll learn, how to make the <i>assistant</i> listening for incoming connection and
-            <a href="#assistant-details">there</a> you'll find detailed information about advanced configuration options.
-            But let's see first how to setup the <i>assisted</i> side.
+            That's it regarding the network configuration;<br>
+            <b>For the impatient:</b> <a href="#assistant-start">Here</a> you'll learn, how to make the <i>assistant</i>
+        <a href="#assistant-start">listening for incoming connections</a>.
         <p>
-            <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup"><b>Setup the Assisted Computer</b></a>
+            But let's first find out about the advanced configuration options.
         <p>
-            Dayon! Assisted is acting as a client application calling the outside world and as such there's no network
-            configuration to setup.
-        <p>
-            Download and install the Dayon! application as for the assistant side. Then start the <i>Dayon!</i>
-            application (you should have a shortcut on the desktop) and enter both the IP address and the port number as
-            communicated by the <i>assistant</i>: (both input fields can be cleared by double clicking them)
-        <p>
-            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
-        <p>
-            You'll then be shortly connected to the <i>assistant</i> that is monitoring your screen. Enjoy!
-        <p>
-            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details"><b>More on the Assistant Setup</b></a>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details" class="no"><b>More on the Assistant Setup</b></a>
         <p>
             Use that form to setup how the <i>assisted</i> screen is going to be <b>captured</b>; you can configure the
             time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.
@@ -92,7 +97,7 @@
         <p>
             <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
         <p>
-            <a name="assistant-start">That's about it. After a click on the play button (the first from left) the
+            <a name="assistant-start" class="no">That's about it. After a click on the play button (the first from left) the
             <i>assistant</i> is ready to accept incoming connections:</a>
         <p>
             <img src="assistant_start.jpg" alt="Dayon! Assistant : Start">
@@ -126,12 +131,12 @@
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
             Currently supported are:
-        <ul>
-            <li>Text: Select text locally or in the assisted window, copy (<code>Ctl + c</code>), click up or down.
-                Subsequently, the transmitted text can be inserted in a local or remote application (<code>Ctrl + v</code>).
-            <li>Files: Select one or more files locally or in the window of the <i>assisted</i> person (<code>Ctl + c</code>),
-                click up or down. Subsequently, the file(s) can be inserted at the destination.
-        </ul>
+            <ul>
+                <li>Text: Select text locally or in the assisted window, copy (<code>Ctl + c</code>), click up or down.
+                    Subsequently, the transmitted text can be inserted in a local or remote application (<code>Ctrl + v</code>).
+                <li>Files: Select one or more files locally or in the window of the <i>assisted</i> person (<code>Ctl + c</code>),
+                    click up or down. Subsequently, the file(s) can be inserted at the destination.
+            </ul>
         <p>
             <strong>Caution</strong>: Depending on the display/windows manager and JDK combination, the clipboard content
             does not get copied into the recipients clipboard. So pasting (<code>Ctrl + v</code>) does have no effect.<br>
