@@ -11,6 +11,7 @@ import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 
 import mpo.dayon.common.babylon.Babylon;
+import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 
 public abstract class SystemUtilities {
@@ -18,13 +19,8 @@ public abstract class SystemUtilities {
     private SystemUtilities() {
     }
 
-    public static URI getQuickStartURI() {
-        try {
-            return new URI("http://retgal.github.io/Dayon/" + Babylon.translate("quickstart.html"));
-        } catch (URISyntaxException e) {
-            Log.warn("Swallowed an URISyntaxException");
-        }
-        return null;
+    public static URI getQuickStartURI(FrameType frameType) throws URISyntaxException {
+        return new URI(String.format("http://retgal.github.io/Dayon/%s#%s-setup", Babylon.translate("quickstart.html"), frameType.getPrefix()));
     }
 
     private static synchronized File getOrCreateAppDir() {

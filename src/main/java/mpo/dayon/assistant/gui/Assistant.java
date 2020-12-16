@@ -8,9 +8,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
-import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -195,10 +194,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
                         try {
                             final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
-                            final URLConnection conn = url.openConnection();
-                            final InputStream in = conn.getInputStream();
-
-                            try (final BufferedReader lines = new BufferedReader(new InputStreamReader(in))) {
+                            final InputStream in = url.openStream();
+                            try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                 publicIp = lines.readLine();
                             }
 
@@ -268,11 +265,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private JMenuItem getjMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
-            final URI uri = getQuickStartURI();
-            if (uri != null && Desktop.isDesktopSupported()) {
+            if (Desktop.isDesktopSupported()) {
                 try {
-                    Desktop.getDesktop().browse(uri);
-                } catch (IOException ex) {
+                    Desktop.getDesktop().browse(getQuickStartURI(FrameType.ASSISTANT));
+                } catch (URISyntaxException | IOException ex) {
                     Log.warn("Help Error!", ex);
                 }
             }

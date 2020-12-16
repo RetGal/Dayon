@@ -233,7 +233,11 @@ public abstract class BaseFrame extends JFrame {
         final Action showHelp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                browse(SystemUtilities.getQuickStartURI());
+                try {
+                    browse(SystemUtilities.getQuickStartURI(frameType));
+                } catch (URISyntaxException ex) {
+                    Log.warn("Help Error!", ex);
+                }
             }
         };
 
