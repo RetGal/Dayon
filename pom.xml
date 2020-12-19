@@ -259,13 +259,15 @@
                                     <resources>
                                         <resource>
                                             <directory>resources</directory>
-                                            <include>dayon.png</include>
+                                            <include>resources/dayon.png</include>
                                         </resource>
                                         <resource>
-                                            <directory>resources/bin</directory>
-                                            <include>dayon.sh</include>
-                                            <include>dayon_assistant.sh</include>
-                                            <include>dayon_assisted.sh</include>
+                                            <directory>resources/snap</directory>
+                                            <includes>
+                                                <include>dayon.sh</include>
+                                                <include>dayon_assistant.sh</include>
+                                                <include>dayon_assisted.sh</include>
+                                            </includes>
                                         </resource>
                                     </resources>
                                 </configuration>
