@@ -265,7 +265,7 @@ public abstract class BaseFrame extends JFrame {
                     desktop.browse(uri);
                 }
             } else {
-                new ProcessBuilder("fake-browser", uri.toString()).start();
+                new ProcessBuilder("dayon.browser", uri.toString()).start();
             }
         } catch (IOException ex) {
             Log.warn(ex);
