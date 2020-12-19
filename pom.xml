@@ -254,7 +254,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${basedir}/target/bin</outputDirectory>
+                                    <outputDirectory>${basedir}/target</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/resources</directory>
@@ -263,34 +263,11 @@
                                         <resource>
                                             <directory>${basedir}/resources/snap</directory>
                                             <includes>
-                                                <include>dayon.sh</include>
-                                                <include>dayon_assistant.sh</include>
-                                                <include>dayon_assisted.sh</include>
+                                                <include>dayon_assistant.desktop</include>
+                                                <include>dayon_assisted.desktop</include>
                                             </includes>
                                         </resource>
                                     </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>chmod</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>chmod</executable>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>-R</argument>
-                                        <argument>${basedir}/target/bin</argument>
-                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>

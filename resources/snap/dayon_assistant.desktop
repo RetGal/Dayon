@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Dayon! Assistant
+Version=1.0
+Exec=dayon.assistant
+Comment=Offer remote assistance
+Comment[de]=Remotesupport anbieten
+Comment[fr]=Offrir assistance à distance
+Icon=/usr/local/bin/dayon/dayon.png
+Type=Application
+Terminal=false
+StartupNotify=true
+Encoding=UTF-8
+Categories=RemoteAccess;Network;
