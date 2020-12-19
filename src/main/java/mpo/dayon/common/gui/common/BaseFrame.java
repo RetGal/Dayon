@@ -6,6 +6,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -263,8 +264,10 @@ public abstract class BaseFrame extends JFrame {
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(uri);
                 }
+            } else {
+                new ProcessBuilder("fake-browser", uri.toString()).start();
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             Log.warn(ex);
         }
     }

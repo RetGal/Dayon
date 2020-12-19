@@ -271,6 +271,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 } catch (URISyntaxException | IOException ex) {
                     Log.warn("Help Error!", ex);
                 }
+            } else {
+                try {
+                    new ProcessBuilder("fake-browser", getQuickStartURI(FrameType.ASSISTANT).toString()).start();
+                } catch (URISyntaxException | IOException ex) {
+                    Log.warn("Help Error!", ex);
+                }
             }
         });
         return help;
