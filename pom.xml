@@ -259,7 +259,7 @@
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/resources</directory>
-                                            <include>resources/dayon.png</include>
+                                            <include>dayon.png</include>
                                         </resource>
                                         <resource>
                                             <directory>${basedir}/resources/snap</directory>
