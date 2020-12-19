@@ -254,7 +254,7 @@
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${basedir}/target</outputDirectory>
+                                    <outputDirectory>${basedir}/target/bin</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/resources</directory>
@@ -288,9 +288,8 @@
                                     <executable>chmod</executable>
                                     <arguments>
                                         <argument>+x</argument>
-                                        <argument>${basedir}/target/dayon.sh</argument>
-                                        <argument>${basedir}/target/dayon_assistant.sh</argument>
-                                        <argument>${basedir}/target/dayon_assisted.sh</argument>
+                                        <argument>-R</argument>
+                                        <argument>${basedir}/target/bin</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
