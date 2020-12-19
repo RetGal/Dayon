@@ -258,11 +258,11 @@
                                     <outputDirectory>${basedir}/target</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>resources</directory>
+                                            <directory>${basedir}/resources</directory>
                                             <include>resources/dayon.png</include>
                                         </resource>
                                         <resource>
-                                            <directory>resources/snap</directory>
+                                            <directory>${basedir}/resources/snap</directory>
                                             <includes>
                                                 <include>dayon.sh</include>
                                                 <include>dayon_assistant.sh</include>
