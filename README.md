@@ -15,7 +15,7 @@ As quick launch versions for Windows, they are also available as individual bina
 - no router or network configuration needed on the assisted side
 - intuitive, multilingual user interface (de, en, es, fr, ru)
 - assistant and assisted functionality in same packet
-- encrypted communication (TLS)
+- secure, encrypted communication (TLS)
 - cross-platform
 - open source
 - free (as hugs)
@@ -33,7 +33,8 @@ The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky 
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
-It is most likely the very last version which is bundled with a Java 8 based JRE.
+Also available as snap:
+[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
 
 ## Website
 
