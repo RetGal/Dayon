@@ -34,6 +34,7 @@ The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
 Also available as snap:
+
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
 
 ## Website
