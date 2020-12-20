@@ -266,12 +266,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
             if (Desktop.isDesktopSupported()) {
+                Log.info("Using Desktop Browser");
                 try {
                     Desktop.getDesktop().browse(getQuickStartURI(FrameType.ASSISTANT));
                 } catch (URISyntaxException | IOException ex) {
                     Log.warn("Help Error!", ex);
                 }
             } else {
+                Log.info("Using Dayon Browser");
                 try {
                     new ProcessBuilder("dayon.browser", getQuickStartURI(FrameType.ASSISTANT).toString()).start();
                 } catch (URISyntaxException | IOException ex) {

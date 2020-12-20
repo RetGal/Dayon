@@ -260,11 +260,13 @@ public abstract class BaseFrame extends JFrame {
     private static void browse(URI uri) {
         try {
             if (Desktop.isDesktopSupported()) {
+                Log.info("Using Desktop Browser");
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(uri);
                 }
             } else {
+                Log.info("Using Dayon Browser");
                 new ProcessBuilder("dayon.browser", uri.toString()).start();
             }
         } catch (IOException ex) {
