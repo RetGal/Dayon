@@ -263,8 +263,9 @@
                                         <resource>
                                             <directory>${basedir}/resources/snap</directory>
                                             <includes>
-                                                <include>dayon_assistant.desktop</include>
-                                                <include>dayon_assisted.desktop</include>
+                                                <include>dayon.assistant.desktop</include>
+                                                <include>dayon.assisted.desktop</include>
+                                                <include>dayon.browser</include>
                                             </includes>
                                         </resource>
                                     </resources>
