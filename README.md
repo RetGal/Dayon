@@ -3,6 +3,7 @@
 ![Java CI (Maven)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Maven)/badge.svg)
 ![Java CI (Ant)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Ant)/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RetGal_Dayon&metric=alert_status)](https://sonarcloud.io/dashboard?id=RetGal_Dayon)
+[![dayon](https://snapcraft.io/dayon/badge.svg)](https://snapcraft.io/dayon)
 
 Dayon! is an easy to use, cross-platform remote desktop assistance solution.
 

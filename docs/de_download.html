@@ -22,30 +22,36 @@
     <div id="content">
         <h2>Download</h2>
         <p>
-            Auf der folgenden <a href="https://github.com/retgal/dayon/releases">Seite</a> finden Sie die aktuellsten
-            Installationspakete für ihre Plattform.
+            Auf <a href="https://github.com/retgal/dayon/releases">GitHub</a> und
+            <a href="https://sourceforge.net/projects/dayonactive/files/">SourceForge</a>
+            finden sie die aktuellsten Installationspakete für ihre Plattform.
+        <p>
+            Seit Version 1.10.2 ist Dayon! auch im <b>Snap Store</b> verfügbar:<br>
+        <p>
+            <a href="https://snapcraft.io/dayon"><img src="https://snapcraft.io/static/images/badges/en/snap-store-white.svg" alt="Get it from the Snap Store" width="150"></a>
         <p>
             <b>Windows:</b> ab Version 1.9 existieren vier unterschiedliche Installationspakete, die eigentliche
             Installation ist selbsterklärend. Sie haben die Wahl zwischen einem Installer mit oder ohne integrierter JRE
             (OpenJDK 1.8 basiert). Das Paket mit integrierter JRE eignet sich bloss für 64Bit Windows Varianten.
             Daneben existieren zwei separate "Quick Launch" Versionen für den Assistenten und de Assistierten. Diese
             beiden portablen Versionen benötigen keine Installation. Um bei diesen Versionen möglichen Probleme mit der
-            Benutzerkontensteuerung zu vermeiden, wir empfohlen den Assistierten mit Administratorenrechten zu starten.
+            Benutzerkontensteuerung zu vermeiden, wird empfohlen den Assistierten mit Administratorenrechten zu starten.
         <p>
-            <b>Debian & Ubuntu:</b> das <code>.deb</code> Paket lässt sich am komfortabelsten mittels dem integrierten
-            Software Installer installieren. Alternativ kann es via dem Befehl <code>sudo dpkg -i dayon*.deb</code>
-            manuell installiert werden.
+            <b>Debian & Ubuntu:</b> die <code>.snap</code> und <code>.deb</code> Pakete lassen sich am komfortabelsten
+            mittels dem integrierten Software Installer installieren. Alternativ können sie es mittels dem Befehl
+            <code>snap install dayon</code>, respektive <code>sudo dpkg -i dayon*.deb</code>, via Terminal installieren.
         <p>
-            <b>Linux:</b> das .tgz-Paket mittels <code>tar xzvf</code> entpacken. Im Zielverzeichnis das Shellskript
-            <code>setup.sh</code> ausführen. Die installierte JRE resp. JDK wird automatisch detektiert. Die JRE ist
-            nicht im .tgz-Paket enthalten. Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so
-            überprüfen Sie das Vorhandensein einer JRE und definieren deren Pfad in der Variable <code>JAVA_HOME</code>
-            im Skript (<code>bin/dayon.sh</code>). Beachten Sie, dass die  Skripte bloss auf diversen Debian und Ubuntu
-            Versionen getestet worden sind.
+            <b>Linux:</b> entweder die sich selbständig aktuell haltende <code>.snap</code> App via Snap Store oder mittels
+            <code>snap install dayon</code>installieren - oder das <code>.tgz</code> Paket mittels <code>tar xzvf</code>
+            entpacken. Im Zielverzeichnis das Shellskript <code>setup.sh</code> ausführen.<br>
+            Die installierte JRE resp. JDK wird automatisch detektiert. Die JRE ist nicht im .tgz-Paket enthalten.
+            Sollte die Autodetektierung aus irgend einem Grund fehlschlagen, so überprüfen sie das Vorhandensein einer
+            JRE und definieren sie deren Pfad in der Variable <code>JAVA_HOME</code> im Skript (<code>bin/dayon.sh</code>).
+            Beachten sie, dass die <code>.tgz</code> Pakete bloss auf diversen Debian und Ubuntu Versionen getestet worden sind.
         <p>
-            <b>Mac OS/OS X:</b> das Paket an einen Ort ihrer Wahl entpacken. Ev. einen Alias für bin/dayon_assisted und
-            bin/dayon_assistant erstellen und auf den Desktop kopieren. (Voraussetzung: installiertes JDK 1.8 oder
-            neuer).
+            <b>Mac OS/OS X:</b> das <code>.tgz</code> Paket an einen Ort ihrer Wahl entpacken. Ev. einen Alias für
+            <code>bin/dayon_assisted</code> und <code>bin/dayon_assistant</code> erstellen und auf den Desktop kopieren.
+            (Voraussetzung: installiertes JDK 1.8 oder neuer).
         <h2>Changelog</h2>
         <h3>Änderungen Dayon! v1.10 Lucky Lobster (27. März 2020) <span class="red">*</span></h3>
         <ul>

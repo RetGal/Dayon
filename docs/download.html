@@ -22,8 +22,13 @@
     <div id="content">
         <h2>Download</h2>
         <p>
-            Use the following <a href="https://github.com/retgal/dayon/releases">page</a> to
-            <a href="https://github.com/retgal/dayon/releases">download</a> the lastest package according to your platform.
+            You can download the latest installation packages for your platform from
+            <a href="https://github.com/retgal/dayon/releases">GitHub</a> or
+            <a href="https://sourceforge.net/projects/dayonactive/files/">SourceForge</a>.
+        <p>
+            Since version 1.10 Dayon! also available in the Snap Store:
+        <p>
+            <a href="https://snapcraft.io/dayon"><img src="https://snapcraft.io/static/images/badges/en/snap-store-white.svg" alt="Get it from the Snap Store" width="150"></a>
         <p>
             <b>Windows:</b> two installers are available and the installation should be straightforward. One package
             comes bundled with an OpenJDK 1.8 based JRE and one without. The one with included JRE is for 64bit versions
@@ -33,19 +38,20 @@
             problems with user account control in these versions, it is recommended to start the assistant with
             administrator rights.
         <p>
-            <b>Debian & Ubuntu:</b> the <code>.deb</code> package can be installed using the software installer provided
-            by your operating system. Alternatively you may install it by executing <code>sudo dpkg -i dayon*.deb</code>.
+            <b>Debian & Ubuntu:</b> the <code>.snap</code> and <code>.deb</code> packages can be installed most conveniently
+            using the integrated software installer. Alternatively, you can install it by tipping the command
+            <code>snap install dayon</code> or <code>sudo dpkg -i dayon*.deb</code> in a terminal.
         <p>
-            <b>Linux:</b> you have to <code>tar xzvf</code> the package. Run the script <code>setup.sh</code>, located
-            in the target directory. The location of the installed JRE/JDK is going to be detected automatically. It is
-            not bundled in the tgz. If it should
-            for whatever reason fail to do so, then you can set the <code>JAVA_HOME</code> in
-            (<code>bin/dayon_run.sh</code>) manually. Note that, I've been testing this on various Debian and Ubuntu
-            releases only.
+        <b>Linux:</b> either install the independently updated <code>.snap</code> app via Snap Store or via <code>snap install dayon</code>
+            - or unpack the <code>.tgz</code> package via <code>tar xzvf</code>. Run the script <code>setup.sh</code>,
+            located in the target directory. The location of the installed JRE/JDK is going to be detected automatically.
+            It is not bundled in the tgz. If it should for whatever reason fail to do so, then you can set the
+            <code>JAVA_HOME</code> in (<code>bin/dayon_run.sh</code>) manually. Note that the <code>.tgz</code> packages have
+            only been tested on various Debian and Ubuntu versions.
         <p>
-            <b>Mac OS/OS X:</b> extract the package to a location of your choice. For more convenience you may want to
-            create an alias for bin/dayon_assisted and bin/dayon_assistant and copy them to your desktop. (JDK 1.8 or
-            greater required)
+        <b>Mac OS/OS X:</b> extract the <code>.tgz</code>package to a location of your choice. For more convenience you may want to
+            create an alias for <code>bin/dayon_assisted</code> and <code>bin/dayon_assistant</code> and copy them to your
+            desktop. (JDK 1.8 or newer required)
         <h2>Change log</h2>
         <h3>Changes in Dayon! v1.10 Lucky Lobster (March 27th, 2020) <span class="red">*</span></h3>
         <ul>
