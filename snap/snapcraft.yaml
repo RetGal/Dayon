@@ -1,0 +1,67 @@
+name: dayon
+title: Dayon!
+version: '1.10.2'
+summary: An easy to use, cross-platform remote desktop assistance solution
+description: |
+  Dayon! allows watching and controlling remote computers.
+  It can be used as free alternative to various commercial remote desktop and remote assistance products.
+
+  Its key features are
+  - no router or network configuration required on the assisted side
+  - friendly, multilingual (de/en/es/fr/ru) user interface
+  - assistant and assisted functionality in one packet
+  - secure, encrypted communication (TLS)
+
+grade: stable
+base: core18
+confinement: strict
+
+
+apps:
+  assisted:
+    extensions:
+      - gnome-3-28
+    command: bin/java -jar $SNAP/jar/dayon.jar $1 $2 $3
+    desktop: ../parts/dayon/build/target/dayon_assisted.desktop
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+    plugs:
+      - home
+      - network
+      - desktop
+  assistant:
+    extensions:
+      - gnome-3-28
+    command: bin/java -cp $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
+    desktop: ../parts/dayon/build/target/dayon_assistant.desktop
+    environment:
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      PATH: $JAVA_HOME/jre/bin:$PATH
+    plugs:
+      - home 
+      - network
+      - desktop
+  browser:
+    extensions:
+      - gnome-3-28
+    command: bin/dayon.browser
+    plugs:
+      - home 
+      - network
+      - desktop
+
+parts:
+  dayon:
+    plugin: maven
+    source: https://github.com/retgal/dayon.git
+    source-tag: master
+    source-type: git
+    maven-options:
+      [-Psnap]
+  browser:
+    plugin: dump
+    source: .
+    organize:
+      'dayon-browser': 'bin/dayon.browser'
+

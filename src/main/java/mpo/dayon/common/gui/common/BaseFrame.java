@@ -6,6 +6,7 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -258,13 +259,15 @@ public abstract class BaseFrame extends JFrame {
 
     private static void browse(URI uri) {
         try {
-            if (Desktop.isDesktopSupported()) {
+            if (System.getProperty("java.class.path").startsWith("/snap/")) {
+                new ProcessBuilder("dayon.browser", uri.toString()).start();
+            } else if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(uri);
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             Log.warn(ex);
         }
     }
