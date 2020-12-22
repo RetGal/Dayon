@@ -1,0 +1,2 @@
+#!/bin/sh
+bin/java -Ddayon.log=file -cp jar/dayon.jar $1 $2 $3 $4

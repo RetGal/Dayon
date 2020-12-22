@@ -262,11 +262,7 @@
                                         </resource>
                                         <resource>
                                             <directory>${basedir}/resources/snap</directory>
-                                            <includes>
-                                                <include>dayon.assistant.desktop</include>
-                                                <include>dayon.assisted.desktop</include>
-                                                <include>dayon.browser</include>
-                                            </includes>
+                                            <include>*</include>
                                         </resource>
                                     </resources>
                                 </configuration>
@@ -289,6 +285,7 @@
                                     <arguments>
                                         <argument>+x</argument>
                                         <argument>${basedir}/target/dayon.browser</argument>
+                                        <argument>${basedir}/target/dayon.launcher</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -434,7 +431,10 @@
                                         <resource>
                                             <directory>resources</directory>
                                             <include>**/*</include>
-                                            <exclude>deb/</exclude>
+                                            <excludes>
+                                                <exclude>deb/</exclude>
+                                                <exclude>snap/</exclude>
+                                            </excludes>
                                         </resource>
                                     </resources>
                                 </configuration>

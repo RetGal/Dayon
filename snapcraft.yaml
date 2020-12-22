@@ -16,40 +16,29 @@ grade: stable
 base: core18
 confinement: strict
 
-
 apps:
   assisted:
     extensions:
-      - gnome-3-28
-    command: bin/java -jar $SNAP/jar/dayon.jar $1 $2 $3
-    desktop: ../parts/dayon/build/target/dayon_assisted.desktop
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
+      [gnome-3-28]
+    command: bin/dayon.launcher $1 $2 $3
+    desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
-      - home
-      - network
-      - desktop
+      [home, network, desktop]
+
   assistant:
     extensions:
-      - gnome-3-28
-    command: bin/java -cp $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
-    desktop: ../parts/dayon/build/target/dayon_assistant.desktop
-    environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
-      PATH: $JAVA_HOME/jre/bin:$PATH
+      [gnome-3-28]
+    command: bin/dayon.launcher mpo.dayon.assistant.AssistantRunner $1
+    desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
-      - home 
-      - network
-      - desktop
+      [home, network, desktop]
+
   browser:
     extensions:
-      - gnome-3-28
+      [gnome-3-28]
     command: bin/dayon.browser
     plugs:
-      - home 
-      - network
-      - desktop
+      [home, network, desktop]
 
 parts:
   dayon:
@@ -59,9 +48,16 @@ parts:
     source-type: git
     maven-options:
       [-Psnap]
-  browser:
-    plugin: dump
-    source: .
-    organize:
-      'dayon-browser': 'bin/dayon.browser'
+    override-build: |
+      snapcraftctl build
+      cp /root/parts/dayon/build/target/dayon.browser /root/parts/dayon/install/bin/
+      cp /root/parts/dayon/build/target/dayon.launcher /root/parts/dayon/install/bin/
+      cp /root/parts/dayon/build/target/dayon.png /root/parts/dayon/install/bin/
+    filesets:
+      exclude-original-jar:
+        [-jar/original-dayon.jar]
+    stage:
+      [$exclude-original-jar]
+
+
 
