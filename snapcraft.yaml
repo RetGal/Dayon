@@ -50,14 +50,11 @@ parts:
       [-Psnap]
     override-build: |
       snapcraftctl build
-      cp /root/parts/dayon/build/target/dayon.browser /root/parts/dayon/install/bin/
-      cp /root/parts/dayon/build/target/dayon.launcher /root/parts/dayon/install/bin/
-      cp /root/parts/dayon/build/target/dayon.png /root/parts/dayon/install/bin/
+      cp target/dayon.browser ../install/bin/
+      cp target/dayon.launcher ../install/bin/
+      cp target/dayon.png ../install/bin/
     filesets:
       exclude-original-jar:
         [-jar/original-dayon.jar]
     stage:
       [$exclude-original-jar]
-
-
-
