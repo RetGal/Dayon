@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Dayon! Assistant
-Version=1.0
+Version=1.10
 Exec=/usr/local/bin/dayon/bin/dayon_assistant.sh
 Comment=Offer remote assistance
 Comment[de]=Remotesupport anbieten
+Comment[es]=Ofrecer asistencia remota
 Comment[fr]=Offrir assistance à distance
+Comment[ru]=Предлагайте удаленную помощь
 Icon=/usr/local/bin/dayon/dayon.png
 Type=Application
 Terminal=false

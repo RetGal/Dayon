@@ -3,7 +3,6 @@ Thank you for downloading Dayon!
 Contents:
 
   readme.txt   This file.
-  doc/         More documentation.
   bin/         Startup scripts, configuration files and the dayon.jar
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
@@ -20,7 +19,7 @@ Running Dayon!
   Open the connection port (e.g., firewall, DSL router, NAT, etc...) and note your external
   IP address (e.g., http://whatismyip.com/).
 
-  The settings (e.g.,, number of capture per second, compression method, ...) will be sent
+  The settings (e.g., number of capture per second, compression method, ...) will be sent
   to the assisted machine during the connection. The assisted has nothing to do except entering
   the IP address and port number as described below.
   
@@ -45,5 +44,6 @@ Project:
 	https://retgal.github.io/Dayon/
 	https://github.com/retgal/dayon
 	https://sourceforge.net/projects/dayonactive/
+    https://snapcraft.io/dayon
 
 Enjoy!

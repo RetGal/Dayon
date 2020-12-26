@@ -1,10 +1,12 @@
 [Desktop Entry]
 Name=Dayon! Assisted
-Version=1.0
+Version=1.10
 Exec=dayon.assisted
 Comment=Request remote assistance
 Comment[de]=Remotesupport erbitten
+Comment[es]=Solicitar asistencia remota
 Comment[fr]=Demander assistance à distance
+Comment[ru]=Запросить удаленную помощь
 Keywords=remote;support;get help
 Icon=bin/dayon.png
 Type=Application

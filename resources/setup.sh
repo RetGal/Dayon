@@ -27,29 +27,38 @@ chmod +x ${INSTALL_DIR}/bin/*.sh
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
 Name=Dayon! Assistant
+Version=1.10
 Exec=${INSTALL_DIR}/bin/dayon_assistant.sh
-Icon=${INSTALL_DIR}/dayon.png
-Terminal=false
-Type=Application
-Categories=Network;X-Communication;
 Comment=Offer remote assistance
 Comment[de]=Remotesupport anbieten
+Comment[es]=Ofrecer asistencia remota
 Comment[fr]=Offrir assistance à distance
-Keywords=remote;support;offer help
+Comment[ru]=Предлагайте удаленную помощь
+Icon=${INSTALL_DIR}/dayon.png
+Type=Application
+Terminal=false
+StartupNotify=true
+Encoding=UTF-8
+Categories=RemoteAccess;Network;
 EOF
 
 cat <<EOF > /usr/share/applications/DayonAssisted.desktop
 [Desktop Entry]
 Name=Dayon! Assisted
+Version=1.10
 Exec=${INSTALL_DIR}/bin/dayon_assisted.sh
-Icon=${INSTALL_DIR}/dayon.png
-Terminal=false
-Type=Application
-Categories=Network;X-Communication;
 Comment=Request remote assistance
 Comment[de]=Remotesupport erbitten
+Comment[es]=Solicitar asistencia remota
 Comment[fr]=Demander assistance à distance
+Comment[ru]=Запросить удаленную помощь
 Keywords=remote;support;get help
+Icon=${INSTALL_DIR}/dayon.png
+Type=Application
+Terminal=false
+StartupNotify=true
+Encoding=UTF-8
+Categories=RemoteAccess;Network;
 EOF
 
 echo "Dayon! setup finished successfully - happy sessions!"
