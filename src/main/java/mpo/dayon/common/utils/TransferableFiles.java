@@ -51,9 +51,9 @@ public class TransferableFiles implements Transferable {
 
     @NotNull
     private Object toUriListFlavor() {
-        final StringBuilder sb = new StringBuilder();
-        files.forEach(file -> sb.append(file.toURI()).append("\r\n"));
-        return sb.toString();
+        final StringBuilder sb = new StringBuilder("x-special/nautilus-clipboard\ncopy\n");
+        files.forEach(file -> sb.append(file.toURI()).append("\n"));
+        return sb.toString().replace("file:/", "file:///");
     }
 
     @NotNull
