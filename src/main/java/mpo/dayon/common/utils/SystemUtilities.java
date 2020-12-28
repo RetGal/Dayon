@@ -4,11 +4,11 @@ import java.io.*;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.swing.UIManager;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -66,11 +66,7 @@ public abstract class SystemUtilities {
         final File appDir = getOrCreateAppDir();
         final File transferDir = new File(appDir, ".transfer");
         if (transferDir.exists()) {
-            try {
-                cleanDir(transferDir);
-            } catch (IOException e) {
-                Log.warn(String.format("Could not clean %s", transferDir));
-            }
+            cleanDir(transferDir);
         } else {
             transferDir.mkdir();
         }
@@ -81,12 +77,15 @@ public abstract class SystemUtilities {
         return isSnapped() ? getOrCreateTransferDir().getPath() : System.getProperty("java.io.tmpdir");
     }
 
-    private static void cleanDir(File folder) throws IOException {
-        Files.walk(folder.toPath())
-                .sorted(Comparator.reverseOrder())
-                .map(Path::toFile)
-                .filter(item -> !folder.getPath().equals(item.getPath()))
-                .forEach(File::delete);
+    private static void cleanDir(File folder) {
+        try (Stream<Path> walk = Files.walk(folder.toPath())) {
+            walk.sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .filter(item -> !folder.getPath().equals(item.getPath()))
+                    .forEach(File::delete);
+        } catch (IOException e) {
+            Log.warn(String.format("Could not clean %s", folder));
+        }
     }
 
     public static String getApplicationName() {
