@@ -99,8 +99,8 @@
                         <version>1.12</version>
                         <executions>
                             <execution>
-                                <id>package</id>
-                                <phase>package</phase>
+                                <id>create-deb</id>
+                                <phase>install</phase>
                                 <goals>
                                     <goal>package</goal>
                                 </goals>
@@ -421,7 +421,7 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <phase>package</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
@@ -441,7 +441,7 @@
                             </execution>
                             <execution>
                                 <id>copy-docs</id>
-                                <phase>package</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>

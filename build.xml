@@ -12,7 +12,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="1.10.2"/>
+	<property name="version" value="1.10.3"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -73,6 +73,8 @@
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/bin"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
+				<exclude name="deb/"/>
+				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
