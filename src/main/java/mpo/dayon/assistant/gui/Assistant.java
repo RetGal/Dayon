@@ -55,9 +55,7 @@ import mpo.dayon.common.utils.FileUtilities;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static mpo.dayon.common.utils.SystemUtilities.getQuickStartURI;
-import static mpo.dayon.common.utils.SystemUtilities.isValidPortNumber;
-import static mpo.dayon.common.utils.SystemUtilities.safeClose;
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
 
@@ -265,7 +263,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private JMenuItem getjMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
-            if (System.getProperty("java.class.path").startsWith("/snap/")) {
+            if (isSnapped()) {
                 try {
                     new ProcessBuilder("dayon.browser", getQuickStartURI(FrameType.ASSISTANT).toString()).start();
                 } catch (URISyntaxException | IOException ex) {

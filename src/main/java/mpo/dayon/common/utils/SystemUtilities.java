@@ -2,6 +2,9 @@ package mpo.dayon.common.utils;
 
 import java.io.*;
 import java.net.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.text.MessageFormat;
 import java.util.*;
@@ -57,6 +60,33 @@ public abstract class SystemUtilities {
             return null;
         }
         return file;
+    }
+
+    public static File getOrCreateTransferDir() {
+        final File appDir = getOrCreateAppDir();
+        final File transferDir = new File(appDir, ".transfer");
+        if (transferDir.exists()) {
+            try {
+                cleanDir(transferDir);
+            } catch (IOException e) {
+                Log.warn(String.format("Could not clean %s", transferDir));
+            }
+        } else {
+            transferDir.mkdir();
+        }
+        return transferDir;
+    }
+
+    public static String getTempDir() {
+        return isSnapped() ? getOrCreateTransferDir().getPath() : System.getProperty("java.io.tmpdir");
+    }
+
+    private static void cleanDir(File folder) throws IOException {
+        Files.walk(folder.toPath())
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .filter(item -> !folder.getPath().equals(item.getPath()))
+                .forEach(File::delete);
     }
 
     public static String getApplicationName() {
@@ -178,6 +208,10 @@ public abstract class SystemUtilities {
             }
         }
         return MetalLookAndFeel.class.getName();
+    }
+
+    public static boolean isSnapped() {
+        return System.getProperty("java.class.path").startsWith("/snap/");
     }
 
     public static boolean isValidPortNumber(String portNumber) {

@@ -19,6 +19,8 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
+import static mpo.dayon.common.utils.SystemUtilities.isSnapped;
+
 public abstract class BaseFrame extends JFrame {
 
     private static final int MIN_WIDTH = 450;
@@ -259,7 +261,7 @@ public abstract class BaseFrame extends JFrame {
 
     private static void browse(URI uri) {
         try {
-            if (System.getProperty("java.class.path").startsWith("/snap/")) {
+            if (isSnapped()) {
                 new ProcessBuilder("dayon.browser", uri.toString()).start();
             } else if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();

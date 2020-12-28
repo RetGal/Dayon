@@ -29,8 +29,7 @@ import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILE
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
-import static mpo.dayon.common.utils.SystemUtilities.safeClose;
-import static mpo.dayon.common.utils.SystemUtilities.safeInterrupt;
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
 
@@ -223,6 +222,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
+            String tmpDir = getTempDir();
+
             NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement
@@ -238,7 +239,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                 if (type.equals(CLIPBOARD_FILES)) {
                     filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                            filesHelper), clipboardOwner);
+                            filesHelper, tmpDir), clipboardOwner);
                     if (filesHelper.isDone()) {
                         fireOnClipboardReceived();
                     }

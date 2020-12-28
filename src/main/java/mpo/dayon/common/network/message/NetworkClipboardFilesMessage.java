@@ -21,7 +21,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
 
-    public static NetworkClipboardFilesHelper unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper) throws IOException {
+    public static NetworkClipboardFilesHelper unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper, String tmpDir) throws IOException {
 
         try {
             if (helper.getTransferId() == null) {
@@ -44,7 +44,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             if (!append) {
                 Log.info("Received " + meta.getFileName());
             }
-            String tempFilePath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId() + fileName;
+            String tempFilePath = tmpDir + File.separator + helper.getTransferId() + fileName;
             writeToTempFile(buffer, read, tempFilePath, append);
 
             long remainingFileSize = helper.getFileBytesLeft() - read;
@@ -58,7 +58,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             helper.setPosition(position);
 
             if (remainingTotalFilesSize == 0) {
-                String rootPath = System.getProperty("java.io.tmpdir") + File.separator + helper.getTransferId();
+                String rootPath = tmpDir + File.separator + helper.getTransferId();
                 helper.setFiles(Arrays.asList(new File(rootPath).listFiles()));
             }
 

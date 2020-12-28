@@ -28,6 +28,7 @@ import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILE
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+import static mpo.dayon.common.utils.SystemUtilities.getTempDir;
 
 public class NetworkAssistedEngine extends NetworkEngine
         implements Configurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
@@ -181,6 +182,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void fileReceivingLoop() throws IOException {
 
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
+        String tmpDir = getTempDir();
 
         //noinspection InfiniteLoopStatement
         while (true) {
@@ -195,7 +197,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
             if (type.equals(CLIPBOARD_FILES)) {
                 filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                        filesHelper), clipboardOwner);
+                        filesHelper, tmpDir), clipboardOwner);
                 if (filesHelper.isDone()) {
                     // let the assistant know that we're done
                     sender.ping();
