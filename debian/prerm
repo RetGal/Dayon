@@ -1,0 +1,8 @@
+#!/bin/bash -e
+if [ -x "/etc/init.d/dayon" ]; then
+        if [ -x "`which invoke-rc.d 2>/dev/null`" ]; then
+                invoke-rc.d dayon stop || true
+        else
+                /etc/init.d/dayon stop || true
+        fi
+fi

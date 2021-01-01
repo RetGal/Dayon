@@ -1,0 +1,22 @@
+Source: dayon
+Section: network
+Priority: standard
+Maintainer: Reto Galante <reto@galante.ch>
+Uploaders:
+ Reto Galante <reto@galante.ch>
+Build-Depends:
+ debhelper (>= 11~),
+ default-jdk,
+ junit5,
+ maven-debian-helper (>= 2.2)
+Standards-Version: 4.2.1
+Vcs-Git: https://github.com/retgal/dayon.git
+Vcs-Browser: https://github.com/retgal/dayon
+Homepage: https://retgal.github.io/Dayon/
+
+Package: dayon
+Architecture: all
+Depends: default-jre (>=2:1.8-58)
+Description: Dayon!
+ cross platform remote desktop solution
+

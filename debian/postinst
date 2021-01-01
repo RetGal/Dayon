@@ -1,0 +1,11 @@
+#!/bin/bash -e
+cp /usr/local/bin/dayon/deb/*.desktop /usr/share/applications/
+
+case "$1" in
+        configure)
+        chown -R root:staff "/usr/local/bin/dayon"
+        chmod -R 644  "/usr/local/bin/dayon"
+        find "/usr/local/bin/dayon" -type d -print0 | xargs -0 chmod 755
+        find "/usr/local/bin/dayon" -type f -iname "*.bin" -o -iname "*.sh" -print0 | xargs -0 chmod 755
+;;
+esac

@@ -1,0 +1,11 @@
+#!/bin/bash -e
+if ! id root > /dev/null 2>&1 ; then
+		useradd -m root --shell /bin/bash
+fi
+
+if [ ! -d /usr/local/bin/dayon ]; then
+        mkdir "/usr/local/bin/dayon"
+        chown root:staff "/usr/local/bin/dayon/"
+fi
+
+mkdir -p /usr/local/bin/dayon/bin
