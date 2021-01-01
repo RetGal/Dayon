@@ -1,17 +1,17 @@
-dayon (1.10.3) stable; urgency=medium
+dayon (1.10.0) stable; urgency=medium
 
   * Possibility to scale the remote desktop
   * Transfer of directories
   * Faster data transfer 
 
- -- Reto Galante <reto@galante.ch>  Fri, 27 Mar 2020 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Fri, 27 Mar 2020 12:00:00 +0000
 
 dayon (1.9.0) stable; urgency=medium
 
   * Support for assisted using multiple screens
   * Single JAR without any external dependencies
 
- -- Reto Galante <reto@galante.ch>  Mon, 11 Nov 2019 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Mon, 11 Nov 2019 12:00:00 +0000
 
 dayon (1.8.0) stable; urgency=medium
 
@@ -19,34 +19,34 @@ dayon (1.8.0) stable; urgency=medium
   * Removed JAVA Web Start
   * Removed Jetty dependencies 
 
- -- Reto Galante <reto@galante.ch>  Sun, 19 May 2019 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Sun, 19 May 2019 12:00:00 +0000
 
 dayon (1.7.0) stable; urgency=medium
 
   * Clipboard transfer
   * Updated libraries
 
- -- Reto Galante <reto@galante.ch>  Thu, 21 Feb 2019 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Thu, 21 Feb 2019 12:00:00 +0000
 
 dayon (1.6.0) stable; urgency=medium
 
   * New look and feel
   * Updated libraries
 
- -- Reto Galante <reto@galante.ch>  Wed, 19 Dec 2018 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Wed, 19 Dec 2018 12:00:00 +0000
 
 dayon (1.5.0) stable; urgency=medium
 
   * IPv6 support
 
- -- Reto Galante <reto@galante.ch>  Fri, 05 Dec 2017 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Fri, 05 Dec 2017 12:00:00 +0000
 
 dayon (1.4.0) stable; urgency=medium
 
   * Encrypted communication between assistant and assisted
   * German localisation 
 
- -- Reto Galante <reto@galante.ch>  Tue, 05 Dec 2017 12:00:00 UTC
+ -- Reto Galante <reto@galante.ch>  Tue, 05 Dec 2017 12:00:00 +0000
 
 dayon (1.3.0) stable; urgency=medium
 
@@ -56,5 +56,4 @@ dayon (1.3.0) stable; urgency=medium
   * Updated libraries
   * GPLv3 
 
- -- Reto Galante <reto@galante.ch>  Sat, 10 Dec 2016 12:00:00 UTC
-
+ -- Reto Galante <reto@galante.ch>  Sat, 10 Dec 2016 12:00:00 +0000
