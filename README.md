@@ -8,7 +8,7 @@
 Dayon! is an easy to use, cross-platform remote desktop assistance solution.
 
 It consists of two parts - one for the assistant and one for the assisted. Both are included in one single package.
-As quick launch versions for Windows, they are also available as individual binaries.
+As quick launch versions for Windows, they are also available as individual binaries and as snap for various linux distributions.
 
 ## Key features
 
