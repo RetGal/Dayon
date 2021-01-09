@@ -5,9 +5,9 @@ Maintainer: Reto Galante <reto@galante.ch>
 Uploaders:
  Reto Galante <reto@galante.ch>
 Build-Depends:
- debhelper (>= 10~),
+ debhelper (>= 9~),
  default-jdk,
- maven-debian-helper (>= 2.1)
+ maven-debian-helper (>= 2~)
 Standards-Version: 4.2.1
 Vcs-Git: https://github.com/retgal/dayon.git
 Vcs-Browser: https://github.com/retgal/dayon
