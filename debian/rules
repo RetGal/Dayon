@@ -2,6 +2,5 @@
 
 %:
 	dh --with javahelper $@
-
 override_dh_auto_build:
     ant ppa
