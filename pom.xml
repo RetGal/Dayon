@@ -111,7 +111,7 @@
                             <unixGroupId>staff</unixGroupId>
                             <installDir>/usr/local/bin/</installDir>
                             <osDependencies>
-                                <default-jre>>=2:1.8-58</default-jre>
+                                <default-jre>>=2:1.8-56</default-jre>
                             </osDependencies>
                             <javaServiceWrapper>false</javaServiceWrapper>
                             <generateVersion>false</generateVersion>

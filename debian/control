@@ -16,7 +16,7 @@ Homepage: https://retgal.github.io/Dayon/
 
 Package: dayon
 Architecture: all
-Depends: default-jre (>=2:1.8-58)
+Depends: default-jre (>=2:1.8-56)
 Description: Dayon!
  cross platform remote desktop solution
 
