@@ -84,6 +84,20 @@
 		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
+	<target name="ppa" depends="build" description="Creates directory structure with files for distribution">
+		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/bin"/>
+		<copy todir="${dir.dist}">
+			<fileset dir="${dir.res}">
+				<exclude name="snap/"/>
+				<exclude name="jre/"/>
+				<exclude name="license/azul_zulu_license.txt"/>
+			</fileset>
+		</copy>
+		<copy file="${dir.docs}/dayon.png" todir="${dir.dist}"/>
+		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
+		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
+	</target>
+
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}"/>
