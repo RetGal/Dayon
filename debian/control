@@ -7,7 +7,6 @@ Uploaders:
 Build-Depends:
  debhelper (>= 11~),
  default-jdk,
- junit5,
  maven-debian-helper (>= 2.2)
 Standards-Version: 4.2.1
 Vcs-Git: https://github.com/retgal/dayon.git
