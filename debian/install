@@ -1,4 +1,4 @@
-debian/bin/dayon.jar /usr/local/bin/dayon/bin/
-debian/bin/dayon.sh /usr/local/bin/dayon/bin/
-debian/bin/dayon_assistant.sh /usr/local/bin/dayon/bin/
-debian/bin/dayon_assisted.sh /usr/local/bin/dayon/bin/
+debian/bin/dayon.jar usr/local/bin/dayon/bin
+debian/bin/dayon.sh usr/local/bin/dayon/bin
+debian/bin/dayon_assistant.sh usr/local/bin/dayon/bin
+debian/bin/dayon_assisted.sh usr/local/bin/dayon/bin
