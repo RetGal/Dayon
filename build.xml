@@ -9,6 +9,7 @@
 	<property name="dir.bin" value="${dir.binfile}/bin"/>
 	<property name="dir.build" value="${dir.binfile}/build"/>
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
+	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
@@ -84,18 +85,21 @@
 		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
-	<target name="ppa" depends="build" description="Creates directory structure with files for distribution">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/bin"/>
-		<copy todir="${dir.dist}">
+	<target name="ppa" depends="build" description="Creates directory structure with files for ppa">
+		<copy file="${dir.build}/dayon.jar" todir="${dir.ppa}/bin"/>
+		<copy todir="${dir.ppa}">
 			<fileset dir="${dir.res}">
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
+				<exclude name="bin/dayon"/>
+				<exclude name="bin/dayon_assisted"/>
+				<exclude name="bin/dayon_assistant"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
-		<copy file="${dir.docs}/dayon.png" todir="${dir.dist}"/>
-		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
-		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
+		<copy file="${dir.docs}/dayon.png" todir="${dir.ppa}"/>
+		<chmod dir="${dir.ppa}/bin" perm="ugo+rx" includes="**/*"/>
+		<chmod dir="${dir.ppa}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
 	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
