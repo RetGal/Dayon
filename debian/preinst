@@ -1,4 +1,5 @@
-#!/bin/bash -e
+#!/bin/sh -e
+
 if ! id root > /dev/null 2>&1 ; then
 		useradd -m root --shell /bin/bash
 fi

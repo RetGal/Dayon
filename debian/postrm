@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/sh -e
 
 case "$1" in
         purge|remove)
@@ -13,5 +13,6 @@ case "$1" in
                 exit 1
         ;;
 esac
+
 rm -f /usr/share/applications/dayon_assistant.desktop
 rm -f /usr/share/applications/dayon_assisted.desktop
