@@ -89,12 +89,15 @@
 		<copy file="${dir.build}/dayon.jar" todir="${dir.ppa}/bin"/>
 		<copy todir="${dir.ppa}">
 			<fileset dir="${dir.res}">
+				<exclude name="deb/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="bin/dayon"/>
 				<exclude name="bin/dayon_assisted"/>
 				<exclude name="bin/dayon_assistant"/>
 				<exclude name="license/azul_zulu_license.txt"/>
+				<exclude name="readme.txt"/>
+				<exclude name="setup.sh"/>
 			</fileset>
 		</copy>
 		<chmod dir="${dir.ppa}/bin" perm="ugo+rx" includes="**/*"/>

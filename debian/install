@@ -1,0 +1,4 @@
+bin/dayon.jar /usr/local/bin/dayon/bin/
+bin/dayon.sh /usr/local/bin/dayon/bin/
+bin/dayon_assistant.sh /usr/local/bin/dayon/bin/
+bin/dayon_assisted.sh /usr/local/bin/dayon/bin/
