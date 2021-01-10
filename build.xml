@@ -97,7 +97,6 @@
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
-		<copy file="${dir.docs}/dayon.png" todir="${dir.ppa}"/>
 		<chmod dir="${dir.ppa}/bin" perm="ugo+rx" includes="**/*"/>
 		<chmod dir="${dir.ppa}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
