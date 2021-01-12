@@ -8,7 +8,7 @@ description: |
 
   Its key features are
   - no router or network configuration required on the assisted side
-  - friendly, multilingual (de/en/es/fr/ru) user interface
+  - friendly, multilingual (de/en/es/fr/it/ru) user interface
   - assistant and assisted functionality in one packet
   - secure, encrypted communication (TLS)
 license: GPL-3.0

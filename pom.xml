@@ -121,20 +121,20 @@
                                     <target>dayon.png</target>
                                 </fileSet>
                                 <fileSet>
-                                    <source>${basedir}/dist/bin/dayon.jar</source>
-                                    <target>bin/dayon.jar</target>
+                                    <source>${basedir}/dist/dayon.jar</source>
+                                    <target>dayon.jar</target>
                                 </fileSet>
                                 <fileSet>
-                                    <source>${basedir}/dist/bin/dayon.sh</source>
-                                    <target>bin/dayon.sh</target>
+                                    <source>${basedir}/dist/dayon.sh</source>
+                                    <target>dayon.sh</target>
                                 </fileSet>
                                 <fileSet>
-                                    <source>${basedir}/dist/bin/dayon_assistant.sh</source>
-                                    <target>bin/dayon_assistant.sh</target>
+                                    <source>${basedir}/dist/dayon_assistant.sh</source>
+                                    <target>dayon_assistant.sh</target>
                                 </fileSet>
                                 <fileSet>
-                                    <source>${basedir}/dist/bin/dayon_assisted.sh</source>
-                                    <target>bin/dayon_assisted.sh</target>
+                                    <source>${basedir}/dist/dayon_assisted.sh</source>
+                                    <target>dayon_assisted.sh</target>
                                 </fileSet>
                                 <fileSet>
                                     <source>${basedir}/resources/deb/</source>
@@ -421,7 +421,7 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <phase>prepare-package</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
@@ -436,37 +436,13 @@
                                                 <exclude>snap/</exclude>
                                             </excludes>
                                         </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-docs</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${basedir}/docs</directory>
-                                            <include>favicon.ico</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-jar</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist/bin</outputDirectory>
-                                    <resources>
                                         <resource>
                                             <directory>${basedir}/target</directory>
                                             <include>dayon.jar</include>
+                                        </resource>
+                                        <resource>
+                                            <directory>${basedir}/docs</directory>
+                                            <include>favicon.ico</include>
                                         </resource>
                                     </resources>
                                 </configuration>
@@ -488,8 +464,12 @@
                                     <executable>chmod</executable>
                                     <arguments>
                                         <argument>+x</argument>
-                                        <argument>-R</argument>
-                                        <argument>${basedir}/dist/bin</argument>
+                                        <argument>${basedir}/dist/dayon</argument>
+                                        <argument>${basedir}/dist/dayon_assistant</argument>
+                                        <argument>${basedir}/dist/dayon_assisted</argument>
+                                        <argument>${basedir}/dist/dayon.sh</argument>
+                                        <argument>${basedir}/dist/dayon_assistant.sh</argument>
+                                        <argument>${basedir}/dist/dayon_assisted.sh</argument>
                                         <argument>${basedir}/dist/setup.sh</argument>
                                     </arguments>
                                 </configuration>

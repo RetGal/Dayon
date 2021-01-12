@@ -2,8 +2,8 @@
 
 case "$1" in
         purge|remove)
-                if [ -d "/usr/local/bin/dayon" ]; then
-                    rm -R "/usr/local/bin/dayon"
+                if [ -f "/usr/local/bin/dayon.sh" ]; then
+                    rm "/usr/local/bin/dayon*"
                 fi
         ;;
         upgrade|failed-upgrade|abort-install|abort-upgrade|disappear)

@@ -1,2 +1,4 @@
 cp ${config.installDir}/deb/*.desktop /usr/share/applications/
-chmod +x ${config.installDir}/bin/*.sh
+chmod +x ${config.installDir}/*.sh
+ln -s ${config.installDir}/dayon_assisted.sh /usr/local/bin/dayon_assisted
+ln -s ${config.installDir}/dayon_assistant.sh /usr/local/bin/dayon_assistant

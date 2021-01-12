@@ -22,18 +22,20 @@ INSTALL_DIR=$(dirname "$0")
 if [ "$INSTALL_DIR" = "." ]; then
 	INSTALL_DIR=`pwd`
 fi
-chmod +x ${INSTALL_DIR}/bin/*.sh
+chmod +x ${INSTALL_DIR}/dayon*sh
 
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
 Name=Dayon! Assistant
 Version=1.10
-Exec=${INSTALL_DIR}/bin/dayon_assistant.sh
+Exec=${INSTALL_DIR}/dayon_assistant.sh
 Comment=Offer remote assistance
 Comment[de]=Remotesupport anbieten
 Comment[es]=Ofrecer asistencia remota
 Comment[fr]=Offrir assistance à distance
+Comment[it]=Offri assistenza remota
 Comment[ru]=Предлагайте удаленную помощь
+Keywords=remote;support;offer help
 Icon=${INSTALL_DIR}/dayon.png
 Type=Application
 Terminal=false
@@ -46,11 +48,12 @@ cat <<EOF > /usr/share/applications/DayonAssisted.desktop
 [Desktop Entry]
 Name=Dayon! Assisted
 Version=1.10
-Exec=${INSTALL_DIR}/bin/dayon_assisted.sh
+Exec=${INSTALL_DIR}/dayon_assisted.sh
 Comment=Request remote assistance
 Comment[de]=Remotesupport erbitten
 Comment[es]=Solicitar asistencia remota
 Comment[fr]=Demander assistance à distance
+Comment[it]=Richiedi assistenza remota
 Comment[ru]=Запросить удаленную помощь
 Keywords=remote;support;get help
 Icon=${INSTALL_DIR}/dayon.png

@@ -1,8 +1,8 @@
 #!/bin/sh
-DAYON_HOME=$(dirname "$0")/..
+DAYON_HOME=$(dirname $(realpath "$0"))
 JAVA_HOME=$(/usr/libexec/java_home)
 JAVA=${JAVA_HOME}/bin/java
 JAVA_OPTS=""
-CLASSPATH="$DAYON_HOME/bin/dayon.jar"
+CLASSPATH="$DAYON_HOME/dayon.jar"
 
 ${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp ${CLASSPATH} $1 $2 $3 $4

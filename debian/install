@@ -1,3 +1,3 @@
-debian/bin/dayon.jar usr/local/bin/dayon/bin/
-debian/bin/*.sh usr/local/bin/dayon/bin/
+debian/dayon.jar usr/local/bin/
+debian/*.sh usr/local/bin/
 debian/*.desktop usr/share/applications/

@@ -2,8 +2,7 @@ Thank you for downloading Dayon!
 
 Contents:
 
-  readme.txt   This file.
-  bin/         Startup scripts, configuration files and the dayon.jar
+  .            Startup scripts, configuration files and the dayon.jar
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
   
@@ -34,7 +33,7 @@ Linux:
 
 OSX/macOS:
 
-  You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted in the bin directory.
+  You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted.
 
 
 Project:

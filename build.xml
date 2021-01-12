@@ -31,7 +31,7 @@
 		<tstamp/>
 		<mkdir dir="${dir.bin}"/>
 		<mkdir dir="${dir.build}"/>
-		<mkdir dir="${dir.dist}/bin"/>
+		<mkdir dir="${dir.dist}"/>
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
@@ -71,7 +71,7 @@
 	</target>
 
 	<target name="dist" depends="build" description="Creates directory structure with files for distribution">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}/bin"/>
+		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
 				<exclude name="deb/"/>
@@ -81,26 +81,24 @@
 			</fileset>
 		</copy>
 		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
-		<chmod dir="${dir.dist}/bin" perm="ugo+rx" includes="**/*"/>
 		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
 	<target name="ppa" depends="build" description="Creates directory structure with files for ppa">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.ppa}/bin"/>
+		<copy file="${dir.build}/dayon.jar" todir="${dir.ppa}"/>
 		<copy todir="${dir.ppa}">
 			<fileset dir="${dir.res}">
 				<exclude name="deb/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
-				<exclude name="bin/dayon"/>
-				<exclude name="bin/dayon_assisted"/>
-				<exclude name="bin/dayon_assistant"/>
+				<exclude name="dayon"/>
+				<exclude name="dayon_assisted"/>
+				<exclude name="dayon_assistant"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 				<exclude name="readme.txt"/>
 				<exclude name="setup.sh"/>
 			</fileset>
 		</copy>
-		<chmod dir="${dir.ppa}/bin" perm="ugo+rx" includes="**/*"/>
 		<chmod dir="${dir.ppa}" perm="ugo+rx" includes="**/*.sh"/>
 	</target>
 
@@ -112,7 +110,7 @@
 	</target>
 
 	<target name="sign" description="Signs the distribution project jar">
-		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/bin/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
+		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
 	</target>
 
 	<target name="tar" description="Creates a gzipped tar archive of the distribution for Linux">
@@ -126,12 +124,10 @@
 			<tarfileset dir="${dir.dist}/tar">
 				<include name="**/*"/>
 				<exclude name="**/*.sh"/>
-				<exclude name="**/bin/*"/>
 				<exclude name="**/favicon.ico"/>
 			</tarfileset>
 			<tarfileset dir="${dir.dist}/tar" filemode="755">
 				<include name="**/*.sh"/>
-				<include name="**/bin/*"/>
 			</tarfileset>
 		</tar>
 		<delete dir="${dir.dist}/tar"/>
