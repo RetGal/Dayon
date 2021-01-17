@@ -2,7 +2,9 @@
 
 case "$1" in
         configure)
-        chown -R root:staff "/usr/local/bin/dayon*sh"
-        find "/usr/local/bin" -type f -iname "dayon*sh" -print0 | xargs -0 chmod 755
+        chown -R root:staff "/usr/local/bin/dayon/dayon*sh"
+        find "/usr/local/bin/dayon" -type f -iname "dayon*sh" -print0 | xargs -0 chmod 755
+        ln -s "/usr/local/bin/dayon/dayon_assisted.sh" "/usr/local/bin/dayon_assisted"
+        ln -s "/usr/local/bin/dayon/dayon_assistant.sh" "/usr/local/bin/dayon_assistant"
 ;;
 esac
