@@ -109,7 +109,7 @@
                         <configuration>
                             <unixUserId>root</unixUserId>
                             <unixGroupId>staff</unixGroupId>
-                            <installDir>/usr/local/bin/</installDir>
+                            <installDir>/usr/bin/</installDir>
                             <osDependencies>
                                 <default-jre>>=2:1.8-56</default-jre>
                             </osDependencies>
