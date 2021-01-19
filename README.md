@@ -38,6 +38,8 @@ Also available as snap:
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
 
+Or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
+
 ## Website
 
 [Deutsch](https://retgal.github.io/Dayon/de_index.html)<br>
