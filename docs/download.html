@@ -26,7 +26,8 @@
             <a href="https://github.com/retgal/dayon/releases">GitHub</a> or
             <a href="https://sourceforge.net/projects/dayonactive/files/">SourceForge</a>.
         <p>
-            Since version 1.10 Dayon! also available in the Snap Store:
+            Independently updated packages with broad hardware support are available in the
+            <a href="https://snapcraft.io/dayon">Snap Store</a> and via <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon"> ppa:regal/dayon</a>.<br>
         <p>
             <a href="https://snapcraft.io/dayon"><img src="https://snapcraft.io/static/images/badges/en/snap-store-white.svg" alt="Get it from the Snap Store" width="150"></a>
         <p>
@@ -38,15 +39,21 @@
             problems with user account control in these versions, it is recommended to start the assistant with
             administrator rights.
         <p>
-            <b>Debian & Ubuntu:</b> the <code>.snap</code> and <code>.deb</code> packages can be installed most conveniently
-            using the integrated software installer. Alternatively, you can install it by tipping the command
-            <code>snap install dayon</code> or <code>sudo dpkg -i dayon*.deb</code> in a terminal.
+            <b>Debian, Ubuntu & derivates:</b>So that you don't have to manually keep Dayon! up to date,
+            installing it via <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a> or
+            as a <a href="https://snapcraft.io/dayon">snap</a> is recommended.<br>
+            <b>PPA</b>: <code>sudo add-apt-repository ppa:regal/dayon</code>, <code>sudo apt-get update</code> and finally
+            <code>sudo apt-get install dayon</code>.<br>
+            <b>Snap</b>: <code>snap install dayon</code>.
+            Alternatively, you can install downloaded <code>.deb</code> packages by tipping the command
+            <code>sudo dpkg -i dayon*.deb</code> in a terminal.
         <p>
-        <b>Linux:</b> either install the independently updated <code>.snap</code> app via Snap Store or via <code>snap install dayon</code>
-            - or unpack the <code>.tgz</code> package via <code>tar xzvf</code>. Run the script <code>setup.sh</code>,
+        <b>Linux:</b> either install the independently updated snap app via <a href="https://snapcraft.io/dayon">Snap Store</a>
+            or via <code>snap install dayon</code><br>
+            Alternatively, unpack the downloaded <code>.tgz</code> package via <code>tar xzvf</code>. Run the script <code>setup.sh</code>,
             located in the target directory. The location of the installed JRE/JDK is going to be detected automatically.
             It is not bundled in the tgz. If it should for whatever reason fail to do so, then you can set the
-            <code>JAVA_HOME</code> in (<code>bin/dayon_run.sh</code>) manually. Note that the <code>.tgz</code> packages have
+            <code>JAVA_HOME</code> in (<code>dayon.sh</code>) manually. Note that the <code>.tgz</code> packages have
             only been tested on various Debian and Ubuntu versions.
         <p>
         <b>Mac OS/OS X:</b> extract the <code>.tgz</code>package to a location of your choice. For more convenience you may want to
