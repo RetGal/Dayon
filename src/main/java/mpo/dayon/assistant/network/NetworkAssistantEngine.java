@@ -2,7 +2,6 @@ package mpo.dayon.assistant.network;
 
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
-import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
@@ -134,7 +133,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     @java.lang.SuppressWarnings("squid:S2189")
-    private void receivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+    private void receivingLoop() throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
         out = null;
 
@@ -206,7 +205,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     @java.lang.SuppressWarnings("squid:S2189")
-    private void fileReceivingLoop() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
+    private void fileReceivingLoop() {
         fileIn = null;
         fileOut = null;
 

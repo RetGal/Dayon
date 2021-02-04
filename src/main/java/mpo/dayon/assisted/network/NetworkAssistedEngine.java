@@ -84,7 +84,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.configuration = configuration;
     }
 
-    @SuppressWarnings("java:S2095") // sockets MUST NOT be closed
+    @SuppressWarnings("java:S2095") // our sockets MUST NOT be closed
     public void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
