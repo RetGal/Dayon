@@ -87,7 +87,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
-        SSLSocket connection = initSocket();
+        SSLSocketFactory ssf = initSSLContext();
+        SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
         sender = new NetworkSender(out); // the active part (!)
         sender.start(1);
@@ -95,7 +96,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         in = initInputStream(connection);
         receiver.start();
 
-        SSLSocket fileConnection = initSocket();
+        SSLSocket fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         ObjectOutputStream fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
         fileSender = new NetworkSender(fileOut); // the active part (!)
         fileSender.start(1);
@@ -104,7 +105,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileReceiver.start();
     }
 
-    private SSLSocket initSocket() throws NoSuchAlgorithmException, IOException, KeyManagementException {
+    private SSLSocketFactory initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
         KeyStore keyStore;
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
@@ -118,8 +119,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
 
-        SSLSocketFactory ssf = sslContext.getSocketFactory();
-        return (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        return sslContext.getSocketFactory();
     }
 
     private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {

@@ -2,6 +2,7 @@ package mpo.dayon.assistant.network;
 
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
@@ -12,10 +13,7 @@ import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLServerSocketFactory;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
 import java.net.ServerSocket;
@@ -42,6 +40,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>();
 
     private NetworkAssistantConfiguration configuration;
+
+    private SSLServerSocketFactory ssf;
 
     private Thread receiver; // in
 
@@ -141,8 +141,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         try {
             fireOnStarting(port);
 
+            ssf = initSSLContext();
             Log.info(String.format("Dayon! server [port:%d]", port));
-            server = initServerSocket(port);
+            server = ssf.createServerSocket(port);
             Log.info("Accepting ...");
 
             do {
@@ -212,7 +213,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.info(String.format("Dayon! file server [port:%d]", port));
 
         try {
-            fileServer = initServerSocket(port);
+            fileServer = ssf.createServerSocket(port);
             fileConnection = fileServer.accept();
 
             fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
@@ -344,21 +345,21 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         cancelling.set(false);
     }
 
-    private ServerSocket initServerSocket(int port) throws KeyStoreException, IOException, NoSuchAlgorithmException, CertificateException, UnrecoverableKeyException, KeyManagementException {
-        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-        keyStore.load(NetworkAssistantEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
-
+    private SSLServerSocketFactory initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
+        KeyStore keyStore;
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
+            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore.load(NetworkAssistedEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
             kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-            SSLServerSocketFactory ssf = sslContext.getServerSocketFactory();
-            return ssf.createServerSocket(port);
-        } catch (KeyManagementException | UnrecoverableKeyException e) {
+        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
             Log.error("Fatal, can not init encryption", e);
-            throw e;
         }
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
+
+        return sslContext.getServerSocketFactory();
     }
 
     private static boolean isProd(Version version, int major, int minor) {
