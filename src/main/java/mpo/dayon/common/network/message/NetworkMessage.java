@@ -25,10 +25,6 @@ public abstract class NetworkMessage {
 	public static void unmarshallMagicNumber(ObjectInputStream in) throws IOException {
 		final int magicNumber = in.readByte();
 		if (magicNumber != NetworkMessage.MAGIC_NUMBER) {
-			if (magicNumber == 0) // possibly the v.0 HELLO message ...
-			{
-				throw new IOException("Protocol error (possibly using an old version of the assisted)!");
-			}
 			throw new IOException("Protocol error!");
 		}
 	}

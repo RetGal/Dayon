@@ -335,8 +335,14 @@ class AssistantFrame extends BaseFrame {
         validate();
         repaint();
 
-        JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
-                JOptionPane.ERROR_MESSAGE);
+        if (error.getMessage() != null) {
+            JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
+                    JOptionPane.ERROR_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", "!"), Babylon.translate("comm.error"),
+                    JOptionPane.ERROR_MESSAGE);
+        }
+
     }
 
     Dimension getUsableSize(int sourceWidth, int sourceHeight) {
