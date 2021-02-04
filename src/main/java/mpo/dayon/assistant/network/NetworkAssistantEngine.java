@@ -350,7 +350,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
         try {
             keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(NetworkAssistedEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
+            keyStore.load(NetworkAssistantEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
             kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
         } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
             Log.error("Fatal, can not init encryption", e);
