@@ -9,7 +9,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
-import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
 
 import javax.net.ssl.*;
@@ -18,14 +17,11 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
@@ -140,7 +136,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         try {
             fireOnStarting(port);
 
-            ssf = initSSLContext();
+            ssf = initSSLContext().getServerSocketFactory();
             Log.info(String.format("Dayon! server [port:%d]", port));
             server = ssf.createServerSocket(port);
             Log.info("Accepting ...");
@@ -342,23 +338,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         safeClose(fileIn, fileOut, fileConnection, fileServer);
 
         cancelling.set(false);
-    }
-
-    private SSLServerSocketFactory initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
-        KeyStore keyStore;
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        try {
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(NetworkAssistantEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
-            kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
-            Log.error("Fatal, can not init encryption", e);
-        }
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-
-        return sslContext.getServerSocketFactory();
     }
 
     private static boolean isProd(Version version, int major, int minor) {

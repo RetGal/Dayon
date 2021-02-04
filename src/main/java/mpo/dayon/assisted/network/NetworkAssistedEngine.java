@@ -12,7 +12,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
-import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,13 +20,10 @@ import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.util.List;
 
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 import static mpo.dayon.common.utils.SystemUtilities.getTempDir;
 
 public class NetworkAssistedEngine extends NetworkEngine
@@ -88,7 +84,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
 
-        SSLSocketFactory ssf = initSSLContext();
+        SSLSocketFactory ssf = initSSLContext().getSocketFactory();
         SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
         sender = new NetworkSender(out); // the active part (!)
@@ -104,23 +100,6 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileSender.ping();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
-    }
-
-    private SSLSocketFactory initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
-        KeyStore keyStore;
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        try {
-            keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(NetworkAssistedEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
-            kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
-            Log.error("Fatal, can not init encryption", e);
-        }
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-
-        return sslContext.getSocketFactory();
     }
 
     private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {
