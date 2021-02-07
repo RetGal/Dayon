@@ -48,23 +48,16 @@ public abstract class SystemUtilities {
     }
 
     public static File getOrCreateAppFile(String name) {
-        final File home = getOrCreateAppDir();
-        if (home == null) {
-            Log.warn("Could not create the application file (1) [" + name + "]!");
-            return null;
-        }
-
-        final File file = new File(home, name);
+        final File file = new File(getOrCreateAppDir(), name);
         if (file.exists() && file.isDirectory()) {
-            Log.warn("Could not create the application file (2) [" + name + "]!");
+            Log.warn("Could not create the application file [" + name + "]!");
             return null;
         }
         return file;
     }
 
     public static File getOrCreateTransferDir() {
-        final File appDir = getOrCreateAppDir();
-        final File transferDir = new File(appDir, ".transfer");
+        final File transferDir = new File(getOrCreateAppDir(), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else {
@@ -217,19 +210,12 @@ public abstract class SystemUtilities {
         try {
             int port = Integer.parseInt(portNumber);
             if (port < 1 || port > 65535) {
-                throw new NumberFormatException();
+                return false;
             }
         } catch (NumberFormatException ex) {
             return false;
         }
         return true;
-    }
-
-    public static String formatIPv6(String serverName) {
-        if (isValidIpV6(serverName)) {
-            return '[' + serverName + ']';
-        }
-        return serverName;
     }
 
     public static boolean isValidIpAddressOrHostName(String serverName) {
