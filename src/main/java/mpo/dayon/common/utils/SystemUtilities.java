@@ -240,6 +240,7 @@ public abstract class SystemUtilities {
         }
     }
 
+    @java.lang.SuppressWarnings("squid:S5998") // matcher input is 256 chars long
     private static boolean isValidHostname(String serverName) {
         return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
                 serverName.matches("^([a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$");
