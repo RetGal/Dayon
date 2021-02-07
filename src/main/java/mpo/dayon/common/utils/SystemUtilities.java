@@ -56,7 +56,7 @@ public abstract class SystemUtilities {
         return file;
     }
 
-    public static File getOrCreateTransferDir() {
+    private static File getOrCreateTransferDir() {
         final File transferDir = new File(getOrCreateAppDir(), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
