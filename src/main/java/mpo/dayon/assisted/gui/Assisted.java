@@ -73,9 +73,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		}
 		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
-		// accept own cert, avoid No name matching host found exception
-		HttpsURLConnection.setDefaultHostnameVerifier(new HostNameIgnorer());
-
 		// these should not block as they are called from the network incoming message thread (!)
 		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
 		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
@@ -154,7 +151,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");
-            } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress)) {
+            } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
             	return Babylon.translate("connection.settings.invalidIpAddress");
             }
 
@@ -162,12 +159,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
             if (portNumber.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyPortNumber");
             }
-            return SystemUtilities.isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
+            return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : Babylon.translate("connection.settings.invalidPortNumber");
         });
 
 		if (ok) {
-			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText(),
-					Integer.parseInt(assistantPortNumberTextField.getText()));
+			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText().trim(),
+					Integer.parseInt(assistantPortNumberTextField.getText().trim()));
 			if (!xconfiguration.equals(configuration)) {
 				configuration = xconfiguration;
 				configuration.persist();
@@ -269,14 +266,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 		} catch (IOException | UnsupportedFlavorException ex) {
 			Log.error("Clipboard error " + ex.getMessage());
 		}
-	}
-
-	private static class HostNameIgnorer implements HostnameVerifier {
-		@Override
-		public boolean verify(String hostname, SSLSession session) {
-			return session.isValid() && !hostname.isEmpty();
-		}
-
 	}
 
 	@Override
