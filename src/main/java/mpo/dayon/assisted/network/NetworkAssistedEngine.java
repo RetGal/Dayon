@@ -8,6 +8,8 @@ import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.Configurable;
+import mpo.dayon.common.error.FatalErrorHandler;
+import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
@@ -19,12 +21,16 @@ import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
+import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.security.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
-import static mpo.dayon.common.utils.SystemUtilities.getTempDir;
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistedEngine extends NetworkEngine
         implements Configurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
@@ -40,17 +46,29 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private final ClipboardOwner clipboardOwner;
 
-    private final Thread receiver; // in
+    private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
+
+    private Thread receiver; // in
 
     private NetworkSender sender; // out
 
+    private SSLSocket connection;
+
+    private ObjectOutputStream out;
+
     private ObjectInputStream in;
 
-    private final Thread fileReceiver; // file in
+    private Thread fileReceiver; // file in
 
     private NetworkSender fileSender; // file out
 
+    private SSLSocket fileConnection;
+
+    private ObjectOutputStream fileOut;
+
     private ObjectInputStream fileIn;
+
+    private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler, NetworkControlMessageHandler controlHandler, NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
@@ -60,6 +78,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.clipboardRequestHandler = clipboardRequestHandler;
         this.clipboardOwner = clipboardOwner;
 
+    }
+
+    private void runReceivers() {
         this.receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws Exception {
@@ -77,16 +98,44 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     @Override
     public void configure(@Nullable NetworkAssistedEngineConfiguration configuration) {
+        Log.info("New configuration (configuration)");
         this.configuration = configuration;
     }
 
+    public void addListener(NetworkAssistedEngineListener listener) {
+        listeners.add(listener);
+    }
+
+    public void connect() {
+        try {
+            start();
+            sendHello();
+            fireOnConnected(connection);
+        } catch (UnknownHostException e) {
+            fireOnHostNotFound(configuration);
+        } catch (SocketTimeoutException e) {
+            fireOnConnectionTimeout(configuration);
+        } catch (IOException e) {
+            closeConnections();
+            fireOnRefused(configuration);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            FatalErrorHandler.bye(e.getMessage(), e);
+        }
+    }
+
     @SuppressWarnings("java:S2095") // our sockets MUST NOT be closed
-    public void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
+        fireOnConnecting(configuration);
+
+        if (receiver == null) {
+            Log.info("Getting the receivers ready");
+            runReceivers();
+        }
 
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+        connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
         sender = new NetworkSender(out); // the active part (!)
         sender.start(1);
         sender.ping();
@@ -94,12 +143,22 @@ public class NetworkAssistedEngine extends NetworkEngine
         receiver.start();
 
         SSLSocket fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        ObjectOutputStream fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
+        fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
         fileSender = new NetworkSender(fileOut); // the active part (!)
         fileSender.start(1);
         fileSender.ping();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
+    }
+
+    /**
+     * Called from a GUI action => do not block the AWT thread (!)
+     */
+    public void cancel() {
+        Log.info("Cancelling the network assisted engine...");
+        cancelling.set(true);
+        closeConnections();
+        fireOnDisconnecting(connection);
     }
 
     private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {
@@ -112,51 +171,83 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void receivingLoop() throws IOException {
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
+        try {
+            //noinspection InfiniteLoopStatement
+            while (true) {
 
-            NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
-            NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-            Log.debug("Received " + type.name());
+                NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+                NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+                Log.debug("Received " + type.name());
 
-            switch (type) {
-                case CAPTURE_CONFIGURATION:
-                    final NetworkCaptureConfigurationMessage captureConfigurationMessage = NetworkCaptureConfigurationMessage.unmarshall(in);
-                    captureConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, captureConfigurationMessage);
-                    break;
+                switch (type) {
+                    case CAPTURE_CONFIGURATION:
+                        final NetworkCaptureConfigurationMessage captureConfigurationMessage = NetworkCaptureConfigurationMessage.unmarshall(in);
+                        captureConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, captureConfigurationMessage);
+                        break;
 
-                case COMPRESSOR_CONFIGURATION:
-                    final NetworkCompressorConfigurationMessage compressorConfigurationMessage = NetworkCompressorConfigurationMessage.unmarshall(in);
-                    compressorConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, compressorConfigurationMessage);
-                    break;
+                    case COMPRESSOR_CONFIGURATION:
+                        final NetworkCompressorConfigurationMessage compressorConfigurationMessage = NetworkCompressorConfigurationMessage.unmarshall(in);
+                        compressorConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, compressorConfigurationMessage);
+                        break;
 
-                case MOUSE_CONTROL:
-                    final NetworkMouseControlMessage mouseControlMessage = NetworkMouseControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(mouseControlMessage);
-                    break;
+                    case MOUSE_CONTROL:
+                        final NetworkMouseControlMessage mouseControlMessage = NetworkMouseControlMessage.unmarshall(in);
+                        controlHandler.handleMessage(mouseControlMessage);
+                        break;
 
-                case KEY_CONTROL:
-                    final NetworkKeyControlMessage keyControlMessage = NetworkKeyControlMessage.unmarshall(in);
-                    controlHandler.handleMessage(keyControlMessage);
-                    break;
+                    case KEY_CONTROL:
+                        final NetworkKeyControlMessage keyControlMessage = NetworkKeyControlMessage.unmarshall(in);
+                        controlHandler.handleMessage(keyControlMessage);
+                        break;
 
-                case CLIPBOARD_REQUEST:
-                    clipboardRequestHandler.handleClipboardRequest(this);
-                    break;
+                    case CLIPBOARD_REQUEST:
+                        clipboardRequestHandler.handleClipboardRequest(this);
+                        break;
 
-                case CLIPBOARD_TEXT:
-                    final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-                    setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
-                    sender.ping();
-                    break;
+                    case CLIPBOARD_TEXT:
+                        final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                        setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                        sender.ping();
+                        break;
 
-                case PING:
-                    break;
+                    case PING:
+                        break;
 
-                default:
-                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                    default:
+                        throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                }
             }
+        } catch (IOException ex) {
+            handleIOException(ex);
+        } finally {
+            closeConnections();
+            fireOnDisconnecting(connection);
         }
+    }
+
+    private void handleIOException(IOException ex) {
+        if (!cancelling.get()) {
+            Log.error("IO error (not cancelled)", ex);
+            fireOnIOError(ex);
+        } else {
+            Log.info("Stopped network receiver (cancelled)");
+        }
+    }
+
+    public void closeConnections() {
+        if (sender != null) {
+            sender.cancel();
+        }
+        receiver = safeInterrupt(receiver);
+        safeClose(in, out, connection);
+
+        if (fileSender != null) {
+            fileSender.cancel();
+        }
+        fileReceiver = safeInterrupt(fileReceiver);
+        safeClose(fileIn, fileOut, fileConnection);
+
+        cancelling.set(false);
     }
 
     private void fileReceivingLoop() throws IOException {
@@ -164,27 +255,32 @@ public class NetworkAssistedEngine extends NetworkEngine
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
         String tmpDir = getTempDir();
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            NetworkMessageType type;
-            if (filesHelper.isDone()) {
-                NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
-                type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
-                Log.debug("Received " + type.name());
-            } else {
-                type = NetworkMessageType.CLIPBOARD_FILES;
+        try {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                NetworkMessageType type;
+                if (filesHelper.isDone()) {
+                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+                    Log.debug("Received " + type.name());
+                } else {
+                    type = NetworkMessageType.CLIPBOARD_FILES;
+                }
+
+                if (type.equals(CLIPBOARD_FILES)) {
+                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+                            filesHelper, tmpDir), clipboardOwner);
+                    if (filesHelper.isDone()) {
+                        // let the assistant know that we're done
+                        sender.ping();
+                    }
+                } else if (!type.equals(PING)) {
+                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                }
             }
 
-            if (type.equals(CLIPBOARD_FILES)) {
-                filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                        filesHelper, tmpDir), clipboardOwner);
-                if (filesHelper.isDone()) {
-                    // let the assistant know that we're done
-                    sender.ping();
-                }
-            } else if (!type.equals(PING)) {
-                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
-            }
+        } catch (IOException ex) {
+            closeConnections();
         }
     }
 
@@ -231,4 +327,47 @@ public class NetworkAssistedEngine extends NetworkEngine
             fileSender.sendClipboardContentFiles(files, size, basePath);
         }
     }
+
+    private void fireOnConnecting(NetworkAssistedEngineConfiguration configuration) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onConnecting(configuration.getServerName(), configuration.getServerPort());
+        }
+    }
+
+    private void fireOnHostNotFound(NetworkAssistedEngineConfiguration configuration) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onHostNotFound(configuration.getServerName());
+        }
+    }
+
+    private void fireOnConnectionTimeout(NetworkAssistedEngineConfiguration configuration) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onConnectionTimeout(configuration.getServerName(), configuration.getServerPort());
+        }
+    }
+
+    private void fireOnRefused(NetworkAssistedEngineConfiguration configuration) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onRefused(configuration.getServerName(), configuration.getServerPort());
+        }
+    }
+
+    private void fireOnConnected(Socket connection) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onConnected(connection);
+        }
+    }
+
+    private void fireOnDisconnecting(Socket connection) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onDisconnecting(connection);
+        }
+    }
+
+    private void fireOnIOError(IOException ex) {
+        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
+            xListener.onIOError(ex);
+        }
+    }
+
 }

@@ -17,7 +17,7 @@ public class MouseEngine {
     public MouseEngine() {
         this.thread = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
+            protected void doRun() {
                 try {
                     MouseEngine.this.mainLoop();
                 } catch (InterruptedException e) {

@@ -192,7 +192,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void startFileReceiver() {
         fileReceiver = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
+            protected void doRun() {
                 NetworkAssistantEngine.this.fileReceivingLoop();
             }
         }, "FileReceiver");
