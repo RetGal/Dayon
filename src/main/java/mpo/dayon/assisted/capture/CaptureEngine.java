@@ -48,8 +48,12 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
         this.thread = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
-                CaptureEngine.this.mainLoop();
+            protected void doRun() {
+                try {
+                    CaptureEngine.this.mainLoop();
+                } catch (InterruptedException e) {
+                    thread.interrupt();
+                }
             }
         }, "CaptureEngine");
     }
@@ -71,8 +75,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         listeners.add(listener);
 
         // We're keeping locally a previous state so we must be sure to send at
-        // least
-        // once the previous capture state to the new listener.
+        // least once the previous capture state to the new listener.
 
         synchronized (reconfigurationLOCK) {
             this.reconfigured = true;
@@ -80,7 +83,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     }
 
     public void start() {
+        Log.debug("CaptureEngine start");
         thread.start();
+    }
+
+    public void stop() {
+        Log.debug("CaptureEngine stop");
+        thread.interrupt();
     }
 
     private void mainLoop() throws InterruptedException {
@@ -110,12 +119,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
                     resetPreviousCapture();
 
-                    // I'm using a flag to tag the capture as a RESET - it is
-                    // then easier
-                    // to handle the reset message until the assistant without
-                    // having to
-                    // change anything (e.g., merging mechanism in the
-                    // compressor engine).
+                    // I'm using a flag to tag the capture as a RESET - it is then easier
+                    // to handle the reset message until the assistant without having to
+                    // change anything (e.g., merging mechanism in the compressor engine).
                     reset = true;
 
                     Log.info("Capture engine has been reconfigured [tile:" + captureId + "] " + configuration);

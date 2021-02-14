@@ -4,8 +4,10 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.List;
 
+import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.event.Listeners;
+import mpo.dayon.common.log.Log;
 
 public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
@@ -16,7 +18,11 @@ public class MouseEngine {
         this.thread = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws Exception {
-                MouseEngine.this.mainLoop();
+                try {
+                    MouseEngine.this.mainLoop();
+                } catch (InterruptedException e) {
+                    thread.interrupt();
+                }
             }
         }, "MouseEngine");
     }
@@ -26,7 +32,13 @@ public class MouseEngine {
     }
 
     public void start() {
+        Log.debug("MouseEngine start");
         thread.start();
+    }
+
+    public void stop() {
+        Log.debug("MouseEngine stop");
+        thread.interrupt();
     }
 
     @java.lang.SuppressWarnings("squid:S2189")

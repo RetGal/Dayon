@@ -74,6 +74,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		// - we could not send the last compressed capture over the network as
 		// the
 		// network queue is full => too many capture (!)
+		Log.debug("CompressorEngine start");
 
 		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(queueSize));
 
@@ -127,7 +128,12 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		// debugging purpose (!)
 	}
 
-	private class MyExecutable extends Executable {
+    public void stop() {
+		Log.debug("CompressorEngine stop");
+		executor.shutdown();
+    }
+
+    private class MyExecutable extends Executable {
 		private final Capture capture;
 
 		MyExecutable(Capture capture) {
@@ -161,17 +167,14 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 				final MemByteBuffer compressed = compressor.compress(cache, capture);
 
-				// Possibly blocking - no problem as we'll replace (and merge)
-				// in our queue
-				// the oldest capture (if any) until we can compress it and send
-				// it to the next
+				// Possibly blocking - no problem as we'll replace (and merge) in our queue
+				// the oldest capture (if any) until we can compress it and send it to the next
 				// stage of processing.
 
 				if (!xreconfigured) {
 					fireOnCompressed(capture, compressor.getMethod(), null, compressed);
 				} else {
-					// we have to send the whole configuration => de-compressor
-					// synchronization (!)
+					// we have to send the whole configuration => de-compressor synchronization (!)
 					fireOnCompressed(capture, compressor.getMethod(), xconfiguration, compressed);
 				}
 			} finally {
