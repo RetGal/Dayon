@@ -22,3 +22,130 @@ License: GPL-3.0
  The full text of the GNU General Public License can be found in
  'https://www.gnu.org/licenses/gpl-3.0.txt'.
 
+Files: com.sun.grizzly.lzma/*/*/*.class (within the jar)
+Copyright: 2009-2015, Oracle and/or its affiliates
+License: GPL-2.0
+
+ This License applies to any program or other work which contains a notice
+ placed by the copyright holder saying it may be distributed under the terms
+ of this General Public License. The "Program", below, refers to any such
+ program or work, and a "work based on the Program" means either the Program
+ or any derivative work under copyright law: that is to say, a work containing
+ the Program or a portion of it, either verbatim or with modifications and/or
+ translated into another language. (Hereinafter, translation is included without
+ limitation in the term "modification".) Each licensee is addressed as "you".
+ .
+ Activities other than copying, distribution and modification are not covered by
+ this License; they are outside its scope. The act of running the Program is not
+ restricted, and the output from the Program is covered only if its contents
+ constitute a work based on the Program (independent of having been made by
+ running the Program). Whether that is true depends on what the Program does.
+ .
+ You may copy and distribute verbatim copies of the Program's source code
+ as you receive it, in any medium, provided that you conspicuously and
+ appropriately publish on each copy an appropriate copyright notice and
+ disclaimer of warranty; keep intact all the notices that refer to this
+ License and to the absence of any warranty; and give any other recipients
+ of the Program a copy of this License along with the Program.
+ .
+ The full text of the GNU General Public License can be found in
+ 'https://www.gnu.org/licenses/gpl-2.0.txt'.
+
+Files: org.itadaki.bzip2/*.class (within the jar)
+License: MIT
+
+ Copyright (c) <year> <copyright holders>
+ .
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+ .
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+ .
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+Files: Desktop icon
+Copyright: Crystal Project, Interaction Design Project (Everaldo)
+License: LGPL-2.0
+
+ This library is free software; you can redistribute it and/or
+ modify it under the terms of the GNU Library General Public
+ License as published by the Free Software Foundation; either
+ version 2 of the License, or (at your option) any later version.
+ .
+ This library is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ Library General Public License for more details.
+ .
+ The full text of the GNU Library General Public License can be found in
+ 'https://www.gnu.org/licenses/gpl-2.0.txt'.
+
+Files: Icons (images within the jar)
+Copyright: iconmonstr, Alexander Kahlkopf
+License: Proprietary
+
+ License Agreement
+ .
+ This license agreement (the “Agreement”) sets forth the terms by which Alexander Kahlkopf,
+ the owner of iconmonstr (the “Licensor”), shall provide access to certain Work (defined below)
+ to you (the “Licensee”, “you” or “your”). This Agreement regulates the free use of the icons,
+ fonts, images and other media content (collectively, the “Work”), which is made available via
+ the website iconmonstr.com (the “Website”). By downloading or copying a Work, you agree to be
+ bound by the following terms and conditions.
+ .
+ 1. Grant of Rights
+ The Works on the Website are copyrighted property of Licensor. Licensor hereby grants Licensee
+ a perpetual, non-exclusive, non-transferrable single-user license for the use of the Work based
+ on the conditions of this Agreement. You agree that the Work serves as part of the design and is
+ not the basis or main component of the product, template or application distributed by the Licensee.
+ Furthermore, you agree not to sell, redistribute, sublicense, share or otherwise transfer the Work
+ to other people or entities.
+ .
+ 2. Permitted Uses
+ Licensee may use the Work in non-commercial and commercial projects, services or products without attribution.
+ Licensee may use the Work for any illustrative purposes in any media, including, but not limited to, websites,
+ web banners, newsletters, PDF documents, blogs, emails, slideshows, TV and video presentations, smartphones,
+ splash screens, movies, magazine articles, books, advertisements, brochures, document illustrations, booklets,
+ billboards, business cards, packages, etc.
+ Licensee may use the Work in template or application without attribution; provided, however, that the Work
+ serves as part of the design and is not the basis or main component of the product, template or application
+ distributed by Licensee and is not used contrary to the terms and conditions of this Agreement.
+ Licensee may adapt or change the Work according to his or her requirements.
+ .
+ 3. Prohibited Uses
+ Licensee may not sell, redistribute, sublicense, share or otherwise transfer the Work to other people or entities.
+ Licensee may not use the Work as part of a logo, trademark or service mark.
+ Licensee may not use the Work for pornographic, infringing, defamatory, racist or religiously offensive illustrations.
+ .
+ 4. Additional Information on Rights
+ Certain Works, such as logos or brands, are subject to copyright and require the agreement of a third party
+ for the assignment of these rights. Licensee is responsible for providing all rights, agreements, and licenses
+ for the use of the Work.
+ .
+ 5. Termination
+ This Agreement shall automatically terminate without notice if you do not comply with the terms or conditions
+ specified in this Agreement. If you yourself wish to terminate this Agreement, destroy the Work, all copies and
+ derivatives of the Work and any materials related to it.
+ .
+ 6. Indemnification
+ You agree to indemnify Licensor for any and all claims, liability performances, damages, costs
+ (including attorney fees) or other liabilities that are caused by or related to a breach of this Agreement,
+ which are caused by the use of the Website or Work, by the non-compliance of the use restrictions of a Work or
+ which are caused by the claims of third parties regarding the use of a Work.
+ .
+ 7. Warranty and Liability
+ The Website and the Works are provided “as is.” Licensor does not accept any warranty or liability regarding a Work,
+ the Website, the accuracy of the information or rights described therein or the licenses, which are subject to
+ this Agreement. Licensor is not liable for damages, costs, losses or claims incurred by you, another person or
+ entity by the use of the Website or the Works.
