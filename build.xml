@@ -56,7 +56,7 @@
 		</copy>
 	</target>
 
-	<target name="build" description="Build the jar">
+	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipgroupfileset dir="${dir.binfile}/lib" includes="bzip2-0.9.1.jar,grizzly-lzma-1.9.65.jar"/>
 			<manifest>
