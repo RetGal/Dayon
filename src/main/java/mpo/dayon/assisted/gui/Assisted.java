@@ -6,12 +6,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.SocketException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
+import java.net.Socket;
 import java.util.List;
 
-import javax.net.ssl.*;
 import javax.swing.*;
 
 import mpo.dayon.assisted.capture.CaptureEngine;
@@ -24,6 +21,7 @@ import mpo.dayon.assisted.control.RobotNetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
+import mpo.dayon.assisted.network.NetworkAssistedEngineListener;
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.error.KeyboardErrorHandler;
@@ -32,127 +30,112 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
-import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 
 public class Assisted implements Subscriber, ClipboardOwner {
-	private AssistedFrame frame;
+    private AssistedFrame frame;
 
-	private NetworkAssistedEngineConfiguration configuration;
+    private NetworkAssistedEngineConfiguration configuration;
 
-	private CaptureEngine captureEngine;
+    private CaptureEngine captureEngine;
 
-	private CompressorEngine compressorEngine;
+    private CompressorEngine compressorEngine;
 
-	public void configure() {
-		final String lnf = SystemUtilities.getDefaultLookAndFeel();
-		try {
-			UIManager.setLookAndFeel(lnf);
-		} catch (Exception ex) {
-			Log.warn("Could not set the [" + lnf + "] L&F!", ex);
-		}
-	}
+    private NetworkAssistedEngine networkEngine;
 
-	public void start(String serverName, String portNumber) {
-		frame = new AssistedFrame();
+    private boolean coldStart = true;
 
-		FatalErrorHandler.attachFrame(frame);
-		KeyboardErrorHandler.attachFrame(frame);
+    public void configure() {
+        final String lnf = SystemUtilities.getDefaultLookAndFeel();
+        try {
+            UIManager.setLookAndFeel(lnf);
+        } catch (Exception ex) {
+            Log.warn("Could not set the [" + lnf + "] L&F!", ex);
+        }
+    }
 
-		frame.setVisible(true);
+    /**
+     * Returns true if we have a valid configuration
+     */
+    public boolean start(String serverName, String portNumber) {
+        Log.info("Assisted start");
 
-		// accept own cert, avoid PKIX path building exception
-		SSLContext sc = null;
-		try {
-			sc = SSLContext.getInstance("TLS");
-			sc.init(null, new TrustManager[] { new CustomTrustManager() }, null);
-		} catch (NoSuchAlgorithmException | KeyManagementException e) {
-			Log.error(e.getMessage());
-			System.exit(1);
-		}
-		HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        // these should not block as they are called from the network incoming message thread (!)
+        final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
+        final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
+        final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
 
-		// these should not block as they are called from the network incoming message thread (!)
-		final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
-		final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
-		final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
-		final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
+        final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
+        controlHandler.subscribe(this);
 
-		controlHandler.subscribe(this);
+        networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
+        networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
-		final NetworkAssistedEngine networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
+        if (frame == null) {
+            frame = new AssistedFrame(new AssistedStartAction(this), new AssistedStopAction(this));
+            FatalErrorHandler.attachFrame(frame);
+            KeyboardErrorHandler.attachFrame(frame);
+            frame.setVisible(true);
+        }
+        return configureConnection(serverName, portNumber);
+    }
 
-		boolean connected = false;
+    private boolean configureConnection(String serverName, String portNumber) {
+        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
+            coldStart = false;
+            configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
+            Log.info("Configuration from cli params" + configuration);
+            networkEngine.configure(configuration);
+            networkEngine.connect();
+            return true;
+        }
 
-		while (!connected) {
-			configureConnection(serverName, portNumber);
-			frame.onConnecting(configuration);
-			networkEngine.configure(configuration);
-			try {
-				networkEngine.start();
-				connected = true;
-			} catch (SocketException e) {
-				frame.onRefused(configuration);
-				serverName = null;
-				portNumber = null;
-			} catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
-				FatalErrorHandler.bye(e.getMessage(), e);
-			}
-		}
-		networkEngine.sendHello();
-		frame.onConnected();
-	}
+        final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
+        final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+        if (ip != null && port > -1) {
+            configuration = new NetworkAssistedEngineConfiguration(ip, port);
+        } else {
+            configuration = new NetworkAssistedEngineConfiguration();
+        }
 
-	private void configureConnection(String serverName, String portNumber) {
-		if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
-			configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
-		} else {
-			configuration = new NetworkAssistedEngineConfiguration();
+        // no network settings dialogue
+        if (coldStart) {
+            coldStart = false;
+            return true;
+        }
 
-			final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-			final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
+        coldStart = false;
+        return requestConnectionSettings();
+    }
 
-			if ((ip == null || port == -1) && !requestConnectionSettings()) {
-				Log.info("Bye!");
-				System.exit(0);
-			}
-		}
-		Log.info("Configuration " + configuration);
-	}
+    private boolean requestConnectionSettings() {
+        JPanel connectionSettingsDialog = new JPanel();
 
-	@Override
-	public void lostOwnership(Clipboard clipboard, Transferable transferable) {
-		Log.error("Lost clipboard ownership");
-	}
+        connectionSettingsDialog.setLayout(new GridLayout(3, 2, 10, 10));
 
-	private boolean requestConnectionSettings() {
-		JPanel connectionSettingsDialog = new JPanel();
+        final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
+        final JTextField assistantIpAddressTextField = new JTextField();
+        assistantIpAddressTextField.setText(configuration.getServerName());
+        assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
 
-		connectionSettingsDialog.setLayout(new GridLayout(3, 2, 10, 10));
+        connectionSettingsDialog.add(assistantIpAddress);
+        connectionSettingsDialog.add(assistantIpAddressTextField);
 
-		final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
-		final JTextField assistantIpAddressTextField = new JTextField();
-		assistantIpAddressTextField.setText(configuration.getServerName());
-		assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
+        final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
+        final JTextField assistantPortNumberTextField = new JTextField();
+        assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
+        assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
 
-		connectionSettingsDialog.add(assistantIpAddress);
-		connectionSettingsDialog.add(assistantIpAddressTextField);
+        connectionSettingsDialog.add(assistantPortNumberLbl);
+        connectionSettingsDialog.add(assistantPortNumberTextField);
 
-		final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
-		final JTextField assistantPortNumberTextField = new JTextField();
-		assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
-		assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
-
-		connectionSettingsDialog.add(assistantPortNumberLbl);
-		connectionSettingsDialog.add(assistantPortNumberTextField);
-
-		final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), connectionSettingsDialog, () -> {
+        final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), connectionSettingsDialog, () -> {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return Babylon.translate("connection.settings.emptyIpAddress");
             } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
-            	return Babylon.translate("connection.settings.invalidIpAddress");
+                return Babylon.translate("connection.settings.invalidIpAddress");
             }
 
             final String portNumber = assistantPortNumberTextField.getText();
@@ -162,115 +145,187 @@ public class Assisted implements Subscriber, ClipboardOwner {
             return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : Babylon.translate("connection.settings.invalidPortNumber");
         });
 
-		if (ok) {
-			final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText().trim(),
-					Integer.parseInt(assistantPortNumberTextField.getText().trim()));
-			if (!xconfiguration.equals(configuration)) {
-				configuration = xconfiguration;
-				configuration.persist();
-			}
-		}
-		return ok;
-	}
+        if (ok) {
+            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText().trim(),
+                    Integer.parseInt(assistantPortNumberTextField.getText().trim()));
+            if (!xconfiguration.equals(configuration)) {
+                configuration = xconfiguration;
+                configuration.persist();
+            }
+            Log.info("Configuration " + configuration);
+        } else {
+            // cancel
+            frame.onReady();
+        }
+        return ok;
+    }
 
-	private MouseAdapter clearTextOnDoubleClick(JTextField textField) {
-		return new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
-					textField.setText(null);
-				}
-			}
-		};
-	}
+    boolean start() {
+        // triggers network settings dialogue
+        return start(null, null);
+    }
 
-	/**
-	 * Should not block as called from the network incoming message thread (!)
-	 */
-	private void onCaptureEngineConfigured(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
-		final CaptureEngineConfiguration captureEngineConfiguration = configuration.getConfiguration();
+    void connect() {
+        frame.onConnecting(configuration.getServerName(), configuration.getServerPort());
+        networkEngine.configure(configuration);
+        networkEngine.connect();
+    }
 
-		Log.info("Capture configuration received " + captureEngineConfiguration);
+    void stop() {
+        Log.info("Assisted stop");
+        if (captureEngine != null) {
+            captureEngine.stop();
+            captureEngine = null;
+        }
+        if (compressorEngine != null) {
+            compressorEngine.stop();
+            compressorEngine = null;
+        }
+        if (networkEngine != null) {
+            networkEngine.cancel();
+            networkEngine = null;
+        }
+        frame.onDisconnecting();
+    }
 
-		if (captureEngine != null) {
-			captureEngine.reconfigure(captureEngineConfiguration);
-			return;
-		}
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+        Log.error("Lost clipboard ownership");
+    }
 
-		// First time we receive a configuration from the assistant (!)
+    private MouseAdapter clearTextOnDoubleClick(JTextField textField) {
+        return new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    textField.setText(null);
+                }
+            }
+        };
+    }
 
-		// Setup the mouse engine (no need before I guess)
-		final MouseEngine mouseEngine = new MouseEngine();
-		mouseEngine.addListener((NetworkAssistedEngine) engine);
-		mouseEngine.start();
+    /**
+     * Should not block as called from the network incoming message thread (!)
+     */
+    private void onCaptureEngineConfigured(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
+        final CaptureEngineConfiguration captureEngineConfiguration = configuration.getConfiguration();
 
-		captureEngine = new CaptureEngine(new RobotCaptureFactory());
-		captureEngine.configure(captureEngineConfiguration);
+        if (captureEngine != null) {
+            Log.info("Capture configuration received " + captureEngineConfiguration);
+            captureEngine.reconfigure(captureEngineConfiguration);
+            return;
+        }
 
-		if (compressorEngine != null) {
-			captureEngine.addListener(compressorEngine);
-		}
+        // Setup the mouse engine (no need before I guess)
+        final MouseEngine mouseEngine = new MouseEngine();
+        mouseEngine.addListener((NetworkAssistedEngine) engine);
+        mouseEngine.start();
 
-		captureEngine.start();
-	}
+        captureEngine = new CaptureEngine(new RobotCaptureFactory());
+        captureEngine.configure(captureEngineConfiguration);
+        if (compressorEngine != null) {
+            captureEngine.addListener(compressorEngine);
+        }
+        captureEngine.start();
+    }
 
-	/**
-	 * Should not block as called from the network incoming message thread (!)
-	 */
-	private void onCompressorEngineConfigured(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
-		final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
+    /**
+     * Should not block as called from the network incoming message thread (!)
+     */
+    private void onCompressorEngineConfigured(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
+        final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
 
-		Log.info("Compressor configuration received " + compressorEngineConfiguration);
+        if (compressorEngine != null) {
+            Log.info("Compressor configuration received " + compressorEngineConfiguration);
+            compressorEngine.reconfigure(compressorEngineConfiguration);
+            return;
+        }
 
-		if (compressorEngine != null) {
-			compressorEngine.reconfigure(compressorEngineConfiguration);
-			return;
-		}
+        compressorEngine = new CompressorEngine();
+        compressorEngine.configure(compressorEngineConfiguration);
+        compressorEngine.addListener((NetworkAssistedEngine) engine);
+        compressorEngine.start(1);
+        if (captureEngine != null) {
+            captureEngine.addListener(compressorEngine);
+        }
+    }
 
-		compressorEngine = new CompressorEngine();
-		compressorEngine.configure(compressorEngineConfiguration);
-		compressorEngine.addListener((NetworkAssistedEngine) engine);
-		compressorEngine.start(1);
+    /**
+     * Should not block as called from the network incoming message thread (!)
+     */
+    private void onClipboardRequested(NetworkAssistedEngine engine) {
 
-		if (captureEngine != null) {
-			captureEngine.addListener(compressorEngine);
-		}
-	}
+        Log.info("Clipboard transfer request received");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transferable = clipboard.getContents(this);
 
-	/**
-	 * Should not block as called from the network incoming message thread (!)
-	 */
-	private void onClipboardRequested(NetworkAssistedEngine engine) {
+        if (transferable == null) return;
 
-		Log.info("Clipboard transfer request received");
-		Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-		Transferable transferable = clipboard.getContents(this);
+        try {
+            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+                // noinspection unchecked
+                List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
+                if (!files.isEmpty()) {
+                    final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
+                    Log.debug("Clipboard contains files with size: " + totalFilesSize);
+                    engine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
+                }
+            } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                // noinspection unchecked
+                String text = (String) clipboard.getData(DataFlavor.stringFlavor);
+                Log.debug("Clipboard contains text: " + text);
+                engine.sendClipboardText(text, text.getBytes().length);
+            }
+        } catch (IOException | UnsupportedFlavorException ex) {
+            Log.error("Clipboard error " + ex.getMessage());
+        }
+    }
 
-		if (transferable == null) return;
+    @Override
+    public void digest(String message) {
+        KeyboardErrorHandler.warn(String.valueOf(message));
+    }
 
-		try {
-			if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-				// noinspection unchecked
-				List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
-				if (!files.isEmpty()) {
-					final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-					Log.debug("Clipboard contains files with size: " + totalFilesSize );
-					engine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
-				}
-			} else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-				// noinspection unchecked
-				String text = (String) clipboard.getData(DataFlavor.stringFlavor);
-				Log.debug("Clipboard contains text: " + text);
-				engine.sendClipboardText(text, text.getBytes().length);
-			}
-		} catch (IOException | UnsupportedFlavorException ex) {
-			Log.error("Clipboard error " + ex.getMessage());
-		}
-	}
+    public void onReady() {
+        frame.onReady();
+    }
 
-	@Override
-	public void digest(String message) {
-		KeyboardErrorHandler.warn(String.valueOf(message));
-	}
+    private class MyNetworkAssistedEngineListener implements NetworkAssistedEngineListener {
 
+        @Override
+        public void onConnecting(String serverName, int serverPort) {
+            frame.onConnecting(serverName, serverPort);
+        }
+
+        @Override
+        public void onHostNotFound(String serverName) {
+            frame.onHostNotFound(serverName);
+        }
+
+        @Override
+        public void onConnectionTimeout(String serverName, int serverPort) {
+            frame.onConnectionTimeout(serverName, serverPort);
+        }
+
+        @Override
+        public void onRefused(String serverName, int serverPort) {
+            frame.onRefused(serverName, serverPort);
+        }
+
+        @Override
+        public void onConnected(Socket connection) {
+            frame.onConnected();
+        }
+
+        @Override
+        public void onDisconnecting(Socket connection) {
+            frame.onDisconnecting();
+        }
+
+        @Override
+        public void onIOError(IOException error) {
+            stop();
+            frame.onDisconnecting();
+        }
+    }
 }
