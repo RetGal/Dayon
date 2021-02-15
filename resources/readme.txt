@@ -38,11 +38,12 @@ OSX/macOS:
 
 Project:
 
-  The project is available at the following HTTP addresses:
+  The project is available at the following URLs:
 
-	https://retgal.github.io/Dayon/
+	https://retgal.github.io/Dayon
 	https://github.com/retgal/dayon
-	https://sourceforge.net/projects/dayonactive/
-    https://snapcraft.io/dayon
+	https://sourceforge.net/projects/dayonactive
+	https://snapcraft.io/dayon
+	https://code.launchpad.net/~regal/+archive/ubuntu/dayon
 
 Enjoy!
