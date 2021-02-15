@@ -1,5 +1,7 @@
 package mpo.dayon.common.version;
 
+import mpo.dayon.common.log.Log;
+
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
@@ -65,7 +67,7 @@ public class Version {
                 conn.setInstanceFollowRedirects(false);
                 conn.setReadTimeout(10000);
             } catch (IOException e) {
-                // offline?
+                Log.error("IOException", e);
             } finally {
                 Objects.requireNonNull(conn).disconnect();
             }
@@ -73,6 +75,8 @@ public class Version {
             String latestLocation = conn.getHeaderField("Location");
             if (latestLocation != null) {
                 latestVersion = latestLocation.substring(latestLocation.lastIndexOf('v'));
+            } else {
+                Log.warn("Failed to read latest version");
             }
         }
         return latestVersion;
