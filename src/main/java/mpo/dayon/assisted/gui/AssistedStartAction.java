@@ -39,11 +39,12 @@ class AssistedStartAction extends AbstractAction {
         protected void done() {
             try {
                 if (!isCancelled()) {
-                    Log.info("NetWorker is done");
                     super.get();
+                    Log.info("NetWorker is done");
                 }
             } catch (InterruptedException | ExecutionException ie) {
                 Log.info("NetWorker was cancelled");
+                Thread.currentThread().interrupt();
             }
         }
     }
