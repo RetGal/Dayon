@@ -10,8 +10,8 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
 
 class AssistedFrame extends BaseFrame {
-	private Action startAction;
-	private Action stopAction;
+	private final transient Action startAction;
+	private final transient Action stopAction;
 
 	public AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction) {
 		super.setFrameType(FrameType.ASSISTED);

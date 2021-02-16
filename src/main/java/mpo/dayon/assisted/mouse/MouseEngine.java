@@ -4,7 +4,6 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.util.List;
 
-import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;

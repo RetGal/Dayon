@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutionException;
 
 class AssistedStartAction extends AbstractAction {
     private final transient Assisted assisted;
-    private transient NetWorker worker;
 
     public AssistedStartAction(Assisted assisted) {
         this.assisted = assisted;
@@ -24,13 +23,12 @@ class AssistedStartAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ev) {
         assisted.onReady();
-        worker = new NetWorker();
-        worker.execute();
+        new NetWorker().execute();
     }
 
-    class NetWorker extends SwingWorker {
+    class NetWorker extends SwingWorker<String, String> {
         @Override
-        protected Object doInBackground() {
+        protected String doInBackground() {
             if (assisted.start() && !isCancelled()) {
                 assisted.connect();
             }
