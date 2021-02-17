@@ -28,7 +28,7 @@ class RunnerTest {
     @Test
     void shouldNotSetUnsupportedLanguage() {
         // given
-        String lang = "tr";
+        String lang = "cn";
         String before = Locale.getDefault().toLanguageTag();
         if (before.equals(lang)) {
             lang = "ru";
