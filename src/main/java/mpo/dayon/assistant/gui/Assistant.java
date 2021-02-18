@@ -389,6 +389,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     Log.debug("Clipboard contains files with size: " + totalFilesSize );
                     // Ok as very few of that (!)
                     new Thread(() -> network.setRemoteClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "setRemoteClipboardFiles").start();
+                    frame.onClipboardSending();
                 }
             } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 // noinspection unchecked
@@ -396,8 +397,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 Log.debug("Clipboard contains text: " + text);
                 // Ok as very few of that (!)
                 new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
+                frame.onClipboardSending();
+            } else {
+                Log.debug("Clipboard contains no supported data");
             }
-            frame.onClipboardSending();
         } catch (IOException | UnsupportedFlavorException ex) {
             Log.error("Clipboard error " + ex.getMessage());
             frame.onClipboardSent();

@@ -269,16 +269,23 @@ public class Assisted implements Subscriber, ClipboardOwner {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: " + totalFilesSize);
                     engine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
+                    return;
                 }
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 // noinspection unchecked
                 String text = (String) clipboard.getData(DataFlavor.stringFlavor);
                 Log.debug("Clipboard contains text: " + text);
                 engine.sendClipboardText(text, text.getBytes().length);
+                return;
+            } else {
+                Log.debug("Clipboard contains no supported data");
             }
         } catch (IOException | UnsupportedFlavorException ex) {
             Log.error("Clipboard error " + ex.getMessage());
         }
+        String text = "\uD83E\uDD84";
+        Log.debug("Sending a unicorn: " + text);
+        engine.sendClipboardText(text, text.getBytes().length);
     }
 
     @Override
