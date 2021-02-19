@@ -20,7 +20,6 @@ public class AssistantConfiguration extends Configuration {
 	 */
 	public AssistantConfiguration() {
 		final Preferences prefs = getPreferences();
-		// Note: did not exist in version = 0 => no migration is required.
 		lookAndFeelClassName = prefs.getStringPreference(PREF_LOOK_AND_FEEL, SystemUtilities.getDefaultLookAndFeel());
 	}
 

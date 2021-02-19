@@ -3,8 +3,6 @@ package mpo.dayon.common.buffer;
 import java.io.OutputStream;
 import java.util.Arrays;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * A mixed between a byte buffer and a byte stream ...
  */
@@ -80,12 +78,12 @@ public class MemByteBuffer extends OutputStream {
 	}
 
 	@Override
-    public void write(@NotNull byte[] buffer) {
+    public void write(byte[] buffer) {
 		write(buffer, 0, buffer.length);
 	}
 
 	@Override
-    public void write(@NotNull byte[] buffer, int off, int len) {
+    public void write(byte[] buffer, int off, int len) {
 		if (len == 0) {
 			return;
 		}

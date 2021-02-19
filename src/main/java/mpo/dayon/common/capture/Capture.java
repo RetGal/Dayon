@@ -14,8 +14,6 @@ import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.log.Log;
 
@@ -169,7 +167,7 @@ public class Capture {
 	/**
 	 * Tile-rectangle buffer to screen-rectangle buffer.
 	 */
-	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(@Nullable byte[] prevBuffer, int prevWidth, int prevHeight) {
+	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final byte[] buffer = new byte[captureDimension.width * captureDimension.height];
 
 		if (prevBuffer != null && captureDimension.width == prevWidth && captureDimension.height == prevHeight) {

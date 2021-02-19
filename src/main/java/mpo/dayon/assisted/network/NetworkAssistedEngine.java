@@ -83,14 +83,14 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void runReceivers() {
         this.receiver = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
+            protected void doRun() {
                 NetworkAssistedEngine.this.receivingLoop();
             }
         }, "CommandReceiver");
 
         this.fileReceiver = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
+            protected void doRun() {
                 NetworkAssistedEngine.this.fileReceivingLoop();
             }
         }, "FileReceiver");
@@ -169,7 +169,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void receivingLoop() throws IOException {
+    private void receivingLoop() {
 
         try {
             //noinspection InfiniteLoopStatement
@@ -250,7 +250,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         cancelling.set(false);
     }
 
-    private void fileReceivingLoop() throws IOException {
+    private void fileReceivingLoop() {
 
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
         String tmpDir = getTempDir();

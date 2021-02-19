@@ -133,7 +133,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             ++captureCount;
             ++captureId;
 
-            @Nullable
             final byte[] pixels = captureFactory.captureGray(quantization);
 
             if (pixels == null) // testing purpose (!)
