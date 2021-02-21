@@ -67,8 +67,8 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        robot.keyRelease(KeyEvent.VK_SHIFT);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
+        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
+        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
     }
 
     @Test
@@ -100,7 +100,7 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        robot.keyRelease(KeyEvent.VK_SHIFT);
-        robot.keyRelease(KeyEvent.VK_CONTROL);
+        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
+        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
     }
 }

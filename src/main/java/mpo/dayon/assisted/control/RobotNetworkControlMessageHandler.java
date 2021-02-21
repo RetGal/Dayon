@@ -99,7 +99,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				if (key.getKeyCode() != Character.MIN_VALUE) {
 					Log.warn("retrying with keyCode " + key.getKeyCode());
 					typeUnicode(key.getKeyCode());
-					return;
 				}
 				shout(message.getKeyChar());
 			}
@@ -122,7 +121,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
 				if (key.getKeyCode() != Character.MIN_VALUE) {
 					releaseUnicode();
-					return;
 				}
 			}
 		}
