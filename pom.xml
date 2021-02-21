@@ -34,6 +34,7 @@
         <bzip2.version>0.9.1</bzip2.version>
         <grizzly-lzma.version>1.9.65</grizzly-lzma.version>
         <junit.jupiter.version>5.7.1</junit.jupiter.version>
+        <mockito.core.version>3.7.7</mockito.core.version>
     </properties>
 
     <dependencies>
@@ -57,6 +58,12 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockito.core.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

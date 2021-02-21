@@ -28,6 +28,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		}
 	}
 
+	public RobotNetworkControlMessageHandler(Robot robot) {
+		this.robot = robot;
+	}
+
 	@Override
 	public void subscribe(Subscriber subscriber) {
 		subscribers.add(subscriber);
@@ -71,39 +75,65 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	public void handleMessage(NetworkKeyControlMessage message) {
 		if (message.isPressed()) {
 			try {
-				robot.keyPress(message.getKeyCode());
+				pressKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
-				if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-					KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
-					// plan b
-					if (key.getKeyCode() != Character.MIN_VALUE) {
-						Log.warn("retrying with keyCode " + key.getKeyCode());
-						typeUnicode(key.getKeyCode());
-						return;
-					}
-					shout(message.getKeyChar());
-				}
+				Log.error("Error while handling key press", ex);
 			}
 		} else if (message.isReleased()) {
 			try {
-				robot.keyRelease(message.getKeyCode());
+				releaseKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
+				Log.error("Error while handling key release", ex);
 			}
 		}
 	}
 
-	/**
-	 * Q&D OS detection
-	 */
-	private void typeUnicode(int keyCode)
-	{
+	private void pressKey(NetworkKeyControlMessage message) {
+		if (message.getKeyCode() != KeyEvent.VK_UNDEFINED) {
+			robot.keyPress(message.getKeyCode());
+		} else {
+			Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
+			if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+				KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
+				// plan b
+				if (key.getKeyCode() != Character.MIN_VALUE) {
+					Log.warn("retrying with keyCode " + key.getKeyCode());
+					typeUnicode(key.getKeyCode());
+					return;
+				}
+				shout(message.getKeyChar());
+			}
+		}
+	}
+
+	private void typeUnicode(int keyCode) {
 		if (File.separatorChar == '/') {
 			typeLinuxUnicode(keyCode);
 			return;
 		}
 		typeWindowsUnicode(keyCode);
+	}
+
+	private void releaseKey(NetworkKeyControlMessage message) {
+		if (message.getKeyCode() != KeyEvent.VK_UNDEFINED) {
+			robot.keyRelease(message.getKeyCode());
+		} else {
+			if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
+				KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
+				if (key.getKeyCode() != Character.MIN_VALUE) {
+					releaseUnicode();
+					return;
+				}
+			}
+		}
+	}
+
+	private void releaseUnicode() {
+		if (File.separatorChar == '/') {
+			releaseLinuxUnicode();
+			return;
+		}
+		releaseWindowsUnicode();
 	}
 
 	/**
@@ -117,7 +147,11 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	        robot.keyPress(code);
 	        robot.keyRelease(code);
 	    }
-	    robot.keyRelease(KeyEvent.VK_ALT);
+	    // will be released when handling the subsequent message
+	}
+
+	private void releaseWindowsUnicode() {
+		robot.keyRelease(KeyEvent.VK_ALT);
 	}
 
 	/**
@@ -136,8 +170,11 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	        robot.keyPress(code);
 	        robot.keyRelease(code);
 		}
-	    robot.keyRelease(KeyEvent.VK_SHIFT);
-	    robot.keyRelease(KeyEvent.VK_CONTROL);
+		// will be released when handling the subsequent message
 	}
 
+	private void releaseLinuxUnicode() {
+		robot.keyRelease(KeyEvent.VK_SHIFT);
+		robot.keyRelease(KeyEvent.VK_CONTROL);
+	}
 }
