@@ -123,7 +123,7 @@
                             </osDependencies>
                             <javaServiceWrapper>false</javaServiceWrapper>
                             <generateVersion>false</generateVersion>
-                            <customCopyRightFile>${basedir}/debian/copyright</customCopyRightFile>
+                            <!-- <customCopyRightFile>${basedir}/debian/copyright</customCopyRightFile> -->
                             <fileSets>
                                 <fileSet>
                                     <source>${basedir}/dist/dayon.png</source>
