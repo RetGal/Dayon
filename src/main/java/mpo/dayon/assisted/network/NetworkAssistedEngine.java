@@ -21,7 +21,6 @@ import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.*;
@@ -52,32 +51,25 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private NetworkSender sender; // out
 
-    private SSLSocket connection;
-
-    private ObjectOutputStream out;
-
     private ObjectInputStream in;
 
     private Thread fileReceiver; // file in
 
     private NetworkSender fileSender; // file out
 
-    private SSLSocket fileConnection;
-
-    private ObjectOutputStream fileOut;
-
     private ObjectInputStream fileIn;
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
-                                 NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler, NetworkControlMessageHandler controlHandler, NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
+                                 NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
+                                 NetworkControlMessageHandler controlHandler,
+                                 NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
         this.captureConfigurationHandler = captureConfigurationHandler;
         this.compressorConfigurationHandler = compressorConfigurationHandler;
         this.controlHandler = controlHandler;
         this.clipboardRequestHandler = clipboardRequestHandler;
         this.clipboardOwner = clipboardOwner;
-
     }
 
     private void runReceivers() {
@@ -110,7 +102,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         try {
             start();
             sendHello();
-            fireOnConnected(connection);
+            fireOnConnected();
         } catch (UnknownHostException e) {
             fireOnHostNotFound(configuration);
         } catch (SocketTimeoutException e) {
@@ -134,8 +126,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
 
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
+        SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
         sender = new NetworkSender(out); // the active part (!)
         sender.start(1);
         sender.ping();
@@ -143,7 +135,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         receiver.start();
 
         SSLSocket fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
+        ObjectOutputStream fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
         fileSender = new NetworkSender(fileOut); // the active part (!)
         fileSender.start(1);
         fileSender.ping();
@@ -158,7 +150,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.info("Cancelling the network assisted engine...");
         cancelling.set(true);
         closeConnections();
-        fireOnDisconnecting(connection);
+        fireOnDisconnecting();
     }
 
     private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {
@@ -182,12 +174,12 @@ public class NetworkAssistedEngine extends NetworkEngine
                 switch (type) {
                     case CAPTURE_CONFIGURATION:
                         final NetworkCaptureConfigurationMessage captureConfigurationMessage = NetworkCaptureConfigurationMessage.unmarshall(in);
-                        captureConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, captureConfigurationMessage);
+                        captureConfigurationHandler.handleConfiguration(captureConfigurationMessage);
                         break;
 
                     case COMPRESSOR_CONFIGURATION:
                         final NetworkCompressorConfigurationMessage compressorConfigurationMessage = NetworkCompressorConfigurationMessage.unmarshall(in);
-                        compressorConfigurationHandler.handleConfiguration(NetworkAssistedEngine.this, compressorConfigurationMessage);
+                        compressorConfigurationHandler.handleConfiguration(compressorConfigurationMessage);
                         break;
 
                     case MOUSE_CONTROL:
@@ -201,7 +193,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                         break;
 
                     case CLIPBOARD_REQUEST:
-                        clipboardRequestHandler.handleClipboardRequest(this);
+                        clipboardRequestHandler.handleClipboardRequest();
                         break;
 
                     case CLIPBOARD_TEXT:
@@ -221,7 +213,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             handleIOException(ex);
         } finally {
             closeConnections();
-            fireOnDisconnecting(connection);
+            fireOnDisconnecting();
         }
     }
 
@@ -239,13 +231,13 @@ public class NetworkAssistedEngine extends NetworkEngine
             sender.cancel();
         }
         receiver = safeInterrupt(receiver);
-        safeClose(in, out, connection);
+        safeClose(in);
 
         if (fileSender != null) {
             fileSender.cancel();
         }
         fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn, fileOut, fileConnection);
+        safeClose(fileIn);
 
         cancelling.set(false);
     }
@@ -352,15 +344,15 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void fireOnConnected(Socket connection) {
+    private void fireOnConnected() {
         for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onConnected(connection);
+            xListener.onConnected();
         }
     }
 
-    private void fireOnDisconnecting(Socket connection) {
+    private void fireOnDisconnecting() {
         for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onDisconnecting(connection);
+            xListener.onDisconnecting();
         }
     }
 

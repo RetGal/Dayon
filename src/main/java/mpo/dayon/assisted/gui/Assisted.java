@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
-import java.net.Socket;
 import java.util.List;
 
 import javax.swing.*;
@@ -28,7 +27,6 @@ import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
@@ -69,7 +67,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
         final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
         controlHandler.subscribe(this);
 
-        networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler, controlHandler, clipboardRequestHandler, this);
+        networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler,
+                controlHandler, clipboardRequestHandler, this);
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
@@ -207,7 +206,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    private void onCaptureEngineConfigured(NetworkEngine engine, NetworkCaptureConfigurationMessage configuration) {
+    private void onCaptureEngineConfigured(NetworkCaptureConfigurationMessage configuration) {
         final CaptureEngineConfiguration captureEngineConfiguration = configuration.getConfiguration();
 
         if (captureEngine != null) {
@@ -218,7 +217,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         // Setup the mouse engine (no need before I guess)
         final MouseEngine mouseEngine = new MouseEngine();
-        mouseEngine.addListener((NetworkAssistedEngine) engine);
+        mouseEngine.addListener(networkEngine);
         mouseEngine.start();
 
         captureEngine = new CaptureEngine(new RobotCaptureFactory());
@@ -232,7 +231,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    private void onCompressorEngineConfigured(NetworkEngine engine, NetworkCompressorConfigurationMessage configuration) {
+    private void onCompressorEngineConfigured(NetworkCompressorConfigurationMessage configuration) {
         final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
 
         if (compressorEngine != null) {
@@ -243,7 +242,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         compressorEngine = new CompressorEngine();
         compressorEngine.configure(compressorEngineConfiguration);
-        compressorEngine.addListener((NetworkAssistedEngine) engine);
+        compressorEngine.addListener(networkEngine);
         compressorEngine.start(1);
         if (captureEngine != null) {
             captureEngine.addListener(compressorEngine);
@@ -253,7 +252,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    private void onClipboardRequested(NetworkAssistedEngine engine) {
+    private void onClipboardRequested() {
 
         Log.info("Clipboard transfer request received");
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -268,14 +267,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: " + totalFilesSize);
-                    engine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
+                    networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
                     return;
                 }
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 // noinspection unchecked
                 String text = (String) clipboard.getData(DataFlavor.stringFlavor);
                 Log.debug("Clipboard contains text: " + text);
-                engine.sendClipboardText(text, text.getBytes().length);
+                networkEngine.sendClipboardText(text, text.getBytes().length);
                 return;
             } else {
                 Log.debug("Clipboard contains no supported data");
@@ -285,7 +284,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
         String text = "\uD83E\uDD84";
         Log.debug("Sending a unicorn: " + text);
-        engine.sendClipboardText(text, text.getBytes().length);
+        networkEngine.sendClipboardText(text, text.getBytes().length);
     }
 
     @Override
@@ -320,12 +319,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         @Override
-        public void onConnected(Socket connection) {
+        public void onConnected() {
             frame.onConnected();
         }
 
         @Override
-        public void onDisconnecting(Socket connection) {
+        public void onDisconnecting() {
             frame.onDisconnecting();
         }
 

@@ -3,7 +3,6 @@ package mpo.dayon.assisted.network;
 import mpo.dayon.common.event.Listener;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public interface NetworkAssistedEngineListener extends Listener {
 
@@ -30,12 +29,12 @@ public interface NetworkAssistedEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onConnected(Socket connection);
+	void onConnected();
 
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onDisconnecting(Socket connection);
+	void onDisconnecting();
 
 	/**
 	 * Should not block as called from the network receiving thread (!)
