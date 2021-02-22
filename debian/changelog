@@ -1,3 +1,10 @@
+dayon (1.10.5) stable; urgency=medium
+
+  * Improved handling of special chars with varying keyboard layouts
+  * Turkish localisation
+
+ -- Reto Galante <reto@galante.ch>  Mon, 22 Feb 2021 12:00:00 +0000
+
 dayon (1.10.4) stable; urgency=medium
 
   * Ability to (re-)start and stop connections to the assistant
