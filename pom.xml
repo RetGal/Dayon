@@ -103,7 +103,8 @@
                     <plugin>
                         <groupId>com.aerse.maven</groupId>
                         <artifactId>deb-maven-plugin</artifactId>
-                        <version>1.13-SNAPSHOT</version>
+                        <!-- <version>1.13-SNAPSHOT</version> -->
+                        <version>1.12</version>
                         <executions>
                             <execution>
                                 <id>create-deb</id>
