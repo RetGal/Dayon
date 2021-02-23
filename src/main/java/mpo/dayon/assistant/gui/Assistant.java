@@ -164,9 +164,17 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         actions.setToggleFitScreenAction(createToggleFixScreenAction());
         actions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         actions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
-        actions.setStartAction(new AssistantStartAction(network));
-        actions.setStopAction(new AssistantStopAction(network));
+        actions.setStartAction(new AssistantStartAction(this));
+        actions.setStopAction(new AssistantStopAction(this));
         return actions;
+    }
+
+    void startNetwork() {
+        network.start();
+    }
+
+    void stopNetwork() {
+        network.cancel();
     }
 
     @Override
@@ -284,7 +292,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private JMenuItem getjMenuItemCopyIpAndPort(JButton button) {
         final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
-            final String url = button.getText() + " " + network.getPort();
+            final String url = button.getText() + " " + networkConfiguration.getPort();
 
             final StringSelection value = new StringSelection(url);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
@@ -820,5 +828,4 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             frame.onIOError(error);
         }
     }
-
 }

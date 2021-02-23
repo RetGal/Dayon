@@ -127,16 +127,14 @@ public class NetworkAssistedEngine extends NetworkEngine
 
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
         SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        ObjectOutputStream out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-        sender = new NetworkSender(out); // the active part (!)
+        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()))); // the active part (!)
         sender.start(1);
         sender.ping();
         in = initInputStream(connection);
         receiver.start();
 
         SSLSocket fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        ObjectOutputStream fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
-        fileSender = new NetworkSender(fileOut); // the active part (!)
+        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()))); // the active part (!)
         fileSender.start(1);
         fileSender.ping();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
@@ -361,5 +359,4 @@ public class NetworkAssistedEngine extends NetworkEngine
             xListener.onIOError(ex);
         }
     }
-
 }

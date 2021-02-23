@@ -48,8 +48,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private ObjectInputStream in;
 
-    private ObjectOutputStream out;
-
     private Thread fileReceiver; // file in
 
     private NetworkSender fileSender; // file out
@@ -59,8 +57,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private Socket fileConnection;
 
     private ObjectInputStream fileIn;
-
-    private ObjectOutputStream fileOut;
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
@@ -93,10 +89,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return LOCALHOST;
     }
 
-    public int getPort() {
-        return configuration.getPort();
-    }
-
     /**
      * Called from a GUI action => do not block the AWT thread (!)
      */
@@ -114,7 +106,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }, "NetworkReceiver");
 
         receiver.start();
-
     }
 
     /**
@@ -131,29 +122,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @java.lang.SuppressWarnings("squid:S2189")
     private void receivingLoop() throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
-        out = null;
 
         try {
-            fireOnStarting(port);
-
-            ssf = initSSLContext().getServerSocketFactory();
-            Log.info(String.format("Dayon! server [port:%d]", port));
-            server = ssf.createServerSocket(port);
-            Log.info("Accepting ...");
-
-            do {
-                safeClose(connection); // we might have refused the accepted connection (!)
-                connection = server.accept();
-                Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-            } while (!fireOnAccepted(connection) && !cancelling.get());
-
-            server.close();
-            server = null;
-
+            awaitConnections();
             startFileReceiver();
-
-            out = new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()));
-            sender = new NetworkSender(out);
+            sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream())));
             sender.start(8);
             sender.ping();
 
@@ -181,6 +154,24 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     }
 
+    private void awaitConnections() throws NoSuchAlgorithmException, IOException, KeyManagementException {
+        fireOnStarting(port);
+
+        ssf = initSSLContext().getServerSocketFactory();
+        Log.info(String.format("Dayon! server [port:%d]", port));
+        server = ssf.createServerSocket(port);
+        Log.info("Accepting ...");
+
+        do {
+            safeClose(connection); // we might have refused the accepted connection (!)
+            connection = server.accept();
+            Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
+        } while (!fireOnAccepted(connection) && !cancelling.get());
+
+        server.close();
+        server = null;
+    }
+
     private ObjectInputStream initInputStream() throws IOException {
         try {
             return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
@@ -203,16 +194,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @java.lang.SuppressWarnings("squid:S2189")
     private void fileReceivingLoop() {
         fileIn = null;
-        fileOut = null;
-
         Log.info(String.format("Dayon! file server [port:%d]", port));
 
         try {
             fileServer = ssf.createServerSocket(port);
             fileConnection = fileServer.accept();
 
-            fileOut = new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()));
-            fileSender = new NetworkSender(fileOut);
+            fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream())));
             fileSender.start(1);
             fileSender.ping();
 
@@ -246,7 +234,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         } catch (IOException ex) {
             closeConnections();
         }
-
     }
 
     private void handleIOException(IOException ex) {
@@ -329,13 +316,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             sender.cancel();
         }
         receiver = safeInterrupt(receiver);
-        safeClose(in, out, connection, server);
+        safeClose(in, connection, server);
 
         if (fileSender != null) {
             fileSender.cancel();
         }
         fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn, fileOut, fileConnection, fileServer);
+        safeClose(fileIn, fileConnection, fileServer);
 
         cancelling.set(false);
     }
