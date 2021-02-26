@@ -19,6 +19,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
+import static mpo.dayon.common.utils.SystemUtilities.getSnapBrowserCommand;
 import static mpo.dayon.common.utils.SystemUtilities.isSnapped;
 
 public abstract class BaseFrame extends JFrame {
@@ -262,7 +263,7 @@ public abstract class BaseFrame extends JFrame {
     private static void browse(URI uri) {
         try {
             if (isSnapped()) {
-                new ProcessBuilder("dayon.browser", uri.toString()).start();
+                new ProcessBuilder(getSnapBrowserCommand(), uri.toString()).start();
             } else if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {

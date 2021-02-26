@@ -206,6 +206,11 @@ public abstract class SystemUtilities {
         return System.getProperty("java.class.path").startsWith("/snap/");
     }
 
+    public static String getSnapBrowserCommand() {
+        String cp = System.getProperty("java.class.path");
+        return cp.substring(0, cp.indexOf("jar")) + "bin/dayon.browser";
+    }
+
     public static boolean isValidPortNumber(String portNumber) {
         try {
             int port = Integer.parseInt(portNumber);
