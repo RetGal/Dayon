@@ -273,7 +273,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         help.addActionListener(ev1 -> {
             if (isSnapped()) {
                 try {
-                    new ProcessBuilder("/bin/dayon.browser", getQuickStartURI(FrameType.ASSISTANT).toString()).start();
+                    new ProcessBuilder("../bin/dayon.browser", getQuickStartURI(FrameType.ASSISTANT).toString()).start();
                 } catch (URISyntaxException | IOException ex) {
                     Log.warn("Help Error!", ex);
                 }
