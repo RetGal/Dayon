@@ -262,7 +262,7 @@ public abstract class BaseFrame extends JFrame {
     private static void browse(URI uri) {
         try {
             if (isSnapped()) {
-                new ProcessBuilder("/snap/bin/dayon.browser", uri.toString()).start();
+                new ProcessBuilder("/bin/dayon.browser", uri.toString()).start();
             } else if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
