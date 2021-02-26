@@ -9,6 +9,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import javax.swing.*;
 
@@ -262,6 +263,8 @@ public abstract class BaseFrame extends JFrame {
     private static void browse(URI uri) {
         try {
             if (isSnapped()) {
+                String path = Paths.get("dayon.browser").toAbsolutePath().toString();
+                Log.warn(path);
                 new ProcessBuilder("./dayon.browser", uri.toString()).start();
             } else if (Desktop.isDesktopSupported()) {
                 final Desktop desktop = Desktop.getDesktop();
