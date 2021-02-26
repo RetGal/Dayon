@@ -103,8 +103,7 @@
                     <plugin>
                         <groupId>com.aerse.maven</groupId>
                         <artifactId>deb-maven-plugin</artifactId>
-                        <!-- <version>1.13-SNAPSHOT</version> -->
-                        <version>1.12</version>
+                        <version>1.16</version>
                         <executions>
                             <execution>
                                 <id>create-deb</id>
@@ -123,7 +122,7 @@
                             </osDependencies>
                             <javaServiceWrapper>false</javaServiceWrapper>
                             <generateVersion>false</generateVersion>
-                            <!-- <customCopyRightFile>${basedir}/debian/copyright</customCopyRightFile> -->
+                            <customCopyRightFile>${basedir}/debian/copyright</customCopyRightFile>
                             <fileSets>
                                 <fileSet>
                                     <source>${basedir}/dist/dayon.png</source>
