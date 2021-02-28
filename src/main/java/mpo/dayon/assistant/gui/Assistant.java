@@ -330,7 +330,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         };
 
         exit.putValue(Action.NAME, margin(Babylon.translate("connection.network")));
-        exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connection.network.settings"));
+        exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connection.settings"));
         exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
         return exit;
     }
