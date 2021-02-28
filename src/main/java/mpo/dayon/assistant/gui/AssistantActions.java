@@ -9,7 +9,6 @@ class AssistantActions {
     private Action captureEngineConfigurationAction;
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
-    private Action lookAndFeelAction;
     private Action toggleFitScreenAction;
     private Action toggleControlModeAction;
     private Action remoteClipboardRequestAction;
@@ -17,6 +16,7 @@ class AssistantActions {
     private Action startAction;
     private Action stopAction;
     private Action sendWindowsKeyAction;
+    private Action settingsAction;
 
     public Action getIpAddressAction() {
         return ipAddressAction;
@@ -56,14 +56,6 @@ class AssistantActions {
 
     public void setResetAction(Action resetAction) {
         this.resetAction = resetAction;
-    }
-
-    public Action getLookAndFeelAction() {
-        return lookAndFeelAction;
-    }
-
-    public void setLookAndFeelAction(Action lookAndFeelAction) {
-        this.lookAndFeelAction = lookAndFeelAction;
     }
 
     public Action getToggleFitScreenAction() {
@@ -120,5 +112,13 @@ class AssistantActions {
 
     public void setSendWindowsKeyAction(Action sendWindowsKeyAction) {
         this.sendWindowsKeyAction = sendWindowsKeyAction;
+    }
+
+    public Action getSettingsAction() {
+        return settingsAction;
+    }
+
+    public void setSettingsAction(Action settingsAction) {
+        this.settingsAction = settingsAction;
     }
 }

@@ -23,6 +23,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -75,6 +76,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private AssistantFrame frame;
 
+    private AssistantActions actions;
+
     private AssistantConfiguration configuration;
 
     private NetworkAssistantConfiguration networkConfiguration;
@@ -118,7 +121,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         decompressor.start(8);
 
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
-
         network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
 
         networkConfiguration = new NetworkAssistantConfiguration();
@@ -145,28 +147,27 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     public void start() {
-        frame = new AssistantFrame(createAssistantActions(), counters);
-
+        actions = createAssistantActions();
+        frame = new AssistantFrame(actions, counters);
         FatalErrorHandler.attachFrame(frame);
-
         frame.addListener(control);
         frame.setVisible(true);
     }
 
     private AssistantActions createAssistantActions() {
-        AssistantActions actions = new AssistantActions();
-        actions.setIpAddressAction(createWhatIsMyIpAction());
-        actions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction());
-        actions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
-        actions.setCompressionEngineConfigurationAction(createComressionConfigurationAction());
-        actions.setResetAction(createResetAction());
-        actions.setLookAndFeelAction(createSwitchLookAndFeelAction());
-        actions.setToggleFitScreenAction(createToggleFixScreenAction());
-        actions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
-        actions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
-        actions.setStartAction(new AssistantStartAction(this));
-        actions.setStopAction(new AssistantStopAction(this));
-        return actions;
+        AssistantActions assistantActions = new AssistantActions();
+        assistantActions.setIpAddressAction(createWhatIsMyIpAction());
+        assistantActions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction());
+        assistantActions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
+        assistantActions.setCompressionEngineConfigurationAction(createComressionConfigurationAction());
+        assistantActions.setResetAction(createResetAction());
+        assistantActions.setSettingsAction(createSettingsAction());
+        assistantActions.setToggleFitScreenAction(createToggleFixScreenAction());
+        assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
+        assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
+        assistantActions.setStartAction(new AssistantStartAction(this));
+        assistantActions.setStopAction(new AssistantStopAction(this));
+        return assistantActions;
     }
 
     void startNetwork() {
@@ -189,7 +190,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             @Override
             public void actionPerformed(ActionEvent ev) {
                 final JButton button = (JButton) ev.getSource();
-
                 final JPopupMenu choices = new JPopupMenu();
 
                 if (publicIp == null) {
@@ -197,14 +197,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     menuItem.addActionListener(ev16 -> {
                         final Cursor cursor = frame.getCursor();
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-
                         try {
                             final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
                             final InputStream in = url.openStream();
                             try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                 publicIp = lines.readLine();
                             }
-
                             safeClose(in);
                         } catch (IOException ex) {
                             Log.error("What is my IP error!", ex);
@@ -213,7 +211,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         } finally {
                             frame.setCursor(cursor);
                         }
-
                         if (publicIp != null) {
                             button.setText(publicIp);
                         }
@@ -233,11 +230,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 }
 
                 choices.addSeparator();
-
-                choices.add(getjMenuItemCopyIpAndPort(button));
-
+                choices.add(getJMenuItemCopyIpAndPort(button));
                 choices.addSeparator();
-                final JMenuItem help = getjMenuItemHelp();
+                final JMenuItem help = getJMenuItemHelp();
                 choices.add(help);
 
                 // -- display the menu
@@ -263,12 +258,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         ip.putValue("DISPLAY_NAME", network.getLocalhost()); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("ipAddress.msg1"));
-
         return ip;
     }
 
     @NotNull
-    private JMenuItem getjMenuItemHelp() {
+    private JMenuItem getJMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
             if (isSnapped()) {
@@ -288,12 +282,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         return help;
     }
 
-    @NotNull
-    private JMenuItem getjMenuItemCopyIpAndPort(JButton button) {
+    private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
         final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
             final String url = button.getText() + " " + networkConfiguration.getPort();
-
             final StringSelection value = new StringSelection(url);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             clipboard.setContents(value, value);
@@ -303,21 +295,15 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private Action createNetworkAssistantConfigurationAction() {
         final Action exit = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-
                 final JPanel pane = new JPanel();
-
                 pane.setLayout(new GridLayout(1, 2, 10, 10));
-
                 final JLabel portNumberLbl = new JLabel(Babylon.translate("connection.settings.portNumber"));
                 portNumberLbl.setToolTipText(Babylon.translate("connection.settings.portNumber.tooltip"));
-
                 final JTextField portNumberTextField = new JTextField();
                 portNumberTextField.setText(String.valueOf(networkConfiguration.getPort()));
-
                 pane.add(portNumberLbl);
                 pane.add(portNumberTextField);
 
@@ -343,16 +329,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        exit.putValue(Action.NAME, "networkAssistantConfiguration");
+        exit.putValue(Action.NAME, margin(Babylon.translate("connection.network")));
         exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connection.network.settings"));
         exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
-
         return exit;
     }
 
     private Action createRemoteClipboardRequestAction() {
         final Action getRemoteClipboard = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 sendRemoteClipboardRequest();
@@ -362,13 +346,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         getRemoteClipboard.putValue(Action.NAME, "getClipboard");
         getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.getRemote"));
         getRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.DOWN));
-
         return getRemoteClipboard;
     }
 
     private Action createRemoteClipboardUpdateAction() {
         final Action setRemoteClipboard = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 sendLocalClipboard();
@@ -378,7 +360,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         setRemoteClipboard.putValue(Action.NAME, "setClipboard");
         setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.setRemote"));
         setRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.UP));
-
         return setRemoteClipboard;
     }
 
@@ -433,26 +414,22 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 JFrame captureFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
                 final JPanel pane = new JPanel();
-
                 pane.setLayout(new GridLayout(2, 2, 10, 10));
 
                 final JLabel tickLbl = new JLabel(Babylon.translate("tick"));
                 tickLbl.setToolTipText(Babylon.translate("tick.tooltip"));
-
                 final JTextField tickTextField = new JTextField();
                 tickTextField.setText(String.valueOf(captureEngineConfiguration.getCaptureTick()));
-
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
                 final JLabel grayLevelsLbl = new JLabel(Babylon.translate("grays"));
                 final JComboBox<Gray8Bits> grayLevelsCb = new JComboBox<>(Gray8Bits.values());
                 grayLevelsCb.setSelectedItem(captureEngineConfiguration.getCaptureQuantization());
-
                 pane.add(grayLevelsLbl);
                 pane.add(grayLevelsCb);
 
-                final boolean ok = DialogFactory.showOkCancel(captureFrame, Babylon.translate("capture.settings"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(captureFrame, Babylon.translate("capture"), pane, () -> {
                     final String tick = tickTextField.getText();
                     if (tick.isEmpty()) {
                         return Babylon.translate("tick.msg1");
@@ -470,7 +447,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 if (ok) {
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
                             (Gray8Bits) grayLevelsCb.getSelectedItem());
-
                     if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
                         captureEngineConfiguration = newCaptureEngineConfiguration;
                         captureEngineConfiguration.persist();
@@ -481,10 +457,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        configure.putValue(Action.NAME, "configureCapture");
-        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.settings.msg"));
+        configure.putValue(Action.NAME, margin(Babylon.translate("capture")));
+        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
-
         return configure;
     }
 
@@ -510,28 +485,24 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 // testing only: final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
                 final JComboBox<CompressionMethod> methodCb = new JComboBox<>(Stream.of(CompressionMethod.values()).filter(e -> !e.equals(CompressionMethod.NONE)).toArray(CompressionMethod[]::new));
                 methodCb.setSelectedItem(compressorEngineConfiguration.getMethod());
-
                 pane.add(methodLbl);
                 pane.add(methodCb);
 
                 final JLabel useCacheLbl = new JLabel(Babylon.translate("compression.cache.usage"));
                 final JCheckBox useCacheCb = new JCheckBox();
                 useCacheCb.setSelected(compressorEngineConfiguration.useCache());
-
                 pane.add(useCacheLbl);
                 pane.add(useCacheCb);
 
                 final JLabel maxSizeLbl = new JLabel(Babylon.translate("compression.cache.max"));
                 maxSizeLbl.setToolTipText(Babylon.translate("compression.cache.max.tooltip"));
                 final JTextField maxSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCacheMaxSize()));
-
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
                 final JLabel purgeSizeLbl = new JLabel(Babylon.translate("compression.cache.purge"));
                 purgeSizeLbl.setToolTipText(Babylon.translate("compression.cache.purge.tooltip"));
                 final JTextField purgeSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCachePurgeSize()));
-
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
 
@@ -547,31 +518,26 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 purgeSizeLbl.setEnabled(useCacheCb.isSelected());
                 purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
-                final boolean ok = DialogFactory.showOkCancel(compressionFrame, Babylon.translate("compression.settings"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(compressionFrame, Babylon.translate("compression"), pane, () -> {
                     final String max = maxSizeTf.getText();
                     if (max.isEmpty()) {
                         return Babylon.translate("compression.cache.max.msg1");
                     }
-
                     final int maxValue;
-
                     try {
                         maxValue = Integer.parseInt(max);
                     } catch (NumberFormatException ex) {
                         return Babylon.translate("compression.cache.max.msg2");
                     }
-
                     if (maxValue <= 0) {
                         return Babylon.translate("compression.cache.max.msg3");
                     }
-
                     return validatePurgeValue(purgeSizeTf, maxValue);
                 });
 
                 if (ok) {
                     final CompressorEngineConfiguration newCompressorEngineConfiguration = new CompressorEngineConfiguration((CompressionMethod) methodCb.getSelectedItem(),
                             useCacheCb.isSelected(), Integer.parseInt(maxSizeTf.getText()), Integer.parseInt(purgeSizeTf.getText()));
-
                     if (!newCompressorEngineConfiguration.equals(compressorEngineConfiguration)) {
                         compressorEngineConfiguration = newCompressorEngineConfiguration;
                         compressorEngineConfiguration.persist();
@@ -582,10 +548,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        configure.putValue(Action.NAME, "configureCompression");
-        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("compression.settings.msg"));
+        configure.putValue(Action.NAME, margin(Babylon.translate("compression")));
+        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("compression.settings"));
         configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
-
         return configure;
     }
 
@@ -595,24 +560,18 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         if (purge.isEmpty()) {
             return Babylon.translate("compression.cache.purge.msg1");
         }
-
         final int purgeValue;
-
         try {
             purgeValue = Integer.parseInt(purge);
         } catch (NumberFormatException ex) {
             return Babylon.translate("compression.cache.purge.msg2");
         }
-
-
         if (purgeValue <= 0) {
             return Babylon.translate("compression.cache.purge.msg3");
         }
-
         if (purgeValue >= maxValue) {
             return Babylon.translate("compression.cache.purge.msg4");
         }
-
         return null;
     }
 
@@ -626,7 +585,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private Action createResetAction() {
         final Action configure = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 // Currently making a RESET within the assisted ...
@@ -637,13 +595,11 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         configure.putValue(Action.NAME, "resetCapture");
         configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.reset"));
         configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.RESET_CAPTURE));
-
         return configure;
     }
 
     private Action createToggleFixScreenAction() {
         final Action fitScreen = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 fitToScreenActivated.set(!fitToScreenActivated.get());
@@ -657,45 +613,50 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         fitScreen.putValue(Action.NAME, "toggleScreenMode");
         fitScreen.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("toggle.screen.mode"));
         fitScreen.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.FIT));
-
         return fitScreen;
     }
 
-    private Action createSwitchLookAndFeelAction() {
-        final Action exit = new AbstractAction() {
-
+    private Action createSettingsAction() {
+        final Action settings = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 final JPopupMenu choices = new JPopupMenu();
-
-                final LookAndFeel current = UIManager.getLookAndFeel();
-                choices.add(new JMenuItem(current.getName()));
-                choices.addSeparator();
-
-                for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-                    if (info.getName().equals(current.getName())) {
-                        continue;
-                    }
-
-                    final JMenuItem mi = new JMenuItem(info.getName());
-
-                    mi.addActionListener(ev1 -> switchLookAndFeel(info));
-                    choices.add(mi);
-                }
-
+                choices.add(actions.getCaptureEngineConfigurationAction());
+                choices.add(actions.getCompressionEngineConfigurationAction());
+                choices.add(actions.getNetworkConfigurationAction());
+                choices.add(createLookAndFeelSubmenu());
                 final Point where = MouseInfo.getPointerInfo().getLocation();
                 final JComponent caller = (JComponent) ev.getSource();
-
                 SwingUtilities.convertPointFromScreen(where, caller);
                 choices.show(caller, 0, caller.getHeight());
             }
         };
 
-        exit.putValue(Action.NAME, "lf");
-        exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("lnf.switch"));
-        exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.LNF));
+        settings.putValue(Action.NAME, Babylon.translate("settings"));
+        settings.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("settings"));
+        settings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SETTINGS));
+        return settings;
+    }
 
-        return exit;
+    private JMenu createLookAndFeelSubmenu() {
+        JMenu submenu = new JMenu(margin(Babylon.translate("lnf")));
+        submenu.setIcon(ImageUtilities.getOrCreateIcon(ImageNames.LNF));
+        submenu.setToolTipText(Babylon.translate("lnf.switch"));
+
+        final LookAndFeel current = UIManager.getLookAndFeel();
+        submenu.add(new JMenuItem(current.getName()));
+        submenu.addSeparator();
+
+        for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if (info.getName().equals(current.getName())) {
+                continue;
+            }
+            final JMenuItem mi = new JMenuItem(info.getName());
+            mi.addActionListener(ev1 -> switchLookAndFeel(info));
+            mi.setText(info.getName());
+            submenu.add(mi);
+        }
+        return submenu;
     }
 
     private void switchLookAndFeel(UIManager.LookAndFeelInfo lnf) {
@@ -703,13 +664,16 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             if (frame != null) {
                 UIManager.setLookAndFeel(lnf.getClassName());
                 SwingUtilities.updateComponentTreeUI(frame);
-
                 configuration = new AssistantConfiguration(lnf.getClassName());
                 configuration.persist();
             }
         } catch (Exception ex) {
             Log.warn("Could not set the L&F [" + lnf.getName() + "]", ex);
         }
+    }
+
+    private String margin(String in) {
+        return " " + in;
     }
 
     private class MyDeCompressorEngineListener implements DeCompressorEngineListener {
@@ -720,7 +684,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         @Override
         public void onDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
             final AbstractMap.SimpleEntry<BufferedImage, byte[]> image;
-
             // synchronized because of the reset onStarting()
             synchronized (prevBufferLOCK) {
                 image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
@@ -729,18 +692,15 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
             }
-
             if (fitToScreenActivated.get()) {
                 Dimension frameDimension = frame.getUsableSize(prevWidth, prevHeight);
                 frame.onCaptureUpdated(scaleImage(image.getKey(), frameDimension.width, frameDimension.height));
             } else {
                 frame.onCaptureUpdated(image.getKey());
             }
-
             receivedTileCounter.add(capture.getDirtyTileCount(), cacheHits);
             skippedTileCounter.add(capture.getSkipped());
             mergedTileCounter.add(capture.getMerged());
-
             captureCompressionCounter.add(capture.getDirtyTileCount(), compressionRatio);
         }
 
@@ -765,7 +725,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         @Override
         public void onStarting(int port) {
             frame.onHttpStarting(port);
-
             synchronized (prevBufferLOCK) {
                 prevBuffer = null;
                 prevWidth = -1;
