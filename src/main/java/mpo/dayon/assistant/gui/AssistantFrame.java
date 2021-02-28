@@ -50,25 +50,19 @@ class AssistantFrame extends BaseFrame {
 
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         super.setFrameType(FrameType.ASSISTANT);
-
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
-        
         this.actions = actions;
         this.actions.setSendWindowsKeyAction(createSendWindowsKeyAction());
         this.actions.setToggleControlModeAction(createToggleControlMode());
-
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
-
         assistantPanel = new AssistantPanel();
         assistantPanel.setFocusable(false);
         assistantPanelWrapper = new JScrollPane(assistantPanel);
-
         addMouseListeners();
 
         // -------------------------------------------------------------------------------------------------------------
-        // Not really needed for the time being - allows for seeing
-        // the TAB with a regular KEY listener ...
+        // Not really needed for the time being - allows for seeing the TAB with a regular KEY listener ...
         setFocusTraversalKeysEnabled(false);
 
         addKeyListeners();
@@ -149,21 +143,17 @@ class AssistantFrame extends BaseFrame {
 
     private ToolBar createToolBar() {
         final ToolBar toolbar = new ToolBar();
-
         toolbar.addAction(actions.getStartAction());
         toolbar.addAction(actions.getStopAction());
         toolbar.addSeparator();
-        toolbar.addAction(actions.getNetworkConfigurationAction());
-        toolbar.addAction(actions.getCaptureEngineConfigurationAction());
-        toolbar.addAction(actions.getCompressionEngineConfigurationAction());
-        toolbar.addAction(actions.getLookAndFeelAction());
-        toolbar.addToggleAction(actions.getToggleFitScreenAction());
-        toolbar.addSeparator();
-        toolbar.addAction(actions.getResetAction());
         toolbar.addToggleAction(actions.getToggleControlModeAction());
         toolbar.addAction(actions.getRemoteClipboardRequestAction());
         toolbar.addAction(actions.getRemoteClipboardSetAction());
         toolbar.addToggleAction(actions.getSendWindowsKeyAction());
+        toolbar.addToggleAction(actions.getToggleFitScreenAction());
+        toolbar.addAction(actions.getResetAction());
+        toolbar.addSeparator();
+        toolbar.addAction(actions.getSettingsAction());
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
         toolbar.addAction(createShowHelpAction());
@@ -171,24 +161,20 @@ class AssistantFrame extends BaseFrame {
         toolbar.addAction(actions.getIpAddressAction());
         toolbar.addSeparator();
         toolbar.addAction(createExitAction());
-
         return toolbar;
     }
 
     private StatusBar createStatusBar(Set<Counter<?>> counters) {
         final StatusBar statusBar = new StatusBar();
-
         for (Counter<?> counter : counters) {
             statusBar.addSeparator();
             statusBar.addCounter(counter, counter.getWidth());
         }
-
         statusBar.addSeparator();
         statusBar.addRamInfo();
         statusBar.addSeparator();
         statusBar.addConnectionDuration();
         statusBar.add(Box.createHorizontalStrut(10));
-
         return statusBar;
     }
 
@@ -201,11 +187,9 @@ class AssistantFrame extends BaseFrame {
                 actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
             }
         };
-
         remoteControl.putValue(Action.NAME, "toggleControlMode");
         remoteControl.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("control.mode"));
         remoteControl.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.CONTROL));
-
         return remoteControl;
     }
 
@@ -221,29 +205,22 @@ class AssistantFrame extends BaseFrame {
                 windowsKeyActivated.set(!windowsKeyActivated.get());
             }
         };
-
         sendWindowsKey.putValue(Action.NAME, "sendWindowsKey");
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.WIN));
-
         return sendWindowsKey;
     }
 
     void onReady() {
         removeCenter();
-
         validate();
         repaint();
-
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
-
         actions.getNetworkConfigurationAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
-        actions.getLookAndFeelAction().setEnabled(true);
         actions.getResetAction().setEnabled(false);
-
         disableControls();
         statusBar.setMessage(Babylon.translate("ready"));
     }
@@ -251,13 +228,10 @@ class AssistantFrame extends BaseFrame {
     void onHttpStarting(int port) {
         actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(true);
-
         actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
-
-        final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
-
         center = new JPanel() {
+            final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -267,7 +241,6 @@ class AssistantFrame extends BaseFrame {
             }
         };
         add(center, BorderLayout.CENTER);
-
         statusBar.setMessage(Babylon.translate("listening", port));
     }
 
@@ -277,21 +250,16 @@ class AssistantFrame extends BaseFrame {
                 ImageUtilities.getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
             return false;
         }
-
         removeCenter();
-
         statusBar.setMessage(Babylon.translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
-
         actions.getResetAction().setEnabled(true);
         actions.getToggleControlModeAction().setEnabled(true);
         actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
         enableTransferControls();
-
         validate();
         repaint();
-
         return true;
     }
 
@@ -329,12 +297,10 @@ class AssistantFrame extends BaseFrame {
         actions.getStopAction().setEnabled(false);
         actions.getResetAction().setEnabled(false);
         disableControls();
-
         stopSessionTimer();
         removeCenter();
         validate();
         repaint();
-
         if (error.getMessage() != null) {
             JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
                     JOptionPane.ERROR_MESSAGE);
@@ -342,7 +308,6 @@ class AssistantFrame extends BaseFrame {
             JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", "!"), Babylon.translate("comm.error"),
                     JOptionPane.ERROR_MESSAGE);
         }
-
     }
 
     Dimension getUsableSize(int sourceWidth, int sourceHeight) {
@@ -453,5 +418,4 @@ class AssistantFrame extends BaseFrame {
             xListener.onKeyReleased(keyCode, keyChar);
         }
     }
-
 }
