@@ -307,7 +307,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 pane.add(portNumberLbl);
                 pane.add(portNumberTextField);
 
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, Babylon.translate("connection.network.settings"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, Babylon.translate("connection.network"), pane, () -> {
                     final String portNumber = portNumberTextField.getText();
                     if (portNumber.isEmpty()) {
                         return Babylon.translate("connection.settings.emptyPortNumber");
