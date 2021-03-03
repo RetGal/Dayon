@@ -7,8 +7,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.assisted.capture.CaptureEngineListener;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;
@@ -182,7 +180,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			}
 		}
 
-		private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
+		private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
 									  MemByteBuffer compressed) {
 			for (final CompressorEngineListener xListener : listeners.getListeners()) {
 				xListener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed);

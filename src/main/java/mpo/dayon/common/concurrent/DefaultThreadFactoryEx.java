@@ -3,8 +3,6 @@ package mpo.dayon.common.concurrent;
 import java.security.SecureRandom;
 import java.util.concurrent.ThreadFactory;
 
-import org.jetbrains.annotations.NotNull;
-
 public class DefaultThreadFactoryEx implements ThreadFactory {
 	private final int threadNumber = new SecureRandom().nextInt(99);
 
@@ -15,7 +13,7 @@ public class DefaultThreadFactoryEx implements ThreadFactory {
 	}
 
 	@Override
-    public Thread newThread(@NotNull Runnable runnable) {
+    public Thread newThread(Runnable runnable) {
 		final Thread thread = new Thread(runnable, namePrefix + threadNumber);
 
 		if (thread.isDaemon()) {

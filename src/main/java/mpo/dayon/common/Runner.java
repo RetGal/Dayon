@@ -2,7 +2,6 @@ package mpo.dayon.common;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -20,7 +19,6 @@ public interface Runner {
         Log.info("============================================================================================");
     }
 
-    @NotNull
     static Map<String, String> extractProgramArgs(String[] args) {
         return Arrays.stream(args)
                 .map(arg -> arg

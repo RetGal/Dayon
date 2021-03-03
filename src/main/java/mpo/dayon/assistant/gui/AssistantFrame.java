@@ -7,7 +7,6 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.version.Version;
-import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -37,7 +36,6 @@ class AssistantFrame extends BaseFrame {
 
     private Timer sessionTimer;
 
-    @Nullable
     private JComponent center;
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);

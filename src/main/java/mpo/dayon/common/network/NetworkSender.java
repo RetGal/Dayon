@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import mpo.dayon.common.network.message.*;
-import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
@@ -70,7 +69,7 @@ public class NetworkSender {
      * <p/>
      * Assisted 2 assistant.
      */
-    public void sendCapture(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
+    public void sendCapture(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
                             MemByteBuffer compressed) {
         send(true, new NetworkCaptureMessage(capture.getId(), compressionMethod, compressionConfiguration, compressed));
     }

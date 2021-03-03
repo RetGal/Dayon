@@ -53,8 +53,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -261,7 +259,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         return ip;
     }
 
-    @NotNull
     private JMenuItem getJMenuItemHelp() {
         final JMenuItem help = new JMenuItem(Babylon.translate("help"));
         help.addActionListener(ev1 -> {
@@ -554,7 +551,6 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         return configure;
     }
 
-    @Nullable
     private String validatePurgeValue(JTextField purgeSizeTf, int maxValue) {
         final String purge = purgeSizeTf.getText();
         if (purge.isEmpty()) {

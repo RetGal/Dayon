@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.log.Log;
 
 public abstract class Executable extends RunnableEx {
@@ -14,7 +12,6 @@ public abstract class Executable extends RunnableEx {
 	/**
 	 * Limiting access to an unbounded queue (!)
 	 */
-	@Nullable
 	private final Semaphore semaphore;
 
 	protected Executable(ExecutorService executor) {
@@ -22,7 +19,7 @@ public abstract class Executable extends RunnableEx {
 		this.semaphore = null;
 	}
 
-	protected Executable(ExecutorService executor, @Nullable Semaphore semaphore) {
+	protected Executable(ExecutorService executor, Semaphore semaphore) {
 		this.executor = executor;
 		this.semaphore = semaphore;
 	}

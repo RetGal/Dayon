@@ -9,8 +9,6 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.log.LogAppender;
 import mpo.dayon.common.log.LogLevel;
 import mpo.dayon.common.log.console.ConsoleAppender;
@@ -37,7 +35,7 @@ public class FileAppender extends LogAppender {
 	}
 
 	@Override
-    public synchronized void append(LogLevel level, @Nullable String message, @Nullable Throwable error) {
+    public synchronized void append(LogLevel level, String message, Throwable error) {
 		try {
 			final String info = format(level, message);
 

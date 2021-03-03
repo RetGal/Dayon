@@ -15,7 +15,6 @@ import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import org.jetbrains.annotations.Nullable;
 
 import javax.net.ssl.*;
 import java.awt.*;
@@ -89,7 +88,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     @Override
-    public void configure(@Nullable NetworkAssistedEngineConfiguration configuration) {
+    public void configure(NetworkAssistedEngineConfiguration configuration) {
         Log.info("New configuration (configuration)");
         this.configuration = configuration;
     }
@@ -291,7 +290,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      * capture.
      */
     @Override
-    public void onCompressed(Capture capture, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
+    public void onCompressed(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
                              MemByteBuffer compressed) {
         if (sender != null) {
             sender.sendCapture(capture, compressionMethod, compressionConfiguration, compressed);

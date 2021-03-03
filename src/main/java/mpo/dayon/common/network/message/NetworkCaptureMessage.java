@@ -2,8 +2,6 @@ package mpo.dayon.common.network.message;
 
 import java.io.*;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.squeeze.CompressionMethod;
@@ -14,12 +12,11 @@ public class NetworkCaptureMessage extends NetworkMessage {
 
 	private final CompressionMethod compressionMethod;
 
-	@Nullable
 	private final CompressorEngineConfiguration compressionConfiguration;
 
 	private final MemByteBuffer payload;
 
-	public NetworkCaptureMessage(int id, CompressionMethod compressionMethod, @Nullable CompressorEngineConfiguration compressionConfiguration,
+	public NetworkCaptureMessage(int id, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
 			MemByteBuffer payload) {
 		this.id = id;
 		this.compressionMethod = compressionMethod;
@@ -40,7 +37,6 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		return compressionMethod;
 	}
 
-	@Nullable
 	public CompressorEngineConfiguration getCompressionConfiguration() {
 		return compressionConfiguration;
 	}
@@ -83,7 +79,6 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		final int id = in.readInt();
 		final CompressionMethod compressionMethod = unmarshallEnum(in, CompressionMethod.class);
 
-		@Nullable
 		final CompressorEngineConfiguration compressionConfiguration;
 
 		if (in.readByte() == 1) {

@@ -6,8 +6,6 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import org.jetbrains.annotations.PropertyKey;
-
 import mpo.dayon.common.log.Log;
 
 public abstract class Babylon {
@@ -16,7 +14,7 @@ public abstract class Babylon {
     private Babylon() {
     }
 
-    public static synchronized String translate(@PropertyKey(resourceBundle = BUNDLE) String tag, Object... arguments) {
+    public static synchronized String translate(String tag, Object... arguments) {
         final Locale locale = Locale.getDefault();
 
         final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE, locale);

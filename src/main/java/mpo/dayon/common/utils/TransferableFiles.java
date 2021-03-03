@@ -1,7 +1,6 @@
 package mpo.dayon.common.utils;
 
 import mpo.dayon.common.log.Log;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -33,7 +32,6 @@ public class TransferableFiles implements Transferable {
         this.files = files;
     }
 
-    @NotNull
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         Log.debug("getTransferData " + flavor.toString());
@@ -49,14 +47,12 @@ public class TransferableFiles implements Transferable {
         throw new UnsupportedFlavorException(flavor);
     }
 
-    @NotNull
     private Object toUriListFlavor() {
         final StringBuilder sb = new StringBuilder("x-special/nautilus-clipboard\ncopy\n");
         files.forEach(file -> sb.append(file.toURI()).append("\n"));
         return sb.toString().replace("file:/", "file:///");
     }
-
-    @NotNull
+    
     private Object toGnomeCopiedFilesFlavor() {
         final StringBuilder sb = new StringBuilder("copy\n");
         files.forEach(file -> sb.append(file.toURI()).append("\n"));

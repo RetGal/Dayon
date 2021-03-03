@@ -3,13 +3,10 @@ package mpo.dayon.common.error;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
 public abstract class FatalErrorHandler {
-    @Nullable
     private static JFrame frame;
 
     private FatalErrorHandler() {

@@ -8,8 +8,6 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
@@ -100,7 +98,6 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 			try {
 				final Compressor compressor = Compressor.get(message.getCompressionMethod());
 
-				@Nullable
 				final CompressorEngineConfiguration configuration = message.getCompressionConfiguration();
 				if (configuration != null) {
 					cache = configuration.useCache() ? new RegularTileCache(configuration.getCacheMaxSize(), configuration.getCachePurgeSize())

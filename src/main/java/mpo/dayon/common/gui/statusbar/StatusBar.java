@@ -9,7 +9,6 @@ import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
 import mpo.dayon.common.babylon.Babylon;
-import org.jetbrains.annotations.Nullable;
 
 import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.monitoring.counter.Counter;
@@ -47,7 +46,7 @@ public class StatusBar extends JPanel {
 		this.message.setText(null);
 	}
 
-	public void setMessage(@Nullable String message) {
+	public void setMessage(String message) {
 		this.message.setText(message);
 	}
 

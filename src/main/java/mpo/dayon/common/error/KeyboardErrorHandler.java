@@ -10,13 +10,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
 
 public abstract class KeyboardErrorHandler {
-    @Nullable
     private static JFrame frame;
 
     private KeyboardErrorHandler() {

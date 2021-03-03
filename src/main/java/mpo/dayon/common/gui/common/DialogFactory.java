@@ -24,8 +24,6 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import org.jetbrains.annotations.Nullable;
-
 import mpo.dayon.common.babylon.Babylon;
 
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
@@ -36,7 +34,6 @@ public abstract class DialogFactory {
 		 * @return {@code null} if the validation is fine; otherwise an error
 		 *         message.
 		 */
-		@Nullable
 		String validate();
 	}
 
@@ -45,7 +42,7 @@ public abstract class DialogFactory {
 	 *
 	 * @return {@code true} for {@code OK}, {@code false} for {@code CANCEL}.
 	 */
-	public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, @Nullable final Validator validator) {
+	public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final Validator validator) {
 		final JButton ok = new JButton(Babylon.translate("ok"));
 		final JButton cancel = new JButton(Babylon.translate("cancel"));
 

@@ -8,29 +8,23 @@ import java.awt.image.BufferedImage;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
-import org.jetbrains.annotations.Nullable;
-
-import mpo.dayon.common.gui.common.ImageNames;
-import mpo.dayon.common.gui.common.ImageUtilities;
+import static mpo.dayon.common.gui.common.ImageNames.MOUSE_YELLOW;
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 
 class AssistantPanel extends JPanel {
 
-	private static final Image MOUSE_CURSOR = ImageUtilities.getOrCreateIcon(ImageNames.MOUSE_YELLOW).getImage();
+	private static final Image MOUSE_CURSOR = getOrCreateIcon(MOUSE_YELLOW).getImage();
 
 	private static final int MOUSE_CURSOR_WIDTH = 12;
-
 	private static final int MOUSE_CURSOR_HEIGHT = 20;
 
-	@Nullable
-	private transient BufferedImage captureImage;
-
 	private int captureWidth = -1;
-
 	private int captureHeight = -1;
 
 	private int mouseX = -1;
-
 	private int mouseY = -1;
+
+	private transient BufferedImage captureImage;
 
 	AssistantPanel() {
 		setOpaque(true);
@@ -39,11 +33,9 @@ class AssistantPanel extends JPanel {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
-
 		if (captureImage != null) {
 			g.drawImage(captureImage, 0, 0, this);
 		}
-
 		if (mouseX > -1 && mouseY > -1) {
 			paintMouse(g);
 		}
@@ -62,34 +54,26 @@ class AssistantPanel extends JPanel {
 		SwingUtilities.invokeLater(() -> {
             final int captureImageWidth = captureImage.getWidth();
             final int captureImageHeight = captureImage.getHeight();
-
             if (AssistantPanel.this.captureWidth != captureImageWidth || AssistantPanel.this.captureHeight != captureImageHeight) {
                 AssistantPanel.this.captureImage = null;
-
                 AssistantPanel.this.captureWidth = captureImageWidth;
                 AssistantPanel.this.captureHeight = captureImageHeight;
-
                 final Dimension size = new Dimension(captureImageWidth, captureImageHeight);
-
                 setSize(size);
                 setPreferredSize(size);
             }
-
             AssistantPanel.this.captureImage = captureImage;
-
             repaint();
         });
 	}
 
 	void onMouseLocationUpdated(final int x, final int y) {
 		SwingUtilities.invokeLater(() -> {
-            if (AssistantPanel.this.mouseX != -1 && AssistantPanel.this.mouseY != -1) {
+            if (AssistantPanel.this.mouseX > -1 && AssistantPanel.this.mouseY > -1) {
                 repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
             }
-
             AssistantPanel.this.mouseX = x;
             AssistantPanel.this.mouseY = y;
-
             repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
         });
 	}
