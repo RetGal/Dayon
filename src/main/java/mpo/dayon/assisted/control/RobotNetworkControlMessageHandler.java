@@ -8,12 +8,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.KeyStroke;
-
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
+
+import static java.awt.event.KeyEvent.*;
 
 public class RobotNetworkControlMessageHandler implements NetworkControlMessageHandler {
 	private final Robot robot;
@@ -77,31 +77,27 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			try {
 				pressKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.error("Error while handling key press", ex);
+				Log.error("Error while handling " + message.toString());
 			}
 		} else if (message.isReleased()) {
 			try {
 				releaseKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.error("Error while handling key release", ex);
+				Log.error("Error while handling " + message.toString());
 			}
 		}
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
-		if (message.getKeyCode() != KeyEvent.VK_UNDEFINED) {
-			robot.keyPress(message.getKeyCode());
-		} else {
-			Log.warn(message.toString() + " contained an invalid keyCode for " + message.getKeyChar());
-			if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-				KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
-				// plan b
-				if (key.getKeyCode() != Character.MIN_VALUE) {
-					Log.warn("retrying with keyCode " + key.getKeyCode());
-					typeUnicode(key.getKeyCode());
-				}
-				shout(message.getKeyChar());
+		if (message.getKeyChar() != CHAR_UNDEFINED && message.getKeyCode() != VK_WINDOWS) {
+			int dec = message.getKeyChar();
+			if ((dec <= 48 || dec >= 57) && (dec <= 64 || dec >= 91) && (dec <= 96 || dec >= 123)) {
+				typeUnicode(dec);
+				return;
 			}
+		}
+		if (message.getKeyCode() != VK_UNDEFINED && message.getKeyCode() != KeyEvent.VK_ALT_GRAPH) {
+			robot.keyPress(message.getKeyCode());
 		}
 	}
 
@@ -114,15 +110,15 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseKey(NetworkKeyControlMessage message) {
-		if (message.getKeyCode() != KeyEvent.VK_UNDEFINED) {
-			robot.keyRelease(message.getKeyCode());
-		} else {
-			if (message.getKeyChar() != KeyEvent.CHAR_UNDEFINED) {
-				KeyStroke key = KeyStroke.getKeyStroke(message.getKeyChar(), 0);
-				if (key.getKeyCode() != Character.MIN_VALUE) {
-					releaseUnicode();
-				}
+		if (message.getKeyChar() != CHAR_UNDEFINED && message.getKeyCode() != VK_WINDOWS) {
+			int dec = message.getKeyChar();
+			if ((dec <= 48 || dec >= 57) && (dec <= 64 || dec >= 91) && (dec <= 96 || dec >= 123)) {
+				releaseUnicode();
+				return;
 			}
+		}
+		if (message.getKeyCode() != VK_UNDEFINED && message.getKeyCode() != VK_ALT_GRAPH) {
+			robot.keyRelease(message.getKeyCode());
 		}
 	}
 
@@ -138,28 +134,28 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in decimal on Windows ä => 228
 	 */
 	private void typeWindowsUnicode(int keyCode) {
-	    robot.keyPress(KeyEvent.VK_ALT);
+	    robot.keyPress(VK_ALT);
 	    // simulate a numpad key press for each digit
 	    for (int i = 3; i >= 0; --i) {
-	        int code = keyCode / (int) (Math.pow(10, i)) % 10 + KeyEvent.VK_NUMPAD0;
+	        int code = keyCode / (int) (Math.pow(10, i)) % 10 + VK_NUMPAD0;
 	        robot.keyPress(code);
 	        robot.keyRelease(code);
 	    }
-	    // will be released when handling the subsequent message
+		// will be released when handling the subsequent message
 	}
 
 	private void releaseWindowsUnicode() {
-		robot.keyRelease(KeyEvent.VK_ALT);
+		robot.keyRelease(VK_ALT);
 	}
 
 	/**
 	 * Unicode characters are typed in hex on Linux ä => e4
 	 */
 	private void typeLinuxUnicode(int keyCode) {
-	    robot.keyPress(KeyEvent.VK_CONTROL);
-	    robot.keyPress(KeyEvent.VK_SHIFT);
-	    robot.keyPress(KeyEvent.VK_U);
-	    robot.keyRelease(KeyEvent.VK_U);
+	    robot.keyPress(VK_CONTROL);
+	    robot.keyPress(VK_SHIFT);
+	    robot.keyPress(VK_U);
+	    robot.keyRelease(VK_U);
 	    char[] charArray = Integer.toHexString(keyCode).toCharArray();
 	    // simulate a key press/release for each char
     	// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
@@ -172,7 +168,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseLinuxUnicode() {
-		robot.keyRelease(KeyEvent.VK_SHIFT);
-		robot.keyRelease(KeyEvent.VK_CONTROL);
+		robot.keyRelease(VK_CONTROL);
+		robot.keyRelease(VK_SHIFT);
 	}
 }

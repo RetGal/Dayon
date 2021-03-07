@@ -25,7 +25,7 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(message.getKeyChar());
+        verify(robot).keyPress(65);
     }
 
     @Test
@@ -35,7 +35,46 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyRelease(message.getKeyChar());
+        verify(robot).keyRelease(65);
+    }
+
+    @Test
+    @DisabledOnOs(WINDOWS)
+    void testHandleMessagePressAe() {
+        // given
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'ä');
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).keyPress(KeyEvent.VK_CONTROL);
+        verify(robot).keyPress(KeyEvent.VK_SHIFT);
+        verify(robot).keyPress(KeyEvent.VK_U);
+        verify(robot).keyRelease(KeyEvent.VK_U);
+        // 228 as hex E4
+        verify(robot).keyPress(KeyEvent.VK_E);
+        verify(robot).keyRelease(KeyEvent.VK_E);
+        verify(robot).keyPress(KeyEvent.VK_4);
+        verify(robot).keyRelease(KeyEvent.VK_4);
+    }
+
+    @Test
+    @DisabledOnOs(WINDOWS)
+    void testHandleMessagePressAt() {
+        // given
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 50, '@');
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        // then
+        verify(robot).keyPress(KeyEvent.VK_CONTROL);
+        verify(robot).keyPress(KeyEvent.VK_SHIFT);
+        verify(robot).keyPress(KeyEvent.VK_U);
+        verify(robot).keyRelease(KeyEvent.VK_U);
+        // 64 as hex 40
+        verify(robot).keyPress(KeyEvent.VK_4);
+        verify(robot).keyRelease(KeyEvent.VK_4);
+        verify(robot).keyPress(KeyEvent.VK_0);
+        verify(robot).keyRelease(KeyEvent.VK_0);
     }
 
     @Test
@@ -67,8 +106,8 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
         verify(robot).keyRelease(KeyEvent.VK_CONTROL);
+        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
     }
 
     @Test
@@ -100,7 +139,7 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
         verify(robot).keyRelease(KeyEvent.VK_CONTROL);
+        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
     }
 }
