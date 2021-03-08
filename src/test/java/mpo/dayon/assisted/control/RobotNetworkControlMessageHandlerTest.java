@@ -19,6 +19,16 @@ class RobotNetworkControlMessageHandlerTest {
     RobotNetworkControlMessageHandler controlMessageHandler = new RobotNetworkControlMessageHandler(robot);
 
     @Test
+    void testHandleMessagePress0() {
+        // given
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 48, '0');
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).keyPress(48);
+    }
+
+    @Test
     void testHandleMessagePressA() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 65, 'A');
@@ -26,6 +36,16 @@ class RobotNetworkControlMessageHandlerTest {
         controlMessageHandler.handleMessage(message);
         // then
         verify(robot).keyPress(65);
+    }
+
+    @Test
+    void testHandleMessagePressz() {
+        // given
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 122, 'z');
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).keyPress(122);
     }
 
     @Test

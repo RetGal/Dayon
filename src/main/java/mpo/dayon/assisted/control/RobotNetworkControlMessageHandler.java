@@ -3,9 +3,9 @@ package mpo.dayon.assisted.control;
 import java.awt.AWTException;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import mpo.dayon.common.event.Subscriber;
@@ -19,7 +19,9 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	private final Robot robot;
 
 	private final List<Subscriber> subscribers = new ArrayList<>();
-	
+	// 										              a,c,p, s, v, x, y, z
+	private static final int[] SHORTCUT_KEYS = new int[] {1,3,16,19,22,24,25,26};
+
 	public RobotNetworkControlMessageHandler() {
 		try {
 			robot = new Robot();
@@ -78,6 +80,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				pressKey(message);
 			} catch (IllegalArgumentException ex) {
 				Log.error("Error while handling " + message.toString());
+				shout(message.getKeyChar());
 			}
 		} else if (message.isReleased()) {
 			try {
@@ -89,15 +92,33 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
-		if (message.getKeyChar() != CHAR_UNDEFINED && message.getKeyCode() != VK_WINDOWS) {
+		if (message.getKeyChar() != CHAR_UNDEFINED && isRegularKey(message)) {
 			int dec = message.getKeyChar();
-			if ((dec <= 48 || dec >= 57) && (dec <= 64 || dec >= 91) && (dec <= 96 || dec >= 123)) {
+			if (!((dec >= 48 && dec <= 57) || (dec >= 65 && dec <= 90) || (dec >= 97 && dec <= 122))) {
 				typeUnicode(dec);
 				return;
 			}
 		}
-		if (message.getKeyCode() != VK_UNDEFINED && message.getKeyCode() != KeyEvent.VK_ALT_GRAPH) {
+		if (message.getKeyCode() != VK_ALT_GRAPH) {
 			robot.keyPress(message.getKeyCode());
+			return;
+		}
+		Log.warn(message.toString());
+	}
+
+	private boolean isRegularKey(NetworkKeyControlMessage message) {
+		switch (message.getKeyCode()) {
+			case VK_BACK_SPACE:
+			case VK_DELETE:
+			case VK_ENTER:
+			case VK_ESCAPE:
+			case VK_SPACE:
+			case VK_TAB:
+			case VK_WINDOWS:
+				return false;
+			default:
+				int charVal = message.getKeyChar();
+				return Arrays.stream(SHORTCUT_KEYS).noneMatch(i -> i == charVal);
 		}
 	}
 
@@ -110,14 +131,14 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseKey(NetworkKeyControlMessage message) {
-		if (message.getKeyChar() != CHAR_UNDEFINED && message.getKeyCode() != VK_WINDOWS) {
+		if (message.getKeyChar() != CHAR_UNDEFINED && isRegularKey(message)) {
 			int dec = message.getKeyChar();
-			if ((dec <= 48 || dec >= 57) && (dec <= 64 || dec >= 91) && (dec <= 96 || dec >= 123)) {
+			if (!((dec >= 48 && dec <= 57) || (dec >= 65 && dec <= 90) || (dec >= 97 && dec <= 122))) {
 				releaseUnicode();
 				return;
 			}
 		}
-		if (message.getKeyCode() != VK_UNDEFINED && message.getKeyCode() != VK_ALT_GRAPH) {
+		if (message.getKeyCode() != VK_ALT_GRAPH) {
 			robot.keyRelease(message.getKeyCode());
 		}
 	}
