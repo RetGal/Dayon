@@ -12,6 +12,11 @@ sun/net
 META-INF/services/sun.net.spi.nameservice.NameServiceDescriptor
 ! jaccess.jar
 com/sun/java/accessibility/
+# legacy8ujsse.jar
+META-INF/maven/org.openjsse.legacy8ujsse/legacy8ujsse/pom.xml
+META-INF/services/java.security.Provider
+org/openjsse/
+META-INF/maven/org.openjsse.legacy8ujsse/legacy8ujsse/pom.properties
 # localedata.jar
 sun/text
 sun/util
@@ -19,6 +24,11 @@ sun/util
 META-INF/services/javax.script.ScriptEngineFactory
 jdk/nashorn
 jdk/internal
+# openjsse.jar
+META-INF/maven/org.openjsse/openjsse/pom.properties
+META-INF/maven/org.openjsse/openjsse/pom.xml
+META-INF/services/java.security.Provider
+org/openjsse/
 ! sunec.jar
 sun/security
 ! sunjce_provider.jar
