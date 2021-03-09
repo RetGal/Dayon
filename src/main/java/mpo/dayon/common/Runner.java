@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public interface Runner {
+
     static void logAppInfo(String appName) {
-        // System.setProperty("dayon.debug", "on");
         SystemUtilities.setApplicationName(appName);
         Log.info("============================================================================================");
         for (String line : SystemUtilities.getSystemProperties()) {
@@ -33,6 +33,12 @@ public interface Runner {
         final String[] supported = {"de", "en", "es", "fr", "it", "ru", "tr"};
         if (arg != null && Arrays.stream(supported).anyMatch(e -> e.equalsIgnoreCase(arg))) {
             Locale.setDefault(new Locale(arg));
+        }
+    }
+
+    static void setDebug(String[] args) {
+        if (Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("debug"))) {
+            System.setProperty("dayon.debug", "on");
         }
     }
 }

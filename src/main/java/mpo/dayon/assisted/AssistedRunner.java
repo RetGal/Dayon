@@ -10,6 +10,7 @@ import java.util.Map;
 class AssistedRunner implements Runner {
     public static void main(String[] args) {
         try {
+            Runner.setDebug(args);
             Map<String, String> programArgs = Runner.extractProgramArgs(args);
             Runner.overrideLocale(programArgs.get("lang"));
             Runner.logAppInfo("dayon_assisted");

@@ -10,6 +10,7 @@ import javax.swing.SwingUtilities;
 class AssistantRunner implements Runner {
 	public static void main(String[] args) {
 		try {
+			Runner.setDebug(args);
 			Runner.overrideLocale(Runner.extractProgramArgs(args).get("lang"));
 			Runner.logAppInfo("dayon_assistant");
 			SwingUtilities.invokeLater(AssistantRunner::launchAssistant);

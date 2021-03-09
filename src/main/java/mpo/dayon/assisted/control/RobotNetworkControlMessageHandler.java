@@ -92,14 +92,22 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
+		if (message.getKeyChar() == CHAR_UNDEFINED) {
+			Log.debug("Undefined KeyChar " + message.toString());
+		}
+		if (message.getKeyCode() == VK_UNDEFINED) {
+			Log.debug("Undefined KeyCode " + message.toString());
+		}
 		if (message.getKeyChar() != CHAR_UNDEFINED && isRegularKey(message)) {
 			int dec = message.getKeyChar();
 			if (!((dec >= 48 && dec <= 57) || (dec >= 65 && dec <= 90) || (dec >= 97 && dec <= 122))) {
+				Log.debug("KeyChar as unicode " + dec + " " + message.toString());
 				typeUnicode(dec);
 				return;
 			}
 		}
 		if (message.getKeyCode() != VK_ALT_GRAPH) {
+			Log.debug("KeyCode " + message.toString());
 			robot.keyPress(message.getKeyCode());
 			return;
 		}
