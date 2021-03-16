@@ -17,6 +17,7 @@ As quick launch versions for Windows, they are also available as individual bina
 - intuitive, multilingual user interface (de, en, es, fr, it, ru, tr)
 - assistant and assisted functionality in same packet
 - secure, encrypted communication (TLS)
+- very low bandwidth usage
 - cross-platform
 - open source
 - free (as hugs)
