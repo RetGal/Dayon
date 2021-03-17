@@ -431,13 +431,13 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     if (tick.isEmpty()) {
                         return Babylon.translate("tick.msg1");
                     }
-
                     try {
-                        Integer.valueOf(tick);
+                        if (Integer.valueOf(tick) < 50 ) {
+                            return Babylon.translate("tick.msg2");
+                        }
                     } catch (NumberFormatException ex) {
                         return Babylon.translate("tick.msg2");
                     }
-
                     return null;
                 });
 

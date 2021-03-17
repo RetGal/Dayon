@@ -17,6 +17,8 @@ import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 
+import static java.lang.Math.abs;
+
 public abstract class SystemUtilities {
 
     private SystemUtilities() {
@@ -113,7 +115,7 @@ public abstract class SystemUtilities {
         if (prop == null) {
             return defaultValue;
         }
-        return Integer.parseInt(prop);
+        return abs(Integer.parseInt(prop));
     }
 
     public static boolean getBooleanProperty(Properties props, String name, boolean defaultValue) {
@@ -129,7 +131,7 @@ public abstract class SystemUtilities {
         if (prop == null) {
             return defaultValue;
         }
-        return Double.parseDouble(prop);
+        return abs(Double.parseDouble(prop));
     }
 
     public static <T extends Enum<T>> T getEnumProperty(Properties props, String name, T defaultValue, T[] enums) {
