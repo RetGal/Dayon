@@ -1,6 +1,5 @@
 package mpo.dayon.common.error;
 
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -33,15 +32,12 @@ public abstract class KeyboardErrorHandler {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     if (timeLeft > 0) {
-                        String sb = "<html>" + Babylon.translate("keyboard.error.msg1") + "<br/>" +
-                                Babylon.translate("keyboard.error.msg2", message) + "<br/>" +
-                                Babylon.translate("keyboard.error.msg3", message) + "</html>";
-                        label.setText(sb);
                         --timeLeft;
                     } else {
                         ((Timer) e.getSource()).stop();
-                        Window win = SwingUtilities.getWindowAncestor(label);
-                        win.setVisible(false);
+                        if (SwingUtilities.getWindowAncestor(label) != null) {
+                            SwingUtilities.getWindowAncestor(label).setVisible(false);
+                        }
                     }
                 }
             };
@@ -49,6 +45,11 @@ public abstract class KeyboardErrorHandler {
             Timer timer = new Timer(timerDelay, ac);
             timer.setInitialDelay(0);
             timer.start();
+
+            String sb = "<html>" + Babylon.translate("keyboard.error.msg1") + "<br/>" +
+                    Babylon.translate("keyboard.error.msg2", message) + "<br/>" +
+                    Babylon.translate("keyboard.error.msg3", message) + "</html>";
+            label.setText(sb);
 
             JOptionPane.showMessageDialog(frame, label, Babylon.translate("keyboard.error"), JOptionPane.WARNING_MESSAGE);
 
