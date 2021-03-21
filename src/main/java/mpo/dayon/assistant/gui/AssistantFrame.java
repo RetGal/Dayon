@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistantFrame extends BaseFrame {
 
@@ -38,6 +39,10 @@ class AssistantFrame extends BaseFrame {
 
     private JComponent center;
 
+    private final JToggleButton controlToggleButton;
+
+    private final JToggleButton windowsKeyToggleButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
@@ -50,8 +55,8 @@ class AssistantFrame extends BaseFrame {
         super.setFrameType(FrameType.ASSISTANT);
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
         this.actions = actions;
-        this.actions.setSendWindowsKeyAction(createSendWindowsKeyAction());
-        this.actions.setToggleControlModeAction(createToggleControlMode());
+        this.controlToggleButton = createToggleButton(createToggleControlMode());
+        this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
         assistantPanel = new AssistantPanel();
@@ -75,6 +80,16 @@ class AssistantFrame extends BaseFrame {
         });
 
         onReady(); // the network has been before we've been registered as a listener ...
+    }
+
+    private JToggleButton createToggleButton(Action action) {
+        final JToggleButton button = new JToggleButton();
+        button.setMargin(ZERO_INSETS);
+        button.setHideActionText(true);
+        button.setAction(action);
+        button.setFocusable(false);
+        button.setSelected(false);
+        return button;
     }
 
     private void addMouseListeners() {
@@ -144,10 +159,10 @@ class AssistantFrame extends BaseFrame {
         toolbar.addAction(actions.getStartAction());
         toolbar.addAction(actions.getStopAction());
         toolbar.addSeparator();
-        toolbar.addToggleAction(actions.getToggleControlModeAction());
+        toolbar.add(controlToggleButton);
         toolbar.addAction(actions.getRemoteClipboardRequestAction());
         toolbar.addAction(actions.getRemoteClipboardSetAction());
-        toolbar.addToggleAction(actions.getSendWindowsKeyAction());
+        toolbar.add(windowsKeyToggleButton);
         toolbar.addToggleAction(actions.getToggleFitScreenAction());
         toolbar.addAction(actions.getResetAction());
         toolbar.addSeparator();
@@ -182,7 +197,7 @@ class AssistantFrame extends BaseFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 controlActivated.set(!controlActivated.get());
-                actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
+                windowsKeyToggleButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.NAME, "toggleControlMode");
@@ -191,7 +206,7 @@ class AssistantFrame extends BaseFrame {
         return remoteControl;
     }
 
-    Action createSendWindowsKeyAction() {
+    private Action createSendWindowsKeyAction() {
         final Action sendWindowsKey = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -253,9 +268,7 @@ class AssistantFrame extends BaseFrame {
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
         actions.getResetAction().setEnabled(true);
-        actions.getToggleControlModeAction().setEnabled(true);
-        actions.getSendWindowsKeyAction().setEnabled(controlActivated.get());
-        enableTransferControls();
+        enableControls();
         validate();
         repaint();
         return true;
@@ -325,14 +338,22 @@ class AssistantFrame extends BaseFrame {
     private void disableControls() {
         controlActivated.set(false);
         windowsKeyActivated.set(false);
-        actions.getToggleControlModeAction().setEnabled(false);
-        actions.getSendWindowsKeyAction().setEnabled(false);
+        controlToggleButton.setEnabled(false);
+        windowsKeyToggleButton.setEnabled(false);
         disableTransferControls();
     }
 
     private void disableTransferControls() {
         actions.getRemoteClipboardSetAction().setEnabled(false);
         actions.getRemoteClipboardRequestAction().setEnabled(false);
+    }
+
+    private void enableControls() {
+        controlToggleButton.setSelected(false);
+        controlToggleButton.setEnabled(true);
+        windowsKeyToggleButton.setSelected(false);
+        windowsKeyToggleButton.setEnabled(true);
+        enableTransferControls();
     }
 
     private void enableTransferControls() {
