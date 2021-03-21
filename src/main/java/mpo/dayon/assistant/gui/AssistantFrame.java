@@ -352,7 +352,6 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setSelected(false);
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
-        windowsKeyToggleButton.setEnabled(true);
         enableTransferControls();
     }
 
