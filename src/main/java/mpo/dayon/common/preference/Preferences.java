@@ -1,9 +1,6 @@
 package mpo.dayon.common.preference;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -23,14 +20,11 @@ public class Preferences {
 
     private final Properties props;
 
-    /**
-     * No need trying to write always...
-     */
     private final AtomicBoolean writeError = new AtomicBoolean();
 
     private final Object cloneLOCK = new Object();
 
-    private boolean dirty;
+    private AtomicBoolean dirty = new AtomicBoolean();
 
     private Preferences() {
         this.file = null;
@@ -41,12 +35,14 @@ public class Preferences {
         this.file = file;
         this.props = new Properties();
 
-        if (file.exists()) // otherwise, use default values - until a persist() // is done later ...
-        {
+        if (file.exists()) {
             try (FileReader in = new FileReader(file)) {
                 props.load(in);
+            } catch (FileNotFoundException e) {
+                Log.error("Preferences (read) permission denied");
             }
         }
+        // otherwise, use default values - until a persist() // is done later ...
     }
 
     public boolean isNull() {
@@ -78,7 +74,7 @@ public class Preferences {
             setupPersister(xpreferences);
             preferences = xpreferences;
             return preferences;
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             Log.warn("Preferences get/create error!", ex);
             preferences = NULL;
             return preferences;
@@ -124,17 +120,14 @@ public class Preferences {
      */
     public void update(Props props) {
         synchronized (cloneLOCK) {
-            for (Map.Entry<String, String> entry : props.entries.entrySet()) {
-                final String pname = entry.getKey();
-                final String pvalue = entry.getValue();
-
+            props.entries.forEach((pname, pvalue) -> {
                 if (Props.REMOVE.equals(pvalue)) {
                     this.props.remove(pname);
                 } else {
                     this.props.setProperty(pname, pvalue);
                 }
-            }
-            dirty = true;
+            });
+            dirty.set(true);
         }
     }
 
@@ -148,16 +141,16 @@ public class Preferences {
         new Timer("PreferencesWriter").schedule(new TimerTask() {
             @Override
             public void run() {
-                if (preferences.isNull()) {
+                if (preferences.isNull() || preferences.writeError.get()) {
                     return;
                 }
 
                 try {
                     Properties cloned = null;
                     synchronized (preferences.cloneLOCK) {
-                        if (preferences.dirty) {
+                        if (preferences.dirty.get()) {
                             cloned = (Properties) preferences.props.clone();
-                            preferences.dirty = false;
+                            preferences.dirty.set(false);
                         }
                     }
                     if (cloned != null) {
@@ -168,7 +161,7 @@ public class Preferences {
                         }
                     }
                 } catch (IOException ex) {
-                    Log.warn("Preferences write error!", ex);
+                    Log.error("Preferences write error!", ex);
                     preferences.writeError.set(true);
                 }
             }
