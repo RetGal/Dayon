@@ -199,20 +199,15 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void addSizeAndPositionListener() {
-        addWindowListener(new WindowAdapter() {
+        addComponentListener(new ComponentAdapter() {
             @Override
-            public void windowOpened(WindowEvent ev) {
-                addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(ComponentEvent ev) {
-                        onSizeUpdated(getWidth(), getHeight());
-                    }
+            public void componentResized(ComponentEvent ev) {
+                onSizeUpdated(getWidth(), getHeight());
+            }
 
-                    @Override
-                    public void componentMoved(ComponentEvent ev) {
-                        onLocationUpdated(getX(), getY());
-                    }
-                });
+            @Override
+            public void componentMoved(ComponentEvent ev) {
+                onLocationUpdated(getX(), getY());
             }
         });
     }

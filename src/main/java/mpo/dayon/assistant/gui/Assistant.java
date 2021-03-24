@@ -54,6 +54,7 @@ import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
 
+import static java.lang.Math.abs;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
@@ -432,7 +433,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         return Babylon.translate("tick.msg1");
                     }
                     try {
-                        if (Integer.valueOf(tick) < 50 ) {
+                        if (Integer.parseInt(tick) < 50 ) {
                             return Babylon.translate("tick.msg2");
                         }
                     } catch (NumberFormatException ex) {
@@ -601,6 +602,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 fitToScreenActivated.set(!fitToScreenActivated.get());
                 if (!fitToScreenActivated.get()) {
                     frame.resetFactors();
+                } else {
+                    frame.resetCanvas();
                 }
                 frame.repaint();
             }
@@ -683,14 +686,15 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             // synchronized because of the reset onStarting()
             synchronized (prevBufferLOCK) {
                 image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
-
                 prevBuffer = image.getValue();
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
             }
             if (fitToScreenActivated.get()) {
-                Dimension frameDimension = frame.getUsableSize(prevWidth, prevHeight);
-                frame.onCaptureUpdated(scaleImage(image.getKey(), frameDimension.width, frameDimension.height));
+                if (frame.getCanvas() == null) {
+                    frame.computeScaleFactors(prevWidth, prevHeight);
+                }
+                frame.onCaptureUpdated(scaleImage(image.getKey(), frame.getCanvas().width, frame.getCanvas().height));
             } else {
                 frame.onCaptureUpdated(image.getKey());
             }
@@ -701,13 +705,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         }
 
         private BufferedImage scaleImage(BufferedImage image, int width, int height) {
-            double scaleX = (double)width/image.getWidth();
-            double scaleY = (double)height/image.getHeight();
-            AffineTransform scaleTransform = AffineTransform.getScaleInstance(scaleX, scaleY);
+            AffineTransform scaleTransform = AffineTransform.getScaleInstance(frame.getxFactor(), frame.getyFactor());
             AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-            return bilinearScaleOp.filter(image, new BufferedImage(width, height, image.getType()));
+            return bilinearScaleOp.filter(image, new BufferedImage(abs(width), abs(height), image.getType()));
         }
     }
+
 
     private class MyNetworkAssistantEngineListener implements NetworkAssistantEngineListener {
         @Override

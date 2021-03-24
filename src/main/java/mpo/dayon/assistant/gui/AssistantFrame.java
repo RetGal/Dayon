@@ -47,9 +47,11 @@ class AssistantFrame extends BaseFrame {
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
 
-    private float xFactor = DEFAULT_FACTOR;
+    private double xFactor = DEFAULT_FACTOR;
 
-    private float yFactor = DEFAULT_FACTOR;
+    private double yFactor = DEFAULT_FACTOR;
+
+    private Dimension canvas;
 
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         super.setFrameType(FrameType.ASSISTANT);
@@ -62,24 +64,27 @@ class AssistantFrame extends BaseFrame {
         assistantPanel = new AssistantPanel();
         assistantPanel.setFocusable(false);
         assistantPanelWrapper = new JScrollPane(assistantPanel);
-        addMouseListeners();
-
         // -------------------------------------------------------------------------------------------------------------
         // Not really needed for the time being - allows for seeing the TAB with a regular KEY listener ...
         setFocusTraversalKeysEnabled(false);
-
+        addFocusListener();
         addKeyListeners();
+        addMouseListeners();
+        addResizeListener();
+        // the network has been before we've been registered as a listener ...
+        onReady();
+    }
 
-        addFocusListener(new FocusAdapter() {
-            @Override
-            public void focusLost(FocusEvent ev) {
-                if (controlActivated.get()) {
-                    fireOnKeyReleased(-1, Character.MIN_VALUE);
-                }
-            }
-        });
+    Dimension getCanvas() {
+        return canvas;
+    }
 
-        onReady(); // the network has been before we've been registered as a listener ...
+    public double getxFactor() {
+        return xFactor;
+    }
+
+    public double getyFactor() {
+        return yFactor;
     }
 
     private JToggleButton createToggleButton(Action action) {
@@ -145,6 +150,26 @@ class AssistantFrame extends BaseFrame {
             public void keyReleased(KeyEvent ev) {
                 if (controlActivated.get()) {
                     fireOnKeyReleased(ev.getKeyCode(), ev.getKeyChar());
+                }
+            }
+        });
+    }
+
+    private void addResizeListener() {
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent ev) {
+                resetCanvas();
+            }
+        });
+    }
+
+    private void addFocusListener() {
+        addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent ev) {
+                if (controlActivated.get()) {
+                    fireOnKeyReleased(-1, Character.MIN_VALUE);
                 }
             }
         });
@@ -321,18 +346,21 @@ class AssistantFrame extends BaseFrame {
         }
     }
 
-    Dimension getUsableSize(int sourceWidth, int sourceHeight) {
-        Dimension dimension = assistantPanelWrapper.getSize();
-        dimension.setSize(dimension.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
-                dimension.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
-        xFactor = (float) dimension.getWidth() / sourceWidth;
-        yFactor = (float) dimension.getHeight() / sourceHeight;
-        return dimension;
+    void computeScaleFactors(int sourceWidth, int sourceHeight) {
+        canvas = assistantPanelWrapper.getSize();
+        canvas.setSize(canvas.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
+                canvas.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
+        xFactor = canvas.getWidth() / sourceWidth;
+        yFactor = canvas.getHeight() / sourceHeight;
     }
 
     void resetFactors() {
         xFactor = DEFAULT_FACTOR;
         yFactor = DEFAULT_FACTOR;
+    }
+
+    void resetCanvas() {
+        canvas = null;
     }
 
     private void disableControls() {
@@ -380,8 +408,8 @@ class AssistantFrame extends BaseFrame {
      * Should not block as called from the network incoming message thread (!)
      */
     void onMouseLocationUpdated(int x, int y) {
-        int xs = Math.round(x * xFactor);
-        int ys = Math.round(y * yFactor);
+        int xs = (int) Math.round(x * xFactor);
+        int ys = (int) Math.round(y * yFactor);
         assistantPanel.onMouseLocationUpdated(xs, ys);
     }
 
@@ -418,11 +446,11 @@ class AssistantFrame extends BaseFrame {
     }
 
     private int scaleYPosition(int y) {
-        return Math.round(y / yFactor);
+        return (int) Math.round(y / yFactor);
     }
 
     private int scaleXPosition(int x) {
-        return Math.round(x / xFactor);
+        return (int) Math.round(x / xFactor);
     }
 
     private void fireOnKeyPressed(int keyCode, char keyChar) {
