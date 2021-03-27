@@ -62,10 +62,8 @@ public abstract class SystemUtilities {
         final File transferDir = new File(getOrCreateAppDir(), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
-        } else {
-            if (!transferDir.mkdir()) {
-                Log.warn("Could not create the transfer directory [" + transferDir + "]!");
-            }
+        } else if (!transferDir.mkdir()) {
+            Log.warn("Could not create the transfer directory [" + transferDir + "]!");
         }
         return transferDir;
     }
