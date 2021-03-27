@@ -198,11 +198,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         try {
                             final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
-                            final InputStream in = url.openStream();
                             try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                 publicIp = lines.readLine();
                             }
-                            safeClose(in);
                         } catch (IOException ex) {
                             Log.error("What is my IP error!", ex);
                             JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
