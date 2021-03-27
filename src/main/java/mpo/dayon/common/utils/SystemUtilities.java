@@ -44,7 +44,7 @@ public abstract class SystemUtilities {
         final File appDir = new File(home, ".dayon");
         if (!appDir.exists() && !appDir.mkdir()) {
             Log.warn("Could not create the application directory [" + appDir.getAbsolutePath() + "]!");
-            return null;
+            return home;
         }
         return appDir;
     }
@@ -63,7 +63,9 @@ public abstract class SystemUtilities {
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else {
-            transferDir.mkdir();
+            if (!transferDir.mkdir()) {
+                Log.warn("Could not create the transfer directory [" + transferDir + "]!");
+            }
         }
         return transferDir;
     }
