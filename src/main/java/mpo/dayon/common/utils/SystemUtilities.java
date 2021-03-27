@@ -41,7 +41,15 @@ public abstract class SystemUtilities {
             return null;
         }
 
-        final File appDir = new File(home, ".dayon");
+        File appDir;
+        if (isSnapped()) {
+            final String classPath = System.getProperty("java.class.path");
+            final String userDataDir = String.format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
+            appDir = new File(userDataDir, ".dayon");
+        } else {
+            appDir = new File(home, ".dayon");
+        }
+
         if (!appDir.exists() && !appDir.mkdir()) {
             Log.warn("Could not create the application directory [" + appDir.getAbsolutePath() + "]!");
             return home;
