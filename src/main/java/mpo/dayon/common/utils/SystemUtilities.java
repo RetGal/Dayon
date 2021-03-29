@@ -21,6 +21,8 @@ import static java.lang.Math.abs;
 
 public abstract class SystemUtilities {
 
+    public static final String JAVA_CLASS_PATH = "java.class.path";
+
     private SystemUtilities() {
     }
 
@@ -43,7 +45,7 @@ public abstract class SystemUtilities {
 
         File appDir;
         if (isSnapped()) {
-            final String classPath = System.getProperty("java.class.path");
+            final String classPath = System.getProperty(JAVA_CLASS_PATH);
             final String userDataDir = String.format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
             appDir = new File(userDataDir, ".dayon");
         } else {
@@ -213,14 +215,14 @@ public abstract class SystemUtilities {
     }
 
     public static boolean isSnapped() {
-        return System.getProperty("java.class.path").startsWith("/snap/");
+        return System.getProperty(JAVA_CLASS_PATH).startsWith("/snap/");
     }
 
     /**
      * Computes the absolute path to dayon.browser
      */
     public static String getSnapBrowserCommand() {
-        String cp = System.getProperty("java.class.path");
+        String cp = System.getProperty(JAVA_CLASS_PATH);
         return cp.substring(0, cp.indexOf("jar")) + "bin/dayon.browser";
     }
 

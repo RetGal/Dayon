@@ -37,7 +37,7 @@ public class CaptureEngineConfiguration extends Configuration {
 
             persist(true);
         } else {
-            captureTick = prefs.getIntPreference(PREF_CAPTURE_TICK, 500);
+            captureTick = prefs.getIntPreference(PREF_CAPTURE_TICK, 200);
             captureQuantization = prefs.getEnumPreference(PREF_CAPTURE_QUANTIZATION, Gray8Bits.X_256, Gray8Bits.values());
         }
     }
