@@ -154,7 +154,7 @@ public class Preferences {
                         }
                     }
                     if (cloned != null) {
-                        Log.info("Writing the preferences [" + preferences.file.getAbsolutePath() + "]");
+                        Log.debug("Writing the preferences [" + preferences.file.getAbsolutePath() + "]");
                         try (PrintWriter out = new PrintWriter(preferences.file)) {
                             cloned.store(out, null);
                             out.flush();

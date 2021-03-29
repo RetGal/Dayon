@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.awt.image.ImagingOpException;
 import java.io.*;
 import java.net.Socket;
 import java.net.URISyntaxException;
@@ -704,8 +705,13 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         private BufferedImage scaleImage(BufferedImage image, int width, int height) {
             AffineTransform scaleTransform = AffineTransform.getScaleInstance(frame.getxFactor(), frame.getyFactor());
-            AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-            return bilinearScaleOp.filter(image, new BufferedImage(abs(width), abs(height), image.getType()));
+            try {
+                AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
+                return bilinearScaleOp.filter(image, new BufferedImage(abs(width), abs(height), image.getType()));
+            } catch (ImagingOpException e) {
+                Log.error(e.getMessage());
+                return image;
+            }
         }
     }
 
