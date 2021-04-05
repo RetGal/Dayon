@@ -15,7 +15,7 @@ class AssistantStartAction extends AbstractAction {
 
         putValue(Action.NAME, "start");
         putValue(Action.SHORT_DESCRIPTION, Babylon.translate("start.session"));
-        putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
+        putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.START));
     }
 
     @Override
