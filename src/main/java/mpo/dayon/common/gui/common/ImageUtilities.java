@@ -14,7 +14,7 @@ public abstract class ImageUtilities {
 
     public static Icon getOrCreateFixedScaleIcon(String name) {
         // workaround for HiDPI support introduced in Java 9, causing ugly scaled icons
-        if (Float.parseFloat(System.getProperty("java.class.version")) < 53.0) {
+        if (Float.parseFloat(System.getProperty("java.class.version")) < 99.0) {
             return getOrCreateIcon(name);
         }
         final String rname = "/images/" + name;
