@@ -17,7 +17,7 @@ class AssistedStopAction extends AbstractAction {
 
 		putValue(Action.NAME, "stop");
 		putValue(Action.SHORT_DESCRIPTION, Babylon.translate("stop.session"));
-		putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.STOP));
+		putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
 	}
 
 	@Override

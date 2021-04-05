@@ -2,12 +2,9 @@ package mpo.dayon.common.gui.toolbar;
 
 import java.awt.Insets;
 
-import javax.swing.Action;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
+import javax.swing.*;
+
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 
 public class ToolBar extends JToolBar {
 	public static final Insets ZERO_INSETS = new Insets(1, 1, 1, 1);
@@ -25,6 +22,7 @@ public class ToolBar extends JToolBar {
 		if (action.getValue(Action.SMALL_ICON) == null) {
 			button.setText((String) action.getValue("DISPLAY_NAME"));
 		}
+		button.setDisabledIcon(null);
 		button.setFocusable(false);
 		add(button);
 	}

@@ -56,6 +56,7 @@ import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
 
 import static java.lang.Math.abs;
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
@@ -328,7 +329,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         exit.putValue(Action.NAME, margin(Babylon.translate("connection.network")));
         exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connection.settings"));
-        exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.NETWORK_SETTINGS));
+        exit.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
         return exit;
     }
 
@@ -342,7 +343,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         getRemoteClipboard.putValue(Action.NAME, "getClipboard");
         getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.getRemote"));
-        getRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.DOWN));
+        getRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.DOWN));
         return getRemoteClipboard;
     }
 
@@ -356,7 +357,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         setRemoteClipboard.putValue(Action.NAME, "setClipboard");
         setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.setRemote"));
-        setRemoteClipboard.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.UP));
+        setRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UP));
         return setRemoteClipboard;
     }
 
@@ -456,7 +457,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         configure.putValue(Action.NAME, margin(Babylon.translate("capture")));
         configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.settings"));
-        configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.CAPTURE_SETTINGS));
+        configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
         return configure;
     }
 
@@ -547,7 +548,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         configure.putValue(Action.NAME, margin(Babylon.translate("compression")));
         configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("compression.settings"));
-        configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.COMPRESSION_SETTINGS));
+        configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
         return configure;
     }
 
@@ -590,7 +591,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         configure.putValue(Action.NAME, "resetCapture");
         configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.reset"));
-        configure.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.RESET_CAPTURE));
+        configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.RESET_CAPTURE));
         return configure;
     }
 
@@ -610,7 +611,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         fitScreen.putValue(Action.NAME, "toggleScreenMode");
         fitScreen.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("toggle.screen.mode"));
-        fitScreen.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.FIT));
+        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
         return fitScreen;
     }
 
@@ -632,13 +633,13 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
         settings.putValue(Action.NAME, Babylon.translate("settings"));
         settings.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("settings"));
-        settings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.SETTINGS));
+        settings.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.SETTINGS));
         return settings;
     }
 
     private JMenu createLookAndFeelSubmenu() {
         JMenu submenu = new JMenu(margin(Babylon.translate("lnf")));
-        submenu.setIcon(ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.LNF));
+        submenu.setIcon(getOrCreateIcon(ImageNames.LNF));
         submenu.setToolTipText(Babylon.translate("lnf.switch"));
 
         final LookAndFeel current = UIManager.getLookAndFeel();

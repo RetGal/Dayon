@@ -7,6 +7,8 @@ import mpo.dayon.common.gui.common.ImageUtilities;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
+
 class AssistantStopAction extends AbstractAction {
     private final transient Assistant assistant;
 
@@ -17,7 +19,7 @@ class AssistantStopAction extends AbstractAction {
 
         putValue(Action.NAME, "stop");
         putValue(Action.SHORT_DESCRIPTION, Babylon.translate("stop.session"));
-        putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.STOP));
+        putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP));
     }
 
     @Override

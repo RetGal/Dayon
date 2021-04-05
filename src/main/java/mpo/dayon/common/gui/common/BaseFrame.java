@@ -94,7 +94,7 @@ public abstract class BaseFrame extends JFrame {
 
         exit.putValue(Action.NAME, "exit");
         exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("exit.dayon"));
-        exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.EXIT));
+        exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.EXIT));
 
         return exit;
     }
@@ -186,14 +186,14 @@ public abstract class BaseFrame extends JFrame {
 
                 JOptionPane.showOptionDialog(BaseFrame.this, panel, Babylon.translate("system.info"),
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                        ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.APP_LARGE), options, options[0]);
+                        ImageUtilities.getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
 
             }
         };
 
         showSystemInfo.putValue(Action.NAME, "showSystemInfo");
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("system.info.show"));
-        showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.INFO));
+        showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
 
         return showSystemInfo;
     }
@@ -242,7 +242,7 @@ public abstract class BaseFrame extends JFrame {
 
         showHelp.putValue(Action.NAME, "showHelp");
         showHelp.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("help"));
-        showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.HELP));
+        showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.HELP));
 
         return showHelp;
     }

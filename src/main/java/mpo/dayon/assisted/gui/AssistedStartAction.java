@@ -17,7 +17,7 @@ class AssistedStartAction extends AbstractAction {
 
         putValue(Action.NAME, "start");
         putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connect.assistant"));
-        putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.START));
+        putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
     }
 
     @Override

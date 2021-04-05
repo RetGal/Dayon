@@ -13,6 +13,7 @@ class AssistedRunner implements Runner {
             Runner.setDebug(args);
             Map<String, String> programArgs = Runner.extractProgramArgs(args);
             Runner.overrideLocale(programArgs.get("lang"));
+            Runner.disableDynamicScale();
             Runner.logAppInfo("dayon_assisted");
             SwingUtilities.invokeLater(() -> launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
         } catch (Exception ex) {

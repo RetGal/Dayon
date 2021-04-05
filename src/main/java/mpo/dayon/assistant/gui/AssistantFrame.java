@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistantFrame extends BaseFrame {
@@ -227,7 +228,7 @@ class AssistantFrame extends BaseFrame {
         };
         remoteControl.putValue(Action.NAME, "toggleControlMode");
         remoteControl.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("control.mode"));
-        remoteControl.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.CONTROL));
+        remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
     }
 
@@ -245,7 +246,7 @@ class AssistantFrame extends BaseFrame {
         };
         sendWindowsKey.putValue(Action.NAME, "sendWindowsKey");
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("send.windowsKey"));
-        sendWindowsKey.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.WIN));
+        sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
         return sendWindowsKey;
     }
 
@@ -269,7 +270,7 @@ class AssistantFrame extends BaseFrame {
         actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
         center = new JPanel() {
-            final ImageIcon waiting = ImageUtilities.getOrCreateIcon(ImageNames.WAITING);
+            final ImageIcon waiting = getOrCreateIcon(ImageNames.WAITING);
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
@@ -285,7 +286,7 @@ class AssistantFrame extends BaseFrame {
     boolean onAccepted(Socket connection) {
         if (JOptionPane.showOptionDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress().getHostAddress()),
                 Babylon.translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-                ImageUtilities.getOrCreateFixedScaleIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
+                getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
             return false;
         }
         removeCenter();

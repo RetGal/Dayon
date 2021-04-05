@@ -41,4 +41,8 @@ public interface Runner {
             System.setProperty("dayon.debug", "on");
         }
     }
+
+    static void disableDynamicScale() {
+        System.setProperty("sun.java2d.uiScale", "1");
+    }
 }
