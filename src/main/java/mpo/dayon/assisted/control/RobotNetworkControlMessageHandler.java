@@ -92,26 +92,19 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
-		if (message.getKeyChar() == CHAR_UNDEFINED) {
-			Log.debug("Undefined KeyChar " + message.toString());
-		}
-		if (message.getKeyCode() == VK_UNDEFINED) {
-			Log.debug("Undefined KeyCode " + message.toString());
-		}
-		if (message.getKeyChar() != CHAR_UNDEFINED && isRegularKey(message)) {
-			int dec = message.getKeyChar();
-			if (!((dec >= 48 && dec <= 57) || (dec >= 65 && dec <= 90) || (dec >= 97 && dec <= 122))) {
-				Log.debug("KeyChar as unicode " + dec + " " + message.toString());
-				typeUnicode(dec);
-				return;
-			}
-		}
-		if (message.getKeyCode() != VK_ALT_GRAPH) {
+		if (message.getKeyCode() != VK_UNDEFINED) {
 			Log.debug("KeyCode " + message.toString());
 			robot.keyPress(message.getKeyCode());
 			return;
 		}
-		Log.warn(message.toString());
+		Log.debug("Undefined KeyCode " + message.toString());
+		if (message.getKeyChar() != CHAR_UNDEFINED) {
+			int dec = message.getKeyChar();
+			Log.debug("KeyChar as unicode " + dec + " " + message.toString());
+			typeUnicode(dec);
+			return;
+		}
+		Log.warn("Undefined KeyChar " + message.toString());
 	}
 
 	private boolean isRegularKey(NetworkKeyControlMessage message) {
@@ -139,16 +132,13 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseKey(NetworkKeyControlMessage message) {
-		if (message.getKeyChar() != CHAR_UNDEFINED && isRegularKey(message)) {
-			int dec = message.getKeyChar();
-			if (!((dec >= 48 && dec <= 57) || (dec >= 65 && dec <= 90) || (dec >= 97 && dec <= 122))) {
-				releaseUnicode();
-				return;
-			}
-		}
-		if (message.getKeyCode() != VK_ALT_GRAPH) {
+		if (message.getKeyCode() != VK_UNDEFINED) {
+			Log.debug("KeyCode " + message.toString());
 			robot.keyRelease(message.getKeyCode());
+			return;
 		}
+		Log.warn("KeyChar as unicode " + message.toString());
+		releaseUnicode();
 	}
 
 	private void releaseUnicode() {
@@ -197,7 +187,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseLinuxUnicode() {
-		robot.keyRelease(VK_CONTROL);
 		robot.keyRelease(VK_SHIFT);
+		robot.keyRelease(VK_CONTROL);
 	}
 }

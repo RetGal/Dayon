@@ -166,7 +166,6 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                Log.debug("Received " + type.name());
 
                 switch (type) {
                     case CAPTURE_CONFIGURATION:

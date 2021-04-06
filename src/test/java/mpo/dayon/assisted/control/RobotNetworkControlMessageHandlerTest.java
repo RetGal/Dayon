@@ -85,16 +85,7 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        // then
-        verify(robot).keyPress(KeyEvent.VK_CONTROL);
-        verify(robot).keyPress(KeyEvent.VK_SHIFT);
-        verify(robot).keyPress(KeyEvent.VK_U);
-        verify(robot).keyRelease(KeyEvent.VK_U);
-        // 64 as hex 40
-        verify(robot).keyPress(KeyEvent.VK_4);
-        verify(robot).keyRelease(KeyEvent.VK_4);
-        verify(robot).keyPress(KeyEvent.VK_0);
-        verify(robot).keyRelease(KeyEvent.VK_0);
+        verify(robot).keyPress(50);
     }
 
     @Test
