@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.gui;
 
-import javax.swing.*;
+import javax.swing.Action;
 
 class AssistantActions {
 
@@ -10,12 +10,10 @@ class AssistantActions {
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
     private Action toggleFitScreenAction;
-    private Action toggleControlModeAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
     private Action startAction;
     private Action stopAction;
-    private Action sendWindowsKeyAction;
     private Action settingsAction;
 
     public Action getIpAddressAction() {
@@ -66,14 +64,6 @@ class AssistantActions {
         this.toggleFitScreenAction = toggleFitScreenAction;
     }
 
-    public Action getToggleControlModeAction() {
-        return toggleControlModeAction;
-    }
-
-    public void setToggleControlModeAction(Action toggleControlModeAction) {
-        this.toggleControlModeAction = toggleControlModeAction;
-    }
-
     public Action getRemoteClipboardRequestAction() {
         return remoteClipboardRequestAction;
     }
@@ -104,14 +94,6 @@ class AssistantActions {
 
     public void setStopAction(Action stopAction) {
         this.stopAction = stopAction;
-    }
-
-    public Action getSendWindowsKeyAction() {
-        return sendWindowsKeyAction;
-    }
-
-    public void setSendWindowsKeyAction(Action sendWindowsKeyAction) {
-        this.sendWindowsKeyAction = sendWindowsKeyAction;
     }
 
     public Action getSettingsAction() {
