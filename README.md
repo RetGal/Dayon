@@ -12,10 +12,9 @@ As quick launch versions for Windows, they are also available as individual bina
 
 ## Key features
 
-- easy setup
-- no router or network configuration needed on the assisted side
+- easy setup (no router or network configuration needed on the assisted side)
 - intuitive, multilingual user interface (de, en, es, fr, it, ru, tr)
-- assistant and assisted functionality in same packet
+- assistant and assisted functionality in one package
 - secure, encrypted communication (TLS)
 - very low bandwidth usage
 - cross-platform
