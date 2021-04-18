@@ -34,13 +34,15 @@ The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky 
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
-Te app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>.
+Te app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
-Also available as snap:
+<a href='//www.microsoft.com/store/apps/9pbm5kw0c790?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get_L.png' alt='English badge' width="127" height="52"/></a>
+
+and as snap:
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
 
-Or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
+or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 
 ## Website
 
