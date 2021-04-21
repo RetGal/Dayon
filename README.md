@@ -34,7 +34,7 @@ The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky 
 
 This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
 
-Te app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
+The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
 <a href='//www.microsoft.com/store/apps/9pbm5kw0c790?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get_L.png' alt='English badge' width="127" height="52"/></a>
 
