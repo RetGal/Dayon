@@ -58,3 +58,5 @@ parts:
         [-jar/original-dayon.jar]
     stage:
       [$exclude-original-jar]
+    stage-packages:
+      [default-jre]
