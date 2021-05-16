@@ -24,7 +24,7 @@ public class Preferences {
 
     private final Object cloneLOCK = new Object();
 
-    private AtomicBoolean dirty = new AtomicBoolean();
+    private final AtomicBoolean dirty = new AtomicBoolean();
 
     private Preferences() {
         this.file = null;

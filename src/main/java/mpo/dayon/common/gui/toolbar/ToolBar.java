@@ -4,8 +4,6 @@ import java.awt.Insets;
 
 import javax.swing.*;
 
-import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
-
 public class ToolBar extends JToolBar {
 	public static final Insets ZERO_INSETS = new Insets(1, 1, 1, 1);
 

@@ -79,32 +79,32 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			try {
 				pressKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.error("Error while handling " + message.toString());
+				Log.error("Error while handling " + message);
 				shout(message.getKeyChar());
 			}
 		} else if (message.isReleased()) {
 			try {
 				releaseKey(message);
 			} catch (IllegalArgumentException ex) {
-				Log.error("Error while handling " + message.toString());
+				Log.error("Error while handling " + message);
 			}
 		}
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
 		if (message.getKeyCode() != VK_UNDEFINED) {
-			Log.debug("KeyCode " + message.toString());
+			Log.debug("KeyCode " + message);
 			robot.keyPress(message.getKeyCode());
 			return;
 		}
-		Log.debug("Undefined KeyCode " + message.toString());
+		Log.debug("Undefined KeyCode " + message);
 		if (message.getKeyChar() != CHAR_UNDEFINED) {
 			int dec = message.getKeyChar();
-			Log.debug("KeyChar as unicode " + dec + " " + message.toString());
+			Log.debug("KeyChar as unicode " + dec + " " + message);
 			typeUnicode(dec);
 			return;
 		}
-		Log.warn("Undefined KeyChar " + message.toString());
+		Log.warn("Undefined KeyChar " + message);
 	}
 
 	private boolean isRegularKey(NetworkKeyControlMessage message) {
@@ -133,11 +133,11 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private void releaseKey(NetworkKeyControlMessage message) {
 		if (message.getKeyCode() != VK_UNDEFINED) {
-			Log.debug("KeyCode " + message.toString());
+			Log.debug("KeyCode " + message);
 			robot.keyRelease(message.getKeyCode());
 			return;
 		}
-		Log.warn("KeyChar as unicode " + message.toString());
+		Log.warn("KeyChar as unicode " + message);
 		releaseUnicode();
 	}
 
