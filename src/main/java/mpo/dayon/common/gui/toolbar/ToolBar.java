@@ -13,19 +13,17 @@ public class ToolBar extends JToolBar {
 	}
 
 	public void addAction(Action action) {
-		final JButton button = new JButton();
-		button.setMargin(ZERO_INSETS);
-		button.setHideActionText(true);
-		button.setAction(action);
-		if (action.getValue(Action.SMALL_ICON) == null) {
-			button.setText((String) action.getValue("DISPLAY_NAME"));
-		}
+		final JToggleButton button = createToggleButton(action);
 		button.setDisabledIcon(null);
-		button.setFocusable(false);
 		add(button);
 	}
 
 	public void addToggleAction(Action action) {
+		final JToggleButton button = createToggleButton(action);
+		add(button);
+	}
+
+	private JToggleButton createToggleButton(Action action) {
 		final JToggleButton button = new JToggleButton();
 		button.setMargin(ZERO_INSETS);
 		button.setHideActionText(true);
@@ -34,7 +32,7 @@ public class ToolBar extends JToolBar {
 			button.setText((String) action.getValue("DISPLAY_NAME"));
 		}
 		button.setFocusable(false);
-		add(button);
+		return button;
 	}
 
 	public void addGlue() {

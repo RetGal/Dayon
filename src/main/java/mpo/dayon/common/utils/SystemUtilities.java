@@ -1,6 +1,14 @@
 package mpo.dayon.common.utils;
 
-import java.io.*;
+import mpo.dayon.common.babylon.Babylon;
+import mpo.dayon.common.gui.common.FrameType;
+import mpo.dayon.common.log.Log;
+
+import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
 import java.net.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,13 +17,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-
-import mpo.dayon.common.babylon.Babylon;
-import mpo.dayon.common.gui.common.FrameType;
-import mpo.dayon.common.log.Log;
 
 import static java.lang.Math.abs;
 
@@ -216,6 +217,14 @@ public abstract class SystemUtilities {
 
     public static boolean isSnapped() {
         return System.getProperty(JAVA_CLASS_PATH).startsWith("/snap/");
+    }
+
+    public static String getBuildNumber() {
+        if (isSnapped()) {
+            String classPath = System.getProperty(JAVA_CLASS_PATH);
+            return classPath.substring(classPath.indexOf("dayon") + 6, classPath.lastIndexOf("/jar"));
+        }
+        return "";
     }
 
     /**

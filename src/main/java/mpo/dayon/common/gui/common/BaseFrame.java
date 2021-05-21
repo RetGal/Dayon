@@ -19,8 +19,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
-import static mpo.dayon.common.utils.SystemUtilities.getSnapBrowserCommand;
-import static mpo.dayon.common.utils.SystemUtilities.isSnapped;
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
@@ -128,7 +127,7 @@ public abstract class BaseFrame extends JFrame {
                     }
                 });
 
-                final JLabel version = new JLabel(composeLabelHtml(Babylon.translate("version.installed"), Version.get().toString()));
+                final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(Babylon.translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.addMouseListener(new MouseAdapter() {
                     @Override
@@ -225,7 +224,14 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String composeLabelHtml(String label, String url) {
-        return "<html>" + label + " : <a href=''>" + url + "</a></html>";
+        return String.format("<html>%s : <a href=''>%s</a></html>", label, url);
+    }
+
+    private String composeLabelHtmlWithBuildNumber(String label, String url, String buildNumber) {
+        if (buildNumber.isEmpty()) {
+            return composeLabelHtml(label, url);
+        }
+        return String.format("<html>%s : <a href=''>%s</a> (build %s)</html>", label, url, buildNumber);
     }
 
     protected Action createShowHelpAction() {
