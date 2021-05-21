@@ -59,4 +59,4 @@ parts:
     stage:
       [$exclude-original-jar]
     stage-packages:
-      [openjdk-11-jre-headless]
+      [default-jre]
