@@ -231,7 +231,7 @@
                             <keystore>${basedir}/src/main/resources/trust/X509</keystore>
                             <alias>mykey</alias>
                             <storepass>spasspass</storepass>
-                            <tsa>http://tsa.starfieldtech.com</tsa>
+                            <tsa>http://timestamp.sectigo.com</tsa>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -397,7 +397,7 @@
                             <keystore>${basedir}/src/main/resources/trust/X509</keystore>
                             <alias>mykey</alias>
                             <storepass>spasspass</storepass>
-                            <tsa>http://tsa.starfieldtech.com</tsa>
+                            <tsa>http://timestamp.sectigo.com</tsa>
                         </configuration>
                     </plugin>
                     <plugin>

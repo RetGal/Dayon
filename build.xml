@@ -110,7 +110,7 @@
 	</target>
 
 	<target name="sign" description="Signs the distribution project jar">
-		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/dayon.jar" tsaurl="http://tsa.starfieldtech.com"/>
+		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/dayon.jar" tsaurl="http://timestamp.sectigo.com"/>
 	</target>
 
 	<target name="tar" description="Creates a gzipped tar archive of the distribution for Linux">
