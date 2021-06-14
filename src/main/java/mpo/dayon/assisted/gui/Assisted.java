@@ -31,6 +31,8 @@ import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 
+import static java.lang.String.format;
+
 public class Assisted implements Subscriber, ClipboardOwner {
     private AssistedFrame frame;
 
@@ -78,6 +80,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             frame.setVisible(true);
         }
         return configureConnection(serverName, portNumber);
+    }
+
+    public NetworkAssistedEngineConfiguration getConfiguration() {
+        return configuration;
     }
 
     private boolean configureConnection(String serverName, String portNumber) {
@@ -171,20 +177,25 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     void stop() {
-        Log.info("Assisted stop");
-        if (captureEngine != null) {
-            captureEngine.stop();
-            captureEngine = null;
-        }
-        if (compressorEngine != null) {
-            compressorEngine.stop();
-            compressorEngine = null;
-        }
-        if (networkEngine != null) {
+        stop(configuration.getServerName());
+    }
+
+    void stop(String serverName) {
+        Log.info(format("Assisted stop [%s]", serverName));
+        if (networkEngine != null && networkEngine.getConfiguration().getServerName().equals(serverName)) {
             networkEngine.cancel();
             networkEngine = null;
+
+            if (captureEngine != null) {
+                captureEngine.stop();
+                captureEngine = null;
+            }
+            if (compressorEngine != null) {
+                compressorEngine.stop();
+                compressorEngine = null;
+            }
+            frame.onDisconnecting();
         }
-        frame.onDisconnecting();
     }
 
     @Override
@@ -305,16 +316,19 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onHostNotFound(String serverName) {
+            stop(serverName);
             frame.onHostNotFound(serverName);
         }
 
         @Override
         public void onConnectionTimeout(String serverName, int serverPort) {
+            stop(serverName);
             frame.onConnectionTimeout(serverName, serverPort);
         }
 
         @Override
         public void onRefused(String serverName, int serverPort) {
+            stop(serverName);
             frame.onRefused(serverName, serverPort);
         }
 
@@ -330,7 +344,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onIOError(IOException error) {
-            stop();
+            stop(getConfiguration().getServerName());
             frame.onDisconnecting();
         }
     }

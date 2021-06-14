@@ -12,6 +12,7 @@ import mpo.dayon.common.version.Version;
 class AssistedFrame extends BaseFrame {
 	private final transient Action startAction;
 	private final transient Action stopAction;
+	private boolean connected;
 
 	public AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction) {
 		super.setFrameType(FrameType.ASSISTED);
@@ -48,36 +49,45 @@ class AssistedFrame extends BaseFrame {
 		startAction.setEnabled(true);
 		stopAction.setEnabled(false);
 		statusBar.setMessage(Babylon.translate("ready"));
+		connected = false;
 	}
 
 	void onConnecting(String serverName, int serverPort) {
 		startAction.setEnabled(false);
-		stopAction.setEnabled(false);
+		stopAction.setEnabled(true);
 		statusBar.setMessage(Babylon.translate("connecting", serverName, serverPort));
+		connected = false;
 	}
 
 	void onConnected() {
 		startAction.setEnabled(false);
 		stopAction.setEnabled(true);
 		statusBar.setMessage(Babylon.translate("connected"));
+		connected = true;
 	}
 
 	void onHostNotFound(String serverName) {
-		startAction.setEnabled(true);
-		stopAction.setEnabled(false);
-		statusBar.setMessage(Babylon.translate("serverNotFound", serverName));
+		if (!connected) {
+			startAction.setEnabled(true);
+			stopAction.setEnabled(false);
+			statusBar.setMessage(Babylon.translate("serverNotFound", serverName));
+		}
 	}
 
 	void onConnectionTimeout(String serverName, int serverPort) {
-		stopAction.setEnabled(false);
-		startAction.setEnabled(true);
-		statusBar.setMessage(Babylon.translate("connectionTimeout", serverName, serverPort));
+		if (!connected) {
+			stopAction.setEnabled(false);
+			startAction.setEnabled(true);
+			statusBar.setMessage(Babylon.translate("connectionTimeout", serverName, serverPort));
+		}
 	}
 
 	void onRefused(String serverName, int serverPort) {
-		startAction.setEnabled(true);
-		stopAction.setEnabled(false);
-		statusBar.setMessage(Babylon.translate("refused",  serverName, serverPort));
+		if (!connected) {
+			startAction.setEnabled(true);
+			stopAction.setEnabled(false);
+			statusBar.setMessage(Babylon.translate("refused", serverName, serverPort));
+		}
 	}
 
 	void onDisconnecting() {

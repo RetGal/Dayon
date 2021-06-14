@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.util.concurrent.ExecutionException;
 
+import static java.lang.String.format;
+
 class AssistedStartAction extends AbstractAction {
     private final transient Assisted assisted;
 
@@ -40,7 +42,7 @@ class AssistedStartAction extends AbstractAction {
             try {
                 if (!isCancelled()) {
                     super.get();
-                    Log.info("NetWorker is done");
+                    Log.debug(format("NetWorker is done [%s]", assisted.getConfiguration().getServerName()));
                 }
             } catch (InterruptedException | ExecutionException ie) {
                 Log.info("NetWorker was cancelled");

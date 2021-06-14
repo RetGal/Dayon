@@ -71,6 +71,10 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.clipboardOwner = clipboardOwner;
     }
 
+    public NetworkAssistedEngineConfiguration getConfiguration() {
+        return configuration;
+    }
+
     private void runReceivers() {
         this.receiver = new Thread(new RunnableEx() {
             @Override
