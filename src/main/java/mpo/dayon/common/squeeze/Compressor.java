@@ -22,14 +22,9 @@ public class Compressor {
     private static final Compressor ZIP_COMPRESSOR = new Compressor(CompressionMethod.ZIP, new RegularRunLengthEncoder(), new ZIP_Zipper());
 
     /**
-     * BZIP2.
+     * XZ.
      */
-    private static final Compressor BZIP2_COMPRESSOR = new Compressor(CompressionMethod.BZIP2, new NullRunLengthEncoder(), new BZIP2_Zipper());
-
-    /**
-     * LZMA.
-     */
-    private static final Compressor LZMA_COMPRESSOR = new Compressor(CompressionMethod.LZMA, new NullRunLengthEncoder(), new LZMA_Zipper());
+    private static final Compressor XZ_COMPRESSOR = new Compressor(CompressionMethod.XZ, new NullRunLengthEncoder(), new XZ_Zipper());
 
     private final CompressionMethod method;
 
@@ -48,10 +43,8 @@ public class Compressor {
         switch (method) {
             case ZIP:
                 return ZIP_COMPRESSOR;
-            case BZIP2:
-                return BZIP2_COMPRESSOR;
-            case LZMA:
-                return LZMA_COMPRESSOR;
+            case XZ:
+                return XZ_COMPRESSOR;
 			case NONE:
 				return NULL_COMPRESSOR;
             default:

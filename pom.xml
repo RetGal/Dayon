@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>1.10.7</version>
+    <version>1.10.8</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -30,22 +30,16 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
-        <bzip2.version>0.9.1</bzip2.version>
-        <grizzly-lzma.version>1.9.65</grizzly-lzma.version>
+        <xz.version>1.9</xz.version>
         <junit.jupiter.version>5.7.1</junit.jupiter.version>
         <mockito.core.version>3.8.0</mockito.core.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.itadaki</groupId>
-            <artifactId>bzip2</artifactId>
-            <version>${bzip2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.grizzly</groupId>
-            <artifactId>grizzly-lzma</artifactId>
-            <version>${grizzly-lzma.version}</version>
+            <groupId>org.tukaani</groupId>
+            <artifactId>xz</artifactId>
+            <version>1.9</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -198,13 +192,7 @@
                                     <minimizeJar>true</minimizeJar>
                                     <filters>
                                         <filter>
-                                            <artifact>com.sun.grizzly:grizzly-lzma</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>org.itadaki:bzip2</artifact>
+                                            <artifact>org.tukaani:xz</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
                                             </excludes>
@@ -364,13 +352,7 @@
                                     <minimizeJar>true</minimizeJar>
                                     <filters>
                                         <filter>
-                                            <artifact>com.sun.grizzly:grizzly-lzma</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>org.itadaki:bzip2</artifact>
+                                            <artifact>org.tukaani:xz</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
                                             </excludes>

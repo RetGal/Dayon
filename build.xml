@@ -13,7 +13,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="1.10.7"/>
+	<property name="version" value="1.10.8"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -58,7 +58,7 @@
 
 	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
-			<zipgroupfileset dir="${dir.binfile}/lib" includes="bzip2-0.9.1.jar,grizzly-lzma-1.9.65.jar"/>
+			<zipgroupfileset dir="${dir.binfile}/lib" includes="xz-1.9.jar"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
