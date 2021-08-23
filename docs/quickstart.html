@@ -91,14 +91,14 @@
         <p>
             <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
         <p>
-            You can then setup the <b>compression</b> method; three methods are available: ZIP, BZIP2 and LZMA. BZIP2
-            and LZMA should give a better compression ratio but requires more CPU as they're much more complicated than
-            ZIP and are currently implemented in JAVA (ZIP is being implemented using some native code in the JDK).
+            You can then setup the <b>compression</b> method; two methods are available: ZIP and XZ. XZ
+            will obtain a (much) better compression ratio but requires more CPU and RAM as it's much more complicated
+            than ZIP and is implemented in JAVA (ZIP is being implemented using some native code in the JDK).
         <p>
             In addition a <b>cache</b> is used that allows for not sending many times the same bitmap as for example
             when opening and navigating menus (i.e., what's under the menus are not sent more than once). The screen is
-            divided into many tiles, each one being
-            possibly cached. You've to define the maximum number of tiles in the cache. Note that a tile is currently
+            divided into many tiles, each one being possibly cached.
+            You've to define the maximum number of tiles in the cache. Note that a tile is currently
             32x32 pixels of 256 levels, that is 1K.
         <p>
             <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
