@@ -21,6 +21,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	private final List<Subscriber> subscribers = new ArrayList<>();
 	// 										              a,c,p, s, v, x, y, z
 	private static final int[] SHORTCUT_KEYS = new int[] {1,3,16,19,22,24,25,26};
+	private static final char UNIX_SEPARATOR_CHAR = '/';
 
 	public RobotNetworkControlMessageHandler() {
 		try {
@@ -93,6 +94,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private void pressKey(NetworkKeyControlMessage message) {
 		if (message.getKeyCode() != VK_UNDEFINED) {
+			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
+				robot.keyPress(VK_CONTROL);
+				robot.keyPress(VK_ALT);
+				Log.debug("KeyCode ALT_GRAPH" + message);
+				return;
+			}
 			Log.debug("KeyCode " + message);
 			robot.keyPress(message.getKeyCode());
 			return;
@@ -124,7 +131,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void typeUnicode(int keyCode) {
-		if (File.separatorChar == '/') {
+		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
 			typeLinuxUnicode(keyCode);
 			return;
 		}
@@ -133,6 +140,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private void releaseKey(NetworkKeyControlMessage message) {
 		if (message.getKeyCode() != VK_UNDEFINED) {
+			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
+				robot.keyRelease(VK_ALT);
+				robot.keyRelease(VK_CONTROL);
+				Log.debug("KeyCode ALT_GRAPH" + message);
+				return;
+			}
 			Log.debug("KeyCode " + message);
 			robot.keyRelease(message.getKeyCode());
 			return;
@@ -142,7 +155,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseUnicode() {
-		if (File.separatorChar == '/') {
+		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
 			releaseLinuxUnicode();
 			return;
 		}
@@ -153,13 +166,13 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in decimal on Windows ä => 228
 	 */
 	private void typeWindowsUnicode(int keyCode) {
-	    robot.keyPress(VK_ALT);
-	    // simulate a numpad key press for each digit
-	    for (int i = 3; i >= 0; --i) {
-	        int code = keyCode / (int) (Math.pow(10, i)) % 10 + VK_NUMPAD0;
-	        robot.keyPress(code);
-	        robot.keyRelease(code);
-	    }
+		robot.keyPress(VK_ALT);
+		// simulate a numpad key press for each digit
+		for (int i = 3; i >= 0; --i) {
+			int code = keyCode / (int) (Math.pow(10, i)) % 10 + VK_NUMPAD0;
+			robot.keyPress(code);
+			robot.keyRelease(code);
+		}
 		// will be released when handling the subsequent message
 	}
 
@@ -171,17 +184,17 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in hex on Linux ä => e4
 	 */
 	private void typeLinuxUnicode(int keyCode) {
-	    robot.keyPress(VK_CONTROL);
-	    robot.keyPress(VK_SHIFT);
-	    robot.keyPress(VK_U);
-	    robot.keyRelease(VK_U);
-	    char[] charArray = Integer.toHexString(keyCode).toCharArray();
-	    // simulate a key press/release for each char
-    	// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
-	    for (char c : charArray) {
-	        int code = Character.toUpperCase(c);
-	        robot.keyPress(code);
-	        robot.keyRelease(code);
+		robot.keyPress(VK_CONTROL);
+		robot.keyPress(VK_SHIFT);
+		robot.keyPress(VK_U);
+		robot.keyRelease(VK_U);
+		char[] charArray = Integer.toHexString(keyCode).toCharArray();
+		// simulate a key press/release for each char
+		// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
+		for (char c : charArray) {
+			int code = Character.toUpperCase(c);
+			robot.keyPress(code);
+			robot.keyRelease(code);
 		}
 		// will be released when handling the subsequent message
 	}
