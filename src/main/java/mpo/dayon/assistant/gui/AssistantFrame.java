@@ -5,6 +5,7 @@ import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.gui.common.*;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
+import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.version.Version;
 
@@ -55,6 +56,7 @@ class AssistantFrame extends BaseFrame {
     private Dimension canvas;
 
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
+        RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
         this.actions = actions;
