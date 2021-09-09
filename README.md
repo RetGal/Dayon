@@ -32,7 +32,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 The ![latest version](https://github.com/RetGal/Dayon/releases) is v1.10 (Lucky Lobster) - released more than ten years after the initial release.
 
-This version comes with a new connection protocol, allowing the clipboard to be shared between assisted and assistant.
+This version comes with a new connection protocol, allowing files and clipboard to be shared between assisted and assistant.
 
 The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
@@ -56,7 +56,7 @@ Please refer to the [English](https://retgal.github.io/Dayon/index.html) or [Fre
  
 ## Screen
 
-![Assistant connected](/docs/assistant_connected.jpg?raw=true "Assistant connected")
+![Assistant in action](/docs/dayon.screen.png?raw=true "Assistant connected")
 
 ## Trivia
 
@@ -83,5 +83,3 @@ You don't have to be a programmer!
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/resources/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/resources/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
 Some additional testing, especially on macOS would also be highly appreciated.
-
- 
