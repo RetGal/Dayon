@@ -22,83 +22,83 @@
     <div id="content">
         <h2>Premier Pas</h2>
         <p>
-            Typiquement, l'<i>assistant</i> discute avec l'<i>assistée</i> en utilisant Skype, le téléphone, son IM
+            Typiquement, l'<em>assistant</em> discute avec l'<em>assistée</em> en utilisant Skype, le téléphone, son IM
             préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser en direct l'écran de
-            l'ordinateur de l'<i>assistée</i>.
+            l'ordinateur de l'<em>assistée</em>.
         <p>
             Notez que les images sur cette page correspondent à la version anglaise mais que l'application elle-même est
             complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre l'essentiel.
         <p>
             <strong>Attention</strong>: cette documentation fait référence à la dernière version du programme.
         <p>
-            <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup" class="no"><b>Mise en Route Coté assistée</b></a>
+            <img src="assisted.png" alt="Assisted"> &nbsp; <a name="assisted-setup" class="no"><strong>Mise en Route Coté assistée</strong></a>
         <p>
             Dayon! assistée se comporte comme un client qui appelle le monde extérieur; à ce titre il n'y a pas de
             configuration réseau à faire.
         <p>
-            Il faut télécharger et installer Dayon!. Ensuite démarrez <i>Dayon!</i>
+            Il faut télécharger et installer Dayon!. Ensuite démarrez <em>Dayon!</em>
             (vous devriez avoir un raccourci sur le bureau) et cliquez sur l'icône de lecture.
         <p>
             <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
         <p>
-            Entrez l'addresse IP et le numéro de port communiqué par l'<i>assistant</i>:
+            Entrez l'addresse IP et le numéro de port communiqué par l'<em>assistant</em>:
             (les deux champs de saisie peuvent être effacés en les double-cliquant) cliquez sur le bouton "OK".
         <p>
             <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
         <p>
-            Vous serez alors promptement connecté à l'<i>assistant</i> qui sera déjà en train de regarder votre écran.
+            Vous serez alors promptement connecté à l'<em>assistant</em> qui sera déjà en train de regarder votre écran.
             Bonne session!
         <p>
-            <img src="assistant.png" alt="Assistant"><a name="assistant-setup" class="no"><b>Mise en Route Coté Assistant</b></a>
+            <img src="assistant.png" alt="Assistant"><a name="assistant-setup" class="no"><strong>Mise en Route Coté Assistant</strong></a>
         <p>
-            Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<i>assistée</i> va se
+            Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<em>assistée</em> va se
             connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur.
             La première chose à faire est de configurer le
-            numéro de <b>port d'écoute</b> comme indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans
-            votre <b>parefeu</b> et sans doute configurer un service <b>NAT</b> sur votre routeur DSL.<br><br>
+            numéro de <strong>port d'écoute</strong> comme indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans
+            votre <strong>parefeu</strong> et sans doute configurer un service <strong>NAT</strong> sur votre routeur DSL.<br><br>
             Consultez <a href="https://portforward.com/router.htm"> portforward.com </a> pour un guide étape par étape
             pour les plus courants modèles de routeurs.
         <p>
             <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
         <p>
-            Ensuite, vous devez décider quelle <b>addresse IP</b> vous voulez communiquer à l'<i>assistée</i> pour qu'il
-            se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <b>publique</b>. Mais pour
+            Ensuite, vous devez décider quelle <strong>addresse IP</strong> vous voulez communiquer à l'<em>assistée</em> pour qu'il
+            se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <strong>publique</strong>. Mais pour
             un test sur votre réseau local (ou
-            sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre <b>addresse IP
-            publique</b> avec le menu suivant:<br>
+            sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre <strong>addresse IP
+            publique</strong> avec le menu suivant:<br>
             <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
         <p>
             Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de
-            copier dans le clipboard l'<b>IP Address & Port Number</b>. Il vous sera ainsi facile de coller dans une
+            copier dans le clipboard l'<strong>IP Address & Port Number</strong>. Il vous sera ainsi facile de coller dans une
             session Skype (ou autre) ou dans un message email.
         <p>
             <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
         <p>
-            <i> Noter que cette addresse IP n'est pas requise pour l'<i>assistant</i>. En effet, l'application écoute
+            <em> Noter que cette addresse IP n'est pas requise pour l'<em>assistant</em>. En effet, l'application écoute
                 sur toutes les interfaces réseaux disponibles; mais la personne assistée va avoir besoin de ces
-                informations.</i>
+                informations.</em>
         <p>
             C'est tout pour la configuration réseau;<br>
-            <b>Pour les impatients:</b> <a href="#assistant-start">Ici</a> vous apprendrez comment faire en sorte que
+            <strong>Pour les impatients:</strong> <a href="#assistant-start">Ici</a> vous apprendrez comment faire en sorte que
             l'assistant <a href="#assistant-start">écoute la connexion entrantes</a>.
         <p>
-            Mais voyons tout d'abord continuer aux informations détaillées sur les options de configuration avancées le côté <i>assistée</i>.
+            Mais voyons tout d'abord continuer aux informations détaillées sur les options de configuration avancées le côté <em>assistée</em>.
         <p>
-            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details" class="no"><b>Mise en Route Coté Assistant
-            (La Suite)</b></a>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a name="assistant-details" class="no"><strong>Mise en Route Coté Assistant
+            (La Suite)</strong></a>
         <p>
-            Cette forme vous permet de configurer la façon dont l'écran est <b>capturé</b>; vous pouvez configurer
+            Cette forme vous permet de configurer la façon dont l'écran est <strong>capturé</strong>; vous pouvez configurer
             l'interval de temps (en milli-seconde) entre deux captures (aka. tic-tac) ainsi que le nombre de niveau de
             gris. Moins de niveaux veut dire moins
             d'information à transmettre sur le réseau (au détriment de la qualité des images).
         <p>
             <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
         <p>
-            Vous pouvez ensuite configuer la méthode de <b>compression</b>; deux méthodes sont disponibles: ZIP et XZ.
+            Vous pouvez ensuite configuer la méthode de <strong>compression</strong>; deux méthodes sont disponibles: ZIP et XZ.
             XZ va donner les meilleurs résultats mais demandent plus de CPU et memoire; elle est bien plus compliquées
             que ZIP et est de plus implémentées en JAVA (ZIP étant implémenté en code natif dans le JDK).
         <p>
-            En plus de la compression, un <b>cache</b> est utilisé pour ne pas envoyer plusieurs fois des images
+            En plus de la compression, un <strong>cache</strong> est utilisé pour ne pas envoyer plusieurs fois des images
             identiques comme par exemple, quand on ouvre et ferme un menu (i.e., l'image sous le menu n'a pas besoin
             d'être renvoyée). Pour cela, l'écran est
             divisé en carreaux, chacun pouvant être caché. Vous devez définir le nombre maximum de carreaux dans le
@@ -106,12 +106,12 @@
         <p>
             <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
         <p>
-            <a name="assistant-start" class="no">C'est à peu près tout. Après un clic sur le bouton play (le premièr à gauche) l' <i>assistant</i> est prêt à
+            <a name="assistant-start" class="no">C'est à peu près tout. Après un clic sur le bouton play (le premièr à gauche) l' <em>assistant</em> est prêt à
             recevoir des données:</a>
         <p>
             <img src="assistant_start.jpg" alt="Dayon! Assistant : Start">
         <p>
-            Vous pouvez maintenant demander à l'<i>assistée</i> de se connecter. Vous serez alors promptement requis
+            Vous pouvez maintenant demander à l'<em>assistée</em> de se connecter. Vous serez alors promptement requis
             d'accepter une nouvelle connexion:
         <p>
             <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
@@ -120,32 +120,32 @@
         <p>
             <img src="assistant_connected.jpg" alt="Dayon! Assistent : Running">
         <p>
-            Si le bureau de l'<i>assisté</i> ne rentre pas dans votre fenêtre, il peut être réduit:
+            Si le bureau de l'<em>assisté</em> ne rentre pas dans votre fenêtre, il peut être réduit:
         <p>
             <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle">
         <p>
-            Par default, le <b>mode de contrôle</b> à distance n'est pas activé; vous pouvez l'activer avec l'icône
+            Par default, le <strong>mode de contrôle</strong> à distance n'est pas activé; vous pouvez l'activer avec l'icône
             suivante:
         <p>
             <img src="assistant_control.jpg" alt="Dayon! Assistant : Control Toggle">
         <p>
         <h2>Fonctions avancées</h2>
         <p>
-            Prérequis: Les fonctions suivantes nécessitent une connexion établie avec l'<i>assistée</i> .
+            Prérequis: Les fonctions suivantes nécessitent une connexion établie avec l'<em>assistée</em> .
         <p>
         <h3>Transfert de presse-papiers</h3>
         <p>
-            En cliquant sur le bouton haut ou bas, le presse-papiers de l'assistant peut être transféré vers l'<i>assistée</i>
+            En cliquant sur le bouton haut ou bas, le presse-papiers de l'assistant peut être transféré vers l'<em>assistée</em>
             (haut) ou le presse-papiers de l'assistée vers l'assistant (bas).
         <p>
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
         <h4>Actuellement pris en charge sont:</h4>
             <ul>
-                <li><strong>Texte</strong>: sélectionnez du texte localement ou dans la fenêtre <i>assistée</i> , copiez (<code>Ctl + c</code>),
+                <li><strong>Texte</strong>: sélectionnez du texte localement ou dans la fenêtre <em>assistée</em> , copiez (<code>Ctl + c</code>),
                     cliquez vers le haut ou le bas. Ensuite, le texte transmis peut être inséré dans une application locale
                     ou distante (<code>Ctrl + v</code>).
-                <li><strong>Fichiers</strong>: sélectionnez un ou plusieurs fichiers localement ou dans la fenêtre de la personne <i>assistée</i>
+                <li><strong>Fichiers</strong>: sélectionnez un ou plusieurs fichiers localement ou dans la fenêtre de la personne <em>assistée</em>
                     (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite, le ou les fichiers peuvent être insérés
                     à la destination.
             </ul>
@@ -158,13 +158,13 @@
         <h3>Transmettre la pression de la touche Windows</h3>
         <p>
             Pour transmettre la pression de la touche Windows, cliquez sur le symbole Windows dans le panneau de configuration
-            de l'<i>assistant</i>:
+            de l'<em>assistant</em>:
         <p>
             <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key">
         <p>
             La touche reste enfoncée jusqu'à ce que vous cliquiez à nouveau sur le symbole.
             Cela vous permet d'envoyer des raccourcis clavier Windows.<br>
-            Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<i>assistée</i>, vous cliquez sur le symbole Windows,
+            Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<em>assistée</em>, vous cliquez sur le symbole Windows,
             appuyez sur la touche <code>M</code>, puis cliquez à nouveau sur le symbole Windows.
         <p>
             C'est tout! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
