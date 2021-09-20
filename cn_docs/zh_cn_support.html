@@ -60,12 +60,10 @@
             <li>网络带宽使用情况
             <li>压缩比：初始捕获（仅差异）已被压缩的次数 
             <li>“图块”数量：通过网络传输的“图块”数量以及缓存命中率。 
-            <li>跳过的捕获：由于屏幕捕获间隔设置过低(即Assistant-首选项-屏幕捕获中的屏幕捕获间隔设置太低)导致远程计算机无法捕获的画面数量。为了减少画面丢失，你必须增加屏幕捕获间隔，增大 Assistant-首选项-屏幕捕获 中的捕获间隔值。
-            <li>合并的“图块”：传输前已合并的截屏。这是由于当前设置的屏幕捕获频率对当前所选的压缩方法太高。 为了最小化这个数字，你 必须减慢捕获速率和/或使用更快的方法更改压缩方法。 the number of screen captures that have been merged before being transmitted.
-                This is due to a capture rate too high for the current compression method. To minimize that number you
-                have to slow down the capture rate and/or change the compression method using a faster one.
-            <li>Memory usage
-            <li>Duration of the active or the last support session
+            <li>跳过的捕获：由于屏幕捕获间隔设置过低(即主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔设置太低)导致远程计算机无法捕获的画面数量。为了减少画面丢失，你必须增加屏幕捕获间隔，增大 Assistant-首选项-屏幕捕获 中的捕获间隔值。
+            <li>合并的“图块”：传输前就被合并的截屏。这是由于设置的屏幕捕获频率对当前所选的压缩方法来说太高了(压缩速度 << 捕获速度)。为了减少由此导致的画面丢失(或失真)，你必须提高 主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔 或 更改 主控端Assistant-首选项-压缩-压缩算法 使用更快的压缩算法。
+            <li>内存
+            <li>会话时长
         </ol>
     </div>
     <div id="footer"></div>
