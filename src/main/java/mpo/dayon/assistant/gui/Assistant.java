@@ -45,7 +45,6 @@ import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
 import mpo.dayon.assistant.utils.NetworkUtilities;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.configuration.Configurable;
@@ -56,6 +55,7 @@ import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
 
 import static java.lang.Math.abs;
+import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -100,19 +100,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private final AtomicBoolean fitToScreenActivated  = new AtomicBoolean(false);
 
     public Assistant() {
-        receivedBitCounter = new BitCounter("receivedBits", Babylon.translate("networkBandwidth"));
+        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
 
-        receivedTileCounter = new TileCounter("receivedTiles", Babylon.translate("receivedTileNumber"));
+        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
         receivedTileCounter.start(1000);
 
-        skippedTileCounter = new SkippedTileCounter("skippedTiles", Babylon.translate("skippedCaptureNumber"));
+        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"));
         skippedTileCounter.start(1000);
 
-        mergedTileCounter = new MergedTileCounter("mergedTiles", Babylon.translate("mergedCaptureNumber"));
+        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"));
         mergedTileCounter.start(1000);
 
-        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", Babylon.translate("captureCompression"));
+        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
 
         counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
@@ -194,7 +194,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 final JPopupMenu choices = new JPopupMenu();
 
                 if (publicIp == null) {
-                    final JMenuItem menuItem = new JMenuItem(Babylon.translate("retrieveMe"));
+                    final JMenuItem menuItem = new JMenuItem(translate("retrieveMe"));
                     menuItem.addActionListener(ev16 -> {
                         final Cursor cursor = frame.getCursor();
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -205,7 +205,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                             }
                         } catch (IOException ex) {
                             Log.error("What is my IP error!", ex);
-                            JOptionPane.showMessageDialog(frame, Babylon.translate("ipAddress.msg1"), Babylon.translate("ipAddress"),
+                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg1"), translate("ipAddress"),
                                     JOptionPane.ERROR_MESSAGE);
                         } finally {
                             frame.setCursor(cursor);
@@ -216,7 +216,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                     });
                     choices.add(menuItem);
                 } else {
-                    final JMenuItem menuItem = new JMenuItem(Babylon.translate("ipAddressPublic", publicIp));
+                    final JMenuItem menuItem = new JMenuItem(translate("ipAddressPublic", publicIp));
                     menuItem.addActionListener(ev15 -> button.setText(publicIp));
                     choices.add(menuItem);
                 }
@@ -256,12 +256,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         ip.putValue(Action.NAME, "whatIsMyIpAddress");
         ip.putValue("DISPLAY_NAME", network.getLocalhost()); // always a selection
         // ...
-        ip.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("ipAddress.msg1"));
+        ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         return ip;
     }
 
     private JMenuItem getJMenuItemHelp() {
-        final JMenuItem help = new JMenuItem(Babylon.translate("help"));
+        final JMenuItem help = new JMenuItem(translate("help"));
         help.addActionListener(ev1 -> {
             if (isSnapped()) {
                 try {
@@ -281,7 +281,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     }
 
     private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
-        final JMenuItem menuItem = new JMenuItem(Babylon.translate("copy.msg"));
+        final JMenuItem menuItem = new JMenuItem(translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
             final String url = button.getText() + " " + networkConfiguration.getPort();
             final StringSelection value = new StringSelection(url);
@@ -298,19 +298,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
                 final JPanel pane = new JPanel();
                 pane.setLayout(new GridLayout(1, 2, 10, 10));
-                final JLabel portNumberLbl = new JLabel(Babylon.translate("connection.settings.portNumber"));
-                portNumberLbl.setToolTipText(Babylon.translate("connection.settings.portNumber.tooltip"));
+                final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
+                portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
                 final JTextField portNumberTextField = new JTextField();
                 portNumberTextField.setText(String.valueOf(networkConfiguration.getPort()));
                 pane.add(portNumberLbl);
                 pane.add(portNumberTextField);
 
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, Babylon.translate("connection.network"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), pane, () -> {
                     final String portNumber = portNumberTextField.getText();
                     if (portNumber.isEmpty()) {
-                        return Babylon.translate("connection.settings.emptyPortNumber");
+                        return translate("connection.settings.emptyPortNumber");
                     }
-                    return isValidPortNumber(portNumber) ? null : Babylon.translate("connection.settings.invalidPortNumber");
+                    return isValidPortNumber(portNumber) ? null : translate("connection.settings.invalidPortNumber");
                 });
 
                 if (ok) {
@@ -327,8 +327,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        exit.putValue(Action.NAME, margin(Babylon.translate("connection.network")));
-        exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connection.settings"));
+        exit.putValue(Action.NAME, margin(translate("connection.network")));
+        exit.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
         exit.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
         return exit;
     }
@@ -342,7 +342,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         };
 
         getRemoteClipboard.putValue(Action.NAME, "getClipboard");
-        getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.getRemote"));
+        getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.getRemote"));
         getRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.DOWN));
         return getRemoteClipboard;
     }
@@ -356,7 +356,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         };
 
         setRemoteClipboard.putValue(Action.NAME, "setClipboard");
-        setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("clipboard.setRemote"));
+        setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.setRemote"));
         setRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UP));
         return setRemoteClipboard;
     }
@@ -414,30 +414,30 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 final JPanel pane = new JPanel();
                 pane.setLayout(new GridLayout(2, 2, 10, 10));
 
-                final JLabel tickLbl = new JLabel(Babylon.translate("tick"));
-                tickLbl.setToolTipText(Babylon.translate("tick.tooltip"));
+                final JLabel tickLbl = new JLabel(translate("tick"));
+                tickLbl.setToolTipText(translate("tick.tooltip"));
                 final JTextField tickTextField = new JTextField();
                 tickTextField.setText(String.valueOf(captureEngineConfiguration.getCaptureTick()));
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
-                final JLabel grayLevelsLbl = new JLabel(Babylon.translate("grays"));
+                final JLabel grayLevelsLbl = new JLabel(translate("grays"));
                 final JComboBox<Gray8Bits> grayLevelsCb = new JComboBox<>(Gray8Bits.values());
                 grayLevelsCb.setSelectedItem(captureEngineConfiguration.getCaptureQuantization());
                 pane.add(grayLevelsLbl);
                 pane.add(grayLevelsCb);
 
-                final boolean ok = DialogFactory.showOkCancel(captureFrame, Babylon.translate("capture"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, () -> {
                     final String tick = tickTextField.getText();
                     if (tick.isEmpty()) {
-                        return Babylon.translate("tick.msg1");
+                        return translate("tick.msg1");
                     }
                     try {
                         if (Integer.parseInt(tick) < 50 ) {
-                            return Babylon.translate("tick.msg2");
+                            return translate("tick.msg2");
                         }
                     } catch (NumberFormatException ex) {
-                        return Babylon.translate("tick.msg2");
+                        return translate("tick.msg2");
                     }
                     return null;
                 });
@@ -455,8 +455,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        configure.putValue(Action.NAME, margin(Babylon.translate("capture")));
-        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.settings"));
+        configure.putValue(Action.NAME, margin(translate("capture")));
+        configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
         return configure;
     }
@@ -479,27 +479,27 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 final JPanel pane = new JPanel();
                 pane.setLayout(new GridLayout(4, 2, 10, 10));
 
-                final JLabel methodLbl = new JLabel(Babylon.translate("compression.method"));
+                final JLabel methodLbl = new JLabel(translate("compression.method"));
                 // testing only: final JComboBox<CompressionMethod> methodCb = new JComboBox<>(CompressionMethod.values());
                 final JComboBox<CompressionMethod> methodCb = new JComboBox<>(Stream.of(CompressionMethod.values()).filter(e -> !e.equals(CompressionMethod.NONE)).toArray(CompressionMethod[]::new));
                 methodCb.setSelectedItem(compressorEngineConfiguration.getMethod());
                 pane.add(methodLbl);
                 pane.add(methodCb);
 
-                final JLabel useCacheLbl = new JLabel(Babylon.translate("compression.cache.usage"));
+                final JLabel useCacheLbl = new JLabel(translate("compression.cache.usage"));
                 final JCheckBox useCacheCb = new JCheckBox();
                 useCacheCb.setSelected(compressorEngineConfiguration.useCache());
                 pane.add(useCacheLbl);
                 pane.add(useCacheCb);
 
-                final JLabel maxSizeLbl = new JLabel(Babylon.translate("compression.cache.max"));
-                maxSizeLbl.setToolTipText(Babylon.translate("compression.cache.max.tooltip"));
+                final JLabel maxSizeLbl = new JLabel(translate("compression.cache.max"));
+                maxSizeLbl.setToolTipText(translate("compression.cache.max.tooltip"));
                 final JTextField maxSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCacheMaxSize()));
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
-                final JLabel purgeSizeLbl = new JLabel(Babylon.translate("compression.cache.purge"));
-                purgeSizeLbl.setToolTipText(Babylon.translate("compression.cache.purge.tooltip"));
+                final JLabel purgeSizeLbl = new JLabel(translate("compression.cache.purge"));
+                purgeSizeLbl.setToolTipText(translate("compression.cache.purge.tooltip"));
                 final JTextField purgeSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCachePurgeSize()));
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
@@ -516,19 +516,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 purgeSizeLbl.setEnabled(useCacheCb.isSelected());
                 purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
-                final boolean ok = DialogFactory.showOkCancel(compressionFrame, Babylon.translate("compression"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(compressionFrame, translate("compression"), pane, () -> {
                     final String max = maxSizeTf.getText();
                     if (max.isEmpty()) {
-                        return Babylon.translate("compression.cache.max.msg1");
+                        return translate("compression.cache.max.msg1");
                     }
                     final int maxValue;
                     try {
                         maxValue = Integer.parseInt(max);
                     } catch (NumberFormatException ex) {
-                        return Babylon.translate("compression.cache.max.msg2");
+                        return translate("compression.cache.max.msg2");
                     }
                     if (maxValue <= 0) {
-                        return Babylon.translate("compression.cache.max.msg3");
+                        return translate("compression.cache.max.msg3");
                     }
                     return validatePurgeValue(purgeSizeTf, maxValue);
                 });
@@ -546,8 +546,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        configure.putValue(Action.NAME, margin(Babylon.translate("compression")));
-        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("compression.settings"));
+        configure.putValue(Action.NAME, margin(translate("compression")));
+        configure.putValue(Action.SHORT_DESCRIPTION, translate("compression.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
         return configure;
     }
@@ -555,19 +555,19 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
     private String validatePurgeValue(JTextField purgeSizeTf, int maxValue) {
         final String purge = purgeSizeTf.getText();
         if (purge.isEmpty()) {
-            return Babylon.translate("compression.cache.purge.msg1");
+            return translate("compression.cache.purge.msg1");
         }
         final int purgeValue;
         try {
             purgeValue = Integer.parseInt(purge);
         } catch (NumberFormatException ex) {
-            return Babylon.translate("compression.cache.purge.msg2");
+            return translate("compression.cache.purge.msg2");
         }
         if (purgeValue <= 0) {
-            return Babylon.translate("compression.cache.purge.msg3");
+            return translate("compression.cache.purge.msg3");
         }
         if (purgeValue >= maxValue) {
-            return Babylon.translate("compression.cache.purge.msg4");
+            return translate("compression.cache.purge.msg4");
         }
         return null;
     }
@@ -590,7 +590,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         };
 
         configure.putValue(Action.NAME, "resetCapture");
-        configure.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("capture.reset"));
+        configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.reset"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.RESET_CAPTURE));
         return configure;
     }
@@ -610,7 +610,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         };
 
         fitScreen.putValue(Action.NAME, "toggleScreenMode");
-        fitScreen.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("toggle.screen.mode"));
+        fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
         fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
         return fitScreen;
     }
@@ -631,16 +631,16 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             }
         };
 
-        settings.putValue(Action.NAME, Babylon.translate("settings"));
-        settings.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("settings"));
+        settings.putValue(Action.NAME, translate("settings"));
+        settings.putValue(Action.SHORT_DESCRIPTION, translate("settings"));
         settings.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.SETTINGS));
         return settings;
     }
 
     private JMenu createLookAndFeelSubmenu() {
-        JMenu submenu = new JMenu(margin(Babylon.translate("lnf")));
+        JMenu submenu = new JMenu(margin(translate("lnf")));
         submenu.setIcon(getOrCreateIcon(ImageNames.LNF));
-        submenu.setToolTipText(Babylon.translate("lnf.switch"));
+        submenu.setToolTipText(translate("lnf.switch"));
 
         final LookAndFeel current = UIManager.getLookAndFeel();
         submenu.add(new JMenuItem(current.getName()));

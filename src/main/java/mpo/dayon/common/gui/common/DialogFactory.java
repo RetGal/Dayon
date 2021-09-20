@@ -24,9 +24,8 @@ import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 
-import mpo.dayon.common.babylon.Babylon;
-
 import static javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public abstract class DialogFactory {
 	public interface Validator {
@@ -43,8 +42,8 @@ public abstract class DialogFactory {
 	 * @return {@code true} for {@code OK}, {@code false} for {@code CANCEL}.
 	 */
 	public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final Validator validator) {
-		final JButton ok = new JButton(Babylon.translate("ok"));
-		final JButton cancel = new JButton(Babylon.translate("cancel"));
+		final JButton ok = new JButton(translate("ok"));
+		final JButton cancel = new JButton(translate("cancel"));
 
 		final JButton[] buttons = new JButton[] { ok, cancel };
 
@@ -159,7 +158,7 @@ public abstract class DialogFactory {
 	}
 
 	public static boolean showYesNo(Component owner, String title, String message) {
-		final Object[] options = { Babylon.translate("yes"), Babylon.translate("no"), };
+		final Object[] options = { translate("yes"), translate("no") };
 
 		final int result = JOptionPane.showOptionDialog(owner, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
 				options[0]);

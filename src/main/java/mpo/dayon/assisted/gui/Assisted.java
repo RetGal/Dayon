@@ -21,7 +21,6 @@ import mpo.dayon.assisted.mouse.MouseEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngineListener;
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
@@ -32,6 +31,7 @@ import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 
 import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public class Assisted implements Subscriber, ClipboardOwner {
     private AssistedFrame frame;
@@ -119,7 +119,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         connectionSettingsDialog.setLayout(new GridLayout(3, 2, 10, 10));
 
-        final JLabel assistantIpAddress = new JLabel(Babylon.translate("connection.settings.assistantIpAddress"));
+        final JLabel assistantIpAddress = new JLabel(translate("connection.settings.assistantIpAddress"));
         final JTextField assistantIpAddressTextField = new JTextField();
         assistantIpAddressTextField.setText(configuration.getServerName());
         assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
@@ -127,7 +127,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         connectionSettingsDialog.add(assistantIpAddress);
         connectionSettingsDialog.add(assistantIpAddressTextField);
 
-        final JLabel assistantPortNumberLbl = new JLabel(Babylon.translate("connection.settings.assistantPortNumber"));
+        final JLabel assistantPortNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
         final JTextField assistantPortNumberTextField = new JTextField();
         assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
         assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
@@ -135,19 +135,19 @@ public class Assisted implements Subscriber, ClipboardOwner {
         connectionSettingsDialog.add(assistantPortNumberLbl);
         connectionSettingsDialog.add(assistantPortNumberTextField);
 
-        final boolean ok = DialogFactory.showOkCancel(frame, Babylon.translate("connection.settings"), connectionSettingsDialog, () -> {
+        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog, () -> {
             final String ipAddress = assistantIpAddressTextField.getText();
             if (ipAddress.isEmpty()) {
-                return Babylon.translate("connection.settings.emptyIpAddress");
+                return translate("connection.settings.emptyIpAddress");
             } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
-                return Babylon.translate("connection.settings.invalidIpAddress");
+                return translate("connection.settings.invalidIpAddress");
             }
 
             final String portNumber = assistantPortNumberTextField.getText();
             if (portNumber.isEmpty()) {
-                return Babylon.translate("connection.settings.emptyPortNumber");
+                return translate("connection.settings.emptyPortNumber");
             }
-            return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : Babylon.translate("connection.settings.invalidPortNumber");
+            return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
         });
 
         if (ok) {

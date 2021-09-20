@@ -1,6 +1,5 @@
 package mpo.dayon.common.utils;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public abstract class SystemUtilities {
 
@@ -28,7 +28,7 @@ public abstract class SystemUtilities {
     }
 
     public static URI getQuickStartURI(FrameType frameType) throws URISyntaxException {
-        return new URI(String.format("http://retgal.github.io/Dayon/%s#%s-setup", Babylon.translate("quickstart.html"), frameType.getPrefix()));
+        return new URI(String.format("http://retgal.github.io/Dayon/%s#%s-setup", translate("quickstart.html"), frameType.getPrefix()));
     }
 
     private static synchronized File getOrCreateAppDir() {

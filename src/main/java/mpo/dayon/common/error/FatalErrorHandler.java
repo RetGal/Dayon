@@ -3,8 +3,10 @@ package mpo.dayon.common.error;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
+
+import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public abstract class FatalErrorHandler {
     private static JFrame frame;
@@ -23,13 +25,13 @@ public abstract class FatalErrorHandler {
             String info = error.getMessage();
 
             if (info == null) {
-                info = Babylon.translate("fatal.error.msg3");
+                info = translate("fatal.error.msg3");
             } else {
-                info = Babylon.translate(info);
+                info = translate(info);
             }
 
-            JOptionPane.showMessageDialog(frame, Babylon.translate("fatal.error.msg1") + "\n" + Babylon.translate("fatal.error.msg2", info),
-                    Babylon.translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, format("%s\n%s", translate("fatal.error.msg1"), translate("fatal.error.msg2", info)),
+                    translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
         }
 
         System.exit(-1);

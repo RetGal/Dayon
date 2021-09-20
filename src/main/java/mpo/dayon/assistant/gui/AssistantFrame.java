@@ -1,11 +1,9 @@
 package mpo.dayon.assistant.gui;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.gui.common.*;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
-import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.version.Version;
 
@@ -20,6 +18,8 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
@@ -58,7 +58,7 @@ class AssistantFrame extends BaseFrame {
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
-        setTitle("Dayon! (" + Babylon.translate("assistant") + ") " + Version.get());
+        setTitle(format("Dayon! (%s) %s", translate("assistant"), Version.get()));
         this.actions = actions;
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
@@ -229,7 +229,7 @@ class AssistantFrame extends BaseFrame {
             }
         };
         remoteControl.putValue(Action.NAME, "toggleControlMode");
-        remoteControl.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("control.mode"));
+        remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
         remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
     }
@@ -247,7 +247,7 @@ class AssistantFrame extends BaseFrame {
             }
         };
         sendWindowsKey.putValue(Action.NAME, "sendWindowsKey");
-        sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("send.windowsKey"));
+        sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
         return sendWindowsKey;
     }
@@ -263,7 +263,7 @@ class AssistantFrame extends BaseFrame {
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
         actions.getResetAction().setEnabled(false);
         disableControls();
-        statusBar.setMessage(Babylon.translate("ready"));
+        statusBar.setMessage(translate("ready"));
     }
 
     void onHttpStarting(int port) {
@@ -282,17 +282,17 @@ class AssistantFrame extends BaseFrame {
             }
         };
         add(center, BorderLayout.CENTER);
-        statusBar.setMessage(Babylon.translate("listening", port));
+        statusBar.setMessage(translate("listening", port));
     }
 
     boolean onAccepted(Socket connection) {
-        if (JOptionPane.showOptionDialog(this, Babylon.translate("connection.incoming.msg1", connection.getInetAddress().getHostAddress()),
-                Babylon.translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+        if (JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1", connection.getInetAddress().getHostAddress()),
+                translate("connection.incoming"), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                 getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
             return false;
         }
         removeCenter();
-        statusBar.setMessage(Babylon.translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
+        statusBar.setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
         actions.getResetAction().setEnabled(true);
@@ -322,7 +322,7 @@ class AssistantFrame extends BaseFrame {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
-            statusBar.setSessionDuration(String.format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
+            statusBar.setSessionDuration(format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
         });
         sessionTimer.start();
     }
@@ -341,10 +341,10 @@ class AssistantFrame extends BaseFrame {
         validate();
         repaint();
         if (error.getMessage() != null) {
-            JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", Babylon.translate(error.getMessage())), Babylon.translate("comm.error"),
+            JOptionPane.showMessageDialog(this, translate("comm.error.msg1", translate(error.getMessage())), translate("comm.error"),
                     JOptionPane.ERROR_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, Babylon.translate("comm.error.msg1", "!"), Babylon.translate("comm.error"),
+            JOptionPane.showMessageDialog(this, translate("comm.error.msg1", "!"), translate("comm.error"),
                     JOptionPane.ERROR_MESSAGE);
         }
     }
