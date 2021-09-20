@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Remote assistance made easy!">
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - Remote assistance for your family and friends</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+<div id="container">
+    <div id="top">
+        <a href="de_quickstart.html"><img src="germany.png" alt="Deutsch"></a> <a href="fr_quickstart.html"><img src="france.png" alt="Français"></a>
+    </div>
+    <div id="menu">
+        <a href="index.html">Home</a> <a href="quickstart.html">Quick Start</a> <a href="download.html">Download</a>
+        <a href="support.html">Support</a> <a href="feedback.html">Feedback</a> <a href="privacy.html">Privacy</a> <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+        <h2>Quick Start</h2>
+        <p>
+            Typically, the <em>assistant</em> is communicating with the <em>assisted</em> using Skype, the phone, their
+            favorite IM, or whatever tool they like. Then starting Dayon! allows for watching live the <em>assisted</em>
+            computer screen.
+        <p>
+            In this documentation, the screenshot show the English localisation of the app.
+            The application itself is also completely localised in French, German, Spanish and Russian.
+            It will fall back to English, if the configured user language is none of the above.
+        <p>
+            <strong>Attention</strong>: This documentation refers to the most recent program version.
+        <p>
+            <img src="assisted.png" alt="Assisted"> &nbsp; <a id="assisted-setup" class="no"><strong>Setup the Assisted Computer</strong></a>
+        <p>
+            Dayon! Assisted is acting as a client application calling the outside world and as such there's no network
+            configuration to setup.
+        <p>
+            Download and install the Dayon! application. Then start the <em>Dayon!</em>
+            application (you should have a shortcut on the desktop) and click the "play" button.
+        <p>
+            <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
+        <p>
+            Enter both the IP address and the port number as communicated by the <em>assistant</em>:
+            (both input fields can be cleared by double clicking them) confirm with OK.
+        <p>
+            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+        <p>
+            You'll then be shortly connected to the <em>assistant</em> that is monitoring your screen. Enjoy!
+        <p>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-setup" class="no">
+            <strong>Setup the Assistant Computer</strong></a>
+        <p>
+            Dayon! Assistant is acting as a typical server application (the <em>assisted</em> is going to connect to) and
+            as such you've to configure your network to make it visible from the outside world. First thing to do is to
+            decide the <strong>listening port</strong> as
+            shown in the following picture. Then authorize that port number in your <strong>firewall</strong> and possibly setup
+            accordingly your <strong>NAT</strong> services (typically on your DSL router).<br><br>
+            Check out <a href="https://portforward.com/router.htm">portforward.com</a> for a step by step guide for the
+            most common router models.
+        <p>
+            <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
+        <p>
+            Then you've to determine which <strong>IP address</strong> you want to give to the <em>assisted</em> to connect to the
+            <em>assistant</em>; you should typically give your <strong>public</strong> IP address. But for testing within your local
+            network you might want to use a
+            different one. You can retrieve your <strong>public IP address</strong> with the following menu:
+        <p>
+            <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+        <p>
+            As you can see on the following picture, the menu contains an item to copy to the clipboard the actual <strong>IP
+            Address & Port Number</strong>. It is then easy to <strong>paste it into a chat session</strong> (e.g., Skype) or into an
+            email.
+        <p>
+            <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
+        <p>
+            <em>Note that this IP address is not required by the assistant application as it is listening on all the
+                available network interfaces; but you need to communicate it to the assisted. (more on this later).</em>
+        <p>
+            That's it regarding the network configuration;<br>
+            <strong>For the impatient:</strong> <a href="#assistant-start">Here</a> you'll learn, how to make the <em>assistant</em>
+            <a href="#assistant-start">listening for incoming connections</a>.
+        <p>
+            But let's first find out about the advanced configuration options.
+        <p>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-details" class="no"><strong>More on the Assistant Setup</strong></a>
+        <p>
+            Use that form to setup how the <em>assisted</em> screen is going to be <strong>captured</strong>; you can configure the
+            time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.
+        <p>
+            <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
+        <p>
+            You can then setup the <strong>compression</strong> method; two methods are available: ZIP and XZ. XZ
+            will obtain a (much) better compression ratio but requires more CPU and RAM as it's much more complicated
+            than ZIP and is implemented in JAVA (ZIP is being implemented using some native code in the JDK).
+        <p>
+            In addition a <strong>cache</strong> is used that allows for not sending many times the same bitmap as for example
+            when opening and navigating menus (i.e., what's under the menus are not sent more than once). The screen is
+            divided into many tiles, each one being possibly cached.
+            You've to define the maximum number of tiles in the cache. Note that a tile is currently
+            32x32 pixels of 256 levels, that is 1K.
+        <p>
+            <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
+        <p>
+            <a id="assistant-start" class="no">That's about it. After a click on the play button (the first from left) the
+            <em>assistant</em> is ready to accept incoming connections:</a>
+        <p>
+            <img src="assistant_start.jpg" alt="Dayon! Assistant : Start">
+        <p>
+            Now you can ask the <em>assisted</em> to connect. You'll be shortly prompted to accept the incoming
+            connection:
+        <p>
+            <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
+        <p>
+            You're now connected and monitoring the remote computer.
+        <p>
+            <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+        <p>
+            If the desktop of the <em>assisted</em> doesn't fit into your window, it can be scaled down:
+        <p>
+            <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle">
+        <p>
+            By default, the remote <strong>control mode</strong> is off; you can switch it on and of using the following icon:
+        <p>
+            <img src="assistant_control.jpg" alt="Dayon! Assistant : Control Toggle">
+        <p>
+        <h2>Advanced functions</h2>
+        <p>
+            Prerequisites: The following functions require an established connection to the assisted.
+        <p>
+        <h3>Clipboard transfer</h3>
+        <p>
+            By clicking on the up- or down button, the clipboard of the assistant can either be transferred to the
+            assisted (up) or the clipboard of the assisted to the assistant (down).
+        <p>
+            <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
+        <p>
+        <h4>Currently supported are:</h4>
+            <ul>
+                <li><strong>Text</strong>: Select text locally or in the assisted window, copy (<code>Ctl + c</code>), click up or down.
+                    Subsequently, the transmitted text can be inserted in a local or remote application (<code>Ctrl + v</code>).
+                <li><strong>Files</strong>: Select one or more files locally or in the window of the <em>assisted</em> person (<code>Ctl + c</code>),
+                    click up or down. Subsequently, the file(s) can be inserted at the destination.
+            </ul>
+        <p>
+            <strong>Caution</strong>: Depending on the display/windows manager and JDK combination, the clipboard content
+            does not get copied into the recipients clipboard. So pasting (<code>Ctrl + v</code>) does have no effect.<br>
+            In most cases the content is nonetheless transferred - take a look at the <code>/tmp</code> directory and
+            look for a uuid folder (something like <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>). There you will find the
+            transferred clipboard files.
+        <p>
+        <h3>Transmit a Windows key press</h3>
+        <p>
+            To transmit the press of the Windows key, click the Windows symbol in the <em>assistants</em> control panel:
+        <p>
+            <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key">
+        <p>
+            The key remains pressed until you click the symbol again. This allows you to send Windows key shortcuts.<br>
+            If you need for example to minimize all windows on the <em>assisted</em> side, you would click the Windows symbol,
+            press the <code>M</code> key and then click the Windows symbol again.
+        <p>
+            That's all folks! You can find more information on the <a href="support.html">support</a> page.
+    </div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>

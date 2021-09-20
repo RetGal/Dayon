@@ -1,0 +1,113 @@
+body {
+	font:12px/20px Verdana, Arial, Helvetica, sans-serif;
+	text-align:center;
+}
+
+img {
+	border:none;
+}
+
+#container {
+	text-align:left;
+	margin:0 auto;
+	width:75%;
+	background-color:#fff;
+}
+
+#top {
+	height:130px;
+	padding-bottom:1.0em;
+	background:#fff url('dayon.png') no-repeat left;
+	text-align:right;
+}
+
+#top img {
+	margin:16px 0 0 4px;
+} 
+
+#menu {
+	text-align:center;
+}
+
+#menu a, #menu a:visited {
+	border-left:1px solid #ccc;
+	font-size:150%;
+	padding:0 0.5em;
+	text-decoration:none;
+	color:#666;
+}
+
+#menu a:last-child {
+	border-right:1px solid #ccc;
+}
+
+#menu a:hover {
+	color:#307fe1;
+}
+
+#content {
+	padding-top:1.0em;
+	background-color:#fff;
+}
+
+#content ul {
+	list-style-image:url('bullet.gif');
+}
+
+#content a:link, #content a:visited {
+	text-decoration:none;
+	color:#307fe1;
+}
+
+#content a:hover {
+	color:#307fe1;
+	text-decoration:underline;
+}
+
+#content h2 {
+	font-size:150%;
+}
+
+#content h3 {
+	font-size:120%;
+}
+
+#content h4 {
+	font-size:110%;
+}
+
+#intro {
+	min-height:120px;
+	background:url('intro.jpg') no-repeat 5px 5px;	
+}
+
+#intro p {
+	margin-left:220px;
+	font-size:130%;
+}
+
+#features {
+	border:1px dashed #666;
+	border-radius:4px;
+	background-color:#f2f7fb;
+	padding:0 10px;
+}
+
+#footer {
+	padding:2.0em 0;
+	text-align:center;
+}
+
+.red {
+	color:red;
+}
+
+code {
+    font-weight:bolder;
+}
+
+.no,
+.no * {
+    text-decoration:none !important;
+	color:#000 !important;
+}
