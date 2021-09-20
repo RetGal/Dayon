@@ -19,6 +19,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
+import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -36,7 +37,7 @@ public abstract class BaseFrame extends JFrame {
 
     private ToolBar toolBar;
 
-    protected static final Object[] OK_CANCEL_OPTIONS = {Babylon.translate("cancel"), Babylon.translate("ok")};
+    protected static final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
 
     protected StatusBar statusBar;
 
@@ -54,7 +55,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void doExit() {
-        if (JOptionPane.showOptionDialog(this, Babylon.translate("exit.confirm"), Babylon.translate("exit"),
+        if (JOptionPane.showOptionDialog(this, translate("exit.confirm"), translate("exit"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, OK_CANCEL_OPTIONS,
                 OK_CANCEL_OPTIONS[1]) == 1) {
             Log.info("Bye!");
@@ -92,14 +93,14 @@ public abstract class BaseFrame extends JFrame {
         };
 
         exit.putValue(Action.NAME, "exit");
-        exit.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("exit.dayon"));
+        exit.putValue(Action.SHORT_DESCRIPTION, translate("exit.dayon"));
         exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.EXIT));
 
         return exit;
     }
 
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
-    private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + Babylon.translate("support.html");
+    private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
     protected Action createShowInfoAction() {
@@ -118,7 +119,7 @@ public abstract class BaseFrame extends JFrame {
 
                 panel.setPreferredSize(new Dimension(500, 300));
 
-                final JLabel info = new JLabel(composeLabelHtml("Dayon!", Babylon.translate("synopsys")));
+                final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
                 info.addMouseListener(new MouseAdapter() {
                     @Override
@@ -127,7 +128,7 @@ public abstract class BaseFrame extends JFrame {
                     }
                 });
 
-                final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(Babylon.translate("version.installed"), Version.get().toString(), getBuildNumber()));
+                final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.addMouseListener(new MouseAdapter() {
                     @Override
@@ -136,7 +137,7 @@ public abstract class BaseFrame extends JFrame {
                     }
                 });
 
-                final JLabel latest = new JLabel(composeLabelHtml(Babylon.translate("version.latest"), Version.get().getLatestRelease()));
+                final JLabel latest = new JLabel(composeLabelHtml(translate("version.latest"), Version.get().getLatestRelease()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 latest.addMouseListener(new MouseAdapter() {
                     @Override
@@ -145,7 +146,7 @@ public abstract class BaseFrame extends JFrame {
                     }
                 });
 
-                final JLabel support = new JLabel(composeLabelHtml(Babylon.translate("support"), HTTP_SUPPORT));
+                final JLabel support = new JLabel(composeLabelHtml(translate("support"), HTTP_SUPPORT));
                 support.setAlignmentX(Component.LEFT_ALIGNMENT);
                 support.addMouseListener(new MouseAdapter() {
                     @Override
@@ -154,7 +155,7 @@ public abstract class BaseFrame extends JFrame {
                     }
                 });
 
-                final JLabel feedback = new JLabel(composeLabelHtml(Babylon.translate("feedback"), HTTP_FEEDBACK));
+                final JLabel feedback = new JLabel(composeLabelHtml(translate("feedback"), HTTP_FEEDBACK));
                 feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
                 feedback.addMouseListener(new MouseAdapter() {
                     @Override
@@ -181,9 +182,9 @@ public abstract class BaseFrame extends JFrame {
                 panel.add(Box.createVerticalStrut(5));
                 panel.add(feedback);
 
-                final Object[] options = {Babylon.translate("ok")};
+                final Object[] options = {translate("ok")};
 
-                JOptionPane.showOptionDialog(BaseFrame.this, panel, Babylon.translate("system.info"),
+                JOptionPane.showOptionDialog(BaseFrame.this, panel, translate("system.info"),
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
                         ImageUtilities.getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
 
@@ -191,7 +192,7 @@ public abstract class BaseFrame extends JFrame {
         };
 
         showSystemInfo.putValue(Action.NAME, "showSystemInfo");
-        showSystemInfo.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("system.info.show"));
+        showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
         showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
 
         return showSystemInfo;
@@ -247,7 +248,7 @@ public abstract class BaseFrame extends JFrame {
         };
 
         showHelp.putValue(Action.NAME, "showHelp");
-        showHelp.putValue(Action.SHORT_DESCRIPTION, Babylon.translate("help"));
+        showHelp.putValue(Action.SHORT_DESCRIPTION, translate("help"));
         showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.HELP));
 
         return showHelp;

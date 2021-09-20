@@ -2,12 +2,14 @@ package mpo.dayon.assisted.gui;
 
 import javax.swing.*;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.BaseFrame;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.version.Version;
+
+import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 class AssistedFrame extends BaseFrame {
 	private final transient Action startAction;
@@ -16,10 +18,9 @@ class AssistedFrame extends BaseFrame {
 
 	public AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction) {
 		super.setFrameType(FrameType.ASSISTED);
-		setTitle("Dayon! (" + Babylon.translate("assisted") + ") " + Version.get());
+		setTitle(format("Dayon! (%s) %s", translate("assisted"), Version.get()));
 		this.stopAction = stopAction;
 		this.startAction = startAction;
-
 		setupToolBar(createToolBar());
 		setupStatusBar(createStatusBar());
 		onReady();
@@ -48,21 +49,21 @@ class AssistedFrame extends BaseFrame {
 	void onReady() {
 		startAction.setEnabled(true);
 		stopAction.setEnabled(false);
-		statusBar.setMessage(Babylon.translate("ready"));
+		statusBar.setMessage(translate("ready"));
 		connected = false;
 	}
 
 	void onConnecting(String serverName, int serverPort) {
 		startAction.setEnabled(false);
 		stopAction.setEnabled(true);
-		statusBar.setMessage(Babylon.translate("connecting", serverName, serverPort));
+		statusBar.setMessage(translate("connecting", serverName, serverPort));
 		connected = false;
 	}
 
 	void onConnected() {
 		startAction.setEnabled(false);
 		stopAction.setEnabled(true);
-		statusBar.setMessage(Babylon.translate("connected"));
+		statusBar.setMessage(translate("connected"));
 		connected = true;
 	}
 
@@ -70,7 +71,7 @@ class AssistedFrame extends BaseFrame {
 		if (!connected) {
 			startAction.setEnabled(true);
 			stopAction.setEnabled(false);
-			statusBar.setMessage(Babylon.translate("serverNotFound", serverName));
+			statusBar.setMessage(translate("serverNotFound", serverName));
 		}
 	}
 
@@ -78,7 +79,7 @@ class AssistedFrame extends BaseFrame {
 		if (!connected) {
 			stopAction.setEnabled(false);
 			startAction.setEnabled(true);
-			statusBar.setMessage(Babylon.translate("connectionTimeout", serverName, serverPort));
+			statusBar.setMessage(translate("connectionTimeout", serverName, serverPort));
 		}
 	}
 
@@ -86,7 +87,7 @@ class AssistedFrame extends BaseFrame {
 		if (!connected) {
 			startAction.setEnabled(true);
 			stopAction.setEnabled(false);
-			statusBar.setMessage(Babylon.translate("refused", serverName, serverPort));
+			statusBar.setMessage(translate("refused", serverName, serverPort));
 		}
 	}
 

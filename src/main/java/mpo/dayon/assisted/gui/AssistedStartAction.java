@@ -1,6 +1,5 @@
 package mpo.dayon.assisted.gui;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
@@ -10,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.util.concurrent.ExecutionException;
 
 import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 class AssistedStartAction extends AbstractAction {
     private final transient Assisted assisted;
@@ -18,7 +18,7 @@ class AssistedStartAction extends AbstractAction {
         this.assisted = assisted;
 
         putValue(Action.NAME, "start");
-        putValue(Action.SHORT_DESCRIPTION, Babylon.translate("connect.assistant"));
+        putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
         putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
     }
 

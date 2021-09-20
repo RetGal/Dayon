@@ -9,8 +9,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.log.Log;
+
+import static java.lang.String.format;
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public abstract class KeyboardErrorHandler {
     private static JFrame frame;
@@ -46,12 +48,11 @@ public abstract class KeyboardErrorHandler {
             timer.setInitialDelay(0);
             timer.start();
 
-            String sb = "<html>" + Babylon.translate("keyboard.error.msg1") + "<br/>" +
-                    Babylon.translate("keyboard.error.msg2", message) + "<br/>" +
-                    Babylon.translate("keyboard.error.msg3", message) + "</html>";
+            String sb = format("<html>%s<br/>%s<br/>%s</html>", translate("keyboard.error.msg1"),
+                    translate("keyboard.error.msg2", message), translate("keyboard.error.msg3", message));
             label.setText(sb);
 
-            JOptionPane.showMessageDialog(frame, label, Babylon.translate("keyboard.error"), JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(frame, label, translate("keyboard.error"), JOptionPane.WARNING_MESSAGE);
 
         } else {
             Log.error("Unable to display error message " + message);

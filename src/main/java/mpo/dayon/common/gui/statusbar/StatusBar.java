@@ -8,12 +8,12 @@ import java.util.TimerTask;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 
-import mpo.dayon.common.babylon.Babylon;
-
 import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.monitoring.counter.CounterListener;
 import mpo.dayon.common.utils.SystemUtilities;
+
+import static mpo.dayon.common.babylon.Babylon.translate;
 
 public class StatusBar extends JPanel {
 	private final JLabel message = new JLabel();
@@ -83,7 +83,7 @@ public class StatusBar extends JPanel {
 				lbl.setText(SystemUtilities.getRamInfo());
 			}
 		});
-		lbl.setToolTipText(Babylon.translate("memory.info" ));
+		lbl.setToolTipText(translate("memory.info" ));
 
 		add(lbl);
 	}
@@ -93,7 +93,7 @@ public class StatusBar extends JPanel {
 
 		sessionDuration.setSize(new java.awt.Dimension(100, 5));
 		sessionDuration.setPreferredSize(new java.awt.Dimension(100, 5));
-		sessionDuration.setToolTipText(Babylon.translate("session.duration" ));
+		sessionDuration.setToolTipText(translate("session.duration" ));
 
 		add(sessionDuration);
 	}
