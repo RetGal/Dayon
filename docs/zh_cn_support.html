@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Remote assistance made easy!">
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - 为您的家人和朋友提供远程协助</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+<div id="container">
+    <div id="top">
+        <a href="support.html"><img src="great_britain.png" alt="English"><a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="fr_support.html"><img src="france.png" alt="Français"></a>
+    </div>
+    <div id="menu">
+        <a href="zh_cn_index.html">首页</a> <a href="zh_cn_quickstart.html">快速入门</a> <a href="zh_cn_download.html">下载</a>
+        <a href="zh_cn_support.html">支持</a> <a href="zh_cn_feedback.html">反馈</a> <a href="zh_cn_privacy.html">隐私</a> <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+        <h2>支持</h2>
+        <p>
+            在<a href="https://github.com/retgal/dayon/issues">GitHub</a>上发布您的疑问或开启一个新的Issue。
+        <h3>已知的不足</h3>
+        <ul>
+            <li>目前无法将某些组合键发送到用户(Assisted)计算机（例如，<code>Ctrl-Alt-Del</code>)。
+            <li>受到不同的显示/窗口管理器与JDK组合的影响，剪贴板内容可能未能够成功复制到目标计算机的剪贴板(内容传输了，但没有复制到剪贴板上，参见下一段)。这也将导致粘贴(<code>Ctrl + v</code>)无效。<br>
+                多数情况下，剪贴板的内容都能传输到目标计算机 —— 可以打开临时目录(比如<code>/tmp</code>)，然后
+                寻找一个uuid样命名的文件夹(比如<code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>)。
+                在这里您或许可以找到传输过来但未能成功复制到目标主机剪贴板的内容。
+        </ul>
+        <h3>用户端(Assisted)自动连接</h3>
+        <p>
+            可以通过命令行参数传递主控端(Assistant)的主机名或IP地址和端口：<br>
+            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
+            如果是Snap版本，请使用：<code>dayon.assisted ah=example.com ap=4242</code>；如果您是从tge压缩包安装的
+            请使用：<code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
+            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
+            或者快速启动版本请使用：<br>
+            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            如果使用这些参数启动，程序将直接连接到给定的远程主机。
+        <h3>Dayon! 配置目录</h3>
+        <p>
+            Dayon! 将会在所登录用户的用户文件夹下或者JAVA属性中的<code>user.home</code>创建一个<code>.dayon</code>文件夹，用于存放Dayon! 的用户配置和日志文件。
+        <h3>CRC效验</h3>
+        <p>
+            在用户端(Assisted)，屏幕被分成不同的区域，这里我们称为 <em>tiles</em> (译者注：这里咱们就翻译成“图块”好啦)。只有那些
+            变更过的“图块”才会被发送到主控端(Assistant)。为了判断“图块”是否有变动，我通过对比同个“图块”前后的CRC编码
+            值(一个用来表示“图块”像素的唯一整数)是否一致。这个方法在效率方面并不完美，因此可能导致某个“图块”已经变
+            更了，却没有同步到主控端(Assistant)。
+        <p>
+            关于上一段提到的这个问题，是我在对部分像素块进行深度测试时发现的。至于视觉上，倒是暂时还看不出有什么问题。
+            但是，如果你在使用的过程中，这个问题已经严重影响到了你的使用体验，请先尝试点击屏幕捕获复位按钮(<strong>垃圾箱图标</strong>)进行画面修复(清理缓存，重新捕获屏幕)，如没有奏效再尝试重启用户端(Assisted)。
+        <h3>状态统计</h3>
+        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
+        <p>主控端(Assistant)下方状态栏正在显示一组计数器。
+        <ol>
+            <li>网络带宽使用情况
+            <li>压缩比：初始捕获（仅差异）已被压缩的次数 
+            <li>“图块”数量：通过网络传输的“图块”数量以及缓存命中率。 
+            <li>跳过的捕获：由于屏幕捕获间隔设置过低(即主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔设置太低)导致远程计算机无法捕获的画面数量。为了减少画面丢失，你必须增加屏幕捕获间隔，增大 Assistant-首选项-屏幕捕获 中的捕获间隔值。
+            <li>合并的“图块”：传输前就被合并的截屏。这是由于设置的屏幕捕获频率对当前所选的压缩方法来说太高了(压缩速度 << 捕获速度)。为了减少由此导致的画面丢失(或失真)，你必须提高 主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔 或 更改 主控端Assistant-首选项-压缩-压缩算法 使用更快的压缩算法。
+            <li>内存
+            <li>会话时长
+        </ol>
+    </div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>

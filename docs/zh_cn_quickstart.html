@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+    <meta name="description" content="Remote assistance made easy!">
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Dayon! - 为您的家人和朋友提供远程协助</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+<div id="container">
+    <div id="top">
+        <a href="quickstart.html"><img src="great_britain.png" alt="English"><a href="de_quickstart.html"><img src="germany.png" alt="Deutsch"></a> <a href="fr_quickstart.html"><img src="france.png" alt="Français"></a>
+    </div>
+    <div id="menu">
+        <a href="zh_cn_index.html">首页</a> <a href="zh_cn_quickstart.html">快速入门</a> <a href="zh_cn_download.html">下载</a>
+        <a href="zh_cn_support.html">支持</a> <a href="zh_cn_feedback.html">反馈</a> <a href="zh_cn_privacy.html">隐私</a> <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+        <h2>快速入门</h2>
+        <p>
+            设想的情景：<strong style="color:red">帮助者</strong>(使用 Dayon! 主控端 Assistant) 使用远程桌面应用 Dayon! <strong style="color:blue">帮助</strong> <strong style="color:red">被帮助者</strong>(下文称为用户，使用 Dayon! 用户端 Assisted)
+            解决计算机方面的问题。
+        </p>
+        <p>
+            一般情况下，帮助者 一边使用 QQ、微信、Skype、电话或者其他通讯工具与用户(被帮助者)进行交流，一边使用 Dayon！实时观
+            看用户的计算机屏幕进行操作指导，必要的情况下还可以使用 Dayon! 进行远程操作。
+        <p>
+            本文中，截图中展示的是应用程序的英文界面。应用程序本身还支持法语、德语、西班牙语和俄语(截至2021年9月21日，中文翻译正在进行中…)。如果终端用户使用的语言不是上述的一种，应用程序将默认使用英语。
+        <p>
+            <strong>注意</strong>：本文档基于最新版本的程序
+        <p>
+            <img src="assisted.png" alt="Assisted"> &nbsp; <a id="assisted-setup" class="no"><strong>配置用户端(Assisted)——如何获得远程协助</strong></a>
+        <p>
+            Dayon! Assisted (用户端) 作为对外发送会话请求的客户端应用程序（ Assisted 用户端 发送会话连接请求到 Assistant 主控端 ），不需要进行网络配置。
+        <p>
+            首先，下载并安装 Dayon! 应用。然后运行 <em>Dayon!</em> (安装完 Dayon! 后你的桌面应该有Dayon!的快捷方式，点击它，且最好以管理员权限运行)，并单击“播放”按钮。
+        <p>
+            <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
+        <p>
+            输入 帮助者 提供的 IP 地址和端口号（可以通过双击来清除两个输入字段），随后点击 确认 进行连接。 
+        <p>
+            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+        <p>
+            如果一切顺利，您很快就会连接到 帮助者 (帮助者使用的是 <em>Assistant</em> 主控端，连接成
+            功后对方就可以看到你屏幕的实时内容)。 Enjoy！
+        <p>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-setup" class="no">
+            <strong>配置主控端(Assistant)——如何开始远程协助</strong></a>
+        <p>
+            Dayon! Assistant (主控端)是一个典型的服务器应用程序（它用于接收 Assisted 用户端 发送过来的请求），因此您必须配置
+            您的网络以使您的计算机可以从外部世界（外网）被访问。首先要做的是 设置 Dayon! 的<strong>监听端口</strong>（如下图所示，默认808
+            0端口。如果你的8080端口运行其他程序，那就将Dayon! 监听端口设置为其他未被占用的端口）。然后配置防火墙(一
+            般来说，只需要配置Windows防火墙，或者Linux的iptables规则即可)开放刚才所设置的监听端口(否则Assisted的连接请求会被
+            计算机防火墙拦截)，以及您的 NAT 服务（通常在您的 DSL 路由器上）等。<br><br>
+            译者注：上面说了那么多，说白就是你要让你的计算机暴露在公网，让用户可以访问得到你。如果你有公网IP，这自然是最方便
+            的。如果你和我一样，没有公网IP，那可以使用内网穿透、VPN等。比如FRP、Ngrok、OpenVPN、ZeroTier等，有些是需要自己有服
+            务器才能搭建，而有些则不需要，而且网上有很多热心网友贡献的免费通道，请自行百度，谢谢。
+            <br><br>
+            在 <a href="https://portforward.com/router.htm">portforward.com</a> 可以查询到常见的路由器(端口转发相关内容)的详细配置指南。
+        <p>
+            <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
+        <p>
+            然后你必须确定 一个 IP 地址 发送给 用户 (即用户输入到Assisted 用户端 的地址和端口)；您通常应该提供您的 公共 IP 地址，
+            但如果只是为了在本地进行测试，您可不必选择它。您可以 检索您的 公共 IP 地址 使用以下菜单：
+            </br></br>
+            译者注：如果你有自己的公网IP，就发送公网IP给用户端。如果你是通过内网穿透，那就将穿透出去
+            的地址(比如frp服务器地址和frp服务器分配的端口)发给用户；如果你的在局域网内，或者是虚拟局
+            域网内，则你使用的将会是局域网的IP地址(虽然你也可以使用公网IP，一句话：可以，但没必要)。
+        <p>
+            <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant: Network IP Addresses">
+        <p>
+            正如您在下图中看到的，菜单包含一个选项 复制IP 地址和端口号到剪贴板。随后你可以很容易地将其
+            粘贴到聊天会话（例如 Skype、QQ）或 电子邮件，然后发送给用户。
+        <p>
+            <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant: Network IP Address Actions">
+        <p>
+             请注意，Assistant 主控端 不需要此 IP 地址，因为它正在侦听所有 可用的网络接口，但您需要将这个IP地址和对应
+             的端口号告诉被帮助的用户，这样用户才能发起连接（稍后会详细介绍）。
+        <p>
+            关于网络配置要提的就是这些。<br>
+            <strong>对于那些不耐烦的人：</strong> <a href="#assistant-start">戳这里</a> 直达 <em>Assistant 主控端 </em> 
+            如何开始监听会话。
+        <p>
+            但首先让我们一起了解下高级配置选项。
+        <p>
+            <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-details" class="no"><strong>主控端高级设置</strong></a>
+        <p>
+            使用该表单来设置 Assisted 用户端 的<strong>屏幕捕获</strong>；你可以配置 两次屏幕捕获（又名滴答）之间的时间间隔（以毫秒为单位）以及画面灰度级数。 
+        <p>
+            <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
+        <p>
+            然后您可以设置 <strong>压缩算法</strong>；目前有两种方法可用：ZIP 和 XZ。XZ会有更好的压缩率，但需要更多的 CPU 和 RAM 性
+            能支持。因为它比 ZIP 要复杂得多，并且它全部使用 JAVA 实现（ ZIP 则有部分通过 Native 代码的实现）。
+        <p>
+            此外，使用 <strong>缓存</strong> 可以避免诸如在打开菜单或者浏览菜单时（如果启用缓存，菜单下的内容不会被多次发送）多次发送
+            相同的位图(bitmap)。屏幕被分成许多“图块”，每个图块都可能被缓存。您必须定义缓存中的最大“图块”数。
+            请注意，当前预设每个“图块”是 256 色 32x32 像素，即 1K。
+        <p>
+            <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings">
+        <p>
+            <a id="assistant-start" class="no"> 现在，单击播放按钮（左起第一个）， Assistant 主控端 就准备好接收传入连接了：</a>
+        <p>
+            <img src="assistant_start.jpg" alt="Dayon! Assistant : Start">
+        <p>
+            现在您可以要求 用户 在 Assisted 用户端 中输入IP地址和端口号发起连接，一切顺利的话，系统很快就会收到连接请求并显示确认对话框：
+        <p>
+            <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
+        <p>
+            连接成功后，你就可以看到用户实时计算机屏幕了。
+        <p>
+            <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
+        <p>
+            如果远程桌面不适配您的窗口，你可以将其缩小(屏幕自适应)：
+        <p>
+            <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle">
+        <p>
+            默认情况下，远程控制 是关闭的；您可以点击以下图标启用和关闭远程控制：
+        <p>
+            <img src="assistant_control.jpg" alt="Dayon! Assistant : Control Toggle">
+        <p>
+        <h2>高级功能</h2>
+        <p>
+            前提：以下功能需要在用户计算机已连接的情况下方可使用。
+        <p>
+        <h3>剪贴板传输</h3>
+        <p>
+            通过单击向上或向下按钮，可以将 本机(你的)的剪贴板内容 发送到 用户计算机的剪贴板上 (向上的按钮) 或者 获取 用
+            户计算机剪贴板内容 到 本机的剪贴板 (向下的按钮)。 
+        <p>
+            <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
+        <p>
+        <h4>目前支持传输的有：</h4>
+            <ul>
+                <li><strong>文字</strong>：在本地或远程主机中选择文本，复制（<code>Ctl + c</code>)，点击向上或向下(传输方向见
+                上文)。随后，传输的文本可以插入本地或远程主机的应用程序了（<code>Ctrl + v</code>)。
+                <li><strong>文件</strong>：在本地或远程主机中选择一个或多个文件（<code>Ctl + c</code>)，单击向上或向下按钮。
+                随后，可以在目标路径插入文件。
+            </ul>
+        <p>
+            <strong>注意</strong>：受到不同的显示/窗口管理器与JDK组合的影响，剪贴板内容可能未能够成功
+            复制到目标计算机的剪贴板(内容传输了，但没有复制到剪贴板上，参见下一段)。这也将导致粘贴(Ctrl + v)无效。
+            多数情况下，剪贴板的内容都能传输到目标计算机 —— 可以打开临时目录(比如/tmp)，然后 寻找一个uuid样命名
+            的文件夹(比如68abde33-dd0d-4527-ab5c-fe4bbbec4d42)。在这里您或许可以找到传输过来但未能成功复制到目标主机剪贴板的内容。
+        <p>
+        <h3>发送Windows徽标按键</h3>
+        <p>
+            要传输 Windows 键(单击一次按下，再次单击是松开)，请单击 Assistant 主控端 上方的 Windows 符号：
+        <p>
+            <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key">
+        <p>
+            单击一次，Windows 键将保持按下状态，直到您再次单击该按钮。这么做是为了发送 Windows 快捷键。
+            例如，如果您需要最小化 所有窗口侧的 ，您可以单击 Windows 符号， 按下 M键，然后再次单击 Windows 符号。
+        <p>
+            That's all folks !  更多信息请查看 <a href="zh_cn_support.html">支持</a> 页面。 
+    </div>
+    <div id="footer"></div>
+</div>
+</body>
+</html>
