@@ -30,7 +30,7 @@ public interface Runner {
     }
 
     static void overrideLocale(String arg) {
-        final String[] supported = {"de", "en", "es", "fr", "it", "ru", "tr"};
+        final String[] supported = {"de", "en", "es", "fr", "it", "ru", "tr", "zh_cn"};
         if (arg != null && Arrays.stream(supported).anyMatch(e -> e.equalsIgnoreCase(arg))) {
             Locale.setDefault(new Locale(arg));
         }
