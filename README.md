@@ -49,7 +49,7 @@ or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 [Deutsch](https://retgal.github.io/Dayon/de_index.html)<br>
 [English](https://retgal.github.io/Dayon/index.html)<br>
 [Français](https://retgal.github.io/Dayon/fr_index.html)<br>
-[中国人](https://retgal.github.io/Dayon/zh_cn_index.html)<br>
+[简体中文](https://retgal.github.io/Dayon/zh_index.html)<br>
 
 Currently, there is no online documentation available for Italian, Spanish, Russian and Turkish.
 Please refer to the [English](https://retgal.github.io/Dayon/index.html) or [French](https://retgal.github.io/Dayon/fr_index.html)
