@@ -101,8 +101,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				return;
 			}
 			Log.debug("KeyCode " + message);
-			robot.keyPress(message.getKeyCode());
-			return;
+			try {
+				robot.keyPress(message.getKeyCode());
+				return;
+			} catch (IllegalArgumentException ie) {
+				Log.debug("Proceeding with plan B");
+			}
 		}
 		Log.debug("Undefined KeyCode " + message);
 		if (message.getKeyChar() != CHAR_UNDEFINED) {
@@ -147,8 +151,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				return;
 			}
 			Log.debug("KeyCode " + message);
-			robot.keyRelease(message.getKeyCode());
-			return;
+			try {
+				robot.keyRelease(message.getKeyCode());
+				return;
+			} catch (IllegalArgumentException ie) {
+				Log.debug("Proceeding with plan B");
+			}
 		}
 		Log.warn("KeyChar as unicode " + message);
 		releaseUnicode();
@@ -166,6 +174,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in decimal on Windows ä => 228
 	 */
 	private void typeWindowsUnicode(int keyCode) {
+		robot.setAutoDelay(1);
 		robot.keyPress(VK_ALT);
 		// simulate a numpad key press for each digit
 		for (int i = 3; i >= 0; --i) {
@@ -184,6 +193,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in hex on Linux ä => e4
 	 */
 	private void typeLinuxUnicode(int keyCode) {
+		robot.setAutoDelay(1);
 		robot.keyPress(VK_CONTROL);
 		robot.keyPress(VK_SHIFT);
 		robot.keyPress(VK_U);
