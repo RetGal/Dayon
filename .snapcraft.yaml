@@ -1,6 +1,6 @@
 name: dayon
 title: Dayon!
-version: '1.10.8'
+version: '1.10.9'
 summary: An easy to use, cross-platform remote desktop assistance solution
 description: |
   Dayon! allows watching and controlling remote computers.
@@ -8,7 +8,7 @@ description: |
 
   Its key features are
   - no router or network configuration required on the assisted side
-  - friendly, multilingual (de/en/es/fr/it/ru/tr) user interface
+  - friendly, multilingual (de/en/es/fr/it/ru/tr/zh) user interface
   - assistant and assisted functionality in one package
   - secure, encrypted communication (TLS)
 license: GPL-3.0
