@@ -1,3 +1,10 @@
+dayon (1.10.9) stable; urgency=medium
+
+  * Chinese localisation
+  * Improved keyboard support (when using different keyboard layouts)
+
+ -- Reto Galante <reto@galante.ch>  Wed, 6 Oct 2021 12:00:00 +0000
+
 dayon (1.10.8) stable; urgency=medium
 
   * New compression algorithm
