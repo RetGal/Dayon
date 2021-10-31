@@ -81,4 +81,18 @@ public class Version {
         }
         return latestVersion;
     }
+
+    public static boolean isCompatibleVersion(int major, int minor, Version that) {
+        if (!isProd(major, minor) || !isProd(that.getMajor(), that.getMajor())) {
+            return true;
+        }
+        if (that.getMajor() == 11 && (major == 1 && minor == 10)) {
+            return true;
+        }
+        return that.getMajor() == major && that.getMinor() == minor;
+    }
+
+    static boolean isProd(int major, int minor) {
+        return major + minor > 0;
+    }
 }

@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.utils.SystemUtilities.*;
+import static mpo.dayon.common.version.Version.isCompatibleVersion;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
 
@@ -302,11 +303,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void introduce(ObjectInputStream in) throws IOException {
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
-
-        final Version version = Version.get();
-        final boolean isProd = isProd(version, hello.getMajor(), hello.getMinor());
-
-        if (isProd && (version.getMajor() != hello.getMajor() || version.getMinor() != hello.getMinor())) {
+        if (!isCompatibleVersion(hello.getMajor(), hello.getMinor(), Version.get())) {
             throw new IOException("version.wrong");
         }
     }
@@ -327,9 +324,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         cancelling.set(false);
     }
 
-    private static boolean isProd(Version version, int major, int minor) {
-        return !(version.isNull() || (major == 0 && minor == 0));
-    }
 
     /**
      * Might be blocking if the sender queue is full (!)
