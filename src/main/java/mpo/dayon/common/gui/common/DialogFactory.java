@@ -41,13 +41,13 @@ public abstract class DialogFactory {
 	 *
 	 * @return {@code true} for {@code OK}, {@code false} for {@code CANCEL}.
 	 */
-	public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final Validator validator) {
+	public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final boolean bordered, final Validator validator) {
 		final JButton ok = new JButton(translate("ok"));
 		final JButton cancel = new JButton(translate("cancel"));
 
 		final JButton[] buttons = new JButton[] { ok, cancel };
 
-		final JDialog dialog = createDialog(owner, title, payloadPane, buttons, ok, true);
+		final JDialog dialog = createDialog(owner, title, payloadPane, bordered, buttons, ok, true);
 
 		final boolean[] result = new boolean[1];
 
@@ -74,25 +74,24 @@ public abstract class DialogFactory {
 	/**
 	 * Creates a modal dialog.
 	 */
-	private static JDialog createDialog(Component owner, String title, JComponent payloadPane, JButton[] buttons, JButton defaultButton,
+	private static JDialog createDialog(Component owner, String title, JComponent payloadPane, boolean bordered, JButton[] buttons, JButton defaultButton,
 			boolean hasEscapeButton) {
 		final Frame parent = owner instanceof Frame ? (Frame) owner : (Frame) SwingUtilities.getAncestorOfClass(Frame.class, owner);
 
 		payloadPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 15, 10));
 
 		final JPanel payloadPaneEx = new JPanel(new BorderLayout());
-
 		payloadPaneEx.add(payloadPane, BorderLayout.CENTER);
 		payloadPaneEx.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
 		final JPanel payloadPaneExEx = new JPanel(new BorderLayout());
-
-		payloadPaneExEx.add(payloadPaneEx, BorderLayout.CENTER);
-		payloadPaneExEx.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+		if (bordered) {
+			payloadPaneExEx.add(payloadPaneEx, BorderLayout.CENTER);
+			payloadPaneExEx.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
+		}
 
 		final JPanel buttonPane = new JPanel();
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
-
 		buttonPane.add(Box.createHorizontalGlue());
 
 		for (JButton button : buttons) {
@@ -105,8 +104,11 @@ public abstract class DialogFactory {
 		// --
 
 		final JPanel contentPane = new JPanel(new BorderLayout());
-
-		contentPane.add(payloadPaneExEx, BorderLayout.CENTER);
+		if (bordered) {
+			contentPane.add(payloadPaneExEx, BorderLayout.CENTER);
+		} else {
+			contentPane.add(payloadPaneEx, BorderLayout.CENTER);
+		}
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 
 		// --

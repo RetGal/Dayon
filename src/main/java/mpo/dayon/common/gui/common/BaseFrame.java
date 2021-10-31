@@ -6,25 +6,26 @@ import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.*;
+import java.awt.im.InputContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import javax.swing.*;
 
-import mpo.dayon.common.babylon.Babylon;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
-    private static final int MIN_WIDTH = 450;
+    private static final int MIN_WIDTH = 550;
     private static final int MIN_HEIGHT = 300;
 
     private transient FrameConfiguration configuration;
@@ -71,6 +72,9 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), MIN_WIDTH),
                 Math.max(configuration.getHeight(), MIN_HEIGHT));
         this.setSize(dimension.width, dimension.height);
+        InputContext context = InputContext.getInstance();
+        String titleTag = frameType.equals(FrameType.ASSISTANT) ? "assistant" : "assisted";
+        setTitle(format("Dayon! (%s) %s %s", translate(titleTag), Version.get(), context.getLocale().toString()));
     }
 
     protected void setupToolBar(ToolBar toolBar) {

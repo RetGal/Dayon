@@ -1,15 +1,5 @@
 package mpo.dayon.assisted.gui;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import javax.swing.*;
-
 import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
@@ -29,6 +19,14 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.utils.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
+
+import javax.swing.UIManager;
+import java.awt.Cursor;
+import java.awt.Toolkit;
+import java.awt.datatransfer.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -115,46 +113,45 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean requestConnectionSettings() {
-        JPanel connectionSettingsDialog = new JPanel();
+        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(configuration);
 
-        connectionSettingsDialog.setLayout(new GridLayout(3, 2, 10, 10));
+        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
+            final String token = connectionSettingsDialog.getToken();
+            if (!token.trim().isEmpty()) {
+                return SystemUtilities.isValidToken(token.trim()) ? null : translate("connection.settings.invalidToken");
+            } else {
 
-        final JLabel assistantIpAddress = new JLabel(translate("connection.settings.assistantIpAddress"));
-        final JTextField assistantIpAddressTextField = new JTextField();
-        assistantIpAddressTextField.setText(configuration.getServerName());
-        assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
+                final String ipAddress = connectionSettingsDialog.getIpAddress();
+                if (ipAddress.isEmpty()) {
+                    return translate("connection.settings.emptyIpAddress");
+                } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
+                    return translate("connection.settings.invalidIpAddress");
+                }
 
-        connectionSettingsDialog.add(assistantIpAddress);
-        connectionSettingsDialog.add(assistantIpAddressTextField);
-
-        final JLabel assistantPortNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
-        final JTextField assistantPortNumberTextField = new JTextField();
-        assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
-        assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
-
-        connectionSettingsDialog.add(assistantPortNumberLbl);
-        connectionSettingsDialog.add(assistantPortNumberTextField);
-
-        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog, () -> {
-            final String ipAddress = assistantIpAddressTextField.getText();
-            if (ipAddress.isEmpty()) {
-                return translate("connection.settings.emptyIpAddress");
-            } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
-                return translate("connection.settings.invalidIpAddress");
+                final String portNumber = connectionSettingsDialog.getPortNumber();
+                if (portNumber.isEmpty()) {
+                    return translate("connection.settings.emptyPortNumber");
+                }
+                return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
             }
-
-            final String portNumber = assistantPortNumberTextField.getText();
-            if (portNumber.isEmpty()) {
-                return translate("connection.settings.emptyPortNumber");
-            }
-            return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
         });
 
         if (ok) {
-            final NetworkAssistedEngineConfiguration xconfiguration = new NetworkAssistedEngineConfiguration(assistantIpAddressTextField.getText().trim(),
-                    Integer.parseInt(assistantPortNumberTextField.getText().trim()));
-            if (!xconfiguration.equals(configuration)) {
-                configuration = xconfiguration;
+            final NetworkAssistedEngineConfiguration newConfiguration;
+            String token = connectionSettingsDialog.getToken().trim();
+            if (!token.isEmpty()) {
+                final Cursor cursor = frame.getCursor();
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                String connectionParams = SystemUtilities.resolveToken(token);
+                Log.debug("Connection params " + connectionParams);
+                newConfiguration = extractConfiguration(connectionParams);
+                frame.setCursor(cursor);
+            } else {
+                newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
+                        Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
+            }
+            if (newConfiguration != null && !newConfiguration.equals(configuration)) {
+                configuration = newConfiguration;
                 configuration.persist();
             }
             Log.info("Configuration " + configuration);
@@ -198,20 +195,23 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
     }
 
+    private NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
+        if (connectionParams != null) {
+            int portStart = connectionParams.lastIndexOf('*');
+            if (portStart > 0) {
+                String address = connectionParams.substring(0, portStart);
+                String port = connectionParams.substring(portStart + 1);
+                if (SystemUtilities.isValidIpAddressOrHostName(address) && SystemUtilities.isValidPortNumber(port)) {
+                    return new NetworkAssistedEngineConfiguration(address, Integer.parseInt(port));
+                }
+            }
+        }
+        return null;
+    }
+
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable transferable) {
         Log.error("Lost clipboard ownership");
-    }
-
-    private MouseAdapter clearTextOnDoubleClick(JTextField textField) {
-        return new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    textField.setText(null);
-                }
-            }
-        };
     }
 
     /**

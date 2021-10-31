@@ -40,7 +40,7 @@ class FrameConfiguration {
         if (type.equals(FrameType.ASSISTANT)) {
             dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 800), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 600));
         } else {
-            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 400), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 200));
+            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 550), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 200));
         }
     }
 
