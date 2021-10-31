@@ -101,4 +101,38 @@ class SystemUtilitiesTest {
 		assertTrue(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
 
+	@Test
+	void checksumShouldReturnComputedChecksum() {
+		// given
+		String base33 = "1CHECK";
+		// when, then
+		assertEquals("E", SystemUtilities.checksum(base33));
+	}
+
+	@Test
+	void isValidTokenShouldReturnFalseForEmptyToken() {
+		// given
+		String token = "";
+
+		// when, then
+		assertFalse(SystemUtilities.isValidToken(token));
+	}
+
+	@Test
+	void isValidTokenShouldReturnFalseForInvalidToken() {
+		// given
+		String token = "1CHECK1";
+
+		// when, then
+		assertFalse(SystemUtilities.isValidToken(token));
+	}
+
+	@Test
+	void isValidTokenShouldReturnTrueForValidToken() {
+		// given
+		String token = "1CHECKE";
+
+		// when, then
+		assertTrue(SystemUtilities.isValidToken(token));
+	}
 }

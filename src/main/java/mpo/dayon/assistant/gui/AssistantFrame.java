@@ -5,7 +5,6 @@ import mpo.dayon.common.gui.common.*;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.monitoring.counter.Counter;
-import mpo.dayon.common.version.Version;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,7 +57,6 @@ class AssistantFrame extends BaseFrame {
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
-        setTitle(format("Dayon! (%s) %s", translate("assistant"), Version.get()));
         this.actions = actions;
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
@@ -198,6 +196,8 @@ class AssistantFrame extends BaseFrame {
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
         toolbar.addAction(createShowHelpAction());
+        toolbar.addSeparator();
+        toolbar.addAction(actions.getTokenAction());
         toolbar.addGlue();
         toolbar.addAction(actions.getIpAddressAction());
         toolbar.addSeparator();

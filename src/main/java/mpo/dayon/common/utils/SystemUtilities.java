@@ -3,15 +3,18 @@ package mpo.dayon.common.utils;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.math.BigInteger;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.InvalidParameterException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 public abstract class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
+    public static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
 
     private SystemUtilities() {
     }
@@ -279,4 +283,44 @@ public abstract class SystemUtilities {
         return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("([0-9]{1,3})"));
     }
 
+    public static boolean isValidToken(String token) {
+        try {
+            if (token.trim().isEmpty() || !token.substring(token.length()-1).equals(checksum(token.substring(0, token.length()-1)))) {
+                return false;
+            }
+        } catch (NumberFormatException ex) {
+            return false;
+        }
+        return true;
+    }
+
+    public static String checksum(String input) {
+        MessageDigest objSHA = null;
+        try {
+            objSHA = MessageDigest.getInstance("SHA-1");
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        byte[] bytSHA = objSHA.digest(input.getBytes());
+        BigInteger intNumber = new BigInteger(1, bytSHA);
+        String hash = intNumber.toString(16);
+        return hash.substring(hash.length()-1).toUpperCase();
+    }
+
+    public static String resolveToken(String token) {
+        HttpsURLConnection conn = null;
+        try {
+            URL url = new URL(String.format(TOKEN_SERVER_URL, token));
+            conn = (HttpsURLConnection) url.openConnection();
+            conn.setInstanceFollowRedirects(false);
+            conn.setReadTimeout(3000);
+            return new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))
+                    .readLine().trim();
+        } catch (IOException e) {
+            Log.error("IOException", e);
+        } finally {
+            Objects.requireNonNull(conn).disconnect();
+        }
+        return null;
+    }
 }

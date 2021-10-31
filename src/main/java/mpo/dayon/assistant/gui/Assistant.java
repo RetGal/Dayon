@@ -1,44 +1,8 @@
 package mpo.dayon.assistant.gui;
 
-import java.awt.*;
-import java.awt.datatransfer.*;
-import java.awt.event.ActionEvent;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImagingOpException;
-import java.io.*;
-import java.net.Socket;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Stream;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
-import javax.swing.JTextField;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
-import mpo.dayon.common.gui.common.*;
-import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.assistant.network.NetworkAssistantConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
@@ -49,17 +13,45 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.error.FatalErrorHandler;
+import mpo.dayon.common.gui.common.DialogFactory;
+import mpo.dayon.common.gui.common.FrameType;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.FileUtilities;
 
+import javax.swing.*;
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.awt.event.ActionEvent;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.awt.image.ImagingOpException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
+
 import static java.lang.Math.abs;
+import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
+
+    private final static String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
+    private final static String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
 
     private final NetworkAssistantEngine network;
 
@@ -97,7 +89,9 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
 
     private final Set<Counter<?>> counters;
 
-    private final AtomicBoolean fitToScreenActivated  = new AtomicBoolean(false);
+    private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
+
+    private String token;
 
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
@@ -160,9 +154,10 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         assistantActions.setIpAddressAction(createWhatIsMyIpAction());
         assistantActions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction());
         assistantActions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
-        assistantActions.setCompressionEngineConfigurationAction(createComressionConfigurationAction());
+        assistantActions.setCompressionEngineConfigurationAction(createCompressionConfigurationAction());
         assistantActions.setResetAction(createResetAction());
         assistantActions.setSettingsAction(createSettingsAction());
+        assistantActions.setTokenAction(createTokenAction());
         assistantActions.setToggleFitScreenAction(createToggleFixScreenAction());
         assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
@@ -199,12 +194,12 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         final Cursor cursor = frame.getCursor();
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         try {
-                            final URL url = new URL("http://dayonhome.sourceforge.net/whatismyip.php");
+                            final URL url = new URL(WHATSMYIP_SERVER_URL);
                             try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                 publicIp = lines.readLine();
                             }
                         } catch (IOException ex) {
-                            Log.error("What is my IP error!", ex);
+                            Log.error("Could not determine public IP", ex);
                             JOptionPane.showMessageDialog(frame, translate("ipAddress.msg1"), translate("ipAddress"),
                                     JOptionPane.ERROR_MESSAGE);
                         } finally {
@@ -212,6 +207,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                         }
                         if (publicIp != null) {
                             button.setText(publicIp);
+                            button.setFont(new Font("Sans Serif", Font.PLAIN, 18));
                         }
                     });
                     choices.add(menuItem);
@@ -286,7 +282,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             final String url = button.getText() + " " + networkConfiguration.getPort();
             final StringSelection value = new StringSelection(url);
             final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(value, value);
+            clipboard.setContents(value, this);
         });
         return menuItem;
     }
@@ -305,7 +301,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 pane.add(portNumberLbl);
                 pane.add(portNumberTextField);
 
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), pane, true, () -> {
                     final String portNumber = portNumberTextField.getText();
                     if (portNumber.isEmpty()) {
                         return translate("connection.settings.emptyPortNumber");
@@ -373,7 +369,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: " + totalFilesSize );
+                    Log.debug("Clipboard contains files with size: " + totalFilesSize);
                     // Ok as very few of that (!)
                     new Thread(() -> network.setRemoteClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "setRemoteClipboardFiles").start();
                     frame.onClipboardSending();
@@ -427,13 +423,13 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 pane.add(grayLevelsLbl);
                 pane.add(grayLevelsCb);
 
-                final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, true, () -> {
                     final String tick = tickTextField.getText();
                     if (tick.isEmpty()) {
                         return translate("tick.msg1");
                     }
                     try {
-                        if (Integer.parseInt(tick) < 50 ) {
+                        if (Integer.parseInt(tick) < 50) {
                             return translate("tick.msg2");
                         }
                     } catch (NumberFormatException ex) {
@@ -469,7 +465,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         new Thread(() -> network.sendCaptureConfiguration(captureEngineConfiguration), "CaptureEngineSettingsSender").start();
     }
 
-    private Action createComressionConfigurationAction() {
+    private Action createCompressionConfigurationAction() {
         final Action configure = new AbstractAction() {
 
             @Override
@@ -516,7 +512,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
                 purgeSizeLbl.setEnabled(useCacheCb.isSelected());
                 purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
-                final boolean ok = DialogFactory.showOkCancel(compressionFrame, translate("compression"), pane, () -> {
+                final boolean ok = DialogFactory.showOkCancel(compressionFrame, translate("compression"), pane, true, () -> {
                     final String max = maxSizeTf.getText();
                     if (max.isEmpty()) {
                         return translate("compression.cache.max.msg1");
@@ -635,6 +631,47 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         settings.putValue(Action.SHORT_DESCRIPTION, translate("settings"));
         settings.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.SETTINGS));
         return settings;
+    }
+
+    private Action createTokenAction() {
+
+        final Action tokenAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                final JButton button = (JButton) ev.getSource();
+
+                if (token == null) {
+                    final Cursor cursor = frame.getCursor();
+                    frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    try {
+                        final URL url = new URL(format(TOKEN_SERVER_URL, networkConfiguration.getPort()));
+                        try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                            token = lines.readLine();
+                        }
+                    } catch (IOException ex) {
+                        Log.error("Could not obtain token", ex);
+                        JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("token"),
+                                JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        frame.setCursor(cursor);
+                    }
+                    if (token != null) {
+                        button.setText(format(" %s ", token));
+                        button.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+                        button.setToolTipText(translate("token.copy.msg"));
+                    }
+                } else {
+                    final StringSelection value = new StringSelection(token);
+                    final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    clipboard.setContents(value, value);
+                }
+            }
+        };
+
+        tokenAction.putValue(Action.NAME, "createToken");
+        tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
+        tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
+        return tokenAction;
     }
 
     private JMenu createLookAndFeelSubmenu() {

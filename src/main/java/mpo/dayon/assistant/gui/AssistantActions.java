@@ -15,6 +15,7 @@ class AssistantActions {
     private Action startAction;
     private Action stopAction;
     private Action settingsAction;
+    private Action tokenAction;
 
     public Action getIpAddressAction() {
         return ipAddressAction;
@@ -102,5 +103,13 @@ class AssistantActions {
 
     public void setSettingsAction(Action settingsAction) {
         this.settingsAction = settingsAction;
+    }
+
+    public Action getTokenAction() {
+        return tokenAction;
+    }
+
+    public void setTokenAction(Action tokenAction) {
+        this.tokenAction = tokenAction;
     }
 }
