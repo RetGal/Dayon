@@ -32,6 +32,7 @@
             本文中，截图中展示的是应用程序的英文界面。应用程序本身还支持法语、德语、西班牙语和俄语(截至2021年9月21日，中文翻译正在进行中…)。如果终端用户使用的语言不是上述的一种，应用程序将默认使用英语。
         <p>
             <strong>注意</strong>：本文档基于最新版本的程序
+            <br/><br/>
         <p>
             <img src="assisted.png" alt="Assisted"> &nbsp; <a id="assisted-setup" class="no"><strong>配置用户端(Assisted)——如何获得远程协助</strong></a>
         <p>
@@ -41,29 +42,51 @@
         <p>
             <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
         <p>
-            输入 帮助者 提供的 IP 地址和端口号（可以通过双击来清除两个输入字段），随后点击 确认 进行连接。 
+            输入由 <em>Assistant</em> 传达的访问令牌，然后点击 OK 确认：<br/>
         <p>
-            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+            <img src="assisted_token.jpg" alt="Dayon! Assisted : Token"><br/>
+            （如果您最近已经连接到这个 <em>Assistant</em>， 那么您可以将该字段留空）
+        <p>
+            <strong>替代变体 （无需访问令牌即可连接）:</strong>
+            输入 帮助者 提供的 IP 地址和端口号， 随后点击 确认 进行连接。
+        <p>
+            <img src="assisted_network.jpg" alt="Dayon! Assisted : Network"><br/>
+            （可以通过双击来清除两个输入字段）
         <p>
             如果一切顺利，您很快就会连接到 帮助者 (帮助者使用的是 <em>Assistant</em> 主控端，连接成
             功后对方就可以看到你屏幕的实时内容)。 Enjoy！
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-setup" class="no">
             <strong>配置主控端(Assistant)——如何开始远程协助</strong></a>
         <p>
-            Dayon! Assistant (主控端)是一个典型的服务器应用程序（它用于接收 Assisted 用户端 发送过来的请求），因此您必须配置
-            您的网络以使您的计算机可以从外部世界（外网）被访问。首先要做的是 设置 Dayon! 的<strong>监听端口</strong>（如下图所示，默认808
-            0端口。如果你的8080端口运行其他程序，那就将Dayon! 监听端口设置为其他未被占用的端口）。然后配置防火墙(一
-            般来说，只需要配置Windows防火墙，或者Linux的iptables规则即可)开放刚才所设置的监听端口(否则Assisted的连接请求会被
-            计算机防火墙拦截)，以及您的 NAT 服务（通常在您的 DSL 路由器上）等。<br><br>
+            Dayon! Assistant 充当典型的服务器应用程序（<em>Assisted</em> 将连接到），因此您必须配置您的网络以使其从外部世界可见 .
+            默认情况下，服务器侦听<strong>端口</strong> 8080，但您可以根据需要更改此设置。
+            在您的<strong>防火墙</strong>中授权该端口号，并可能相应地设置您的<strong>NAT</strong>服务（通常在您的 DSL 路由器上）。 <br><br>
             译者注：上面说了那么多，说白就是你要让你的计算机暴露在公网，让用户可以访问得到你。如果你有公网IP，这自然是最方便
             的。如果你和我一样，没有公网IP，那可以使用内网穿透、VPN等。比如FRP、Ngrok、OpenVPN、ZeroTier等，有些是需要自己有服
             务器才能搭建，而有些则不需要，而且网上有很多热心网友贡献的免费通道，请自行百度，谢谢。
             <br><br>
             在 <a href="https://portforward.com/router.htm">portforward.com</a> 可以查询到常见的路由器(端口转发相关内容)的详细配置指南。
         <p>
+            <strong>可选：</strong>调整传入连接的端口：
+        <p>
             <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
         <p>
+            通过单击密钥生成访问令牌：
+        <p>
+            <img src="assistant_create_token.jpg" alt="Dayon! Assistant: Create Token">
+        <p>
+            单击鼠标将生成的访问令牌复制到剪贴板：
+        <p>
+            <img src="assistant_copy_token.jpg" alt="Dayon! Assistant: Copy Token">
+        <p>
+            就是这样 - 通过邮件、IM 或电话将此<strong>访问令牌</strong>传达给<em>Assisted</em>。
+        <p>
+            <strong>对于那些不耐烦的人：</strong> <a href="#assistant-start">戳这里</a> 直达 <em>Assistant 主控端 </em>
+            如何开始监听会话。
+        <p>
+            <strong>替代变体（无令牌连接）：</strong>
             然后你必须确定 一个 IP 地址 发送给 用户 (即用户输入到Assisted 用户端 的地址和端口)；您通常应该提供您的 公共 IP 地址，
             但如果只是为了在本地进行测试，您可不必选择它。您可以 检索您的 公共 IP 地址 使用以下菜单：
             </br></br>
@@ -86,6 +109,7 @@
             如何开始监听会话。
         <p>
             但首先让我们一起了解下高级配置选项。
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-details" class="no"><strong>主控端高级设置</strong></a>
         <p>

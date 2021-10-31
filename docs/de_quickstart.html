@@ -31,6 +31,7 @@
             Anwendersprache lokalisiert. Die Symbole sind in allen Sprachen identisch.
         <p>
             <strong>Achtung</strong>: Diese Dokumentation bezieht sich auf die jeweils aktuellste Programmversion.
+            <br/><br/>
         <p>
             <img src="assisted.png" alt="Assistierter"> &nbsp; <a id="assisted-setup" class="no"><strong>Konfiguration Assistierter</strong></a>
         <p>
@@ -40,30 +41,52 @@
             Dayon! herunter laden und installieren. Danach die <em>Dayon!</em> Applikation starten.
             (sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) Klicken sie auf das "Play" Symbol.
         <p>
-            <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
+            <img src="assisted_ready.jpg" alt="Dayon! Assistierter : Ready">
         <p>
-            Tragen sie die vom <em>Assistenten</em> mitgeteilte IP-Adresse und Portnummer ein:
-            (beide Eingabefelder können mittels Doppelklick geleert werden) und quittieren sie mit OK.
+            Tragen sie das vom <em>Assistenten</em> mitgeteilten Token ein und quittieren sie mit OK:<br/>
         <p>
-            <img src="assisted_start.jpg" alt="Dayon! Assistierter : Starting">
+            <img src="assisted_token.jpg" alt="Dayon! Assistierter : Token"><br/>
+            (sollten sie sich vor kurzem bereits mit diesem <em>Assistenten</em> verbunden haben, dann können sie das Feld auch leer lassen)
+        <p>
+            <strong>Alternative Variante (verbinden ohne Token):</strong>
+            Tragen sie stattdessen die vom <em>Assistenten</em> mitgeteilte IP-Adresse und Portnummer ein und quittieren sie mit OK:<br/>
+        <p>
+            <img src="assisted_network.jpg" alt="Dayon! Assistierter : Network"><br/>
+            (beide Eingabefelder können mittels Doppelklick geleert werden)
         <p>
             Kurz nach dem Klick auf <em>OK</em> werden sie mit ihrem <em>Assistenten</em> verbunden sein. Viel Vergnügen!
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistent"> &nbsp; <a id="assistant-setup" class="no"><strong>Konfiguration Assistent</strong></a>
         <p>
             Der Assistent (Dayon.Assistant) fungiert als eine typische Server-Anwendung (der <em>Assistierte</em>
             verbindet sich mit dieser). Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand von Nöten. Das
-            Netzwerk des <em>Assistenten</em> (der,
-            welcher Hilfe anbietet) muss so konfiguriert werden, dass es vom Internet her erreichbar ist. Als erstes
-            wird der <strong>Port</strong> definiert, auf welchem der Server horchen soll. Anschliessend wird dieser Port auf der
-            <strong>Firewall</strong> für eingehenden Verkehr
-            geöffnet. In den meisten Fällen wird es notwendig sein, diesen Port via <strong>NAT</strong> auf dem <strong>Router</strong> an
-            den entsprechenden Rechner weiter zu leiten.<br><br>
+            Netzwerk des <em>Assistenten</em> (der, welcher Hilfe anbietet) muss so konfiguriert werden, dass es vom Internet her erreichbar ist.
+        <p>
+            Standardmässig horcht der Server auf <strong>Port</strong> 8080, sie können diesen aber bei Bedarf ändern.
+            Dieser Port auf der <strong>Firewall</strong> für eingehenden Verkehr geöffnet. In den meisten Fällen wird es notwendig sein,
+            den Port via <strong>NAT</strong> auf dem <strong>Router</strong> an den entsprechenden Rechner weiter zu leiten.<br><br>
             Bebilderte Schritt-für-Schritt-Anleitungen für das Einrichten von Portweiterleitungen für die gängigsten
-            Router Modelle finden sie auf <a href="https://portforward.com/router.htm">portforward.com</a>.
+            Router Modelle finden sie beispielsweise auf <a href="https://portforward.com/router.htm">portforward.com</a>.
+        <p>
+            <strong>Optional:</strong> Port für eingehende Verbindungen anpassen:
         <p>
             <img src="assistant_network_settings.jpg" alt="Dayon! Assistent: Network Settings">
         <p>
+            Generieren sie als nächstes mittels Mausklick auf den Schlüssel ein Zugangstoken:
+        <p>
+            <img src="assistant_create_token.jpg" alt="Dayon! Assistent: Token erstellen">
+        <p>
+            Kopieren sie das generierte Zugangstoken mittels Mausklick in die Zwischenablage:
+        <p>
+            <img src="assistant_copy_token.jpg" alt="Dayon! Assistent: Token kopieren">
+        <p>
+            Das wär's bereits - teilen sie dieses <strong>Token</strong> dem <em>Assistierten</em> via Mail, IM oder Telefon mit.
+        <p>
+            <strong>Für ungeduldige:</strong> <a href="#assistant-start">Hier</a> erfahren sie, wie sie den Assistenten
+            <a href="#assistant-start">empfangsbereit machen</a>.
+        <p>
+            <strong>Alternative Variante (verbinden ohne Token):</strong>
             Um die öffentliche <strong>IP-Adresse</strong> ihres Rechners zu ermitteln, mit welchem sich der <em>Assistierte</em>
             verbinden wird, klicken sie auf <strong>Ermittle meine IP-Adresse (öffentlich)</strong>. Fürs Testen im LAN genügt
             hingegen die private IP-Adresse:
@@ -86,6 +109,7 @@
             <a href="#assistant-start">empfangsbereit machen</a>.
         <p>
             Ansonsten lassen sie uns zuerst einen Blick die erweiterten Konfigurationsmöglichkeiten des <em>Assistierten</em> werfen.
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistent"> &nbsp; <a id="assistant-details" class="no"><strong>Mehr zur Konfiguration des Assistenten</strong></a>
         <p>

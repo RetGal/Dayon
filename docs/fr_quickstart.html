@@ -30,6 +30,7 @@
             complètement traduite. Je pense que cela ne devrait pas vous empêcher de comprendre l'essentiel.
         <p>
             <strong>Attention</strong>: cette documentation fait référence à la dernière version du programme.
+            <br/><br/>
         <p>
             <img src="assisted.png" alt="Assisted"> &nbsp; <a id="assisted-setup" class="no"><strong>Mise en Route Coté assistée</strong></a>
         <p>
@@ -41,26 +42,48 @@
         <p>
             <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready">
         <p>
-            Entrez l'addresse IP et le numéro de port communiqué par l'<em>assistant</em>:
-            (les deux champs de saisie peuvent être effacés en les double-cliquant) cliquez sur le bouton "OK".
+            Saisissez le code d'accès communiqué par l'<em>assistant</em> et validez par OK:<br/>
         <p>
-            <img src="assisted_start.jpg" alt="Dayon! Assisted : Starting">
+            <img src="assisted_token.jpg" alt="Dayon! Assistied : Token"><br/>
+            (si vous vous êtes déjà connecté à cet <em>assistant</em> récemment, vous pouvez laisser le champ vide)
+        <p>
+            <strong>Variante alternative (connexion sans code d'accès):</strong>
+            Entrez l'addresse IP et le numéro de port communiqué par l'<em>assistant</em> cliquez sur le bouton "OK":<br/>
+        <p>
+        <img src="assisted_network.jpg" alt="Dayon! Assisted : Network"><br/>
+            (les deux champs de saisie peuvent être effacés en les double-cliquant)
         <p>
             Vous serez alors promptement connecté à l'<em>assistant</em> qui sera déjà en train de regarder votre écran.
             Bonne session!
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistant"><a id="assistant-setup" class="no"><strong>Mise en Route Coté Assistant</strong></a>
         <p>
             Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<em>assistée</em> va se
             connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur.
-            La première chose à faire est de configurer le
-            numéro de <strong>port d'écoute</strong> comme indiqué sur l'image suivante. Ensuite, il faudra autoriser ce port dans
-            votre <strong>parefeu</strong> et sans doute configurer un service <strong>NAT</strong> sur votre routeur DSL.<br><br>
+            Par défaut, le serveur écoute le <strong>Port</strong> 8080, mais vous pouvez le modifier si nécessaire.
+            Ensuite, il faudra autoriser ce port dans votre <strong>parefeu</strong> et sans doute configurer un service <strong>NAT</strong> sur votre routeur DSL.<br><br>
             Consultez <a href="https://portforward.com/router.htm"> portforward.com </a> pour un guide étape par étape
             pour les plus courants modèles de routeurs.
         <p>
+            <strong>Optional:</strong> Ajuster le port pour les connexions entrantes:
+        <p>
             <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings">
         <p>
+            Générez un code d'accès en cliquant sur la clé:
+        <p>
+            <img src="assistant_create_token.jpg" alt="Dayon! Assistant: Create Token">
+        <p>
+            Copiez le code d'accès généré dans le presse-papiers d'un simple clic de souris:
+        <p>
+            <img src="assistant_copy_token.jpg" alt="Dayon! Assistant: Copy Token">
+        <p>
+            C'est tout - communiquez ce <strong>code d'accès</strong> à l'<em>assisté</em> par courrier, messagerie instantanée ou téléphone.
+        <p>
+            <strong>Pour les impatients:</strong> <a href="#assistant-start">Ici</a> vous apprendrez comment faire en sorte que
+            l'assistant <a href="#assistant-start">écoute la connexion entrantes</a>.
+        <p>
+            <strong>Variante alternative (connexion sans code d'accès):</strong>
             Ensuite, vous devez décider quelle <strong>addresse IP</strong> vous voulez communiquer à l'<em>assistée</em> pour qu'il
             se connecte sur votre ordinateur; vous devez en principe donner votre addresse IP <strong>publique</strong>. Mais pour
             un test sur votre réseau local (ou
@@ -83,6 +106,7 @@
             l'assistant <a href="#assistant-start">écoute la connexion entrantes</a>.
         <p>
             Mais voyons tout d'abord continuer aux informations détaillées sur les options de configuration avancées le côté <em>assistée</em>.
+            <br/><br/>
         <p>
             <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-details" class="no"><strong>Mise en Route Coté Assistant
             (La Suite)</strong></a>

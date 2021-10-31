@@ -1,3 +1,10 @@
+dayon (11.0.0) stable; urgency=medium
+
+  * Connection via access token
+  * Various GUI improvements
+
+ -- Reto Galante <reto@galante.ch>  Sun, 31 Oct 2021 12:00:00 +0000
+
 dayon (1.10.9) stable; urgency=medium
 
   * Chinese localisation
