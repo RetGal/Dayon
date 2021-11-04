@@ -3,13 +3,13 @@ define('DB_NAME', "dayon.db");
 define('TOKEN_LIFETIME', 604800000);
 header('Content-type: text/plain');
 if (isset($_GET['port'])) {
-	$port = clean($_GET['port'], 5);
-    $token = substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, 6);
-	$token .= checksum($token);
-	$pdo = new PDO('sqlite:'.DB_NAME);
-	echo insertToken(strtoupper($token), $_SERVER['REMOTE_ADDR'], $port, $pdo);
-	if (rand(0, 5) == 5) {
-		removeOldTokens($pdo);
+	$port = clean($_GET['port'], 6);
+	if (isValidPort($port)) {
+	    $pdo = new PDO('sqlite:'.DB_NAME);
+        echo createToken($pdo, $port);
+        if (rand(0, 5) == 5) {
+            removeOldTokens($pdo);
+        }
 	}
 }
 
@@ -28,24 +28,41 @@ function clean($val, $maxLen = "") {
 	return $val;
 }
 
-function checksum($in) {
-        return substr(sha1($in), -1);
+function isValidPort($port) {
+    return is_numeric($port) && $port > 0 && $port < 65536;
+}
+
+function createToken($pdo, $port) {
+    $token = computeToken();
+    $attempt = 0;
+    while (!insertToken($token, $_SERVER['REMOTE_ADDR'], $port, $pdo) && $attempt < 10) {
+        $token = computeToken();
+        $attempt++;
+    }
+    return $token;
+}
+
+function computeToken() {
+    $token = substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, 6);
+    $token .= strtoupper(substr(sha1($token), -1));
+    return $token;
 }
 
 function insertToken($token, $address, $port, $pdo) {
     $sql = "INSERT INTO tokens (token,assistant,port,ts) VALUES (:token,:address,:port,:ts)";
 	$date = new DateTime();
 	$ts = $date->getTimestamp();
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
-        $stmt->bindParam(':address', $address, PDO::PARAM_STR);
-        $stmt->bindParam(':port', $port, PDO::PARAM_INT);
-        $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
-        $success = $stmt->execute();
-        if (!$success) {
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
+    $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+    $stmt->bindParam(':port', $port, PDO::PARAM_INT);
+    $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
+    $success = $stmt->execute();
+    if (!$success) {
  		print_r($stmt->errorInfo());
+ 		return 0;
 	} else {
-		return $token;
+		return 1;
 	}
 }
 
