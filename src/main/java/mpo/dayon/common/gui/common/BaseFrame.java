@@ -10,6 +10,7 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Locale;
 
 import javax.swing.*;
 
@@ -82,7 +83,8 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void setTitle(String titleString, Version version) {
-        setTitle(format("Dayon! (%s) %s %s", titleString, version, InputContext.getInstance().getLocale().toString()));
+        Locale locale = InputContext.getInstance().getLocale();
+        setTitle(format("Dayon! (%s) %s %s", titleString, version, locale != null ? locale.toString() : ""));
     }
 
     protected void setupToolBar(ToolBar toolBar) {
