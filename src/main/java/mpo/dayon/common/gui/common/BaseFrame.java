@@ -72,9 +72,17 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), MIN_WIDTH),
                 Math.max(configuration.getHeight(), MIN_HEIGHT));
         this.setSize(dimension.width, dimension.height);
-        InputContext context = InputContext.getInstance();
-        String titleTag = frameType.equals(FrameType.ASSISTANT) ? "assistant" : "assisted";
-        setTitle(format("Dayon! (%s) %s %s", translate(titleTag), Version.get(), context.getLocale().toString()));
+        String titleString = frameType.equals(FrameType.ASSISTANT) ? translate("assistant") : translate("assisted");
+        updateTitle(titleString, Version.get());
+    }
+
+    private void updateTitle(String titleString, Version version) {
+        setTitle(titleString, version);
+        new Timer(5000, e -> setTitle(titleString, version)).start();
+    }
+
+    private void setTitle(String titleString, Version version) {
+        setTitle(format("Dayon! (%s) %s %s", titleString, version, InputContext.getInstance().getLocale().toString()));
     }
 
     protected void setupToolBar(ToolBar toolBar) {
