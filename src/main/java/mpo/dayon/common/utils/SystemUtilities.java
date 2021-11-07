@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import static java.lang.Math.abs;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
-public abstract class SystemUtilities {
+public final class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
     public static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";

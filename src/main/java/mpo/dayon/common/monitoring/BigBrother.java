@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import mpo.dayon.common.monitoring.counter.Counter;
 
-public class BigBrother {
+public final class BigBrother {
     private static final BigBrother INSTANCE = new BigBrother();
 
     private final Timer timer = new Timer("BigBrother");

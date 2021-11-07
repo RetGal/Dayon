@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Stream;
 
-public class FileUtilities {
+public final class FileUtilities {
 
     private FileUtilities() {
         throw new IllegalStateException();

@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
-public abstract class ScreenUtilities {
+public final class ScreenUtilities {
 
     public static final Rectangle SCREEN;
 

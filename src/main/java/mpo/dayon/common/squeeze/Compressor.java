@@ -10,7 +10,7 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
-public class Compressor {
+public final class Compressor {
     /**
      * NONE. (testing only)
      */

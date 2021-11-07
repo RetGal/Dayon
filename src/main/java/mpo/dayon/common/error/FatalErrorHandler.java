@@ -8,7 +8,7 @@ import mpo.dayon.common.log.Log;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
-public abstract class FatalErrorHandler {
+public final class FatalErrorHandler {
     private static JFrame frame;
 
     private FatalErrorHandler() {

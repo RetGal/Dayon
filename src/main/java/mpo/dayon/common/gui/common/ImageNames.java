@@ -1,6 +1,6 @@
 package mpo.dayon.common.gui.common;
 
-public abstract class ImageNames {
+public final class ImageNames {
 	private ImageNames() {
 	}
 

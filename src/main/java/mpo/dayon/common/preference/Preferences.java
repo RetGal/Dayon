@@ -11,7 +11,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 
-public class Preferences {
+public final class Preferences {
     private static final Preferences NULL = new Preferences();
 
     private static Preferences preferences;

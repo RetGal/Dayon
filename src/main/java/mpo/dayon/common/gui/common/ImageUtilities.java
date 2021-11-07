@@ -4,7 +4,7 @@ import javax.swing.ImageIcon;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class ImageUtilities {
+public final class ImageUtilities {
     private ImageUtilities() {
     }
 

@@ -12,7 +12,7 @@ import java.io.FileNotFoundException;
  * the same time I need a very simple stuff on the assistant side - let's see
  * later (!)
  */
-public class Log {
+public final class Log {
     private static final boolean DEBUG = System.getProperty("dayon.debug") != null;
 
     private static LogAppender out;
