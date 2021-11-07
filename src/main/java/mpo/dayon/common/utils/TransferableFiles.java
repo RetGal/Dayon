@@ -37,7 +37,7 @@ public class TransferableFiles implements Transferable {
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         Log.debug("getTransferData " + flavor.toString());
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
-            return Collections.unmodifiableList(files);
+            return files;
         }
         if (flavor.equals(uriListFlavor)) {
             return toUriListFlavor();

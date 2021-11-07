@@ -106,7 +106,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     public List<File> getFiles() {
-        return Collections.unmodifiableList(files);
+        return files;
     }
 
     @Override
