@@ -10,7 +10,7 @@ import mpo.dayon.common.log.Log;
 
 import static java.lang.String.format;
 
-public abstract class Babylon {
+public final class Babylon {
     private static final String BUNDLE = "Babylon";
 
     private Babylon() {
@@ -34,7 +34,7 @@ public abstract class Babylon {
         if (value != null) {
             return value.trim();
         }
-        return value;
+        return null;
     }
 
     @java.lang.SuppressWarnings("squid:S4973")

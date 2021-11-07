@@ -28,7 +28,7 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
                 }
 
                 if (count == 255) {
-                    out.write(count);
+                    out.write(255);
                     prev = Integer.MIN_VALUE;
                     ++pos;
                 } else if (pos < len) {

@@ -108,7 +108,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
             return true;
         }
 
-        coldStart = false;
         return requestConnectionSettings();
     }
 
