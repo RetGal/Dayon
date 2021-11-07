@@ -260,7 +260,7 @@ public class CaptureTile {
 			if (cachedXYWH == null || !cachedXYWH.configuration.equals(captureWidth, captureHeight, tileWidth, tileHeight)) {
 				cachedXYWH = computeXYWH(captureWidth, captureHeight, tileWidth, tileHeight);
 			}
-			return cachedXYWH.xywh;
+			return cachedXYWH.xywh.clone();
 		}
 	}
 

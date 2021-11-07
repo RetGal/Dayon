@@ -26,7 +26,7 @@ public class MemByteBuffer extends OutputStream {
 	 *            the newly created buffer is adopting that byte array (!)
 	 */
 	public MemByteBuffer(byte[] data) {
-		buffer = data;
+		buffer = data.clone();
 		count = data.length;
 	}
 
@@ -35,7 +35,7 @@ public class MemByteBuffer extends OutputStream {
 	}
 
 	public byte[] getInternal() {
-		return buffer;
+		return buffer.clone();
 	}
 
 	public int mark() {

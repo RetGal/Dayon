@@ -2,6 +2,7 @@ package mpo.dayon.common.network.message;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class NetworkClipboardFilesHelper {
@@ -22,19 +23,19 @@ public class NetworkClipboardFilesHelper {
     }
 
     public List<File> getFiles() {
-        return files;
+        return Collections.unmodifiableList(files);
     }
 
     public void setFiles(List<File> files) {
-        this.files = files;
+        this.files = Collections.unmodifiableList(files);
     }
 
     public List<FileMetaData> getFileMetadatas() {
-        return fileMetadatas;
+        return Collections.unmodifiableList(fileMetadatas);
     }
 
     public void setFileMetadatas(List<FileMetaData> fileMetadatas) {
-        this.fileMetadatas = fileMetadatas;
+       this.fileMetadatas = Collections.unmodifiableList(fileMetadatas);
     }
 
     public String getTransferId() {

@@ -16,7 +16,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private static final int MAX_BUFFER_CAPACITY = 7168;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize, String basePath) {
-        this.files = files;
+        this.files = Collections.unmodifiableList(files);
         this.fileMetaDatas = getMetaData(files, basePath);
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
@@ -106,7 +106,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     public List<File> getFiles() {
-        return files;
+        return Collections.unmodifiableList(files);
     }
 
     @Override

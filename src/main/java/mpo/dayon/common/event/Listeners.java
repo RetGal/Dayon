@@ -1,5 +1,6 @@
 package mpo.dayon.common.event;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -8,7 +9,7 @@ public class Listeners<T extends Listener> {
 	private final List<T> listeners = new CopyOnWriteArrayList<>();
 
 	public List<T> getListeners() {
-		return listeners;
+		return Collections.unmodifiableList(listeners);
 	}
 	
 	public void add(T listener) {

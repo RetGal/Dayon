@@ -8,6 +8,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class TransferableFiles implements Transferable {
@@ -29,14 +30,14 @@ public class TransferableFiles implements Transferable {
             DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
 
     public TransferableFiles(List<File> files) {
-        this.files = files;
+        this.files = Collections.unmodifiableList(files);
     }
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
         Log.debug("getTransferData " + flavor.toString());
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
-            return files;
+            return Collections.unmodifiableList(files);
         }
         if (flavor.equals(uriListFlavor)) {
             return toUriListFlavor();

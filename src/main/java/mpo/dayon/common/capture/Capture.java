@@ -48,7 +48,7 @@ public class Capture {
 		this.captureDimension = captureDimension;
 		this.tileDimension = tileDimension;
 
-		this.dirty = dirty;
+		this.dirty = dirty.clone();
 	}
 
 	public int getId() {
@@ -116,7 +116,7 @@ public class Capture {
 	}
 
 	public CaptureTile[] getDirtyTiles() {
-		return dirty;
+		return dirty.clone();
 	}
 
 	public void mergeDirtyTiles(Capture[] olders) {
