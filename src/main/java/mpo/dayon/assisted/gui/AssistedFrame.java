@@ -23,7 +23,6 @@ class AssistedFrame extends BaseFrame {
     private final transient Action toggleMultiScreenCaptureAction;
     private final JButton startButton;
     private final JButton stopButton;
-    private final JButton connectionSettingsButton;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
@@ -33,7 +32,6 @@ class AssistedFrame extends BaseFrame {
         this.startAction = startAction;
         this.startButton = createButton(this.startAction);
         this.stopButton = createButton(this.stopAction, false);
-        this.connectionSettingsButton = createButton(createConnectionSettingsAction(null));
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());
@@ -45,7 +43,6 @@ class AssistedFrame extends BaseFrame {
         toolbar.add(startButton);
         toolbar.add(stopButton);
         toolbar.addSeparator();
-        toolbar.add(connectionSettingsButton);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
             toolbar.addSeparator();
             if (ScreenUtilities.getNumberOfScreens() > 1) {
@@ -78,7 +75,6 @@ class AssistedFrame extends BaseFrame {
     void onReady() {
         this.setCursor(mouseCursor);
         toggleStartButton(true);
-        connectionSettingsButton.setEnabled(true);
         getStatusBar().setMessage(translate("ready"));
         connected = false;
     }
@@ -93,7 +89,6 @@ class AssistedFrame extends BaseFrame {
     void onConnecting(String serverName, int serverPort) {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         toggleStartButton(false);
-        connectionSettingsButton.setEnabled(false);
         getStatusBar().setMessage(translate("connecting", serverName, serverPort));
         connected = false;
     }
