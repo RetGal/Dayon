@@ -55,7 +55,7 @@ public class Version {
     }
 
     boolean isLatestVersion() {
-        return getLatestRelease().equals(numericVersion);
+        return numericVersion.equals(getLatestRelease());
     }
 
     public String getLatestRelease() {
