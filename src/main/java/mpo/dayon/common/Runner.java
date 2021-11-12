@@ -1,6 +1,5 @@
 package mpo.dayon.common;
 
-import mpo.dayon.assistant.AssistantRunner;
 import mpo.dayon.assisted.AssistedRunner;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
@@ -29,11 +28,7 @@ public interface Runner {
         SwingUtilities.invokeLater(() -> {
             Runner.logAppInfo(hasAssistant(args) ? "dayon_assistant" : "dayon_assisted");
             try {
-                if (hasAssistant(args)) {
-                    AssistantRunner.launchAssistant(language);
-                } else {
-                    AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap"));
-                }
+                AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap"));
             } catch (Exception ex) {
                 FatalErrorHandler.bye(hasAssistant(args) ? "The assistant is dead!" : "The assisted is dead!", ex);
             }

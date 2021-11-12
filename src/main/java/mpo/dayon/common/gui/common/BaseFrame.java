@@ -136,8 +136,6 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -376,31 +374,6 @@ public abstract class BaseFrame extends JFrame {
             assistantPanel.add(autoConnectLbl);
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
-        } else {
-            final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive.join())), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive.join()))));
-            upnpPanel.add(upnpStatus);
-            panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-            final JPanel portPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-            portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-            portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-            portPanel.add(portNumberLbl);
-            portPanel.add(portNumberTextField);
-            final JLabel autoAcceptLbl = new JLabel(translate("connection.settings.autoAccept"));
-            portPanel.add(autoAcceptLbl);
-            autoConnectCheckBox.setSelected(networkConfiguration.isAutoAccept());
-            portPanel.add(autoConnectCheckBox);
-            panel.add(portPanel, createGridBagConstraints(gridy++));
         }
 
         if (hasTokenServerUrlFromYaml) {
