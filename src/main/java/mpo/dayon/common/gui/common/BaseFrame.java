@@ -17,10 +17,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.dosse.upnp.UPnP;
-import mpo.dayon.assistant.network.NetworkAssistantEngine;
-import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
-import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -124,8 +120,6 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -309,13 +303,16 @@ public abstract class BaseFrame extends JFrame {
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, isUpnpEnabled.join());
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, false);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
 
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
+                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
+                    updateSystemProperty(newTokenServerUrl);
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
                     if (ASSISTED.equals(frameType)) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
@@ -339,7 +336,6 @@ public abstract class BaseFrame extends JFrame {
 
         if (ASSISTED.equals(frameType)) {
             final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
             final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
             hostLbl.setFont(titleFont);
             panel.add(hostLbl, createGridBagConstraints(gridy++));
@@ -358,27 +354,6 @@ public abstract class BaseFrame extends JFrame {
             autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
-        } else {
-            final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
-            upnpPanel.add(upnpStatus);
-            panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-            final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-            portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-            portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-            portPanel.add(portNumberLbl);
-            portPanel.add(portNumberTextField);
-            panel.add(portPanel, createGridBagConstraints(gridy++));
         }
 
         final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
@@ -685,8 +660,4 @@ public abstract class BaseFrame extends JFrame {
             browse(format(CHAT_URL, fingerprints.getText().trim().replace(":", "-")));
         }
     }
-
-    public void onClipboardSending() {}
-
-    public void onClipboardSent() {}
 }
