@@ -28,7 +28,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>11</maven.compiler.release>
-        <dayon.mainClass>mpo.dayon.common.Runner</dayon.mainClass>
+        <dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
         <sonar.organization>retgal-github</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.12</xz.version>
@@ -97,7 +97,7 @@
                                 <mainClass>${dayon.mainClass}</mainClass>
                             </manifest>
                             <manifestEntries>
-                                <Application-Name>Dayon!</Application-Name>
+                                <Application-Name>Fensterkitt</Application-Name>
                                 <Implementation-Version>${project.version}</Implementation-Version>
                                 <Permissions>all-permissions</Permissions>
                                 <Trusted-Library>true</Trusted-Library>
@@ -342,16 +342,8 @@
                                     <target>dayon.sh</target>
                                 </fileSet>
                                 <fileSet>
-                                    <source>${basedir}/dist/dayon_assistant.sh</source>
-                                    <target>dayon_assistant.sh</target>
-                                </fileSet>
-                                <fileSet>
                                     <source>${basedir}/dist/dayon_assisted.sh</source>
                                     <target>dayon_assisted.sh</target>
-                                </fileSet>
-                                <fileSet>
-                                    <source>${basedir}/debian/dayon_assistant.desktop</source>
-                                    <target>dayon_assistant.desktop</target>
                                 </fileSet>
                                 <fileSet>
                                     <source>${basedir}/debian/dayon_assisted.desktop</source>
@@ -584,7 +576,6 @@
                                         <exec executable="chmod" osfamily="unix">
                                             <arg value="+x"/>
                                             <arg value="${basedir}/dist/dayon.sh"/>
-                                            <arg value="${basedir}/dist/dayon_assistant.sh"/>
                                             <arg value="${basedir}/dist/dayon_assisted.sh"/>
                                             <arg value="${basedir}/dist/setup.sh"/>
                                         </exec>
@@ -647,178 +638,6 @@
                                         <argument>${project.build.directory}/jlink/jre</argument>
                                     </arguments>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>makeself</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*</include>
-                                            <excludes>
-                                                <exclude>jre/</exclude>
-                                                <exclude>jrex/</exclude>
-                                                <exclude>snap/</exclude>
-                                            </excludes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/docs</directory>
-                                            <include>favicon.ico</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>copy-runtime</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>${basedir}/target/jlink</directory>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../dist/</archiveDir>
-                            <fileName>dayon.sh</fileName>
-                            <label>Dayon! ${project.version}</label>
-                            <startupScript>./dayon_assisted.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>makeself</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>mac</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*.sh</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>assisted</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../dist/</archiveDir>
-                            <fileName>Assisted.command</fileName>
-                            <label>Dayon! Assisted ${project.version}</label>
-                            <startupScript>./dayon_assisted.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>makeself</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>assistant</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../dist/</archiveDir>
-                            <fileName>Assistant.command</fileName>
-                            <label>Dayon! Assistant ${project.version}</label>
-                            <startupScript>./dayon_assistant.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>makeself</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
