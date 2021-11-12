@@ -9,7 +9,6 @@ module mpo.dayon {
     requires sdp.api;
     requires WaifUPnP;
 
-    exports mpo.dayon.assistant;
     exports mpo.dayon.assisted;
     exports mpo.dayon.common;
 }

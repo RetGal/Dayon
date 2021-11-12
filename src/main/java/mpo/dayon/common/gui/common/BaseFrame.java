@@ -8,19 +8,11 @@ import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.CompletableFuture;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.dosse.upnp.UPnP;
-import mpo.dayon.assistant.network.NetworkAssistantEngine;
-import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
-import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -33,15 +25,12 @@ import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static javax.swing.SwingUtilities.invokeLater;
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
 import static mpo.dayon.common.log.LogAppender.cleanup;
-import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
-import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -123,7 +112,7 @@ public abstract class BaseFrame extends JFrame {
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
         setupWindow();
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
     }
 
     private void setupWindow() {
@@ -149,44 +138,9 @@ public abstract class BaseFrame extends JFrame {
 
     protected void setupToolBar(ToolBar toolBar, Action toolbarAction) {
         if (ASSISTANT.equals(frameType)) {
-            biometricPanel = new JPanel();
-            biometricPanel.setLayout(new GridBagLayout());
-            biometricPanel.setVisible(false);
-            biometricPanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 0, 0));
-            biometricPanel.setPreferredSize(new Dimension(165, 67));
-            biometricPanel.setMaximumSize(new Dimension(165, 67));
-            FINGERPRINTS.setHorizontalAlignment(SwingConstants.CENTER);
-            GridBagConstraints gb = new GridBagConstraints();
-            gb.insets = new Insets(5,5,5,0);
-            biometricPanel.add(FINGERPRINTS, gb);
-            gb.gridy = 1;
-            gb.weighty = 1;
-            // prevent vertical stretching of the clickable region of the fingerprints
-            biometricPanel.add(new JLabel(), gb);
-            toolBar.add(biometricPanel, BorderLayout.WEST);
-
-            JPanel sixSeven = new JPanel();
-            sixSeven.setLayout(new GridBagLayout());
-            sixSeven.setBorder(BorderFactory.createEmptyBorder(1, 10, 0, 5));
-            sixSeven.setPreferredSize(new Dimension(125, 67));
-            sixSeven.setMaximumSize(new Dimension(125, 67));
-            GridBagConstraints gbc = new GridBagConstraints();
-            gbc.anchor = GridBagConstraints.EAST;
-            sixSeven.add(addAction(createShowInfoAction()), gbc);
-            gbc.gridx = 1;
-            sixSeven.add(addAction(createShowHelpAction()), gbc);
-            gbc.gridx = 2;
-            gbc.weightx = 1;
-            sixSeven.add(addAction(createExitAction()), gbc);
-            gbc.gridy = 1;
-            gbc.weighty = 1;
-            gbc.anchor = GridBagConstraints.LAST_LINE_END;
-            sixSeven.add(addAction(toolbarAction, 4), gbc);
-            toolBar.add(sixSeven, BorderLayout.EAST);
+            // noop
         } else {
             toolBar.add(FINGERPRINTS);
-            toolBar.add(addAction(createShowInfoAction()));
-            toolBar.add(addAction(createShowHelpAction()));
             toolBar.add(addAction(createExitAction()));
         }
         add(toolBar, BorderLayout.NORTH);
@@ -399,85 +353,11 @@ public abstract class BaseFrame extends JFrame {
         return buttonsPanel;
     }
 
-    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
-        return createConnectionSettingsAction(null, networkEngine);
-    }
-
-    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(networkEngine, null);
-    }
-
-    private Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
-        final Action conf = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-                final JTextField addressTextField = new JTextField();
-                final JTextField portNumberTextField = new JTextField();
-                final JCheckBox autoConnectCheckBox = new JCheckBox();
-                final ButtonGroup tokenRadioGroup = new ButtonGroup();
-                final JTextField customTokenTextField = new JTextField();
-                final JComboBox<String> customTokenServersSelection = new JComboBox<>(tokenServerUrlsFromYaml);
-                CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
-
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, customTokenServersSelection, upnpActive);
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
-                        () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField, customTokenServersSelection));
-
-                if (ok) {
-                    String newTokenServerUrl = getSelectedTokenServerUrl(tokenRadioGroup, customTokenTextField, customTokenServersSelection);
-                    statusBar.setTokenserverIndicator(newTokenServerUrl.isBlank() && tokenServerUrlsFromYaml.length == 0);
-                    applyNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistantEngine, networkAssistedEngine);
-                }
-            }
-        };
-        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
-        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
-        return conf;
-    }
-
-    private void applyNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox,
-                                         String newTokenServerUrl, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
-        if (ASSISTED.equals(frameType)) {
-            updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
-        } else {
-            updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, autoConnectCheckBox, networkAssistantEngine);
-        }
-    }
-
-    private static String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField, JComboBox<String> customTokenServersSelection) {
-        if (customTokenServersSelection.getItemCount() > 1) {
-            return customTokenServersSelection.getSelectedItem().toString();
-        }
-        String selectedValue = tokenRadioGroup.getSelection() == null ? null : tokenRadioGroup.getSelection().getActionCommand();
-        if (CUSTOM.equals(selectedValue) && isValidUrl(customTokenTextField.getText().trim())) {
-            return customTokenTextField.getText();
-        }
-        return "";
-    }
-
-    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup,
-                              JTextField customTokenTextField, JComboBox<String> customTokenServersSelection, CompletableFuture<Boolean> upnpActive) {
-        final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
-        final JPanel panel = new JPanel(new GridBagLayout());
-        int gridy = 0;
-        String currentTokenServer = getCurrentTokenServer();
-        if (ASSISTED.equals(frameType)) {
-            gridy = addAssistedConfiguration(panel, gridy, titleFont, addressTextField, portNumberTextField, autoConnectCheckBox);
-        } else {
-            gridy = addAssistantConfiguration(panel, gridy, titleFont, portNumberTextField, autoConnectCheckBox, upnpActive);
-        }
-        if (customTokenServersSelection.getItemCount() > 1) {
-            return addPreconfiguredTokenServerPanel(panel, gridy, titleFont, customTokenServersSelection);
-        }
-        return addTokenServerSelectionPanel(panel, gridy, titleFont, tokenRadioGroup, customTokenTextField, currentTokenServer);
-    }
-
     private String getCurrentTokenServer() {
         if (ASSISTED.equals(frameType)) {
             return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
         }
-        return new NetworkAssistantEngineConfiguration().getTokenServerUrl();
+        return null;
     }
 
     private static int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
@@ -502,161 +382,8 @@ public abstract class BaseFrame extends JFrame {
         return gridy;
     }
 
-    private static int addAssistantConfiguration(JPanel panel, int gridy, Font titleFont, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, CompletableFuture<Boolean> upnpActive) {
-        final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-        JLabel hostLabel = new JLabel(toUpperFirst(translate("host")));
-        hostLabel.setFont(titleFont);
-        panel.add(hostLabel, createGridBagConstraints(gridy++));
-
-        JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-        upnpPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>",
-                format(translate(format("connection.settings.upnp.%s", upnpActive.join())), UPnP.getDefaultGatewayIP()),
-                translate(format("connection.settings.portforward.%s", upnpActive.join()))));
-        upnpPanel.add(upnpStatus);
-        panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-        JPanel portPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        portPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
-        portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-        autoConnectCheckBox.setSelected(networkConfiguration.isAutoAccept());
-
-        JLabel portNumberLabel = new JLabel(translate("connection.settings.portNumber"));
-        portNumberLabel.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-        portPanel.add(portNumberLabel);
-        portPanel.add(portNumberTextField);
-        portPanel.add(new JLabel(translate("connection.settings.autoAccept")));
-        portPanel.add(autoConnectCheckBox);
-        panel.add(portPanel, createGridBagConstraints(gridy++));
-        return gridy;
-    }
-
-    private static JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont, JComboBox<String> customTokenServersSelection) {
-        JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-        if (customTokenServersSelection.getItemCount() > 1) {
-            JPanel tokenPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-            tokenPanel.add(new JLabel(translate("token.custom.server")));
-            customTokenServersSelection.setFont(new Font("Sans Serif", Font.PLAIN, 13));
-            customTokenServersSelection.setSelectedItem(System.getProperty("dayon.tokenserver.url", ""));
-            tokenPanel.add(customTokenServersSelection);
-            panel.add(tokenPanel, createGridBagConstraints(gridy));
-        } else {
-            JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-            tokenPanel.add(new JLabel(translate("token.server.preconfigured")));
-            panel.add(tokenPanel, createGridBagConstraints(gridy));
-        }
-        return panel;
-    }
-
-    private static JPanel addTokenServerSelectionPanel(JPanel panel, int gridy, Font titleFont, ButtonGroup tokenRadioGroup,
-                                                       JTextField customTokenTextField, String currentTokenServer) {
-        JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-
-        JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-
-        JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-        defaultTokenRadio.setActionCommand("default");
-        JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(CUSTOM);
-        tokenRadioGroup.add(defaultTokenRadio);
-        tokenRadioGroup.add(customTokenRadio);
-
-        boolean customTextFieldEditable = !currentTokenServer.isEmpty() && !currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL);
-        if (!customTextFieldEditable) {
-            defaultTokenRadio.setSelected(true);
-            currentTokenServer = "";
-        } else {
-            customTokenRadio.setSelected(true);
-        }
-
-        JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
-        defaultTokenTextField.setEditable(false);
-        defaultTokenTextField.setFocusable(false);
-        customTokenTextField.setText(currentTokenServer);
-        customTokenTextField.setEditable(customTextFieldEditable);
-
-        defaultTokenRadio.addActionListener(evt -> {
-            defaultTokenRadio.requestFocus();
-            customTokenTextField.setEditable(false);
-        });
-        customTokenRadio.addActionListener(evt -> {
-            customTokenTextField.requestFocus();
-            customTokenTextField.setEditable(true);
-        });
-
-        tokenPanel.add(defaultTokenRadio);
-        tokenPanel.add(defaultTokenTextField);
-        tokenPanel.add(customTokenRadio);
-        tokenPanel.add(customTokenTextField);
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
-        return panel;
-    }
-
     private static String toUpperFirst(String text) {
         return text.isEmpty() ? text : Character.toUpperCase(text.charAt(0)) + text.substring(1);
-    }
-
-    private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, JComboBox<String> customTokenServersSelection) {
-        String addressError = validateAddressText(addressTextField);
-        if (addressError != null) {
-            return addressError;
-        }
-        String portError = validatePortNumberText(portNumberTextField);
-        if (portError != null) {
-            return portError;
-        }
-        if (isCustomTokenServerSelected(tokenRadioGroup)) {
-            return validateCustomTokenServer(customTokenTextField.getText().trim());
-        }
-        if (customTokenServersSelection.getItemCount() > 1) {
-            return validateCustomTokenServer(customTokenServersSelection.getSelectedItem().toString());
-        }
-        return null;
-    }
-
-    private String validateAddressText(JTextField addressTextField) {
-        if (!ASSISTED.equals(frameType)) {
-            return null;
-        }
-        final String ipAddress = addressTextField.getText();
-        if (ipAddress.isEmpty()) {
-            return translate("connection.settings.emptyIpAddress");
-        }
-        if (!isValidIpAddressOrHostName(ipAddress)) {
-            return translate("connection.settings.invalidIpAddress");
-        }
-        return null;
-    }
-
-    private static String validatePortNumberText(JTextField portNumberTextField) {
-        final String portNumber = portNumberTextField.getText();
-        if (portNumber.isEmpty()) {
-            return translate("connection.settings.emptyPortNumber");
-        }
-        if (!isValidPortNumber(portNumber)) {
-            return translate("connection.settings.invalidPortNumber");
-        }
-        return null;
-    }
-
-    private static boolean isCustomTokenServerSelected(ButtonGroup tokenRadioGroup) {
-        return tokenRadioGroup.getSelection() != null && CUSTOM.equals(tokenRadioGroup.getSelection().getActionCommand());
-    }
-
-    private static String validateCustomTokenServer(String tokenServer) {
-        if (isValidUrl(tokenServer) && tokenServer.endsWith("/")) {
-            final String tokenServerVersion = getTokenServerVersion(tokenServer);
-            Log.debug("Token server version: " + tokenServerVersion);
-            return validateTokenServerVersion(tokenServerVersion);
-        }
-        return translate("connection.settings.invalidTokenServer");
     }
 
     private static String validateTokenServerVersion(String tokenServerVersion) {
@@ -674,58 +401,12 @@ public abstract class BaseFrame extends JFrame {
         return translate("connection.settings.invalidTokenServer");
     }
 
-    private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl, NetworkAssistedEngine networkEngine) {
-        final NetworkAssistedEngineConfiguration newConfig = new NetworkAssistedEngineConfiguration(
-                addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
-
-        if (!newConfig.equals(new NetworkAssistedEngineConfiguration())) {
-            newConfig.persist();
-            networkEngine.reconfigure(newConfig);
-        }
-    }
-
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, JCheckBox autoConnectCheckBox, NetworkAssistantEngine networkEngine) {
-        final NetworkAssistantEngineConfiguration oldConfig = new NetworkAssistantEngineConfiguration();
-        final NetworkAssistantEngineConfiguration newConfig = new NetworkAssistantEngineConfiguration(
-                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl, autoConnectCheckBox.isSelected());
-
-        if (!newConfig.equals(oldConfig)) {
-            manageRouterPorts(oldConfig.getPort(), newConfig.getPort(), null);
-            newConfig.persist();
-            networkEngine.reconfigure(newConfig);
-        }
-    }
-
     private static GridBagConstraints createGridBagConstraints(int gridy) {
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = HORIZONTAL;
         gc.gridx = 0;
         gc.gridy = gridy;
         return gc;
-    }
-
-    private static String getTokenServerVersion(String tokenServer) {
-        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
-            try {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(tokenServer))
-                        .header("User-Agent", USER_AGENT)
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-                if (response.statusCode() != 200 || !response.body().startsWith("v.")) {
-                    return null;
-                }
-                return response.body().trim();
-            } catch (IOException | InterruptedException | SecurityException ex) {
-                Log.error(format("Error checking token server %s", tokenServer), ex);
-                if (ex instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
-                return null;
-            }
-        });
-        return future.join();
     }
 
     private void addSizeAndPositionListener() {
