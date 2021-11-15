@@ -6,7 +6,7 @@ if (isset($_GET['port'])) {
 	$port = clean($_GET['port'], 6);
 	if (isValidPort($port)) {
 	    $pdo = new PDO('sqlite:'.DB_NAME);
-        echo createToken($pdo, $port);
+        echo createToken($pdo, $port),"\n";
         if (rand(0, 5) == 5) {
             removeOldTokens($pdo);
         }
@@ -16,7 +16,7 @@ if (isset($_GET['port'])) {
 if (isset($_GET['token'])) {
 	$token = clean($_GET['token'], 7);
 	$pdo = new PDO('sqlite:'.DB_NAME);
-	echo readToken($token, $pdo);
+	echo readToken($token, $pdo),"\n";
 	updateToken($token, $_SERVER['REMOTE_ADDR'], $pdo);
 }
 
