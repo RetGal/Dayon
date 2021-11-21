@@ -97,7 +97,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyPress(VK_CONTROL);
 				robot.keyPress(VK_ALT);
-				Log.debug("KeyCode ALT_GRAPH" + message);
+				Log.debug("KeyCode ALT_GRAPH " + message);
 				return;
 			}
 			Log.debug("KeyCode " + message);
@@ -136,9 +136,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private void typeUnicode(int keyCode) {
 		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
+			robot.keyRelease(VK_ALT_GRAPH);
 			typeLinuxUnicode(keyCode);
 			return;
 		}
+		robot.keyRelease(VK_ALT);
+		robot.keyRelease(VK_CONTROL);
 		typeWindowsUnicode(keyCode);
 	}
 
@@ -147,7 +150,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyRelease(VK_ALT);
 				robot.keyRelease(VK_CONTROL);
-				Log.debug("KeyCode ALT_GRAPH" + message);
+				Log.debug("KeyCode ALT_GRAPH " + message);
 				return;
 			}
 			Log.debug("KeyCode " + message);
