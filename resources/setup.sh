@@ -27,7 +27,7 @@ chmod +x ${INSTALL_DIR}/dayon*sh
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
 Name=Dayon! Assistant
-Version=1.10
+Version=11.0
 Exec=${INSTALL_DIR}/dayon_assistant.sh
 Comment=Offer remote assistance
 Comment[de]=Remotesupport anbieten
@@ -48,7 +48,7 @@ EOF
 cat <<EOF > /usr/share/applications/DayonAssisted.desktop
 [Desktop Entry]
 Name=Dayon! Assisted
-Version=1.10
+Version=11.0
 Exec=${INSTALL_DIR}/dayon_assisted.sh
 Comment=Request remote assistance
 Comment[de]=Remotesupport erbitten
