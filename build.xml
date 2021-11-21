@@ -13,7 +13,7 @@
 	<property name="main.class" value="mpo.dayon.assisted.AssistedRunner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="11.0.0"/>
+	<property name="version" value="11.0.1"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">

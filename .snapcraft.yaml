@@ -1,9 +1,9 @@
 name: dayon
 title: Dayon!
-version: '11.0.0'
-summary: An easy to use, cross-platform remote desktop assistance solution
+version: '11.0.1'
+summary: An easy-to-use, cross-platform remote desktop assistance solution
 description: |
-  Dayon! allows accessing and controlling remote computers.
+  An easy-to-use, cross-platform remote desktop support solution for everyone.
   It can be used as free alternative to various commercial remote desktop and remote assistance products.
 
   Its key features are
