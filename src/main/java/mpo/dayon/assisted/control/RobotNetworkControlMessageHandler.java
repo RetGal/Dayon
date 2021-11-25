@@ -5,8 +5,9 @@ import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.log.Log;
@@ -19,9 +20,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	private final Robot robot;
 
 	private final List<Subscriber> subscribers = new ArrayList<>();
-	// 										              a,c,p, s, v, x, y, z
-	private static final int[] SHORTCUT_KEYS = new int[] {1,3,16,19,22,24,25,26};
+
 	private static final char UNIX_SEPARATOR_CHAR = '/';
+
+	private final Set<Integer> pressedKeys = new HashSet<>();
 
 	public RobotNetworkControlMessageHandler() {
 		try {
@@ -93,16 +95,20 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
-		if (message.getKeyCode() != VK_UNDEFINED) {
-			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
+		int keyCode = message.getKeyCode();
+		if (keyCode != VK_UNDEFINED) {
+			if (keyCode == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyPress(VK_CONTROL);
+				pressedKeys.add(VK_CONTROL);
 				robot.keyPress(VK_ALT);
+				pressedKeys.add(VK_ALT);
 				Log.debug("KeyCode ALT_GRAPH " + message);
 				return;
 			}
 			Log.debug("KeyCode " + message);
 			try {
-				robot.keyPress(message.getKeyCode());
+				robot.keyPress(keyCode);
+				pressedKeys.add(keyCode);
 				return;
 			} catch (IllegalArgumentException ie) {
 				Log.debug("Proceeding with plan B");
@@ -112,65 +118,41 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		if (message.getKeyChar() != CHAR_UNDEFINED) {
 			int dec = message.getKeyChar();
 			Log.debug("KeyChar as unicode " + dec + " " + message);
+			pressedKeys.forEach(robot::keyRelease);
 			typeUnicode(dec);
+			pressedKeys.forEach(robot::keyPress);
 			return;
 		}
 		Log.warn("Undefined KeyChar " + message);
 	}
 
-	private boolean isRegularKey(NetworkKeyControlMessage message) {
-		switch (message.getKeyCode()) {
-			case VK_BACK_SPACE:
-			case VK_DELETE:
-			case VK_ENTER:
-			case VK_ESCAPE:
-			case VK_SPACE:
-			case VK_TAB:
-			case VK_WINDOWS:
-				return false;
-			default:
-				int charVal = message.getKeyChar();
-				return Arrays.stream(SHORTCUT_KEYS).noneMatch(i -> i == charVal);
-		}
-	}
-
 	private void typeUnicode(int keyCode) {
 		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
-			robot.keyRelease(VK_ALT_GRAPH);
 			typeLinuxUnicode(keyCode);
 			return;
 		}
-		robot.keyRelease(VK_ALT);
-		robot.keyRelease(VK_CONTROL);
 		typeWindowsUnicode(keyCode);
 	}
 
 	private void releaseKey(NetworkKeyControlMessage message) {
-		if (message.getKeyCode() != VK_UNDEFINED) {
-			if (message.getKeyCode() == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
+		int keyCode = message.getKeyCode();
+		if (keyCode != VK_UNDEFINED) {
+			if (keyCode == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyRelease(VK_ALT);
+				pressedKeys.remove(VK_ALT);
 				robot.keyRelease(VK_CONTROL);
+				pressedKeys.remove(VK_CONTROL);
 				Log.debug("KeyCode ALT_GRAPH " + message);
 				return;
 			}
 			Log.debug("KeyCode " + message);
 			try {
-				robot.keyRelease(message.getKeyCode());
-				return;
+				robot.keyRelease(keyCode);
+				pressedKeys.remove(keyCode);
 			} catch (IllegalArgumentException ie) {
-				Log.debug("Proceeding with plan B");
+				Log.warn("Error releasing KeyCode " + message);
 			}
 		}
-		Log.warn("KeyChar as unicode " + message);
-		releaseUnicode();
-	}
-
-	private void releaseUnicode() {
-		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
-			releaseLinuxUnicode();
-			return;
-		}
-		releaseWindowsUnicode();
 	}
 
 	/**
@@ -185,7 +167,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			robot.keyPress(code);
 			robot.keyRelease(code);
 		}
-		// will be released when handling the subsequent message
+		robot.keyRelease(VK_ALT);
 	}
 
 	private void releaseWindowsUnicode() {
@@ -209,10 +191,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			robot.keyPress(code);
 			robot.keyRelease(code);
 		}
-		// will be released when handling the subsequent message
-	}
-
-	private void releaseLinuxUnicode() {
 		robot.keyRelease(VK_SHIFT);
 		robot.keyRelease(VK_CONTROL);
 	}
