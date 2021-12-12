@@ -3,76 +3,42 @@ package mpo.dayon.common.utils;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 class SystemUtilitiesTest {
 	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnIncompleteIpv4Address() {
-		// given
-		String ipv4 = "10.0.";
+	@ParameterizedTest
+	@CsvSource({ "10.0.", "2.5.6.256" })
+	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv4Address(String ipv4) {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv4));
 	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv4Address() {
-		// given
-		String ipv4 = "2.5.6.256";
-		// when, then
-		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv4));
-	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnTrueForValidIpv4Address() {
-		// given
-		String ipv4 = "145.74.11.8";
+
+	@ParameterizedTest
+	@CsvSource({ "10.0.0.10", "2.5.6.255" })
+	void isValidIpAdressOrHostNameShouldReturnTrueForValidIpv4Address(String ipv4) {
 		// when, then
 		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv4));
 	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnIncompleteIpv6Address() {
-		// given
-		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:";
+
+	@ParameterizedTest
+	@CsvSource({ "abcd:1234:abcd:1234:abcd:1234:abcd:", "abcd:1234:abcd:1234:abcd:1234:abcd:snafu" })
+	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv6Address(String ipv6) {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv6Address() {
-		// given
-		String ipv6 = "abcd:1234:abcd:1234:abcd:1234:abcd:snafu";
-		// when, then
-		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv6));
-	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnTrueForValidIpv6Address() {
-		// given
-		String ipv6 = "ac:0:0:0:0:0:0:dc";
+
+	@ParameterizedTest
+	@CsvSource({ "ac:0:0:0:0:0:0:dc", "ac::dc" })
+	void isValidIpAdressOrHostNameShouldReturnTrueForValidIpv6Address(String ipv6) {
 		// when, then
 		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv6));
 	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnTrueForCompressedValidIpv6Address() {
-		// given
-		String ipv6 = "ac::dc";
-		assertTrue(SystemUtilities.isValidIpAddressOrHostName(ipv6));
-	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidHostname() {
-		// given
-		String hostName = "snafu.example.";
-		// when, then
-		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
-	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnFalseForAnotherInvalidHostname() {
-		// given
-		String hostName = "snafu..example.com";
+
+	@ParameterizedTest
+	@CsvSource({ "snafu.example.", "snafu..example.com" })
+	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidHostname(String hostName) {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
@@ -84,19 +50,10 @@ class SystemUtilitiesTest {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnTrueForValidHostname() {
-		// given
-		String hostName = "snafu.example.com";
-		// when, then
-		assertTrue(SystemUtilities.isValidIpAddressOrHostName(hostName));
-	}
-	
-	@Test
-	void isValidIpAdressOrHostNameShouldReturnTrueForAnotherValidHostname() {
-		// given
-		String hostName = "localhost";
+
+	@ParameterizedTest
+	@CsvSource({ "snafu.example.com", "localhost" })
+	void isValidIpAdressOrHostNameShouldReturnTrueForValidHostname(String hostName) {
 		// when, then
 		assertTrue(SystemUtilities.isValidIpAddressOrHostName(hostName));
 	}
@@ -118,20 +75,16 @@ class SystemUtilitiesTest {
 		assertFalse(SystemUtilities.isValidToken(token));
 	}
 
-	@Test
-	void isValidTokenShouldReturnFalseForInvalidToken() {
-		// given
-		String token = "1CHECK1";
-
+	@ParameterizedTest
+	@CsvSource({ "SQL3", "COVID", "1CHECK2" })
+	void isValidTokenShouldReturnFalseForInvalidToken(String token) {
 		// when, then
 		assertFalse(SystemUtilities.isValidToken(token));
 	}
 
-	@Test
-	void isValidTokenShouldReturnTrueForValidToken() {
-		// given
-		String token = "1CHECKE";
-
+	@ParameterizedTest
+	@CsvSource({ "TQP3", "1CHECKE" })
+	void isValidTokenShouldReturnTrueForValidToken(String token) {
 		// when, then
 		assertTrue(SystemUtilities.isValidToken(token));
 	}
