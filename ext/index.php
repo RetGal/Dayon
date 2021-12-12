@@ -1,5 +1,6 @@
 <?php
 define('DB_NAME', "dayon.db");
+define('TOKEN_MIN_LENGTH', 4);
 define('TOKEN_LIFETIME', 604800000);
 header('Content-type: text/plain');
 if (isset($_GET['port'])) {
@@ -33,17 +34,18 @@ function isValidPort($port) {
 }
 
 function createToken($pdo, $port) {
-    $token = computeToken();
+    $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
     while (!insertToken($token, $_SERVER['REMOTE_ADDR'], $port, $pdo) && $attempt < 10) {
-        $token = computeToken();
+        $length = $attempt < TOKEN_MIN_LENGTH ? TOKEN_MIN_LENGTH : round(TOKEN_MIN_LENGTH+$attempt/2);
+        $token = computeToken($length);
         $attempt++;
     }
     return $token;
 }
 
-function computeToken() {
-    $token = substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, 6);
+function computeToken($length) {
+    $token = substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, $length-1);
     $token .= strtoupper(substr(sha1($token), -1));
     return $token;
 }
@@ -59,7 +61,7 @@ function insertToken($token, $address, $port, $pdo) {
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $success = $stmt->execute();
     if (!$success) {
- 		print_r($stmt->errorInfo());
+ 		// print_r($stmt->errorInfo());
  		return 0;
 	} else {
 		return 1;
