@@ -75,6 +75,8 @@ class RobotNetworkControlMessageHandlerTest {
         verify(robot).keyRelease(KeyEvent.VK_E);
         verify(robot).keyPress(KeyEvent.VK_4);
         verify(robot).keyRelease(KeyEvent.VK_4);
+        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
+        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
     }
 
     @Test
@@ -107,16 +109,6 @@ class RobotNetworkControlMessageHandlerTest {
         verify(robot).keyRelease(KeyEvent.VK_5);
         verify(robot).keyPress(KeyEvent.VK_F);
         verify(robot).keyRelease(KeyEvent.VK_F);
-    }
-
-    @Test
-    @DisabledOnOs(WINDOWS)
-    void testHandleMessageReleaseTurkishLowerSpecialSTypedOnNonTurkishAssisted() {
-        // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(RELEASED, 0, 'ş');
-        // when
-        controlMessageHandler.handleMessage(message);
-        // then
         verify(robot).keyRelease(KeyEvent.VK_CONTROL);
         verify(robot).keyRelease(KeyEvent.VK_SHIFT);
     }
@@ -140,16 +132,6 @@ class RobotNetworkControlMessageHandlerTest {
         verify(robot).keyRelease(KeyEvent.VK_5);
         verify(robot).keyPress(KeyEvent.VK_E);
         verify(robot).keyRelease(KeyEvent.VK_E);
-    }
-
-    @Test
-    @DisabledOnOs(WINDOWS)
-    void testHandleMessageReleaseTurkishUpperSpecialSTypedOnNonTurkishAssisted() {
-        // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(RELEASED, 0, 'Ş');
-        // when
-        controlMessageHandler.handleMessage(message);
-        // then
         verify(robot).keyRelease(KeyEvent.VK_CONTROL);
         verify(robot).keyRelease(KeyEvent.VK_SHIFT);
     }
