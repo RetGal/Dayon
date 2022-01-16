@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>11.0.2</version>
+    <version>11.0.3</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -17,7 +17,7 @@
             <email>reto@galante.ch</email>
         </developer>
     </developers>
-    <inceptionYear>2016-2021</inceptionYear>
+    <inceptionYear>2016-2022</inceptionYear>
     <licenses>
         <license>
             <name>GPL-3</name>
@@ -32,7 +32,7 @@
         <dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
         <xz.version>1.9</xz.version>
         <junit.jupiter.version>5.8.2</junit.jupiter.version>
-        <mockito.core.version>4.1.0</mockito.core.version>
+        <mockito.core.version>4.2.0</mockito.core.version>
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
     </properties>
 
