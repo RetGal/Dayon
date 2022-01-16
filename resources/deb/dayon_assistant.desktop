@@ -9,6 +9,7 @@ Comment[fr]=Offrir assistance à distance
 Comment[it]=Offri assistenza remota
 Comment[ru]=Предлагайте удаленную помощь
 Comment[tr]=Uzaktan yardım sunun
+Comment[zh]=提供远程协助
 Keywords=remote;support;offer help
 Icon=/usr/bin/dayon/dayon.png
 Type=Application
