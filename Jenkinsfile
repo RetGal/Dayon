@@ -16,8 +16,8 @@ pipeline {
     }
     stages {
         stage('Info') {
-            def SMILE = ':)'
             steps {
+                def SMILE = ':)'
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY} ${SMILE}"
             }
         }
