@@ -5,7 +5,7 @@ pipeline {
         timeout(time: 10, unit: 'MINUTES')
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
-        skipStagesAfterUnstable()
+        skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
     }
     environment {
         COMPANY = 'Puzzle ITC'
@@ -40,19 +40,10 @@ pipeline {
                 }
             }
         }
-        stage('Setup') {
-            steps {
-                sh './resources/setup.sh'
-            }
-        }
         stage('Deploy') {
-            when {
-              expression {
-                currentBuild.result == null || currentBuild.result == 'SUCCESS'
-              }
-            }
             steps {
                 echo 'Deploying..'
+                sh 'ls -asl'
             }
         }
     }
@@ -71,6 +62,7 @@ pipeline {
         }
         always {
             echo 'Done'
+            deleteDir() // clean up our workspace
         }
     }
 }
