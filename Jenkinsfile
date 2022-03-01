@@ -40,6 +40,11 @@ pipeline {
                 }
             }
         }
+        stage('Setup') {
+            steps {
+                sh './resources/setup.sh'
+            }
+        }
         stage('Deploy') {
             when {
               expression {
