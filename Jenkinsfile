@@ -10,6 +10,9 @@ pipeline {
     environment {
         COMPANY = 'Puzzle ITC'
     }
+    parameters {
+        string(name: 'smile', defaultValue: ':)', description: 'just smile')
+    }
     tools {
         jdk 'jdk11'
         maven 'maven36'
@@ -18,7 +21,7 @@ pipeline {
         stage('Info') {
             steps {
                 def SMILE = ':)'
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY} ${SMILE}"
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY} ${params.smile}"
             }
         }
         stage('Build') {
