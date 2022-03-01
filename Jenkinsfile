@@ -1,17 +1,22 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.8.1-adoptopenjdk-11'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
     options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timeout(time: 10, unit: 'MINUTES')
+        timestamps()  // Timestamper Plugin
+        disableConcurrentBuilds()
         skipStagesAfterUnstable()
+    }
+    tools {
+        jdk 'jdk11'
+        maven 'maven36'
     }
     stages {
         stage('Build') {
             steps {
-                sh 'mvn -B -Pdefault,deb -DskipTests clean package'
+                withMaven { // Requires Pipeline Maven Integration plugin
+                    sh 'mvn -B -Pdefault,deb -DskipTests clean package -Dsurefire.useFile=false -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
+                }
             }
         }
         stage('Test') {
