@@ -20,7 +20,7 @@ pipeline {
     stages {
         stage('Info') {
             steps {
-                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY} ${params.smile}"
+                echo "Running ${BUILD_ID} on ${JENKINS_URL} for ${COMPANY} ${params.smile}"
             }
         }
         stage('Build') {
