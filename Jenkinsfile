@@ -7,11 +7,20 @@ pipeline {
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
     }
+    environment {
+        COMPANY = 'Puzzle ITC'
+    }
     tools {
         jdk 'jdk11'
         maven 'maven36'
     }
     stages {
+        stage('Info') {
+            def SMILE = ':)'
+            steps {
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY} ${SMILE}"
+            }
+        }
         stage('Build') {
             steps {
                 withMaven { // Requires Pipeline Maven Integration plugin
@@ -28,6 +37,33 @@ pipeline {
                     junit 'target/surefire-reports/*.xml'
                 }
             }
+        }
+        stage('Deploy') {
+            when {
+              expression {
+                currentBuild.result == null || currentBuild.result == 'SUCCESS'
+              }
+            }
+            steps {
+                echo 'Deploying..'
+            }
+        }
+    }
+    post {
+        success {
+            echo 'Success'
+        }
+        failure {
+            echo 'Failure'
+        }
+        unstable {
+            echo 'Unstable'
+        }
+        changed {
+            echo 'Changed'
+        }
+        always {
+            echo 'Done'
         }
     }
 }
