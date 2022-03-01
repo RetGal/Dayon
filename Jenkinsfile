@@ -9,6 +9,7 @@ pipeline {
     }
     environment {
         COMPANY = 'Puzzle ITC'
+        smile = '(:'
     }
     parameters {
         string(name: 'smile', defaultValue: ':)', description: 'just smile')
@@ -20,7 +21,8 @@ pipeline {
     stages {
         stage('Info') {
             steps {
-                echo "Running ${BUILD_ID} on ${JENKINS_URL} for ${COMPANY} ${params.smile}"
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL} for ${env.COMPANY}"
+                echo "Smile params: ${params.smile} env: ${env.smile} no prefix: ${smile}"
             }
         }
         stage('Build') {
