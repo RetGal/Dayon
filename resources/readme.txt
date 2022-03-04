@@ -33,6 +33,8 @@ Linux:
 OSX/macOS:
 
   You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted.
+  You will also have to grant the "Screen Recording" permission to dayon_assisted:
+  System Preferences => Security and Privacy => Privacy => Screen Recording
 
 
 Project:

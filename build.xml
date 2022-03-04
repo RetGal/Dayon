@@ -128,6 +128,9 @@
 			</tarfileset>
 			<tarfileset dir="${dir.dist}/tar" filemode="755">
 				<include name="**/*.sh"/>
+				<include name="**/dayon"/>
+				<include name="**/dayon_assistant"/>
+				<include name="**/dayon_assisted"/>
 			</tarfileset>
 		</tar>
 		<delete dir="${dir.dist}/tar"/>
