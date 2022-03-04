@@ -124,6 +124,9 @@
 			<tarfileset dir="${dir.dist}/tar">
 				<include name="**/*"/>
 				<exclude name="**/*.sh"/>
+				<exclude name="**/dayon"/>
+				<exclude name="**/dayon_assistant"/>
+				<exclude name="**/dayon_assisted"/>
 				<exclude name="**/favicon.ico"/>
 			</tarfileset>
 			<tarfileset dir="${dir.dist}/tar" filemode="755">
