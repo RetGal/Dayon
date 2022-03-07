@@ -48,6 +48,8 @@ parts:
     source-type: git
     maven-options:
       [-Psnap]
+    build-packages:
+      [ca-certificates-java, default-jre]
     override-build: |
       snapcraftctl build
       cp target/dayon.browser ../install/bin/
