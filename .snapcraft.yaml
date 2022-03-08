@@ -13,13 +13,13 @@ description: |
   - secure, encrypted communication (TLS)
 license: GPL-3.0
 grade: stable
-base: core18
+base: core20
 confinement: strict
 
 apps:
   assisted:
     extensions:
-      [gnome-3-28]
+      [gnome-3-38]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
@@ -27,7 +27,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome-3-28]
+      [gnome-3-38]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
@@ -35,7 +35,7 @@ apps:
 
   browser:
     extensions:
-      [gnome-3-28]
+      [gnome-3-38]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
@@ -49,7 +49,7 @@ parts:
     maven-options:
       [-Psnap]
     build-packages:
-      [ca-certificates-java, openjdk-17-jre]
+      [ca-certificates, ca-certificates-java, default-jre]
     override-build: |
       snapcraftctl build
       cp target/dayon.browser ../install/bin/
@@ -61,4 +61,4 @@ parts:
     stage:
       [$exclude-original-jar]
     stage-packages:
-      [openjdk-17-jre]
+      [default-jre]
