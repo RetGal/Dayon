@@ -13,7 +13,7 @@ description: |
   - secure, encrypted communication (TLS)
 license: GPL-3.0
 grade: stable
-base: core18
+base: core20
 confinement: strict
 
 apps:
