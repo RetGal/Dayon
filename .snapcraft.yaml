@@ -49,7 +49,7 @@ parts:
     maven-options:
       [-Psnap]
     build-packages:
-      [ca-certificates-java, default-jre]
+      [ca-certificates-java, openjdk-17-jre]
     override-build: |
       snapcraftctl build
       cp target/dayon.browser ../install/bin/
@@ -61,4 +61,4 @@ parts:
     stage:
       [$exclude-original-jar]
     stage-packages:
-      [ca-certificates-java, default-jre]
+      [openjdk-17-jre]
