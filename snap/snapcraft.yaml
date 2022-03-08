@@ -1,11 +1,10 @@
 name: dayon
 title: Dayon!
-version: '11.0.3'
+adopt-info: dayon
 summary: An easy-to-use, cross-platform remote desktop assistance solution
 description: |
   An easy-to-use, cross-platform remote desktop support solution for everyone.
   It can be used as free alternative to various commercial remote desktop and remote assistance products.
-
   Its key features are
   - no router or network configuration required on the assisted side
   - friendly, multilingual (de/en/es/fr/it/ru/tr/zh) user interface
@@ -13,13 +12,13 @@ description: |
   - secure, encrypted communication (TLS)
 license: GPL-3.0
 grade: stable
-base: core20
+base: core18
 confinement: strict
 
 apps:
   assisted:
     extensions:
-      [gnome-3-38]
+      [gnome-3-28]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
@@ -27,7 +26,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome-3-38]
+      [gnome-3-28]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
@@ -35,7 +34,7 @@ apps:
 
   browser:
     extensions:
-      [gnome-3-38]
+      [gnome-3-28]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
@@ -48,17 +47,26 @@ parts:
     source-type: git
     maven-options:
       [-Psnap]
+    
     build-packages:
       [ca-certificates, ca-certificates-java, default-jre]
+   
     override-build: |
       snapcraftctl build
       cp target/dayon.browser ../install/bin/
       cp target/dayon.launcher ../install/bin/
       cp target/dayon.png ../install/bin/
+      
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)"
+      
     filesets:
       exclude-original-jar:
         [-jar/original-dayon.jar]
+    
     stage:
       [$exclude-original-jar]
+      
     stage-packages:
       [default-jre]
