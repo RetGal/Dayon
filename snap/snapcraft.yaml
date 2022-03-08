@@ -1,7 +1,6 @@
 name: dayon
 title: Dayon!
 adopt-info: dayon
-#version: '11.0.3'
 summary: An easy-to-use, cross-platform remote desktop assistance solution
 description: |
   An easy-to-use, cross-platform remote desktop support solution for everyone.
@@ -19,7 +18,7 @@ confinement: strict
 apps:
   assisted:
     extensions:
-      [gnome-3-38]
+      [gnome-3-28]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
