@@ -22,7 +22,7 @@ apps:
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
-      [home, network, desktop]
+      [home, network, network-bind, desktop]
 
   assistant:
     extensions:
@@ -30,7 +30,7 @@ apps:
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
-      [home, network, desktop]
+      [home, network, network-bind, desktop]
 
   browser:
     extensions:
