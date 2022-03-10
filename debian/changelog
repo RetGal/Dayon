@@ -1,3 +1,10 @@
+dayon (11.0.4) stable; urgency=low
+
+  * Fixed latent coordinate out of bounds exception
+  * Show IPv6 addresses in the snap version
+
+ -- Reto Galante <reto@galante.ch>  Thu, 10 Mar 2022 12:00:00 +0000
+
 dayon (11.0.3) stable; urgency=low
 
   * Updated desktop entries and copyright information

@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>11.0.3</version>
+    <version>11.0.4</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
