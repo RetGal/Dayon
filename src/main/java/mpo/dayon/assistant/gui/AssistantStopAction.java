@@ -12,7 +12,7 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 class AssistantStopAction extends AbstractAction {
     private final transient Assistant assistant;
 
-    public AssistantStopAction(Assistant assistant) {
+    AssistantStopAction(Assistant assistant) {
         setEnabled(false);
 
         this.assistant = assistant;

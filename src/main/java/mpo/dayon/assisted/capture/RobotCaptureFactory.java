@@ -3,18 +3,19 @@ package mpo.dayon.assisted.capture;
 import java.awt.*;
 
 import mpo.dayon.common.capture.Gray8Bits;
-import mpo.dayon.common.utils.ScreenUtilities;
+import mpo.dayon.assisted.utils.ScreenUtilities;
 
 public class RobotCaptureFactory implements CaptureFactory {
-	private static final Dimension CAPTURE_DIMENSION;
+	private static Dimension captureDimension;
 
-	static {
-		CAPTURE_DIMENSION = ScreenUtilities.SCREEN.getSize();
+	public RobotCaptureFactory(boolean allScreens) {
+		ScreenUtilities.setShareAllScreens(allScreens);
+		captureDimension = ScreenUtilities.getSharedScreenSize().getSize();
 	}
 
 	@Override
 	public Dimension getDimension() {
-		return CAPTURE_DIMENSION;
+		return captureDimension;
 	}
 
 	@Override

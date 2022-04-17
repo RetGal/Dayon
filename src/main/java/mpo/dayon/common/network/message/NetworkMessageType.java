@@ -54,5 +54,10 @@ public enum NetworkMessageType {
 	/**
 	 * A ping.
 	 */
-	PING
+	PING,
+
+	/**
+	 * A screen resize event.
+	 */
+	RESIZE
 }

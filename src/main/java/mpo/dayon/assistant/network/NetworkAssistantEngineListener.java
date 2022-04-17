@@ -41,6 +41,11 @@ public interface NetworkAssistantEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
+	void onResizeScreen(int width, int height);
+
+	/**
+	 * Should not block as called from the network receiving thread (!)
+	 */
 	void onDisconnecting();
 
 	void onIOError(IOException error);

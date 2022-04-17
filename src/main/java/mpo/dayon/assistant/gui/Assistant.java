@@ -724,6 +724,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
             synchronized (prevBufferLOCK) {
                 image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
                 prevBuffer = image.getValue();
+                // set to capture.getWidth()/getHeight() to visualize changed tiles only
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
             }
@@ -788,6 +789,7 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         public void onConnected(Socket connection) {
             sendCaptureConfiguration(captureEngineConfiguration);
             sendCompressorConfiguration(compressorEngineConfiguration);
+            frame.resetCanvas();
             frame.onSessionStarted();
         }
 
@@ -813,6 +815,14 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         @Override
         public void onClipboardSent() {
             frame.onClipboardSent();
+        }
+
+        /**
+         * Should not block as called from the network receiving thread (!)
+         */
+        @Override
+        public void onResizeScreen(int width, int height) {
+            frame.computeScaleFactors(width, height);
         }
 
         /**

@@ -158,6 +158,11 @@ public class NetworkSender {
         send(true, message);
     }
 
+    public void sendResizeScreen(int width, int height) {
+        final NetworkMessage message = new NetworkResizeScreenMessage(width, height);
+        send(true, message);
+    }
+
     public void ping() {
         send(false, new NetworkPingMessage());
     }

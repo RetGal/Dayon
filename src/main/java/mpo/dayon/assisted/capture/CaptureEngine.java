@@ -27,7 +27,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
      * I keep only the checksum as I do not want to keep the referenceS to the
      * byte[] of the previous captureS.
      */
-    private final long[] previousCapture;
+    private long[] previousCapture;
 
     private final Object reconfigurationLOCK = new Object();
 
@@ -123,7 +123,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 break;
             }
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
-            final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension(), previousCapture);
+            final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension());
 
             if (dirty != null) {
                 final Capture capture = new Capture(captureId, reset, skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
@@ -168,7 +168,15 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         }
     }
 
-    private static CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, Dimension captureDimension, long[] previousCapture) {
+    private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, Dimension captureDimension) {
+        final int x = (int) Math.ceil((float) captureDimension.width / TILE_DIMENSION.width);
+        final int y = (int) Math.ceil((float) captureDimension.height / TILE_DIMENSION.height);
+        final int length = Math.max(x*y, previousCapture.length);
+        // change in screen resolution?
+        if (length > previousCapture.length) {
+            previousCapture = new long[length];
+            resetPreviousCapture();
+        }
         CaptureTile[] dirty = null;
         int tileId = 0;
 
@@ -183,7 +191,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
                 if (cs != previousCapture[tileId]) {
                     if (dirty == null) {
-                        dirty = new CaptureTile[previousCapture.length];
+                        dirty = new CaptureTile[length];
                     }
                     final Position position = new Position(tx, ty);
                     dirty[tileId] = new CaptureTile(captureId, tileId, cs, position, tw, th, data);

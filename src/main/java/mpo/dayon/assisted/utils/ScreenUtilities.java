@@ -1,4 +1,4 @@
-package mpo.dayon.common.utils;
+package mpo.dayon.assisted.utils;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -12,26 +12,58 @@ import static java.lang.String.format;
 
 public final class ScreenUtilities {
 
-    public static final Rectangle SCREEN;
+    private static final int NUMBER_OF_SCREENS;
+
+    private static final Rectangle COMBINED_SCREEN_SIZE;
+
+    private static final Rectangle DEFAULT_SIZE;
 
     private static final Robot robot;
 
-    private static final int[] rgb;
+    private static Rectangle sharedScreenSize;
 
-    private static final byte[] gray;
+    private static int[] rgb;
+
+    private static byte[] gray;
+
+    private static boolean shareAllScreens;
 
     private ScreenUtilities() {
     }
 
     static {
-        SCREEN = new Rectangle(getCombinedScreenSize());
-        rgb = new int[SCREEN.height * SCREEN.width];
+        NUMBER_OF_SCREENS = countScreens();
+        DEFAULT_SIZE = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds();
+        COMBINED_SCREEN_SIZE = new Rectangle(getCombinedScreenSize());
+        sharedScreenSize = shareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
+        rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
         gray = new byte[rgb.length];
         try {
             robot = new Robot();
         } catch (AWTException ex) {
             throw new IllegalStateException("Could not initialize the AWT robot!", ex);
         }
+    }
+
+    public static synchronized void setShareAllScreens(boolean doShareAllScreens) {
+//        if (shareAllScreens != doShareAllScreens) {
+            shareAllScreens = doShareAllScreens;
+            sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
+            rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
+            gray = new byte[rgb.length];
+//        }
+    }
+
+    public static Rectangle getSharedScreenSize() {
+        return sharedScreenSize;
+    }
+
+    public static int getNumberOfScreens() {
+        return NUMBER_OF_SCREENS;
+    }
+
+    private static int countScreens() {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
     }
 
     private static Rectangle getCombinedScreenSize() {
@@ -46,7 +78,7 @@ public final class ScreenUtilities {
     }
 
     public static byte[] captureGray(Gray8Bits quantization) {
-        return rgbToGray8(quantization, captureRGB(SCREEN));
+        return rgbToGray8(quantization, captureRGB(sharedScreenSize));
     }
 
     private static int[] captureRGB(Rectangle bounds) {
@@ -60,7 +92,7 @@ public final class ScreenUtilities {
         }
         int i = 0;
         for (int yPos = bounds.y; yPos < imageHeight; yPos++) {
-            for (int xPos = bounds.x; xPos < imageWidth; xPos++) {
+            for (int xPos = bounds.x; xPos < imageWidth && i < rgb.length; xPos++) {
                 rgb[i++] = image.getRGB(xPos, yPos);
             }
         }
