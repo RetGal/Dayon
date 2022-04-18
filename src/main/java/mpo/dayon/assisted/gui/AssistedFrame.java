@@ -4,6 +4,7 @@ import mpo.dayon.common.gui.common.BaseFrame;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
+import mpo.dayon.assisted.utils.ScreenUtilities;
 
 import javax.swing.Action;
 import javax.swing.Box;
@@ -14,13 +15,15 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 class AssistedFrame extends BaseFrame {
     private final Action startAction;
     private final Action stopAction;
+    private final Action toggleMultiScreenCaptureAction;
     private final Cursor cursor = this.getCursor();
     private boolean connected;
 
-    public AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction) {
+    AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction, Action toggleMultiScreenCaptureAction) {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
         this.startAction = startAction;
+        this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());
         onReady();
@@ -30,6 +33,9 @@ class AssistedFrame extends BaseFrame {
         final ToolBar toolbar = new ToolBar();
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
+        if (ScreenUtilities.getNumberOfScreens() > 1) {
+            toolbar.addToggleAction(toggleMultiScreenCaptureAction);
+        }
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
         toolbar.addAction(createShowHelpAction());

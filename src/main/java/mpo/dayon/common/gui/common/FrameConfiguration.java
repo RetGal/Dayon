@@ -33,7 +33,7 @@ class FrameConfiguration {
         return dimension.height;
     }
 
-    public FrameConfiguration(FrameType type) {
+    FrameConfiguration(FrameType type) {
         final Preferences prefs = Preferences.getPreferences();
         version = prefs.getIntPreference(type.getPrefix() + PREF_VERSION_SUFFIX, 0);
         position = new Position(prefs.getIntPreference(type.getPrefix() + PREF_X_SUFFIX, 100), prefs.getIntPreference(type.getPrefix() + PREF_Y_SUFFIX, 100));
@@ -44,7 +44,7 @@ class FrameConfiguration {
         }
     }
 
-    public FrameConfiguration(Position position, Dimension dimension) {
+    FrameConfiguration(Position position, Dimension dimension) {
         this.position = position;
         this.dimension = dimension;
     }

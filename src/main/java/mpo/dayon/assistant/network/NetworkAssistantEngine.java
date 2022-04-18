@@ -271,6 +271,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnClipboardSent();
                 break;
 
+            case RESIZE:
+                final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
+                fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
+                fireOnResizeScreen(resize.getWidth(), resize.getHeigth());
+                break;
+
             case HELLO:
                 throw new IllegalArgumentException("Unexpected message [HELLO]!");
 
@@ -425,6 +431,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void fireOnClipboardSent() {
         for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
             xListener.onClipboardSent();
+        }
+    }
+
+    private void fireOnResizeScreen(int width, int height) {
+        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
+            xListener.onResizeScreen(width, height);
         }
     }
 

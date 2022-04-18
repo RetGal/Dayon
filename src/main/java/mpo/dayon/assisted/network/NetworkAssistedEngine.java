@@ -320,6 +320,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    public void sendResizeScreen(int width, int height) {
+        if (sender != null) {
+            sender.sendResizeScreen(width, height);
+        }
+    }
+
     private void fireOnConnecting(NetworkAssistedEngineConfiguration configuration) {
         for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
             xListener.onConnecting(configuration.getServerName(), configuration.getServerPort());

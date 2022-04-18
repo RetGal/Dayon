@@ -11,7 +11,7 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 class AssistedStopAction extends AbstractAction {
 	private final transient Assisted assisted;
 
-	public AssistedStopAction(Assisted assisted) {
+	AssistedStopAction(Assisted assisted) {
 		setEnabled(false);
 
 		this.assisted = assisted;

@@ -14,7 +14,7 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 class AssistedStartAction extends AbstractAction {
     private final transient Assisted assisted;
 
-    public AssistedStartAction(Assisted assisted) {
+    AssistedStartAction(Assisted assisted) {
         this.assisted = assisted;
 
         putValue(Action.NAME, "start");
