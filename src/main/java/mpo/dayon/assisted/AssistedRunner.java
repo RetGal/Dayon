@@ -3,9 +3,22 @@ package mpo.dayon.assisted;
 import mpo.dayon.assisted.gui.Assisted;
 import mpo.dayon.common.Runner;
 import mpo.dayon.common.error.FatalErrorHandler;
+import mpo.dayon.common.log.Log;
 
 import javax.swing.SwingUtilities;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.String.format;
+import static mpo.dayon.common.utils.SystemUtilities.getJarDir;
+import static mpo.dayon.common.utils.SystemUtilities.getOrCreateAppDir;
 
 class AssistedRunner implements Runner {
     public static void main(String[] args) {
@@ -24,6 +37,35 @@ class AssistedRunner implements Runner {
     private static void launchAssisted(String assistantHost, String assistantPort) {
         final Assisted assisted = new Assisted();
         assisted.configure();
+        // cli args have precedence
+        if (assistantHost == null || assistantPort == null) {
+            final Map<String, String> config = readPresetFile();
+            assistantHost = config.get("host");
+            assistantPort = config.get("port");
+        }
         assisted.start(assistantHost, assistantPort);
     }
+
+    private static Map<String, String> readPresetFile() {
+        List<String> paths = Arrays.asList(getOrCreateAppDir().toString(), System.getProperty("user.home"), getJarDir());
+        for (String path : paths) {
+            for (String fileExt : Arrays.asList("yaml", "yml")) {
+                File presetFile = new File(path, format("assisted.%s", fileExt));
+                if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
+                    try (Stream<String> lines = Files.lines(presetFile.toPath())) {
+                        final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
+                        if (content.size() > 1) {
+                            Log.info(format("Using connection settings from %s", presetFile.getPath()));
+                            return content;
+                        }
+                    } catch (IOException e) {
+                        Log.warn(e.getMessage());
+                    }
+                }
+            }
+        }
+        return Collections.EMPTY_MAP;
+    }
+
+
 }

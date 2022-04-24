@@ -96,7 +96,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
             coldStart = false;
             configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
-            Log.info("Configuration from cli params" + configuration);
+            Log.info("Configuration from params " + configuration);
             networkEngine.configure(configuration);
             networkEngine.connect();
             return true;
