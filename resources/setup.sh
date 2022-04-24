@@ -1,5 +1,5 @@
 #!/bin/sh
-if [ ! `whoami` = "root" ]; then
+if [ ! "$(whoami)" = "root" ]; then
 	echo "This script must be run as super user - e.g. 'sudo sh setup.sh'"
 	exit 77
 fi
@@ -20,9 +20,9 @@ fi
 
 INSTALL_DIR=$(dirname "$0")
 if [ "$INSTALL_DIR" = "." ]; then
-	INSTALL_DIR=`pwd`
+	INSTALL_DIR=$(pwd)
 fi
-chmod +x ${INSTALL_DIR}/dayon*sh
+chmod +x "${INSTALL_DIR}"/dayon*sh
 
 cat <<EOF > /usr/share/applications/DayonAssistant.desktop
 [Desktop Entry]
