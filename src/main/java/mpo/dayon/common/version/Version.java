@@ -65,7 +65,7 @@ public class Version {
                 URL obj = new URL(RELEASE_LOCATION + "latest");
                 conn = (HttpsURLConnection) obj.openConnection();
                 conn.setInstanceFollowRedirects(false);
-                conn.setReadTimeout(10000);
+                conn.setReadTimeout(5000);
             } catch (IOException e) {
                 Log.error("IOException", e);
             } finally {

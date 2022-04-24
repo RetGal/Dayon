@@ -49,10 +49,9 @@ public abstract class NetworkEngine {
 	}
 
 	protected SSLContext initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
-		KeyStore keyStore;
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 		try {
-			keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			keyStore.load(NetworkEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
 			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
 		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {

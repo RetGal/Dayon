@@ -20,6 +20,7 @@ import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.*;
@@ -129,18 +130,19 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
 
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        SSLSocket connection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()))); // the active part (!)
+        SSLSocket socket = (SSLSocket) ssf.createSocket();
+        socket.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
+        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()))); // the active part (!)
         sender.start(1);
         sender.ping();
-        in = initInputStream(connection);
+        in = initInputStream(socket);
         receiver.start();
 
-        SSLSocket fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()))); // the active part (!)
+        SSLSocket fileSocket = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileSocket.getOutputStream()))); // the active part (!)
         fileSender.start(1);
         fileSender.ping();
-        fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+        fileIn = new ObjectInputStream(new BufferedInputStream(fileSocket.getInputStream()));
         fileReceiver.start();
     }
 
