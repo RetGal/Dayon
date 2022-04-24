@@ -256,6 +256,9 @@ public final class SystemUtilities {
     }
 
     private static boolean isValidIpV4(String serverName) {
+        if (serverName == null || !serverName.contains(".")) {
+            return false;
+        }
         try {
             InetAddress inetAddress = InetAddress.getByName(serverName);
             return inetAddress instanceof Inet4Address;

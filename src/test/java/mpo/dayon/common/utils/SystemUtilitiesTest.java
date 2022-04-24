@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 class SystemUtilitiesTest {
 	
 	@ParameterizedTest
-	@CsvSource({ "10.0.", "2.5.6.256" })
+	@CsvSource({ "77", "10.0.", "2.5.6.256" })
 	void isValidIpAdressOrHostNameShouldReturnFalseForAnInvalidIpv4Address(String ipv4) {
 		// when, then
 		assertFalse(SystemUtilities.isValidIpAddressOrHostName(ipv4));
