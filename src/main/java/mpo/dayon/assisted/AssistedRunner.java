@@ -40,10 +40,10 @@ class AssistedRunner implements Runner {
         // cli args have precedence
         if (assistantHost == null || assistantPort == null) {
             final Map<String, String> config = readPresetFile();
-            assistantHost = config.get("host");
-            assistantPort = config.get("port");
+            assisted.start(config.get("host"), config.get("port"), isAutoConnect(config));
+        } else {
+            assisted.start(assistantHost, assistantPort, true);
         }
-        assisted.start(assistantHost, assistantPort);
     }
 
     private static Map<String, String> readPresetFile() {
@@ -52,14 +52,9 @@ class AssistedRunner implements Runner {
             for (String fileExt : Arrays.asList("yaml", "yml")) {
                 File presetFile = new File(path, format("assisted.%s", fileExt));
                 if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
-                    try (Stream<String> lines = Files.lines(presetFile.toPath())) {
-                        final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
-                        if (content.size() > 1) {
-                            Log.info(format("Using connection settings from %s", presetFile.getPath()));
-                            return content;
-                        }
-                    } catch (IOException e) {
-                        Log.warn(e.getMessage());
+                    Map<String, String> content = parseFileContent(presetFile);
+                    if (content != null) {
+                        return content;
                     }
                 }
             }
@@ -67,5 +62,20 @@ class AssistedRunner implements Runner {
         return Collections.EMPTY_MAP;
     }
 
+    private static Map<String, String> parseFileContent(File presetFile) {
+        try (Stream<String> lines = Files.lines(presetFile.toPath())) {
+            final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
+            if (content.containsKey("host") && content.containsKey("port")) {
+                Log.info(format("Using connection settings from %s", presetFile.getPath()));
+                return content;
+            }
+        } catch (IOException e) {
+            Log.warn(e.getMessage());
+        }
+        return null;
+    }
 
+    private static boolean isAutoConnect(Map<String, String> config) {
+        return !config.containsKey("autoConnect") || !config.get("autoConnect").equalsIgnoreCase("false");
+    }
 }

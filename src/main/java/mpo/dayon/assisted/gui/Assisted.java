@@ -64,7 +64,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     /**
      * Returns true if we have a valid configuration
      */
-    public boolean start(String serverName, String portNumber) {
+    public boolean start(String serverName, String portNumber, boolean autoConnect) {
         Log.info("Assisted start");
 
         // these should not block as they are called from the network incoming message thread (!)
@@ -85,15 +85,15 @@ public class Assisted implements Subscriber, ClipboardOwner {
             KeyboardErrorHandler.attachFrame(frame);
             frame.setVisible(true);
         }
-        return configureConnection(serverName, portNumber);
+        return configureConnection(serverName, portNumber, autoConnect);
     }
 
     public NetworkAssistedEngineConfiguration getConfiguration() {
         return configuration;
     }
 
-    private boolean configureConnection(String serverName, String portNumber) {
-        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
+    private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
+        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber) && autoConnect) {
             coldStart = false;
             configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
             Log.info("Configuration from params " + configuration);
@@ -102,24 +102,16 @@ public class Assisted implements Subscriber, ClipboardOwner {
             return true;
         }
 
-        final String ip = SystemUtilities.getStringProperty(null, "dayon.assistant.ipAddress", null);
-        final int port = SystemUtilities.getIntProperty(null, "dayon.assistant.portNumber", -1);
-        if (ip != null && port > -1) {
-            configuration = new NetworkAssistedEngineConfiguration(ip, port);
-        } else {
-            configuration = new NetworkAssistedEngineConfiguration();
-        }
-
         // no network settings dialogue
         if (coldStart) {
             coldStart = false;
             return true;
         }
-
         return requestConnectionSettings();
     }
 
     private boolean requestConnectionSettings() {
+        configuration = new NetworkAssistedEngineConfiguration();
         ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(configuration);
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
@@ -190,7 +182,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     boolean start() {
         // triggers network settings dialogue
-        return start(null, null);
+        return start(null, null, false);
     }
 
     void connect() {
