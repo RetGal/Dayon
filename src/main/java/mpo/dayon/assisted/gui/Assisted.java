@@ -93,16 +93,22 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
-        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber) && autoConnect) {
-            coldStart = false;
+        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
             configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
             Log.info("Configuration from params " + configuration);
             networkEngine.configure(configuration);
+            configuration.persist();
+        } else {
+            autoConnect = false;
+        }
+
+        if (autoConnect) {
+            coldStart = false;
             networkEngine.connect();
             return true;
         }
 
-        // no network settings dialogue
+        // no network settings dialogue after startup
         if (coldStart) {
             coldStart = false;
             return true;
