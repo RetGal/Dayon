@@ -28,20 +28,11 @@
             <li>There's currently no way to send certain key combinations to the assisted computer (e.g., <code>Ctrl-Alt-Del</code>).
             <li>Ideally, the computers of the assistant and the assisted use both the same input language.
                 Using different keyboard layouts can lead to problems, especially when entering special characters.
+                The keyboard layout in use can be seen in the title bar of the respective application.
         </ul>
-        <h3>Automatic connection of the assisted</h3>
-        <p>
-            The host name or IP address and port of the assistant can be passed via command line parameters:<br>
-            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
-            Installed as a snap, the command is <code>dayon.assisted ah=example.com ap=4242</code>, installed
-            from a .tgz archive: <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
-            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
-            or for the Quick Launch version:<br>
-            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
-            If the assistant is started with these parameters, then he connects directly to the given host without further inquiry.
         <h3>Dayon! Home Directory</h3>
         <p>
-            The directory <code>.dayon</code> is created within the default home directory of the logged in user or within
+            The directory <code>.dayon</code> is created within the default home directory of the logged-in user or within
             the directory referenced by the JAVA property <code>user.home</code> and contains the saved user preferences
             and default log file(s).
         <h3>CRC Checksum</h3>
@@ -50,7 +41,7 @@
             changed from the previous capture are sent over the network to the assistant side. To determine if a tile is
             different I'm currently computing a
             CRC code (i.e., a unique integer value representing the pixels of the tile) that is not perfect for the sake
-            of speed. So it might happens that some <em>changed</em> tiles are not sent to the assistant.
+            of speed. So it might happen that some <em>changed</em> tiles are not sent to the assistant.
         <p>
             Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed
             anything serious. But in case things are going mad you can then restart the assisted or before try the

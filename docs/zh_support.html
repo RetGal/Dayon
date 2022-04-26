@@ -27,17 +27,8 @@
         <ul>
             <li>目前无法将某些组合键发送到用户(Assisted)计算机（例如，<code>Ctrl-Alt-Del</code>)。
             <li>理想情况下，助手和被协助者的计算机使用相同的输入语言。 使用不同的键盘布局可能会导致问题，尤其是在输入特殊字符时。
+                使用的键盘布局可以在相应应用程序的标题栏中看到。
         </ul>
-        <h3>用户端(Assisted)自动连接</h3>
-        <p>
-            可以通过命令行参数传递主控端(Assistant)的主机名或IP地址和端口：<br>
-            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
-            如果是Snap版本，请使用：<code>dayon.assisted ah=example.com ap=4242</code>；如果您是从tge压缩包安装的
-            请使用：<code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
-            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
-            或者快速启动版本请使用：<br>
-            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
-            如果使用这些参数启动，程序将直接连接到给定的远程主机。
         <h3>Dayon! 配置目录</h3>
         <p>
             Dayon! 将会在所登录用户的用户文件夹下或者JAVA属性中的<code>user.home</code>创建一个<code>.dayon</code>文件夹，用于存放Dayon! 的用户配置和日志文件。

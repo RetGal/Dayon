@@ -27,19 +27,10 @@
         <ul>
             <li>Il n'y a actuellement aucun moyen d'envoyer certaines combinaisons clés à l'ordinateur assisté. (par example <code>Ctrl-Alt-Del</code>).
             <li>Idéalement, les ordinateurs de l'assistant et de l'assisté utilisent tous les deux la même langue de saisie.
-                L'utilisation de différentes dispositions de clavier peut entraîner des problèmes, en particulier lors de la saisie de caractères spéciaux.         </ul>
-        <h3>Connexion automatique de l’assistant</h3>
-        <p>
-            Le nom d'hôte ou l'adresse IP et le port de l'assistant peuvent être transmis via les paramètres de ligne de
-            commande:<br>
-            <code>dayon_assisted ah=example.com ah=4242</code> (Linux/Mac OS)<br>
-            Installée comme snap, la commande est <code>dayon.assisted ah=example.com ap=4242</code>, installée
-            à partir d'un .tgz: <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
-            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
-            ou pour la version «lancement rapide»:<br>
-            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
-            Si l'assistant est démarré avec ces paramètres, il se connecte directement à l'hôte donné sans interrogation
-            supplémentaire.
+                L'utilisation de différentes dispositions de clavier peut entraîner des problèmes, en particulier lors de la saisie de caractères spéciaux.
+                La disposition du clavier utilisée est visible dans la barre de titre de l'application respective.
+        </ul>
+
         <h3>Dayon! Répertoire de base</h3>
         <p>
             Le répertoire <code>.dayon</code> est créé dans le répertoire de base par défaut de l'utilisateur connecté
@@ -67,12 +58,12 @@
             <li>Compression Ratio: combien de fois la capture initiale (diff only) a été comprimé
             <li>Number of Tiles: le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
             <li>Number of Skipped Capture: le nombre de captures d'écran qui ont été ignorées En raison d'un taux trop
-                élevé (c'est-à-dire, une valeur de cotation faible) pour la CPU. Pour minimiser cette vous devez
+                élevé (c'est-à-dire, une valeur de cotation faible) pour la CPU. Pour minimiser cette, vous devez
                 ralentir le taux de capture en utilisant
                 une valeur plus grande.
             <li>Number of Merged Capture: le nombre de captures d'écran fusionnées avant d'être transmis. Ceci est dû à
                 un taux de capture trop élevé pour le courant méthode de compression. Pour minimiser ce nombre, vous
-                devez ralentir la capture taux et / ou changer la méthode de compression en utilisant un plus rapide.
+                devez ralentir la capture taux et/ou changer la méthode de compression en utilisant un plus rapide.
             <li>Utilisation de la mémoire
             <li>Durée de la session d'assistance active ou de la dernière
         </ol>
