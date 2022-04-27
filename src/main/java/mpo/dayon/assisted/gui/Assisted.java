@@ -95,7 +95,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
         if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
             configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
-            Log.info("Configuration from params " + configuration);
+            Log.info("Autoconfigured " + configuration);
             networkEngine.configure(configuration);
             configuration.persist();
         } else {
@@ -171,13 +171,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         final Action multiScreen = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-            initNewCaptureEngine(!shareAllScreens.get());
-            shareAllScreens.set(!shareAllScreens.get());
-            frame.repaint();
-            if (networkEngine != null) {
-                final Dimension screenSize = ScreenUtilities.getSharedScreenSize().getSize();
-                networkEngine.sendResizeScreen(screenSize.width, screenSize.height);
-            }
+                initNewCaptureEngine(!shareAllScreens.get());
+                shareAllScreens.set(!shareAllScreens.get());
+                frame.repaint();
+                if (networkEngine != null) {
+                    final Dimension screenSize = ScreenUtilities.getSharedScreenSize().getSize();
+                    networkEngine.sendResizeScreen(screenSize.width, screenSize.height);
+                }
             }
         };
         multiScreen.putValue(Action.NAME, "shareAllScreens");
