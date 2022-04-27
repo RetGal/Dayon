@@ -37,7 +37,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             long fileSize = meta.getFileSize();
             byte[] buffer;
-            Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFileBytesLeft());
+            Log.debug("Size/left: " + fileSize + "/" + helper.getFileBytesLeft());
             buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
 
             int read = readIntoBuffer(in, buffer);
