@@ -29,7 +29,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
                 helper.setTransferId(UUID.randomUUID().toString());
                 helper.setFileMetadatas((ArrayList<FileMetaData>) in.readObject());
                 helper.setFileBytesLeft(helper.getFileMetadatas().get(0).getFileSize());
-                helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToInt(fileMetaData -> (int) fileMetaData.getFileSize()).sum());
+                helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToLong(FileMetaData::getFileSize).sum());
             }
             int position = helper.getPosition();
             FileMetaData meta = helper.getFileMetadatas().get(position);
