@@ -29,7 +29,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
                 helper.setTransferId(UUID.randomUUID().toString());
                 helper.setFileMetadatas((ArrayList<FileMetaData>) in.readObject());
                 helper.setFileBytesLeft(helper.getFileMetadatas().get(0).getFileSize());
-                helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToInt(fileMetaData -> (int) fileMetaData.getFileSize()).sum());
+                helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToLong(FileMetaData::getFileSize).sum());
             }
             int position = helper.getPosition();
             FileMetaData meta = helper.getFileMetadatas().get(position);
@@ -37,7 +37,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             long fileSize = meta.getFileSize();
             byte[] buffer;
-            Log.debug("Size/written: " + Math.toIntExact(fileSize) + "/" + helper.getFileBytesLeft());
+            Log.debug("Size/left: " + fileSize + "/" + helper.getFileBytesLeft());
             buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
 
             int read = readIntoBuffer(in, buffer);
