@@ -263,7 +263,7 @@ class AssistantFrame extends BaseFrame {
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
         actions.getResetAction().setEnabled(false);
         disableControls();
-        statusBar.setMessage(translate("ready"));
+        getStatusBar().setMessage(translate("ready"));
     }
 
     void onHttpStarting(int port) {
@@ -282,7 +282,7 @@ class AssistantFrame extends BaseFrame {
             }
         };
         add(center, BorderLayout.CENTER);
-        statusBar.setMessage(translate("listening", port));
+        getStatusBar().setMessage(translate("listening", port));
     }
 
     boolean onAccepted(Socket connection) {
@@ -292,7 +292,7 @@ class AssistantFrame extends BaseFrame {
             return false;
         }
         removeCenter();
-        statusBar.setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
+        getStatusBar().setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
         actions.getResetAction().setEnabled(true);
@@ -322,7 +322,7 @@ class AssistantFrame extends BaseFrame {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
-            statusBar.setSessionDuration(format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
+            getStatusBar().setSessionDuration(format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
         });
         sessionTimer.start();
     }
