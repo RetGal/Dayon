@@ -119,7 +119,7 @@ public class CaptureTile {
 		this.singleLevel = -1;
 
 		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black image (!)
-				: cached.capture; // sharing it (!)
+				: cached.getCapture(); // sharing it (!)
 
 		if (width * height != capture.size()) {
 			throw new IllegalArgumentException("Ouch!");

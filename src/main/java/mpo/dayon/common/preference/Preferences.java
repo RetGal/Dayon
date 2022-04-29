@@ -37,7 +37,7 @@ public final class Preferences {
 
         if (file.exists()) {
             try (FileReader in = new FileReader(file)) {
-                props.load(in);
+                getProps().load(in);
             } catch (FileNotFoundException e) {
                 Log.error("Preferences (read) permission denied");
             }
@@ -82,23 +82,43 @@ public final class Preferences {
     }
 
     public String getStringPreference(String name, String defaultValue) {
-        return SystemUtilities.getStringProperty(props, name, defaultValue);
+        return SystemUtilities.getStringProperty(getProps(), name, defaultValue);
     }
 
     public int getIntPreference(String name, int defaultValue) {
-        return SystemUtilities.getIntProperty(props, name, defaultValue);
+        return SystemUtilities.getIntProperty(getProps(), name, defaultValue);
     }
 
     public <T extends Enum<T>> T getEnumPreference(String name, T defaultValue, T[] enums) {
-        return SystemUtilities.getEnumProperty(props, name, defaultValue, enums);
+        return SystemUtilities.getEnumProperty(getProps(), name, defaultValue, enums);
     }
 
     public double getDoublePreference(String name, double defaultValue) {
-        return SystemUtilities.getDoubleProperty(props, name, defaultValue);
+        return SystemUtilities.getDoubleProperty(getProps(), name, defaultValue);
     }
 
     public boolean getBooleanPreference(String name, boolean defaultValue) {
-        return SystemUtilities.getBooleanProperty(props, name, defaultValue);
+        return SystemUtilities.getBooleanProperty(getProps(), name, defaultValue);
+    }
+
+    private AtomicBoolean getWriteError() {
+        return writeError;
+    }
+
+    private Object getCloneLOCK() {
+        return cloneLOCK;
+    }
+
+    private AtomicBoolean getDirty() {
+        return dirty;
+    }
+
+    private Properties getProps() {
+        return props;
+    }
+
+    private File getFile() {
+        return file;
     }
 
     public static class Props {
@@ -107,11 +127,15 @@ public final class Preferences {
         private final Map<String, String> entries = new HashMap<>();
 
         public void set(String name, String value) {
-            entries.put(name, value);
+            getEntries().put(name, value);
         }
 
         public void clear(String name) {
-            entries.put(name, REMOVE);
+            getEntries().put(name, REMOVE);
+        }
+
+        public Map<String, String> getEntries() {
+            return entries;
         }
     }
 
@@ -119,15 +143,15 @@ public final class Preferences {
      * Called from multiple threads (!)
      */
     public void update(Props props) {
-        synchronized (cloneLOCK) {
-            props.entries.forEach((pname, pvalue) -> {
+        synchronized (getCloneLOCK()) {
+            props.getEntries().forEach((pname, pvalue) -> {
                 if (Props.REMOVE.equals(pvalue)) {
-                    this.props.remove(pname);
+                    this.getProps().remove(pname);
                 } else {
-                    this.props.setProperty(pname, pvalue);
+                    this.getProps().setProperty(pname, pvalue);
                 }
             });
-            dirty.set(true);
+            getDirty().set(true);
         }
     }
 
@@ -141,31 +165,31 @@ public final class Preferences {
         new Timer("PreferencesWriter").schedule(new TimerTask() {
             @Override
             public void run() {
-                if (preferences.isNull() || preferences.writeError.get()) {
+                if (preferences.isNull() || preferences.getWriteError().get()) {
                     return;
                 }
 
                 try {
                     Properties cloned = null;
-                    synchronized (preferences.cloneLOCK) {
-                        if (preferences.dirty.get()) {
-                            cloned = (Properties) preferences.props.clone();
-                            preferences.dirty.set(false);
+                    synchronized (preferences.getCloneLOCK()) {
+                        if (preferences.getDirty().get()) {
+                            cloned = (Properties) preferences.getProps().clone();
+                            preferences.getDirty().set(false);
                         }
                     }
                     if (cloned != null) {
-                        Log.debug("Writing the preferences [" + preferences.file.getAbsolutePath() + "]");
-                        try (PrintWriter out = new PrintWriter(preferences.file)) {
+                        Log.debug("Writing the preferences [" + preferences.getFile().getAbsolutePath() + "]");
+                        try (PrintWriter out = new PrintWriter(preferences.getFile())) {
                             cloned.store(out, null);
                             out.flush();
                         }
                     }
                 } catch (FileNotFoundException e) {
                     Log.error("Preferences (write) permission denied");
-                    preferences.writeError.set(true);
+                    preferences.getWriteError().set(true);
                 } catch (IOException ex) {
                     Log.error("Preferences write error!", ex);
-                    preferences.writeError.set(true);
+                    preferences.getWriteError().set(true);
                 }
             }
         }, 0, 2000);

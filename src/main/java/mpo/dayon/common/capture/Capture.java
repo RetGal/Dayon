@@ -67,6 +67,10 @@ public class Capture {
 		return merged.get();
 	}
 
+	private CaptureTile[] getDirty() {
+		return dirty;
+	}
+
 	/**
 	 * @see #computeInitialByteCount()
 	 */
@@ -126,8 +130,8 @@ public class Capture {
 		for (final Capture older : olders) {
 			doMergeDirtyTiles(older);
 
-			xskipped += older.skipped.get();
-			xmerged += older.merged.get();
+			xskipped += older.getSkipped();
+			xmerged += older.getMerged();
 		}
 
 		skipped.addAndGet(xskipped);
@@ -150,13 +154,13 @@ public class Capture {
 		// In that case (for the sake of simplicity) a FULL capture will be
 		// sent.
 
-		if (dirty.length != older.dirty.length) {
+		if (dirty.length != older.getDirty().length) {
 			return; // we're keeping the newest (FULL capture anyway)
 		}
 
 		for (int idx = 0; idx < dirty.length; idx++) {
 			final CaptureTile thisTile = dirty[idx];
-			final CaptureTile olderTile = older.dirty[idx];
+			final CaptureTile olderTile = older.getDirty()[idx];
 
 			if (olderTile != null && thisTile == null) {
 				dirty[idx] = olderTile;

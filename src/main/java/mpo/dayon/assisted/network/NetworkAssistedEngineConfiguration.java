@@ -45,7 +45,7 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
             return false;
         }
         final NetworkAssistedEngineConfiguration that = (NetworkAssistedEngineConfiguration) o;
-        return serverPort == that.serverPort && serverName.equals(that.serverName);
+        return serverPort == that.getServerPort() && serverName.equals(that.getServerName());
     }
 
     @Override

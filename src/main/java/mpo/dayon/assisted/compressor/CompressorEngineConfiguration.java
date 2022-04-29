@@ -73,7 +73,7 @@ public class CompressorEngineConfiguration extends Configuration {
             return false;
         }
         final CompressorEngineConfiguration that = (CompressorEngineConfiguration) o;
-        return maxSize == that.maxSize && purgeSize == that.purgeSize && useCache == that.useCache && method == that.method;
+        return maxSize == that.getCacheMaxSize() && purgeSize == that.getCachePurgeSize() && useCache == that.useCache() && method == that.getMethod();
     }
 
     @Override

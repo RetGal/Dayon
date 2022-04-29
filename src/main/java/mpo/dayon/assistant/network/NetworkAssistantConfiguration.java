@@ -37,7 +37,7 @@ public class NetworkAssistantConfiguration extends Configuration {
 
 		final NetworkAssistantConfiguration that = (NetworkAssistantConfiguration) o;
 
-		return port == that.port;
+		return port == that.getPort();
 	}
 
 	@Override

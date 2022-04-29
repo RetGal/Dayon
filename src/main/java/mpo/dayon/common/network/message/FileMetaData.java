@@ -7,16 +7,16 @@ public class FileMetaData implements Serializable {
     private final String fileName;
     private final long fileSize;
 
-    public FileMetaData(String fileName, long fileSize, String basePath) {
+    FileMetaData(String fileName, long fileSize, String basePath) {
         this.fileName = fileName.replace(basePath, "");
         this.fileSize = fileSize;
     }
 
-    public String getFileName() {
+    String getFileName() {
         return fileName;
     }
 
-    public long getFileSize() {
+    long getFileSize() {
         return fileSize;
     }
 
@@ -27,8 +27,8 @@ public class FileMetaData implements Serializable {
 
         FileMetaData that = (FileMetaData) o;
 
-        if (fileSize != that.fileSize) return false;
-        return Objects.equals(fileName, that.fileName);
+        if (fileSize != that.getFileSize()) return false;
+        return Objects.equals(fileName, that.getFileName());
     }
 
     @Override
