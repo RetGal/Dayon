@@ -38,7 +38,9 @@ class AssistedFrame extends BaseFrame {
         final ToolBar toolbar = new ToolBar();
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
-        toolbar.addSeparator();
+        if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
+            toolbar.addSeparator();
+        }
         if (ScreenUtilities.getNumberOfScreens() > 1) {
             toolbar.addToggleAction(toggleMultiScreenCaptureAction);
         }
