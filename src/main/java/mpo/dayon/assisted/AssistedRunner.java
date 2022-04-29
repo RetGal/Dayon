@@ -47,15 +47,14 @@ class AssistedRunner implements Runner {
     }
 
     private static Map<String, String> readPresetFile() {
-        List<String> paths = Arrays.asList(getOrCreateAppDir().toString(), System.getProperty("user.home"), getJarDir());
+        final List<String> paths = Arrays.asList(getOrCreateAppDir().toString(), System.getProperty("user.home"), getJarDir());
+        final String fileName = "assisted.yaml";
         for (String path : paths) {
-            for (String fileExt : Arrays.asList("yaml", "yml")) {
-                File presetFile = new File(path, format("assisted.%s", fileExt));
-                if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
-                    Map<String, String> content = parseFileContent(presetFile);
-                    if (content != null) {
-                        return content;
-                    }
+            final File presetFile = new File(path, fileName);
+            if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
+                final Map<String, String> content = parseFileContent(presetFile);
+                if (content != null) {
+                    return content;
                 }
             }
         }
