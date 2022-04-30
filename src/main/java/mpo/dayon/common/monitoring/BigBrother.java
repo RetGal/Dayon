@@ -21,15 +21,23 @@ public final class BigBrother {
      * @param instantRatePeriod millis
      */
     public void registerCounter(final Counter<?> counter, final long instantRatePeriod) {
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                counter.computeAndResetInstantValue();
-            }
-        }, 0, instantRatePeriod);
+        timer.scheduleAtFixedRate(new SecondsCounter(counter), 0, instantRatePeriod);
     }
 
     public void registerRamInfo(TimerTask callback) {
         timer.scheduleAtFixedRate(callback, 0, 1000);
+    }
+
+    private static class SecondsCounter extends TimerTask {
+        private final Counter<?> counter;
+
+        public SecondsCounter(Counter<?> counter) {
+            this.counter = counter;
+        }
+
+        @Override
+        public void run() {
+            counter.computeAndResetInstantValue();
+        }
     }
 }

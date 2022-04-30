@@ -271,16 +271,7 @@ class AssistantFrame extends BaseFrame {
         actions.getStopAction().setEnabled(true);
         actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
-        center = new JPanel() {
-            final ImageIcon waiting = getOrCreateIcon(ImageNames.WAITING);
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                final int x = (getWidth() - waiting.getIconWidth()) / 2;
-                final int y = (getHeight() - waiting.getIconHeight()) / 2;
-                g.drawImage(waiting.getImage(), x, y, this);
-            }
-        };
+        center = new Spinner();
         add(center, BorderLayout.CENTER);
         getStatusBar().setMessage(translate("listening", port));
     }
@@ -465,6 +456,18 @@ class AssistantFrame extends BaseFrame {
     private void fireOnKeyReleased(int keyCode, char keyChar) {
         for (final AssistantFrameListener xListener : listeners.getListeners()) {
             xListener.onKeyReleased(keyCode, keyChar);
+        }
+    }
+
+    private static class Spinner extends JPanel {
+        final ImageIcon waiting = getOrCreateIcon(ImageNames.WAITING);
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            final int x = (getWidth() - waiting.getIconWidth()) / 2;
+            final int y = (getHeight() - waiting.getIconHeight()) / 2;
+            g.drawImage(waiting.getImage(), x, y, this);
         }
     }
 }

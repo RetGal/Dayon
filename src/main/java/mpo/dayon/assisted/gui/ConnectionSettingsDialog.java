@@ -73,13 +73,21 @@ public class ConnectionSettingsDialog {
     }
 
     private MouseAdapter clearTextOnDoubleClick(JTextField textField) {
-        return new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    textField.setText(null);
-                }
+        return new Cleanser(textField);
+    }
+
+    private static class Cleanser extends MouseAdapter {
+        private final JTextField textField;
+
+        public Cleanser(JTextField textField) {
+            this.textField = textField;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getClickCount() == 2) {
+                textField.setText(null);
             }
-        };
+        }
     }
 }
