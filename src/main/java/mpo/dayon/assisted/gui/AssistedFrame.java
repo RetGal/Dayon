@@ -60,7 +60,7 @@ class AssistedFrame extends BaseFrame {
 
         showUacSettings.putValue(Action.NAME, "showUacSettings");
         showUacSettings.putValue(Action.SHORT_DESCRIPTION, translate("uacSettings"));
-        showUacSettings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SETTINGS));
+        showUacSettings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SHIELD));
 
         return showUacSettings;
     }
