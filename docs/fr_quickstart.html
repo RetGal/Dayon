@@ -191,6 +191,31 @@
             Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<em>assistée</em>, vous cliquez sur le symbole Windows,
             appuyez sur la touche <code>M</code>, puis cliquez à nouveau sur le symbole Windows.
         <p>
+        <h3>Connexion automatique de l'assistée</h3>
+        <h4>Via les paramètres de la ligne de commande</h4>
+        <p>
+            Le nom d'hôte ou l'adresse IP et le port de l'assistant peuvent être transmis via des paramètres de ligne de commande :<br>
+            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
+            Installé en Snap, la commande est <code>dayon.assisted ah=example.com ap=4242</code>, depuis un .tgz
+            Archive installée à la place : <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
+            <code>java -jar dayon.jar ah=exemple.com ap=4567</code> (Windows)<br>
+            ou pour la version de lancement rapide :<br>
+            <code>dayon_assisted.exe ah=exemple.org ap=80</code><br>
+            Si l'assistant est démarré avec ces paramètres, il se connecte directement à l'hôte transféré sans demander.
+        <h4>Via le fichier de configuration</h4>
+        <p>
+            A partir de la version v11.0.5, les paramètres de connexion peuvent être stockés dans un fichier <code>YAML</code>.
+            La structure est extrêmement simple :<pre>
+host: an.example.com
+port: 8080</pre>
+        Ce fichier peut être enregistré sous le nom <code><a href="assisted.yaml">assisted.yaml</a></code> soit dans le Dayon! répertoire personnel, dans le répertoire utilisateur,
+        ou dans le même répertoire que le <code>.jar</code>, resp. Fichier <code>.exe</code>.
+        Cet ordre correspond également à la priorité avec laquelle ils sont pris en compte dans le cas de configurations multiples
+        existent. (la première gagne)<br>
+        Pour éviter que l'assisté ne se connecte automatiquement juste après le démarrage, <code><a href="assisted.yaml">assisted.yaml</a></code> la
+        ligne suivante peut être ajoutée : <pre>
+autoConnect: false</pre>
+        <p>
             C'est tout! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
     </div>
     <div id="footer"></div>

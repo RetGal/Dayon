@@ -15,16 +15,7 @@ public class NetworkAssistantConfiguration extends Configuration {
 	 */
 	public NetworkAssistantConfiguration() {
 		final Preferences prefs = Preferences.getPreferences();
-
-		final int version = prefs.getIntPreference(PREF_VERSION, 0);
-
-		if (!prefs.isNull() && version == 0) {
-			port = prefs.getIntPreference("assistantPortNumber", 8080);
-
-			persist(true);
-		} else {
-			port = prefs.getIntPreference(PREF_PORT_NUMBER, 8080);
-		}
+		port = prefs.getIntPreference(PREF_PORT_NUMBER, 8080);
 	}
 
 	public NetworkAssistantConfiguration(int port) {
@@ -46,7 +37,7 @@ public class NetworkAssistantConfiguration extends Configuration {
 
 		final NetworkAssistantConfiguration that = (NetworkAssistantConfiguration) o;
 
-		return port == that.port;
+		return port == that.getPort();
 	}
 
 	@Override
@@ -67,7 +58,6 @@ public class NetworkAssistantConfiguration extends Configuration {
 		if (clear) // migration support (!)
 		{
 			props.clear("assistantPortNumber");
-			props.clear("assistantIpAddress");
 		}
 		Preferences.getPreferences().update(props); // atomic (!)
 	}

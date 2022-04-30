@@ -41,7 +41,7 @@ public abstract class BaseFrame extends JFrame {
 
     protected static final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
 
-    protected StatusBar statusBar;
+    private StatusBar statusBar;
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -93,7 +93,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
-        this.statusBar = statusBar;
+        this.setStatusBar(statusBar);
         add(statusBar, BorderLayout.SOUTH);
     }
 
@@ -135,48 +135,23 @@ public abstract class BaseFrame extends JFrame {
 
                 final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
-                info.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        browse(HTTP_HOME);
-                    }
-                });
+                info.addMouseListener(new HomeMouseAdapter());
 
                 final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
-                version.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        browse(Version.RELEASE_LOCATION + Version.get());
-                    }
-                });
+                version.addMouseListener(new ReleaseMouseAdapter());
 
                 final JLabel latest = new JLabel(composeLabelHtml(translate("version.latest"), Version.get().getLatestRelease()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
-                latest.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        browse(Version.RELEASE_LOCATION + Version.get().getLatestRelease());
-                    }
-                });
+                latest.addMouseListener(new LatestReleaseMouseAdapter());
 
                 final JLabel support = new JLabel(composeLabelHtml(translate("support"), HTTP_SUPPORT));
                 support.setAlignmentX(Component.LEFT_ALIGNMENT);
-                support.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        browse(HTTP_SUPPORT);
-                    }
-                });
+                support.addMouseListener(new SupportMouseAdapter());
 
                 final JLabel feedback = new JLabel(composeLabelHtml(translate("feedback"), HTTP_FEEDBACK));
                 feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
-                feedback.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        browse(HTTP_FEEDBACK);
-                    }
-                });
+                feedback.addMouseListener(new FeedbackMouseAdapter());
 
                 final JScrollPane spane = new JScrollPane(props);
                 spane.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -293,5 +268,48 @@ public abstract class BaseFrame extends JFrame {
 
     public ToolBar getToolBar() {
         return toolBar;
+    }
+
+    public StatusBar getStatusBar() {
+        return statusBar;
+    }
+
+    public void setStatusBar(StatusBar statusBar) {
+        this.statusBar = statusBar;
+    }
+
+    private static class FeedbackMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(HTTP_FEEDBACK);
+        }
+    }
+
+    private static class HomeMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(HTTP_HOME);
+        }
+    }
+
+    private static class ReleaseMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(Version.RELEASE_LOCATION + Version.get());
+        }
+    }
+
+    private static class LatestReleaseMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(Version.RELEASE_LOCATION + Version.get().getLatestRelease());
+        }
+    }
+
+    private static class SupportMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(HTTP_SUPPORT);
+        }
     }
 }

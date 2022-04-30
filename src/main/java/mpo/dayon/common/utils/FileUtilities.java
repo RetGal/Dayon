@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,8 +23,9 @@ public final class FileUtilities {
     }
 
     private static long calculateFileSize(File node) throws IOException {
-        if (node.isFile()) {
-            return node.length();
+        BasicFileAttributes basicFileAttributes = Files.readAttributes(node.toPath(), BasicFileAttributes.class);
+        if (basicFileAttributes.isRegularFile()) {
+            return basicFileAttributes.size();
         }
         try (Stream<Path> stream = Files.walk(node.toPath())) {
             return stream.filter(p -> p.toFile().isFile())

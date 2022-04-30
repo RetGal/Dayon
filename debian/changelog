@@ -1,3 +1,12 @@
+dayon (11.0.5) stable; urgency=medium
+
+  * Let user decide if he/she/it wants to share just the primary or all screens (assisted)
+  * Added shortcut for showing the UAC settings dialogue (assisted)
+  * Connection pre configurable with a yaml file
+  * Fixed integer overflow exception when transferring very large files (>4GB)
+
+ -- Reto Galante <reto@galante.ch>  Sat, 30 Apr 2022 12:00:00 +0000
+
 dayon (11.0.4) stable; urgency=low
 
   * Fixed latent coordinate out of bounds exception

@@ -12,6 +12,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -35,7 +36,7 @@ public final class SystemUtilities {
         return new URI(String.format("http://retgal.github.io/Dayon/%s#%s-setup", translate("quickstart.html"), frameType.getPrefix()));
     }
 
-    private static synchronized File getOrCreateAppDir() {
+    public static synchronized File getOrCreateAppDir() {
         final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
         if (homeDir == null) {
             Log.warn("Home directory [user.home] is null!");
@@ -85,6 +86,16 @@ public final class SystemUtilities {
 
     public static String getTempDir() {
         return isSnapped() ? getOrCreateTransferDir().getPath() : System.getProperty("java.io.tmpdir");
+    }
+
+    public static String getJarDir() {
+        String jarPath = "";
+        try {
+            jarPath = Paths.get(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
+        } catch (URISyntaxException e) {
+            Log.warn(e.getMessage());
+        }
+        return jarPath;
     }
 
     private static void cleanDir(File folder) {

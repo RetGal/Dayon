@@ -184,6 +184,31 @@
             If you need for example to minimize all windows on the <em>assisted</em> side, you would click the Windows symbol,
             press the <code>M</code> key and then click the Windows symbol again.
         <p>
+        <h3>Automatic connection of the assisted</h3>
+        <h4>Via command line parameters</h4>
+        <p>
+            The host name or IP address and port of the assistant can be passed via command line parameters:<br>
+            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
+            Installed as a snap, the command is <code>dayon.assisted ah=example.com ap=4242</code>, installed
+            from a .tgz archive: <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
+            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
+            or for the Quick Launch version:<br>
+            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            If the assistant is started with these parameters, then he connects directly to the given host without further inquiry.
+        <h4>Via configuration file</h4>
+        <p>
+            From version v11.0.5, the connection parameters can be stored in a <code>YAML</code> file.
+            The structure is extremely simple:<pre>
+host: an.example.com
+port: 8080</pre>
+        This file can be saved under the name <code><a href="assisted.yaml">assisted.yaml</a></code> either in the Dayon! home directory, in the user directory,
+        or in the same directory as the <code>.jar</code>, resp. <code>.exe</code> file.
+        This order also corresponds to the priority with which they are taken into account in the case of multiple configurations
+        exist. (first wins)<br>
+        To prevent the assisted from automatically connecting right after the start, <code><a href="assisted.yaml">assisted.yaml</a></code>
+        the following line can be added: <pre>
+autoConnect: false</pre>
+        <p>
             That's all folks! You can find more information on the <a href="support.html">support</a> page.
     </div>
     <div id="footer"></div>

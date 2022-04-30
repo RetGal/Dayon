@@ -28,18 +28,8 @@ public class CaptureEngineConfiguration extends Configuration {
      */
     public CaptureEngineConfiguration() {
         final Preferences prefs = Preferences.getPreferences();
-
-        final int version = prefs.getIntPreference(PREF_VERSION, 0);
-
-        if (!prefs.isNull() && version == 0) {
-            captureTick = (int) (1000.0 / prefs.getDoublePreference("generations", 2.0));
-            captureQuantization = prefs.getEnumPreference("grayLevels", Gray8Bits.X_256, Gray8Bits.values());
-
-            persist(true);
-        } else {
-            captureTick = prefs.getIntPreference(PREF_CAPTURE_TICK, 200);
-            captureQuantization = prefs.getEnumPreference(PREF_CAPTURE_QUANTIZATION, Gray8Bits.X_256, Gray8Bits.values());
-        }
+        captureTick = prefs.getIntPreference(PREF_CAPTURE_TICK, 200);
+        captureQuantization = prefs.getEnumPreference(PREF_CAPTURE_QUANTIZATION, Gray8Bits.X_256, Gray8Bits.values());
     }
 
     public CaptureEngineConfiguration(int captureTick, Gray8Bits captureQuantization) {
@@ -66,7 +56,7 @@ public class CaptureEngineConfiguration extends Configuration {
 
         final CaptureEngineConfiguration that = (CaptureEngineConfiguration) o;
 
-        return captureTick == that.captureTick && captureQuantization == that.captureQuantization;
+        return captureTick == that.getCaptureTick() && captureQuantization == that.getCaptureQuantization();
     }
 
     @Override
@@ -85,7 +75,6 @@ public class CaptureEngineConfiguration extends Configuration {
 
     private Preferences.Props getProps(boolean clear) {
         final Preferences.Props props = new Preferences.Props();
-
         props.set(PREF_VERSION, String.valueOf(1));
         props.set(PREF_CAPTURE_TICK, String.valueOf(captureTick));
         props.set(PREF_CAPTURE_QUANTIZATION, String.valueOf(captureQuantization.ordinal()));
@@ -93,8 +82,6 @@ public class CaptureEngineConfiguration extends Configuration {
         // migration support (!)
         if (clear) {
             props.clear("generations");
-            props.clear("grayLevels");
-            props.clear("tiles");
         }
         return props;
     }

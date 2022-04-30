@@ -1,0 +1,4 @@
+host: localhost
+port: 8080
+# uncomment the next line to prevent auto connection at startup
+# autoConnect: false

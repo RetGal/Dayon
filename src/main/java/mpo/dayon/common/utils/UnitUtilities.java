@@ -22,6 +22,14 @@ public abstract class UnitUtilities {
             this.name = name;
             this.value = value;
         }
+
+        public double getValue() {
+            return value;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
     }
 
     public static String toBitSize(double bits) {
@@ -30,8 +38,8 @@ public abstract class UnitUtilities {
         for (int idx = units.length - 1; idx >= 0; idx--) {
             final BitUnit unit = units[idx];
 
-            if (bits >= unit.value) {
-                return String.format(DEC_UNIT, bits / unit.value, unit.symbol);
+            if (bits >= unit.getValue()) {
+                return String.format(DEC_UNIT, bits / unit.getValue(), unit.getSymbol());
             }
         }
         return String.format(DEC_UNIT, bits, "bit");
@@ -58,6 +66,18 @@ public abstract class UnitUtilities {
             this.value = value;
             this.formatter = formatter;
         }
+
+        public double getValue() {
+            return value;
+        }
+
+        public String getSymbol() {
+            return symbol;
+        }
+
+        public String getFormatter() {
+            return formatter;
+        }
     }
 
     public static String toByteSize(double bytes) {
@@ -70,11 +90,11 @@ public abstract class UnitUtilities {
         for (int idx = units.length - 1; idx >= 0; idx--) {
             final ByteUnit unit = units[idx];
 
-            if (bytes >= unit.value) {
+            if (bytes >= unit.getValue()) {
                 if (withDecimal) {
-                    return String.format(DEC_UNIT, bytes / unit.value, unit.symbol);
+                    return String.format(DEC_UNIT, bytes / unit.getValue(), unit.getSymbol());
                 }
-                return String.format(unit.formatter, bytes / unit.value);
+                return String.format(unit.getFormatter(), bytes / unit.getValue());
             }
         }
 

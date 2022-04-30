@@ -93,10 +93,10 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
                     int pos = 0;
 
                     for (int idx = pendings.size() - 1; idx > -1; idx--) {
-                        cpendings[pos++] = ((MyExecutable) pendings.get(idx)).capture;
+                        cpendings[pos++] = ((MyExecutable) pendings.get(idx)).getCapture();
                     }
 
-                    newer.capture.mergeDirtyTiles(cpendings);
+                    newer.getCapture().mergeDirtyTiles(cpendings);
                 }
 
                 poolExecutor.execute(newer);
@@ -158,22 +158,22 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 				}
 
 				if (xreconfigured) {
-					Log.info("Compressor engine has been reconfigured [tile:" + capture.getId() + "] " + xconfiguration);
+					Log.info("Compressor engine has been reconfigured [tile:" + getCapture().getId() + "] " + xconfiguration);
 				}
 
 				final Compressor compressor = Compressor.get(xconfiguration.getMethod());
 
-				final MemByteBuffer compressed = compressor.compress(cache, capture);
+				final MemByteBuffer compressed = compressor.compress(cache, getCapture());
 
 				// Possibly blocking - no problem as we'll replace (and merge) in our queue
 				// the oldest capture (if any) until we can compress it and send it to the next
 				// stage of processing.
 
 				if (!xreconfigured) {
-					fireOnCompressed(capture, compressor.getMethod(), null, compressed);
+					fireOnCompressed(getCapture(), compressor.getMethod(), null, compressed);
 				} else {
 					// we have to send the whole configuration => de-compressor synchronization (!)
-					fireOnCompressed(capture, compressor.getMethod(), xconfiguration, compressed);
+					fireOnCompressed(getCapture(), compressor.getMethod(), xconfiguration, compressed);
 				}
 			} finally {
 				cache.onCaptureProcessed();
@@ -187,6 +187,9 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			}
 		}
 
+		public Capture getCapture() {
+			return capture;
+		}
 	}
 
 }

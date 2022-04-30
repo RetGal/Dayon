@@ -4,6 +4,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.FileUtilities;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.*;
 
 import static java.util.Arrays.copyOf;
@@ -147,7 +148,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         long fileSize = file.length();
         Log.debug("Total bytes to be sent: " + fileSize);
         byte[] buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
-        try (InputStream input = new FileInputStream(file)) {
+        try (InputStream input = Files.newInputStream(file.toPath())) {
             int read;
             while (input.available() > 0) {
                 read = readIntoBuffer(input, buffer);

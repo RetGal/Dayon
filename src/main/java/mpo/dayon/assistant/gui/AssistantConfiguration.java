@@ -40,7 +40,7 @@ public class AssistantConfiguration extends Configuration {
 			return false;
 		}
 		final AssistantConfiguration that = (AssistantConfiguration) o;
-		return lookAndFeelClassName.equals(that.lookAndFeelClassName);
+		return lookAndFeelClassName.equals(that.getLookAndFeelClassName());
 	}
 
 	@Override

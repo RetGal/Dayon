@@ -179,6 +179,31 @@
             单击一次，Windows 键将保持按下状态，直到您再次单击该按钮。这么做是为了发送 Windows 快捷键。
             例如，如果您需要最小化 所有窗口侧的 ，您可以单击 Windows 符号， 按下 M键，然后再次单击 Windows 符号。
         <p>
+        <h3>用户端(Assisted)自动连接</h3>
+        <h4>通过命令行参数</h4>
+        <p>
+            可以通过命令行参数传递主控端(Assistant)的主机名或IP地址和端口：<br>
+            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
+            如果是Snap版本，请使用：<code>dayon.assisted ah=example.com ap=4242</code>；如果您是从tge压缩包安装的
+            请使用：<code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
+            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
+            或者快速启动版本请使用：<br>
+            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            如果使用这些参数启动，程序将直接连接到给定的远程主机。
+        <h4>通过配置文件</h4>
+        <p>
+            从 v11.0.5 版本开始，连接参数可以存储在 <code>YAML</code> 文件中。
+            结构极其简单：<pre>
+host: an.example.com
+port: 8080</pre>
+        该文件可以在 Dayon 中以 <code><a href="assisted.yaml">assisted.yaml</a></code> 的名称保存！ 主目录，在用户目录中，
+        或在与 <code>.jar</code> 相同的目录中，分别。 <code>.exe</code> 文件。
+        此顺序还对应于在多个配置的情况下考虑它们的优先级
+        存在。 （第一次获胜）<br>
+        为防止辅助启动后立即自动连接，<code><a href="assisted.yaml">assisted.yaml</a></code>
+        可以添加以下行：<pre>
+autoConnect: false</pre>
+        <p>
             That's all folks !  更多信息请查看 <a href="zh_support.html">支持</a> 页面。
     </div>
     <div id="footer"></div>

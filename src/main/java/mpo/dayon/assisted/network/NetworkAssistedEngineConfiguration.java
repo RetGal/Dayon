@@ -19,16 +19,8 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
      */
     public NetworkAssistedEngineConfiguration() {
         final Preferences prefs = Preferences.getPreferences();
-        final int version = prefs.getIntPreference(PREF_VERSION, 0);
-
-        if (!prefs.isNull() && version == 0) {
-            serverName = prefs.getStringPreference("assistantIpAddress", "localhost");
-            serverPort = prefs.getIntPreference("assistantPortNumber", 8080);
-            persist(true);
-        } else {
-            serverName = prefs.getStringPreference(PREF_SERVER_NAME, "localhost");
-            serverPort = prefs.getIntPreference(PREF_SERVER_PORT_NUMBER, 8080);
-        }
+        serverName = prefs.getStringPreference(PREF_SERVER_NAME, "localhost");
+        serverPort = prefs.getIntPreference(PREF_SERVER_PORT_NUMBER, 8080);
     }
 
     public NetworkAssistedEngineConfiguration(String serverName, int serverPort) {
@@ -53,7 +45,7 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
             return false;
         }
         final NetworkAssistedEngineConfiguration that = (NetworkAssistedEngineConfiguration) o;
-        return serverPort == that.serverPort && serverName.equals(that.serverName);
+        return serverPort == that.getServerPort() && serverName.equals(that.getServerName());
     }
 
     @Override
@@ -75,15 +67,6 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
         {
             props.clear("assistantIpAddress");
             props.clear("assistantPortNumber");
-
-            props.clear("tiles");
-            props.clear("grayLevels");
-            props.clear("generations");
-
-            props.clear("assistedFrameX");
-            props.clear("assistedFrameY");
-            props.clear("assistedFrameWidth");
-            props.clear("assistedFrameHeight");
         }
         Preferences.getPreferences().update(props); // atomic (!)
     }

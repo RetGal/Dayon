@@ -192,6 +192,31 @@
             Wenn sie beispielsweise alle Fenster des <em>Assistierten</em> minimieren möchten, klicken sie auf das Windows-Symbol,
             danach drücken sie die <code>M</code> Taste und klicken schliesslich erneut auf das Windows-Symbol.
         <p>
+        <h3>Automatische Verbindung des Assistierten</h3>
+        <h4>Via Kommandozeilenparameter</h4>
+        <p>
+            Der Hostname oder IP-Adresse und der Port des Assistenten können via Kommandozeilenparameter übergeben werden:<br>
+            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
+            Als Snap installiert, lautet der Befehl <code>dayon.assisted ah=example.com ap=4242</code>, aus einem .tgz
+            Archiv installiert hingegen: <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
+            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
+            oder bei der Quick Launch Version:<br>
+            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der übergebenen Host.
+        <h4>Via Konfigurationsdatei</h4>
+        <p>
+            Ab Version v11.0.5, können die Verbindungsparameter in einer <code>YAML</code>-Datei hinterlegt werden.
+            Die Struktur ist äusserst simpel:<pre>
+host: an.example.com
+port: 8080</pre>
+        Diese Datei kann unter dem Namen <code><a href="assisted.yaml">assisted.yaml</a></code> entweder im Dayon! Heimverzeichnis, im Benutzerverzeichnis,
+        oder im selben Verzeichnis wie die <code>.jar</code>, resp. <code>.exe</code> Datei abgelegt werden.
+        Diese Reihenfolge entspricht auch der Priorität, mit welcher sie berücksichtigt werden, falls mehrere Konfigurationen
+        existieren. (die erste gewinnt)<br>
+        Um zu verhindern, dass sich der Assistierte direkt nach dem Start automatisch verbindet, kann <code><a href="assisted.yaml">assisted.yaml</a></code> um die
+        folgende Zeile ergänzt werden:<pre>
+autoConnect: false</pre>
+        <p>
             Das ist alles! Weitere Informationen finden sie auf der <a href="de_support.html">Support</a> Seite.
     </div>
     <div id="footer"></div>

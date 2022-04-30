@@ -28,18 +28,9 @@
             <li>Es existiert keine Möglichkeit gewisse Tastenkombinationen wie etwa <code>Ctrl-Alt-Del</code> an den entfernten
                 Computer zu senden.
             <li>Idealerweise verwenden die Computer des Assistenten und des Assistierten beide dieselbe Eingabesprache.
-                Die Verwendung unterschiedlicher Tastaturlayouts kann insbesondere bei der Eingabe von Sonderzeichen zu Problemen führen.
+                Die Verwendung unterschiedlicher Tastaturbelegung kann insbesondere bei der Eingabe von Sonderzeichen zu Problemen führen.
+                Die verwendete Tastaturbelegung ist in der Titelleiste der jeweiligen Applikation ersichtlich.
         </ul>
-        <h3>Automatische Verbindung des Assistierten</h3>
-        <p>
-            Der Hostname oder IP-Adresse und der Port des Assistenten können via Kommandozeilenparameter übergeben werden:<br>
-            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
-            Als Snap installiert, lautet der Befehl <code>dayon.assisted ah=example.com ap=4242</code>, aus einem .tgz
-            Archiv installiert hingegen: <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
-            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
-            oder bei der Quick Launch Version:<br>
-            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
-            Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der übergebenen Host.
         <h3>Dayon! Heimverzeichnis</h3>
         <p>
             Das Verzeichnis <code>.dayon</code> wird im Standardbenutzerverzeichnis des eingelogten Benutzers oder

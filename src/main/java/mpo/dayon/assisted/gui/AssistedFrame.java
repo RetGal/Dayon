@@ -38,11 +38,13 @@ class AssistedFrame extends BaseFrame {
         final ToolBar toolbar = new ToolBar();
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
-        toolbar.addSeparator();
+        if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
+            toolbar.addSeparator();
+        }
         if (ScreenUtilities.getNumberOfScreens() > 1) {
             toolbar.addToggleAction(toggleMultiScreenCaptureAction);
         }
-        if (File.separatorChar != '\\') {
+        if (File.separatorChar == '\\') {
             toolbar.addAction(createShowUacSettingsAction());
         }
         toolbar.addSeparator();
@@ -54,16 +56,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     private Action createShowUacSettingsAction() {
-        final Action showUacSettings = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-            try {
-                Runtime.getRuntime().exec(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe");
-            } catch (IOException e) {
-                Log.error(e.getMessage());
-            }
-            }
-        };
+        final Action showUacSettings = new AssistedAbstractAction();
 
         showUacSettings.putValue(Action.NAME, "showUacSettings");
         showUacSettings.putValue(Action.SHORT_DESCRIPTION, translate("uacSettings"));
@@ -84,7 +77,7 @@ class AssistedFrame extends BaseFrame {
         this.setCursor(cursor);
         startAction.setEnabled(true);
         stopAction.setEnabled(false);
-        statusBar.setMessage(translate("ready"));
+        getStatusBar().setMessage(translate("ready"));
         connected = false;
     }
 
@@ -92,7 +85,7 @@ class AssistedFrame extends BaseFrame {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
-        statusBar.setMessage(translate("connecting", serverName, serverPort));
+        getStatusBar().setMessage(translate("connecting", serverName, serverPort));
         connected = false;
     }
 
@@ -100,7 +93,7 @@ class AssistedFrame extends BaseFrame {
         this.setCursor(cursor);
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
-        statusBar.setMessage(translate("connected"));
+        getStatusBar().setMessage(translate("connected"));
         connected = true;
     }
 
@@ -109,7 +102,7 @@ class AssistedFrame extends BaseFrame {
         if (!connected) {
             startAction.setEnabled(true);
             stopAction.setEnabled(false);
-            statusBar.setMessage(translate("serverNotFound", serverName));
+            getStatusBar().setMessage(translate("serverNotFound", serverName));
         }
     }
 
@@ -118,7 +111,7 @@ class AssistedFrame extends BaseFrame {
         if (!connected) {
             stopAction.setEnabled(false);
             startAction.setEnabled(true);
-            statusBar.setMessage(translate("connectionTimeout", serverName, serverPort));
+            getStatusBar().setMessage(translate("connectionTimeout", serverName, serverPort));
         }
     }
 
@@ -127,11 +120,22 @@ class AssistedFrame extends BaseFrame {
         if (!connected) {
             startAction.setEnabled(true);
             stopAction.setEnabled(false);
-            statusBar.setMessage(translate("refused", serverName, serverPort));
+            getStatusBar().setMessage(translate("refused", serverName, serverPort));
         }
     }
 
     void onDisconnecting() {
         onReady();
+    }
+
+    private static class AssistedAbstractAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent ev) {
+        try {
+            Runtime.getRuntime().exec(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe");
+        } catch (IOException e) {
+            Log.error(e.getMessage());
+        }
+        }
     }
 }
