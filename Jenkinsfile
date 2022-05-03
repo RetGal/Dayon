@@ -42,6 +42,11 @@ pipeline {
                 }
             }
         }
+        stage('Human sanity check') {
+            steps {
+                input "Does everything look fine?"
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying..'
