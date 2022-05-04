@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Locale;
 import java.util.Map;
 
-import static mpo.dayon.common.Runner.extractProgramArgs;
-import static mpo.dayon.common.Runner.overrideLocale;
+import static mpo.dayon.common.Runner.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RunnerTest {
@@ -49,5 +48,16 @@ class RunnerTest {
         assertEquals(2, programArgs.size());
         assertEquals("en", programArgs.get("lang"));
         assertEquals("BAR", programArgs.get("foo"));
+    }
+
+    @Test
+    void shouldSetDebug() {
+        // given
+        String[] args = {"debug"};
+        assertNull(System.getProperty("dayon.debug"));
+        // when
+        setDebug(args);
+        // then
+        assertEquals("on", System.getProperty("dayon.debug"));
     }
 }
