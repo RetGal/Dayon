@@ -11,7 +11,6 @@ import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
-import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.FrameType;
@@ -48,7 +47,7 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
-public class Assistant implements Configurable<AssistantConfiguration>, ClipboardOwner {
+public class Assistant implements ClipboardOwner {
 
     private final static String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
     private final static String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
@@ -129,10 +128,8 @@ public class Assistant implements Configurable<AssistantConfiguration>, Clipboar
         compressorEngineConfiguration = new CompressorEngineConfiguration();
     }
 
-    @Override
-    public void configure(AssistantConfiguration configuration) {
-        this.configuration = configuration;
-
+    public void configure() {
+        this.configuration = new AssistantConfiguration();
         final String lnf = configuration.getLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(lnf);

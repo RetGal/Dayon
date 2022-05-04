@@ -1,7 +1,6 @@
 package mpo.dayon.assistant;
 
 import mpo.dayon.assistant.gui.Assistant;
-import mpo.dayon.assistant.gui.AssistantConfiguration;
 import mpo.dayon.common.Runner;
 import mpo.dayon.common.error.FatalErrorHandler;
 
@@ -22,7 +21,7 @@ class AssistantRunner implements Runner {
 
 	private static void launchAssistant() {
 		final Assistant assistant = new Assistant();
-		assistant.configure(new AssistantConfiguration());
+		assistant.configure();
 		assistant.start();
 	}
 }
