@@ -20,6 +20,7 @@ import java.security.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -138,7 +139,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (true) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                Log.debug("Received " + type.name());
+                Log.debug(format("Received %s", type.name()));
 
                 if (introduced) {
                     processIntroduced(type, in);
@@ -159,14 +160,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnStarting(port);
 
         ssf = initSSLContext().getServerSocketFactory();
-        Log.info(String.format("Dayon! server [port:%d]", port));
+        Log.info(format("Dayon! server [port:%d]", port));
         server = ssf.createServerSocket(port);
         Log.info("Accepting ...");
 
         do {
             safeClose(connection); // we might have refused the accepted connection (!)
             connection = server.accept();
-            Log.info(String.format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
+            Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
 
         server.close();
@@ -195,7 +196,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @java.lang.SuppressWarnings("squid:S2189")
     private void fileReceivingLoop() {
         fileIn = null;
-        Log.info(String.format("Dayon! file server [port:%d]", port));
+        Log.info(format("Dayon! file server [port:%d]", port));
 
         try {
             fileServer = ssf.createServerSocket(port);
@@ -229,7 +230,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                         fireOnClipboardReceived();
                     }
                 } else if (!type.equals(PING)) {
-                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
                 }
             }
         } catch (IOException ex) {
@@ -281,7 +282,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 throw new IllegalArgumentException("Unexpected message [HELLO]!");
 
             default:
-                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }
     }
 
@@ -299,10 +300,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case MOUSE_LOCATION:
             case CLIPBOARD_TEXT:
             case CLIPBOARD_FILES:
-                throw new IllegalArgumentException("Unexpected message [" + type.name() + "]!");
+                throw new IllegalArgumentException(format("Unexpected message [%s]!", type.name()));
 
             default:
-                throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }
     }
 
@@ -310,6 +311,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
         if (!isCompatibleVersion(hello.getMajor(), hello.getMinor(), Version.get())) {
+            Log.error(format("Incompatible assisted version: %d.%d", hello.getMajor(), hello.getMinor()));
             throw new IOException("version.wrong");
         }
     }

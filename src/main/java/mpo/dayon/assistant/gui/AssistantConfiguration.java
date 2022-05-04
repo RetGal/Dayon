@@ -1,7 +1,6 @@
 package mpo.dayon.assistant.gui;
 
 import mpo.dayon.common.configuration.Configuration;
-import mpo.dayon.common.preference.Preferences;
 import mpo.dayon.common.utils.SystemUtilities;
 
 import static mpo.dayon.common.preference.Preferences.*;
@@ -19,8 +18,7 @@ public class AssistantConfiguration extends Configuration {
 	 * @see mpo.dayon.common.preference.Preferences
 	 */
 	public AssistantConfiguration() {
-		final Preferences prefs = getPreferences();
-		lookAndFeelClassName = prefs.getStringPreference(PREF_LOOK_AND_FEEL, SystemUtilities.getDefaultLookAndFeel());
+		lookAndFeelClassName = getPreferences().getStringPreference(PREF_LOOK_AND_FEEL, SystemUtilities.getDefaultLookAndFeel());
 	}
 
 	AssistantConfiguration(String lookAndFeelClassName) {
