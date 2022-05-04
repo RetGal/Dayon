@@ -54,12 +54,8 @@ public class MemByteBuffer extends OutputStream {
 	 */
 	@Override
     public void write(int val) {
-		final int newcount = count + 1;
-
-		if (newcount > buffer.length) {
-			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newcount));
-		}
-
+		final int newCount = count + 1;
+		increaseBuffer(newCount);
 		buffer[count++] = (byte) val;
 	}
 
@@ -67,12 +63,8 @@ public class MemByteBuffer extends OutputStream {
 	 * @see #write(int)
 	 */
 	private void write(int val1, int val2) {
-		final int newcount = count + 2;
-
-		if (newcount > buffer.length) {
-			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newcount));
-		}
-
+		final int newCount = count + 2;
+		increaseBuffer(newCount);
 		buffer[count++] = (byte) val1;
 		buffer[count++] = (byte) val2;
 	}
@@ -87,16 +79,10 @@ public class MemByteBuffer extends OutputStream {
 		if (len == 0) {
 			return;
 		}
-
-		final int newcount = count + len;
-
-		if (newcount > this.buffer.length) {
-			this.buffer = Arrays.copyOf(this.buffer, Math.max(this.buffer.length << 1, newcount));
-		}
-
+		final int newCount = count + len;
+		increaseBuffer(newCount);
 		System.arraycopy(buffer, off, this.buffer, count, len);
-
-		count = newcount;
+		count = newCount;
 	}
 
 	/**
@@ -117,36 +103,30 @@ public class MemByteBuffer extends OutputStream {
 	public void writeLenAsShort(int mark) {
 		final int end = mark();
 		final int len = end - mark - 2; // -2: the len (as short) itself (!)
-
 		resetToMark(mark);
 		writeShort(-len);
-
 		resetToMark(end);
 	}
 
 	public void fill(int len, int val) {
-		final int newcount = count + len;
-
-		if (newcount > buffer.length) {
-			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newcount));
-		}
-
-		for (int idx = count; idx < newcount; idx++) {
+		final int newCount = count + len;
+		increaseBuffer(newCount);
+		for (int idx = count; idx < newCount; idx++) {
 			buffer[idx] = (byte) val;
 		}
-
-		count = newcount;
+		count = newCount;
 	}
 
 	public void arraycopy(byte[] in, int start, int len) {
-		final int newcount = count + len;
-
-		if (newcount > buffer.length) {
-			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newcount));
-		}
-
+		final int newCount = count + len;
+		increaseBuffer(newCount);
 		System.arraycopy(in, start, buffer, count, len);
+		count = newCount;
+	}
 
-		count = newcount;
+	private void increaseBuffer(int newCount) {
+		if (newCount > buffer.length) {
+			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
+		}
 	}
 }
