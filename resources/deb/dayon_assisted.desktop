@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Dayon! Assisted
-Version=11.0
+Version=1.0
 Exec=/usr/bin/dayon_assisted
 Comment=Request remote assistance
 Comment[de]=Remotesupport erbitten
