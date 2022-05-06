@@ -415,7 +415,6 @@
                                             <include>**/*</include>
                                             <excludes>
                                                 <exclude>deb/</exclude>
-                                                <exclude>flatpak/</exclude>
                                                 <exclude>snap/</exclude>
                                             </excludes>
                                         </resource>
