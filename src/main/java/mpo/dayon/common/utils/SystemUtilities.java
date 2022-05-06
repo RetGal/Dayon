@@ -256,8 +256,7 @@ public final class SystemUtilities {
     }
 
     public static String getFlatpakBrowserCommand() {
-        String cp = System.getProperty(JAVA_CLASS_PATH);
-        return cp.substring(0, cp.indexOf("jar")) + "browser";
+        return "/app/bin/dayon.browser";
     }
 
     public static boolean isValidPortNumber(String portNumber) {
