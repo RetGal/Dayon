@@ -228,11 +228,7 @@ public abstract class BaseFrame extends JFrame {
         final Action showHelp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                try {
-                    browse(SystemUtilities.getQuickStartURI(frameType));
-                } catch (URISyntaxException ex) {
-                    Log.warn("Help Error!", ex);
-                }
+                browse(SystemUtilities.getQuickStartURI(frameType));
             }
         };
 
@@ -259,10 +255,12 @@ public abstract class BaseFrame extends JFrame {
                 final Desktop desktop = Desktop.getDesktop();
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(uri);
+                } else if (isFlat()) {
+                    new ProcessBuilder(getFlatpakBrowserCommand(), uri.toString()).start();
                 }
             }
         } catch (IOException ex) {
-            Log.warn(ex);
+            Log.warn(ex.getMessage());
         }
     }
 

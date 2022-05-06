@@ -75,6 +75,7 @@
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
 				<exclude name="deb/"/>
+				<exclude name="flatpak/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="license/azul_zulu_license.txt"/>
@@ -89,6 +90,7 @@
 		<copy todir="${dir.ppa}">
 			<fileset dir="${dir.res}">
 				<exclude name="deb/"/>
+				<exclude name="flatpak/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="dayon"/>

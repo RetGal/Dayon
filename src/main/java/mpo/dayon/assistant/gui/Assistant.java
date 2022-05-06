@@ -256,18 +256,19 @@ public class Assistant implements ClipboardOwner {
     private JMenuItem getJMenuItemHelp() {
         final JMenuItem help = new JMenuItem(translate("help"));
         help.addActionListener(ev1 -> {
-            if (isSnapped()) {
-                try {
+            try {
+                if (isSnapped()) {
                     new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(FrameType.ASSISTANT).toString()).start();
-                } catch (URISyntaxException | IOException ex) {
-                    Log.warn("Help Error!", ex);
+                } else if (Desktop.isDesktopSupported()) {
+                    final Desktop desktop = Desktop.getDesktop();
+                    if (desktop.isSupported(Desktop.Action.BROWSE)) {
+                        desktop.browse(getQuickStartURI(FrameType.ASSISTANT));
+                    } else if (isFlat()) {
+                        new ProcessBuilder(getFlatpakBrowserCommand(), getQuickStartURI(FrameType.ASSISTANT).toString()).start();
+                    }
                 }
-            } else if (Desktop.isDesktopSupported()) {
-                try {
-                    Desktop.getDesktop().browse(getQuickStartURI(FrameType.ASSISTANT));
-                } catch (URISyntaxException | IOException ex) {
-                    Log.warn("Help Error!", ex);
-                }
+            } catch (IOException ex) {
+                Log.warn(ex.getMessage());
             }
         });
         return help;

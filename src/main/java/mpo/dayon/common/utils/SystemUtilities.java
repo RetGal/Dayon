@@ -27,13 +27,14 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 public final class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
+    public static final String JAVA_VENDOR = "java.vendor";
     public static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
 
     private SystemUtilities() {
     }
 
-    public static URI getQuickStartURI(FrameType frameType) throws URISyntaxException {
-        return new URI(String.format("http://retgal.github.io/Dayon/%s#%s-setup", translate("quickstart.html"), frameType.getPrefix()));
+    public static URI getQuickStartURI(FrameType frameType) {
+        return URI.create(String.format("http://retgal.github.io/Dayon/%s#%s-setup", translate("quickstart.html"), frameType.getPrefix()));
     }
 
     public static synchronized File getOrCreateAppDir() {
@@ -234,6 +235,10 @@ public final class SystemUtilities {
         return System.getProperty(JAVA_CLASS_PATH).startsWith("/snap/");
     }
 
+    public static boolean isFlat() {
+        return System.getProperty(JAVA_VENDOR).toLowerCase().startsWith("flat");
+    }
+
     public static String getBuildNumber() {
         if (isSnapped()) {
             String classPath = System.getProperty(JAVA_CLASS_PATH);
@@ -248,6 +253,11 @@ public final class SystemUtilities {
     public static String getSnapBrowserCommand() {
         String cp = System.getProperty(JAVA_CLASS_PATH);
         return cp.substring(0, cp.indexOf("jar")) + "bin/dayon.browser";
+    }
+
+    public static String getFlatpakBrowserCommand() {
+        String cp = System.getProperty(JAVA_CLASS_PATH);
+        return cp.substring(0, cp.indexOf("jar")) + "browser";
     }
 
     public static boolean isValidPortNumber(String portNumber) {

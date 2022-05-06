@@ -1,0 +1,4 @@
+#!/bin/sh
+case "$@" in http*://*)
+    xdg-open "$@"
+esac
