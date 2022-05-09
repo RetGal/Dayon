@@ -1,70 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-    <meta name="description" content="Remote assistance made easy!">
-    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="description" content="Remote assistance made easy!" />
+    <meta
+      name="keywords"
+      content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Dayon! - Remote assistance for your family and friends</title>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-<div id="container">
-    <div id="top">
-        <a href="de_support.html"><img src="germany.png" alt="Deutsch"></a> <a href="fr_support.html"><img src="france.png" alt="Français"></a> <a href="zh_support.html"><img src="china.png" alt="简体中文"></a>
-    </div>
-    <div id="menu">
-        <a href="index.html">Home</a> <a href="quickstart.html">Quick Start</a> <a href="download.html">Download</a>
-        <a href="support.html">Support</a> <a href="feedback.html">Feedback</a> <a href="privacy.html">Privacy</a> <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
+    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150" />
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+  </head>
+  <body>
+    <div id="container">
+      <div id="top">
+        <a href="de_support.html">
+          <img src="germany.png" width="32" height="32" alt="Deutsch" />
+        </a>
+        <a href="fr_support.html">
+          <img src="france.png" width="32" height="32" alt="Français" />
+        </a>
+        <a href="zh_support.html">
+          <img src="china.png" width="32" height="32" alt="简体中文" />
+        </a>
+      </div>
+      <div id="menu">
+        <a href="index.html">Home</a>
+        <a href="quickstart.html">Quick Start</a>
+        <a href="download.html">Download</a>
+        <a href="support.html">Support</a>
+        <a href="feedback.html">Feedback</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+      </div>
+      <div id="content">
         <h2>Support</h2>
         <p>
-            Post your question or open a new issue on <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+          Post your question or open a new issue on
+          <a href="https://github.com/retgal/dayon/issues">GitHub</a>
+          .
+        </p>
+
         <h3>Known Limitations</h3>
         <ul>
-            <li>There's currently no way to send certain key combinations to the assisted computer (e.g., <code>Ctrl-Alt-Del</code>).
-            <li>Ideally, the computers of the assistant and the assisted use both the same input language.
-                Using different keyboard layouts can lead to problems, especially when entering special characters.
-                The keyboard layout in use can be seen in the title bar of the respective application.
+          <li>
+            There's currently no way to send certain key combinations to the
+            assisted computer (e.g.,
+            <code>Ctrl-Alt-Del</code>
+            ).
+          </li>
+          <li>
+            Ideally, the computers of the assistant and the assisted use both
+            the same input language. Using different keyboard layouts can lead
+            to problems, especially when entering special characters. The
+            keyboard layout in use can be seen in the title bar of the
+            respective application.
+          </li>
         </ul>
+
         <h3>Dayon! Home Directory</h3>
         <p>
-            The directory <code>.dayon</code> is created within the default home directory of the logged-in user or within
-            the directory referenced by the JAVA property <code>user.home</code> and contains the saved user preferences
-            and default log file(s).
+          The directory
+          <code>.dayon</code>
+          is created within the default home directory of the logged-in user or
+          within the directory referenced by the JAVA property
+          <code>user.home</code>
+          and contains the saved user preferences and default log file(s).
+        </p>
+
         <h3>CRC Checksum</h3>
         <p>
-            On the assisted side, the screen is divided into different areas called <em>tiles</em>. Only tiles that have
-            changed from the previous capture are sent over the network to the assistant side. To determine if a tile is
-            different I'm currently computing a
-            CRC code (i.e., a unique integer value representing the pixels of the tile) that is not perfect for the sake
-            of speed. So it might happen that some <em>changed</em> tiles are not sent to the assistant.
+          On the assisted side, the screen is divided into different areas
+          called
+          <em>tiles</em>
+          . Only tiles that have changed from the previous capture are sent over
+          the network to the assistant side. To determine if a tile is different
+          I'm currently computing a CRC code (i.e., a unique integer value
+          representing the pixels of the tile) that is not perfect for the sake
+          of speed. So it might happen that some
+          <em>changed</em>
+          tiles are not sent to the assistant.
+        </p>
+
         <p>
-            Until now I've detected that issue during strong testing for very few pixels. Visually, I've not noticed
-            anything serious. But in case things are going mad you can then restart the assisted or before try the
-            <code>reset</code> action (<strong>trash bin icon</strong>) that should clear every cached data and resend a full
-            screen capture from scratch.
+          Until now I've detected that issue during strong testing for very few
+          pixels. Visually, I've not noticed anything serious. But in case
+          things are going mad you can then restart the assisted or before try
+          the
+          <code>reset</code>
+          action (
+          <strong>trash bin icon</strong>
+          ) that should clear every cached data and resend a full screen capture
+          from scratch.
+        </p>
+
         <h3>Statistics Counters</h3>
-        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics">
-        <p>The status bar of the assistant frame is displaying a set of counters.
+        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics" />
+        <p>
+          The status bar of the assistant frame is displaying a set of counters.
+        </p>
         <ol>
-            <li>Network Bandwidth
-            <li>Compression Ratio: how many times the initial capture (diff only) has been compressed
-            <li>Number of Tiles: the number of tile being transmitted over the network as well as the cache hits.
-            <li>Number of Skipped Capture: the number of screen captures that have been skipped because of a too high
-                rate (i.e., low tick value) for the CPU. To minimize that number you have to slow down the capture rate
-                using a bigger tick value.
-            <li>Number of Merged Capture: the number of screen captures that have been merged before being transmitted.
-                This is due to a capture rate too high for the current compression method. To minimize that number you
-                have to slow down the capture rate and/or change the compression method using a faster one.
-            <li>Memory usage
-            <li>Duration of the active or the last support session
+          <li>Network Bandwidth</li>
+          <li>
+            Compression Ratio: how many times the initial capture (diff only)
+            has been compressed
+          </li>
+          <li>
+            Number of Tiles: the number of tile being transmitted over the
+            network as well as the cache hits.
+          </li>
+          <li>
+            Number of Skipped Capture: the number of screen captures that have
+            been skipped because of a too high rate (i.e., low tick value) for
+            the CPU. To minimize that number you have to slow down the capture
+            rate using a bigger tick value.
+          </li>
+
+          <li>
+            Number of Merged Capture: the number of screen captures that have
+            been merged before being transmitted. This is due to a capture rate
+            too high for the current compression method. To minimize that number
+            you have to slow down the capture rate and/or change the compression
+            method using a faster one.
+          </li>
+
+          <li>Memory usage</li>
+          <li>Duration of the active or the last support session</li>
         </ol>
+      </div>
+      <div id="footer"></div>
     </div>
-    <div id="footer"></div>
-</div>
-</body>
+  </body>
 </html>
