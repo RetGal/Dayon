@@ -38,9 +38,13 @@ The app is available directly from the <a href="https://www.microsoft.com/store/
 
 <a href='//www.microsoft.com/store/apps/9pbm5kw0c790?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get_L.png' alt='English badge' width="127" height="52"/></a>
 
-and as snap:
+as snap:
 
 [![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
+
+as flatpak:
+
+[Flatpak](https://flathub.org/apps/details/io.github.retgal.Dayon)
 
 or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 
