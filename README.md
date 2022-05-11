@@ -44,7 +44,7 @@ as snap:
 
 as flatpak:
 
-[Flatpak](https://flathub.org/apps/details/io.github.retgal.Dayon)
+[Flathub](https://flathub.org/apps/details/io.github.retgal.Dayon)
 
 or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 
