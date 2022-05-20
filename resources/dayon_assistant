@@ -4,7 +4,7 @@ realpath() {
 }
 ABS_PATH=$(dirname $(realpath "$0"))
 if [ ! -f "$ABS_PATH/dayon" ]; then
-  "$ABS_PATH/dayon/dayon" mpo.dayon.assistant.AssistantRunner "$1"
+  "$ABS_PATH/dayon/dayon" mpo.dayon.assistant.AssistantRunner "$1" "$2"
 else
-  "$ABS_PATH/dayon" mpo.dayon.assistant.AssistantRunner "$1"
+  "$ABS_PATH/dayon" mpo.dayon.assistant.AssistantRunner "$1" "$2"
 fi

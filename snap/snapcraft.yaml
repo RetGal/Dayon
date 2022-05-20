@@ -19,7 +19,7 @@ apps:
   assisted:
     extensions:
       [gnome-3-28]
-    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3
+    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3 $4
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
       [home, network, network-bind, desktop]
@@ -27,7 +27,7 @@ apps:
   assistant:
     extensions:
       [gnome-3-28]
-    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1
+    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1 $2
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
       [home, network, network-bind, desktop]
