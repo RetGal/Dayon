@@ -53,9 +53,9 @@ parts:
    
     override-build: |
       snapcraftctl build
-      cp target/dayon.browser ../install/bin/
-      cp target/dayon.launcher ../install/bin/
-      cp target/dayon.png ../install/bin/
+      cp target/dayon.browser $SNAPCRAFT_PART_INSTALL/bin/
+      cp target/dayon.launcher $SNAPCRAFT_PART_INSTALL/bin/
+      cp target/dayon.png $SNAPCRAFT_PART_INSTALL/bin/
       
     override-pull: |
       snapcraftctl pull
