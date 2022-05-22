@@ -63,6 +63,10 @@ Please refer to the [English](https://retgal.github.io/Dayon/index.html) or [Fre
 
 ![Assistant in action](/docs/dayon.screen.png?raw=true "Assistant connected")
 
+## Connection establishment
+
+![Connection establishment](/docs/dayon.connection.diagram.svg)
+
 ## Trivia
 
 Dayon! means "Come in!" in Visayas - a local Philippine dialect. 
