@@ -68,6 +68,7 @@ pipeline {
             echo 'Changed'
         }
         always {
+            build job: 'Starting deployment', parameters: [string(filename: 'Jenkinsfile_after')]
             echo 'Done'
             deleteDir() // clean up our workspace
         }
