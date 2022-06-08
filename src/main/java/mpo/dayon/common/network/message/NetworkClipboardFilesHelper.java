@@ -30,43 +30,43 @@ public class NetworkClipboardFilesHelper {
         this.files = Collections.unmodifiableList(files);
     }
 
-    public List<FileMetaData> getFileMetadatas() {
+    List<FileMetaData> getFileMetadatas() {
         return Collections.unmodifiableList(fileMetadatas);
     }
 
-    public void setFileMetadatas(List<FileMetaData> fileMetadatas) {
+    void setFileMetadatas(List<FileMetaData> fileMetadatas) {
        this.fileMetadatas = Collections.unmodifiableList(fileMetadatas);
     }
 
-    public String getTransferId() {
+    String getTransferId() {
         return transferId;
     }
 
-    public void setTransferId(String transferId) {
+    void setTransferId(String transferId) {
         this.transferId = transferId;
     }
 
-    public int getPosition() {
+    int getPosition() {
         return position;
     }
 
-    public void setPosition(int position) {
+    void setPosition(int position) {
         this.position = position;
     }
 
-    public long getFileBytesLeft() {
+    long getFileBytesLeft() {
         return fileBytesLeft;
     }
 
-    public void setFileBytesLeft(long fileBytesLeft) {
+    void setFileBytesLeft(long fileBytesLeft) {
         this.fileBytesLeft = fileBytesLeft;
     }
 
-    public long getTotalFileBytesLeft() {
+    long getTotalFileBytesLeft() {
         return totalFileBytesLeft;
     }
 
-    public void setTotalFileBytesLeft(long totalFileBytesLeft) {
+    void setTotalFileBytesLeft(long totalFileBytesLeft) {
         this.totalFileBytesLeft = totalFileBytesLeft;
     }
 

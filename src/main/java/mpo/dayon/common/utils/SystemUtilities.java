@@ -299,11 +299,11 @@ public final class SystemUtilities {
     @java.lang.SuppressWarnings("squid:S5998") // matcher input is max 256 chars long
     private static boolean isValidHostname(String serverName) {
         return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
-                serverName.matches("^([a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9])(\\.([a-zA-Z0-9][a-zA-Z0-9\\-]{0,61}[a-zA-Z0-9]))*$");
+                serverName.matches("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d])(\\.([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]))*$");
     }
 
     private static boolean isLookingLikeAnIpV4(String serverName) {
-        return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("([0-9]{1,3})"));
+        return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("(\\d{1,3})"));
     }
 
     public static boolean isValidToken(String token) {

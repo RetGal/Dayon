@@ -79,7 +79,7 @@ public class ConnectionSettingsDialog {
     private static class Cleanser extends MouseAdapter {
         private final JTextField textField;
 
-        public Cleanser(JTextField textField) {
+        private Cleanser(JTextField textField) {
             this.textField = textField;
         }
 

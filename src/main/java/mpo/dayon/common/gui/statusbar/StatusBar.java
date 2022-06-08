@@ -76,7 +76,7 @@ public class StatusBar extends JPanel {
 	private static class MemoryCounter extends TimerTask {
 		private final JLabel lbl;
 
-		public MemoryCounter(JLabel lbl) {
+		private MemoryCounter(JLabel lbl) {
 			this.lbl = lbl;
 		}
 

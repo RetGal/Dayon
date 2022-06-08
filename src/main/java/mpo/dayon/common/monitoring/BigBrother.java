@@ -31,7 +31,7 @@ public final class BigBrother {
     private static class SecondsCounter extends TimerTask {
         private final Counter<?> counter;
 
-        public SecondsCounter(Counter<?> counter) {
+        private SecondsCounter(Counter<?> counter) {
             this.counter = counter;
         }
 
