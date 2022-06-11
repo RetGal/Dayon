@@ -1,6 +1,5 @@
 package mpo.dayon.common.utils;
 
-import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.log.Log;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
-import static mpo.dayon.common.babylon.Babylon.translate;
 
 public final class SystemUtilities {
 
@@ -33,8 +31,8 @@ public final class SystemUtilities {
     private SystemUtilities() {
     }
 
-    public static URI getQuickStartURI(FrameType frameType) {
-        return URI.create(String.format("http://retgal.github.io/Dayon/%s#%s-setup", translate("quickstart.html"), frameType.getPrefix()));
+    public static URI getQuickStartURI(String quickstartPage,String section) {
+        return URI.create(String.format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
     }
 
     public static synchronized File getOrCreateAppDir() {
@@ -108,18 +106,6 @@ public final class SystemUtilities {
         } catch (IOException e) {
             Log.warn(String.format("Could not clean %s", folder));
         }
-    }
-
-    public static String getApplicationName() {
-        try {
-            return SystemUtilities.getStringProperty(null, "dayon.application.name");
-        } catch (InvalidParameterException ex) {
-            throw new InvalidParameterException("Missing application name!");
-        }
-    }
-
-    public static void setApplicationName(String name) {
-        System.setProperty("dayon.application.name", name);
     }
 
     private static String getStringProperty(Properties props, String name) {

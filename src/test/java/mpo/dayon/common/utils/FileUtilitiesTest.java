@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.Collections;
 
 import static java.lang.String.format;
-import static mpo.dayon.common.utils.FileUtilities.separatorsToSystem;
-import static mpo.dayon.common.utils.FileUtilities.calculateTotalFileSize;
+import static mpo.dayon.common.network.FileUtilities.separatorsToSystem;
+import static mpo.dayon.common.network.FileUtilities.calculateTotalFileSize;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.condition.OS.LINUX;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;

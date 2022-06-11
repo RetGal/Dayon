@@ -1,4 +1,4 @@
-package mpo.dayon.common.utils;
+package mpo.dayon.common.network;
 
 import mpo.dayon.common.log.Log;
 

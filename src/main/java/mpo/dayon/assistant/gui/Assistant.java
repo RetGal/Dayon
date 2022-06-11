@@ -13,13 +13,12 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.gui.common.DialogFactory;
-import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import mpo.dayon.common.utils.FileUtilities;
+import mpo.dayon.common.network.FileUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -50,6 +49,8 @@ public class Assistant implements ClipboardOwner {
 
     private final static String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
     private final static String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
+    private final static String QUICKSTART_PAGE = translate("quickstart.html");
+    private final static String APP = "assistant";
 
     private final NetworkAssistantEngine network;
 
@@ -257,13 +258,13 @@ public class Assistant implements ClipboardOwner {
         help.addActionListener(ev1 -> {
             try {
                 if (isSnapped()) {
-                    new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(FrameType.ASSISTANT).toString()).start();
+                    new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(QUICKSTART_PAGE, APP).toString()).start();
                 } else if (Desktop.isDesktopSupported()) {
                     final Desktop desktop = Desktop.getDesktop();
                     if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                        desktop.browse(getQuickStartURI(FrameType.ASSISTANT));
+                        desktop.browse(getQuickStartURI(QUICKSTART_PAGE, APP));
                     } else if (isFlat()) {
-                        new ProcessBuilder(getFlatpakBrowserCommand(), getQuickStartURI(FrameType.ASSISTANT).toString()).start();
+                        new ProcessBuilder(getFlatpakBrowserCommand(), getQuickStartURI(QUICKSTART_PAGE, APP).toString()).start();
                     }
                 }
             } catch (IOException ex) {

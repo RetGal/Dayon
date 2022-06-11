@@ -3,7 +3,6 @@ package mpo.dayon.common.network;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkClipboardFilesHelper;
 import mpo.dayon.common.security.CustomTrustManager;
-import mpo.dayon.common.utils.TransferableFiles;
 
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;

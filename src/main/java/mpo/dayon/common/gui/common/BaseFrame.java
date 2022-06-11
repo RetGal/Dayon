@@ -228,7 +228,7 @@ public abstract class BaseFrame extends JFrame {
         final Action showHelp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                browse(SystemUtilities.getQuickStartURI(frameType));
+                browse(SystemUtilities.getQuickStartURI(translate("quickstart.html"), frameType.getPrefix()));
             }
         };
 

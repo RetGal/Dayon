@@ -19,7 +19,7 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
-import mpo.dayon.common.utils.FileUtilities;
+import mpo.dayon.common.network.FileUtilities;
 import mpo.dayon.common.utils.SystemUtilities;
 
 import javax.swing.*;

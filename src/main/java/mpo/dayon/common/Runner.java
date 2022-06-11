@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 public interface Runner {
 
     static void logAppInfo(String appName) {
-        SystemUtilities.setApplicationName(appName);
+        System.setProperty("dayon.application.name", appName);
         Log.info("============================================================================================");
         for (String line : SystemUtilities.getSystemProperties()) {
             Log.info(line);

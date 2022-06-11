@@ -1,7 +1,7 @@
 package mpo.dayon.common.network.message;
 
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.FileUtilities;
+import mpo.dayon.common.network.FileUtilities;
 
 import java.io.*;
 import java.nio.file.Files;

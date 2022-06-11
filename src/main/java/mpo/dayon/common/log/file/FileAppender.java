@@ -12,7 +12,6 @@ import java.io.StringWriter;
 import mpo.dayon.common.log.LogAppender;
 import mpo.dayon.common.log.LogLevel;
 import mpo.dayon.common.log.console.ConsoleAppender;
-import mpo.dayon.common.utils.SystemUtilities;
 
 public class FileAppender extends LogAppender {
 	private static final long MAX_FILE_SIZE = 1024 * 1024L;
@@ -71,9 +70,7 @@ public class FileAppender extends LogAppender {
 	}
 
 	private void setupFile(String filename, boolean append) throws FileNotFoundException {
-		final FileOutputStream ostream = new FileOutputStream(filename, append);
-		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(ostream)));
-
+		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, append))));
 		final File file = new File(filename);
 		count = file.length();
 	}
@@ -95,7 +92,7 @@ public class FileAppender extends LogAppender {
 
 		// Rename fileName to fileName.1
 		if (renameSucceeded) {
-			SystemUtilities.safeClose(writer);
+			writer.close();
 			renameSucceeded = new File(filename).renameTo(new File(filename + "." + 1));
 
 			if (!renameSucceeded) {

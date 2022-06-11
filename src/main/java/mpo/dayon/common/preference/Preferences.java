@@ -54,7 +54,7 @@ public final class Preferences {
             return preferences;
         }
 
-        final String name = SystemUtilities.getApplicationName();
+        final String name = System.getProperty("dayon.application.name");
 
         try {
             final Preferences xpreferences;

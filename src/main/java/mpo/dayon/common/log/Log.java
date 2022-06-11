@@ -21,12 +21,12 @@ public final class Log {
     }
 
     static {
-        final String mode = SystemUtilities.getStringProperty(null, "dayon.log", "console");
+        final String mode = System.getProperty("dayon.log", "console");
         out = new ConsoleAppender();
 
         if ("file".equals(mode)) {
             try {
-                final String filename = SystemUtilities.getApplicationName() + ".log";
+                final String filename = System.getProperty("dayon.application.name") + ".log";
                 final File file = SystemUtilities.getOrCreateAppFile(filename);
 
                 if (file == null) {
