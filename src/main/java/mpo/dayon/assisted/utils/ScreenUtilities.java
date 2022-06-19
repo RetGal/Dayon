@@ -18,7 +18,7 @@ public final class ScreenUtilities {
 
     private static final Rectangle DEFAULT_SIZE;
 
-    private static final Robot robot;
+    private static final Robot ROBOT;
 
     private static Rectangle sharedScreenSize;
 
@@ -39,19 +39,17 @@ public final class ScreenUtilities {
         rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
         gray = new byte[rgb.length];
         try {
-            robot = new Robot();
+            ROBOT = new Robot();
         } catch (AWTException ex) {
             throw new IllegalStateException("Could not initialize the AWT robot!", ex);
         }
     }
 
     public static synchronized void setShareAllScreens(boolean doShareAllScreens) {
-//        if (shareAllScreens != doShareAllScreens) {
-            shareAllScreens = doShareAllScreens;
-            sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
-            rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-            gray = new byte[rgb.length];
-//        }
+        shareAllScreens = doShareAllScreens;
+        sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
+        rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
+        gray = new byte[rgb.length];
     }
 
     public static Rectangle getSharedScreenSize() {
@@ -82,7 +80,7 @@ public final class ScreenUtilities {
     }
 
     private static int[] captureRGB(Rectangle bounds) {
-        BufferedImage image = robot.createScreenCapture(bounds);
+        BufferedImage image = ROBOT.createScreenCapture(bounds);
         int imageHeight = image.getHeight();
         int imageWidth = image.getWidth();
         if (imageHeight != bounds.height || imageWidth != bounds.width) {

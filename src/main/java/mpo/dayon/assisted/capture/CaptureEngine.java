@@ -89,7 +89,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     private void mainLoop() throws InterruptedException {
         Gray8Bits quantization = null;
         int tick = -1;
-        long start = -1;
+        long start = -1L;
         int captureId = 0;
         int captureCount = 0;
         int skipped = 0;

@@ -201,7 +201,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         stop(configuration.getServerName());
     }
 
-    void stop(String serverName) {
+    private void stop(String serverName) {
         Log.info(format("Assisted stop [%s]", serverName));
         if (networkEngine != null && networkEngine.getConfiguration().getServerName().equals(serverName)) {
             networkEngine.cancel();
@@ -337,7 +337,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         KeyboardErrorHandler.warn(String.valueOf(message));
     }
 
-    public void onReady() {
+    void onReady() {
         frame.onReady();
     }
 

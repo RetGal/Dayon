@@ -67,7 +67,7 @@ public class MouseEngine {
         int delayedCaptureCount = 0;
 
         while (true) {
-            final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * (long) 50;
+            final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * 50L;
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
 
             if (capturePause < 0) {
