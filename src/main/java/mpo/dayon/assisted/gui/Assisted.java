@@ -52,7 +52,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
-    public void configure() {
+    public void setup() {
         final String lnf = SystemUtilities.getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
@@ -142,34 +142,38 @@ public class Assisted implements Subscriber, ClipboardOwner {
         });
 
         if (ok) {
-            final NetworkAssistedEngineConfiguration newConfiguration;
-            String token = connectionSettingsDialog.getToken().trim();
-            if (!token.isEmpty()) {
-                final Cursor cursor = frame.getCursor();
-                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                String connectionParams = null;
-                try {
-                    connectionParams = SystemUtilities.resolveToken(token);
-                } catch (IOException ie){
-                    Log.warn("Could not resolve token " + token);
-                }
-                Log.debug("Connection params " + connectionParams);
-                newConfiguration = extractConfiguration(connectionParams);
-                frame.setCursor(cursor);
-            } else {
-                newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
-                        Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
-            }
-            if (newConfiguration != null && !newConfiguration.equals(configuration)) {
-                configuration = newConfiguration;
-                configuration.persist();
-            }
-            Log.info("Configuration " + configuration);
+            applyConnectionSettings(connectionSettingsDialog);
         } else {
             // cancel
             frame.onReady();
         }
         return ok;
+    }
+
+    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
+        final NetworkAssistedEngineConfiguration newConfiguration;
+        String token = connectionSettingsDialog.getToken().trim();
+        if (!token.isEmpty()) {
+            final Cursor cursor = frame.getCursor();
+            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            String connectionParams = null;
+            try {
+                connectionParams = SystemUtilities.resolveToken(token);
+            } catch (IOException ie){
+                Log.warn("Could not resolve token " + token);
+            }
+            Log.debug("Connection params " + connectionParams);
+            newConfiguration = extractConfiguration(connectionParams);
+            frame.setCursor(cursor);
+        } else {
+            newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
+                    Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
+        }
+        if (newConfiguration != null && !newConfiguration.equals(configuration)) {
+            configuration = newConfiguration;
+            configuration.persist();
+        }
+        Log.info("Configuration " + configuration);
     }
 
     private Action createToggleMultiScreenAction() {
