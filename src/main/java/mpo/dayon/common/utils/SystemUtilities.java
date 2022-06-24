@@ -40,17 +40,17 @@ public final class SystemUtilities {
     public static File getOrCreateAppFile(String name) throws IOException {
         final File file = new File(getProperty(DAYON_HOME), name);
         if (file.exists() && file.isDirectory()) {
-            throw new IOException(format("Error creating %s%s%s", getProperty("dayon.home"), File.separator, name));
+            throw new IOException(format("Error creating %s%s%s", getProperty(DAYON_HOME), File.separator, name));
         }
         return file;
     }
 
     private static File getOrCreateTransferDir() throws IOException {
-        final File transferDir = new File(getProperty("dayon.home"), ".transfer");
+        final File transferDir = new File(getProperty(DAYON_HOME), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else if (!transferDir.mkdir()) {
-            throw new IOException(format("Error creating %s%s%s", getProperty("dayon.home"), File.separator, ".transfer"));
+            throw new IOException(format("Error creating %s%s%s", getProperty(DAYON_HOME), File.separator, ".transfer"));
         }
         return transferDir;
     }
