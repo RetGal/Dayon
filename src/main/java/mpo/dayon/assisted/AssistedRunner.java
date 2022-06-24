@@ -53,12 +53,12 @@ class AssistedRunner implements Runner {
             final File presetFile = new File(path, fileName);
             if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
                 final Map<String, String> content = parseFileContent(presetFile);
-                if (content != null) {
+                if (!content.isEmpty()) {
                     return content;
                 }
             }
         }
-        return Collections.EMPTY_MAP;
+        return Collections.emptyMap();
     }
 
     private static Map<String, String> parseFileContent(File presetFile) {
@@ -71,7 +71,7 @@ class AssistedRunner implements Runner {
         } catch (IOException e) {
             Log.warn(e.getMessage());
         }
-        return null;
+        return Collections.emptyMap();
     }
 
     private static boolean isAutoConnect(Map<String, String> config) {

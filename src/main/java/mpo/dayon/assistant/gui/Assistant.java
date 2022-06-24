@@ -47,10 +47,10 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    private final static String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
-    private final static String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
-    private final static String QUICKSTART_PAGE = translate("quickstart.html");
-    private final static String APP = "assistant";
+    private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
+    private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
+    private static final String QUICKSTART_PAGE = translate("quickstart.html");
+    private static final String APP = "assistant";
 
     private final NetworkAssistantEngine network;
 
