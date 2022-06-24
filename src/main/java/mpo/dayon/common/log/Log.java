@@ -5,7 +5,7 @@ import mpo.dayon.common.log.file.FileAppender;
 import mpo.dayon.common.utils.SystemUtilities;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Minimal logging interface - minimize the JAR size on the assisted side - at
@@ -28,16 +28,12 @@ public final class Log {
             try {
                 final String filename = System.getProperty("dayon.application.name") + ".log";
                 final File file = SystemUtilities.getOrCreateAppFile(filename);
-
-                if (file == null) {
-                    throw new FileNotFoundException(filename);
-                }
                 // console ...
                 info("Log file : " + file.getAbsolutePath());
                 out = new FileAppender(file.getAbsolutePath());
                 // file ...
                 info("Log file : " + file.getAbsolutePath());
-            } catch (FileNotFoundException ex) {
+            } catch (IOException ex) {
                 // console ...
                 warn("Log file setup error (fallback to console)!", ex);
             }

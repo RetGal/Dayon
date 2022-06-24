@@ -147,7 +147,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
             if (!token.isEmpty()) {
                 final Cursor cursor = frame.getCursor();
                 frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                String connectionParams = SystemUtilities.resolveToken(token);
+                String connectionParams = null;
+                try {
+                    connectionParams = SystemUtilities.resolveToken(token);
+                } catch (IOException ie){
+                    Log.warn("Could not resolve token " + token);
+                }
                 Log.debug("Connection params " + connectionParams);
                 newConfiguration = extractConfiguration(connectionParams);
                 frame.setCursor(cursor);

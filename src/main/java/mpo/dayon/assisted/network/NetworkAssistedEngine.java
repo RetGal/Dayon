@@ -246,10 +246,9 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void fileReceivingLoop() {
 
-        NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
-        String tmpDir = getTempDir();
-
         try {
+            String tmpDir = getTempDir();
+            NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
             //noinspection InfiniteLoopStatement
             while (true) {
                 NetworkMessageType type;

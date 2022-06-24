@@ -1,7 +1,5 @@
 package mpo.dayon.common.utils;
 
-import mpo.dayon.common.log.Log;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
@@ -21,11 +19,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 
 public final class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
-    
     public static final String FLATPACK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
@@ -34,50 +33,45 @@ public final class SystemUtilities {
     }
 
     public static URI getQuickStartURI(String quickstartPage,String section) {
-        return URI.create(String.format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
+        return URI.create(format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
     }
 
-    public static File getOrCreateAppFile(String name) {
-        final File file = new File(System.getProperty("dayon.home"), name);
+    public static File getOrCreateAppFile(String name) throws IOException {
+        final File file = new File(getProperty("dayon.home"), name);
         if (file.exists() && file.isDirectory()) {
-            Log.warn("Could not create the application file [" + name + "]!");
-            return null;
+            throw new IOException(format("Error creating %s%s%s", getProperty("dayon.home"), File.separator, name));
         }
         return file;
     }
 
-    private static File getOrCreateTransferDir() {
-        final File transferDir = new File(System.getProperty("dayon.home"), ".transfer");
+    private static File getOrCreateTransferDir() throws IOException {
+        final File transferDir = new File(getProperty("dayon.home"), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else if (!transferDir.mkdir()) {
-            Log.warn("Could not create the transfer directory [" + transferDir + "]!");
+            throw new IOException(format("Error creating %s%s%s", getProperty("dayon.home"), File.separator, ".transfer"));
         }
         return transferDir;
     }
 
-    public static String getTempDir() {
-        return isSnapped() ? getOrCreateTransferDir().getPath() : System.getProperty("java.io.tmpdir");
+    public static String getTempDir() throws IOException {
+        return isSnapped() ? getOrCreateTransferDir().getPath() : getProperty("java.io.tmpdir");
     }
 
     public static String getJarDir() {
-        String jarPath = "";
         try {
-            jarPath = Paths.get(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
+            return Paths.get(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
         } catch (URISyntaxException e) {
-            Log.warn(e.getMessage());
+            return "";
         }
-        return jarPath;
     }
 
-    private static void cleanDir(File folder) {
+    private static void cleanDir(File folder) throws IOException {
         try (Stream<Path> walk = Files.walk(folder.toPath())) {
             walk.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
                     .filter(item -> !folder.getPath().equals(item.getPath()))
                     .forEach(File::delete);
-        } catch (IOException e) {
-            Log.warn(String.format("Could not clean %s", folder));
         }
     }
 
@@ -91,7 +85,7 @@ public final class SystemUtilities {
 
     public static String getStringProperty(Properties props, String name, String defaultValue) {
         if (props == null) {
-            return System.getProperty(name);
+            return getProperty(name);
         }
         return props.getProperty(name, defaultValue);
     }
@@ -138,7 +132,7 @@ public final class SystemUtilities {
         Collections.sort(propNames);
 
         for (String propName : propNames) {
-            String propValue = System.getProperty(propName);
+            String propValue = getProperty(propName);
             // I want to display the actual content of the line separator...
             if (propName.equals("line.separator")) {
                 StringBuilder hex = new StringBuilder();
@@ -148,13 +142,13 @@ public final class SystemUtilities {
                 }
                 propValue = hex.toString();
             }
-            props.add(String.format(format, propName, propValue));
+            props.add(format(format, propName, propValue));
         }
         return props;
     }
 
     public static String getSystemPropertiesEx() {
-        return getSystemProperties().stream().map(line -> line + System.getProperty("line.separator")).collect(Collectors.joining());
+        return getSystemProperties().stream().map(line -> line + getProperty("line.separator")).collect(Collectors.joining());
     }
 
     public static String getRamInfo() {
@@ -165,11 +159,10 @@ public final class SystemUtilities {
 
     public static void safeClose(Closeable... closeables) {
         Arrays.stream(closeables).filter(Objects::nonNull).forEachOrdered(open -> {
-            Log.debug(open.getClass().getSimpleName() + " closing");
             try {
                 open.close();
             } catch (IOException ignored) {
-                Log.debug(open.getClass().getSimpleName() + " closing failed");
+                // ignored
             }
         });
     }
@@ -191,16 +184,16 @@ public final class SystemUtilities {
     }
 
     public static boolean isSnapped() {
-        return System.getProperty(JAVA_CLASS_PATH).startsWith("/snap/");
+        return getProperty(JAVA_CLASS_PATH).startsWith("/snap/");
     }
 
     public static boolean isFlat() {
-        return System.getProperty(JAVA_VENDOR).toLowerCase().startsWith("flat");
+        return getProperty(JAVA_VENDOR).toLowerCase().startsWith("flat");
     }
 
     public static String getBuildNumber() {
         if (isSnapped()) {
-            String classPath = System.getProperty(JAVA_CLASS_PATH);
+            String classPath = getProperty(JAVA_CLASS_PATH);
             return classPath.substring(classPath.indexOf("dayon") + 6, classPath.lastIndexOf("/jar"));
         }
         return "";
@@ -210,7 +203,7 @@ public final class SystemUtilities {
      * Computes the absolute path to dayon.browser
      */
     public static String getSnapBrowserCommand() {
-        String cp = System.getProperty(JAVA_CLASS_PATH);
+        String cp = getProperty(JAVA_CLASS_PATH);
         return cp.substring(0, cp.indexOf("jar")) + "bin/dayon.browser";
     }
 
@@ -285,22 +278,13 @@ public final class SystemUtilities {
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
-    public static String resolveToken(String token) {
-        HttpsURLConnection conn = null;
-        try {
-            URL url = new URL(String.format(TOKEN_SERVER_URL, token));
-            conn = (HttpsURLConnection) url.openConnection();
-            conn.setInstanceFollowRedirects(false);
-            conn.setReadTimeout(3000);
-            return new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))
-                    .readLine().trim();
-        } catch (IOException e) {
-            Log.error("IOException", e);
-        } finally {
-            if (conn != null) {
-                conn.disconnect();
-            }
-        }
-        return null;
+    public static String resolveToken(String token) throws IOException {
+        URL url = new URL(format(TOKEN_SERVER_URL, token));
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        conn.setInstanceFollowRedirects(false);
+        conn.setReadTimeout(3000);
+        conn.disconnect();
+        return new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))
+                .readLine().trim();
     }
 }

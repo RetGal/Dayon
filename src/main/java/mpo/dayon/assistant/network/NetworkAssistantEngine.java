@@ -209,7 +209,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
             String tmpDir = getTempDir();
-
             NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
             //noinspection InfiniteLoopStatement

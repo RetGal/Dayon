@@ -68,7 +68,7 @@ public final class Preferences {
                 }
                 xpreferences = new Preferences(file);
             } else {
-                Log.info("Preferences [null]");
+                Log.warn("Preferences (missing) [" + name + ".properties]");
                 xpreferences = NULL;
             }
             setupPersister(xpreferences);
