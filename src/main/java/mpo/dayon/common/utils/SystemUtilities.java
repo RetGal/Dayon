@@ -28,6 +28,7 @@ public final class SystemUtilities {
     public static final String FLATPACK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
+    private static final String DAYON_HOME = "dayon.home";
 
     private SystemUtilities() {
     }
@@ -37,7 +38,7 @@ public final class SystemUtilities {
     }
 
     public static File getOrCreateAppFile(String name) throws IOException {
-        final File file = new File(getProperty("dayon.home"), name);
+        final File file = new File(getProperty(DAYON_HOME), name);
         if (file.exists() && file.isDirectory()) {
             throw new IOException(format("Error creating %s%s%s", getProperty("dayon.home"), File.separator, name));
         }
