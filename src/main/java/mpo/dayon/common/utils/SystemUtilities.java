@@ -260,19 +260,14 @@ public final class SystemUtilities {
             if (token.trim().isEmpty() || !token.substring(token.length()-1).equals(checksum(token.substring(0, token.length()-1)))) {
                 return false;
             }
-        } catch (NumberFormatException ex) {
+        } catch (NumberFormatException | NoSuchAlgorithmException ex) {
             return false;
         }
         return true;
     }
 
-    public static String checksum(String input) {
-        MessageDigest objSHA = null;
-        try {
-            objSHA = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
+    public static String checksum(String input) throws NoSuchAlgorithmException {
+        MessageDigest objSHA = MessageDigest.getInstance("SHA-1");
         byte[] bytSHA = objSHA != null ? objSHA.digest(input.getBytes()) : new byte[0];
         BigInteger intNumber = new BigInteger(1, bytSHA);
         String hash = intNumber.toString(16);

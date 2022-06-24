@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.security.NoSuchAlgorithmException;
+
 class SystemUtilitiesTest {
 	
 	@ParameterizedTest
@@ -60,7 +62,7 @@ class SystemUtilitiesTest {
 	}
 
 	@Test
-	void checksumShouldReturnComputedChecksum() {
+	void checksumShouldReturnComputedChecksum() throws NoSuchAlgorithmException {
 		// given
 		String base33 = "1CHECK";
 		// when, then
