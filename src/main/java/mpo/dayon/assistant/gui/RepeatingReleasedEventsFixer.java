@@ -75,7 +75,7 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
 
     private final Map<Integer, ReleasedAction> _map = new HashMap<>();
 
-    private static volatile RepeatingReleasedEventsFixer instance;
+    private static RepeatingReleasedEventsFixer instance;
 
     private RepeatingReleasedEventsFixer() {
         // singleton
@@ -85,8 +85,9 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
         if (instance == null) {
             synchronized (RepeatingReleasedEventsFixer.class) {
                 if (instance == null) {
-                    instance = new RepeatingReleasedEventsFixer();
-                    Toolkit.getDefaultToolkit().addAWTEventListener(instance, AWTEvent.KEY_EVENT_MASK);
+                    final RepeatingReleasedEventsFixer fixer = new RepeatingReleasedEventsFixer();
+                    Toolkit.getDefaultToolkit().addAWTEventListener(fixer, AWTEvent.KEY_EVENT_MASK);
+                    instance = fixer;
                 }
             }
         }
