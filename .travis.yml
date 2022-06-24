@@ -1,2 +1,0 @@
-language: java
-bundler_args: --retry 1
