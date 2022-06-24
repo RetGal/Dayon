@@ -20,7 +20,6 @@ import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.network.FileUtilities;
-import mpo.dayon.common.utils.SystemUtilities;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
     private AssistedFrame frame;
@@ -53,7 +53,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
     public void setup() {
-        final String lnf = SystemUtilities.getDefaultLookAndFeel();
+        final String lnf = getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
         } catch (Exception ex) {
@@ -93,7 +93,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
-        if (SystemUtilities.isValidIpAddressOrHostName(serverName) && SystemUtilities.isValidPortNumber(portNumber)) {
+        if (isValidIpAddressOrHostName(serverName) && isValidPortNumber(portNumber)) {
             configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
             Log.info("Autoconfigured " + configuration);
             networkEngine.configure(configuration);
@@ -123,21 +123,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
             final String token = connectionSettingsDialog.getToken();
             if (!token.trim().isEmpty()) {
-                return SystemUtilities.isValidToken(token.trim()) ? null : translate("connection.settings.invalidToken");
+                return isValidToken(token.trim()) ? null : translate("connection.settings.invalidToken");
             } else {
-
-                final String ipAddress = connectionSettingsDialog.getIpAddress();
-                if (ipAddress.isEmpty()) {
-                    return translate("connection.settings.emptyIpAddress");
-                } else if (!SystemUtilities.isValidIpAddressOrHostName(ipAddress.trim())) {
-                    return translate("connection.settings.invalidIpAddress");
+                String validationErrorMessage = validateIpAddress(connectionSettingsDialog.getIpAddress());
+                if (validationErrorMessage != null) {
+                    return validationErrorMessage;
                 }
-
-                final String portNumber = connectionSettingsDialog.getPortNumber();
-                if (portNumber.isEmpty()) {
-                    return translate("connection.settings.emptyPortNumber");
-                }
-                return SystemUtilities.isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
+                return validatePortNumber(connectionSettingsDialog.getPortNumber());
             }
         });
 
@@ -150,6 +142,20 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return ok;
     }
 
+    private String validateIpAddress(String ipAddress) {
+        if (ipAddress.isEmpty()) {
+            return translate("connection.settings.emptyIpAddress");
+        }
+        return isValidIpAddressOrHostName(ipAddress.trim()) ? null : translate("connection.settings.invalidIpAddress");
+    }
+
+    private String validatePortNumber(String portNumber) {
+        if (portNumber.isEmpty()) {
+            return translate("connection.settings.emptyPortNumber");
+        }
+        return isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
+    }
+
     private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
         final NetworkAssistedEngineConfiguration newConfiguration;
         String token = connectionSettingsDialog.getToken().trim();
@@ -158,7 +164,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             String connectionParams = null;
             try {
-                connectionParams = SystemUtilities.resolveToken(token);
+                connectionParams = resolveToken(token);
             } catch (IOException ie){
                 Log.warn("Could not resolve token " + token);
             }
@@ -234,7 +240,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             if (portStart > 0) {
                 String address = connectionParams.substring(0, portStart);
                 String port = connectionParams.substring(portStart + 1);
-                if (SystemUtilities.isValidIpAddressOrHostName(address) && SystemUtilities.isValidPortNumber(port)) {
+                if (isValidIpAddressOrHostName(address) && isValidPortNumber(port)) {
                     return new NetworkAssistedEngineConfiguration(address, Integer.parseInt(port));
                 }
             }
