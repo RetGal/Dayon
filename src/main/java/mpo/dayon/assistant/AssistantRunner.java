@@ -12,6 +12,7 @@ class AssistantRunner implements Runner {
 			Runner.setDebug(args);
 			Runner.overrideLocale(Runner.extractProgramArgs(args).get("lang"));
 			Runner.disableDynamicScale();
+			Runner.getOrCreateAppHomeDir();
 			Runner.logAppInfo("dayon_assistant");
 			SwingUtilities.invokeLater(AssistantRunner::launchAssistant);
 		} catch (Exception ex) {

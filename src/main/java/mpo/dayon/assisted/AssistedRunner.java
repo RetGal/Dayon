@@ -18,7 +18,6 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.getJarDir;
-import static mpo.dayon.common.utils.SystemUtilities.getOrCreateAppDir;
 
 class AssistedRunner implements Runner {
     public static void main(String[] args) {
@@ -27,6 +26,7 @@ class AssistedRunner implements Runner {
             Map<String, String> programArgs = Runner.extractProgramArgs(args);
             Runner.overrideLocale(programArgs.get("lang"));
             Runner.disableDynamicScale();
+            Runner.getOrCreateAppHomeDir();
             Runner.logAppInfo("dayon_assisted");
             SwingUtilities.invokeLater(() -> launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
         } catch (Exception ex) {
@@ -47,7 +47,7 @@ class AssistedRunner implements Runner {
     }
 
     private static Map<String, String> readPresetFile() {
-        final List<String> paths = Arrays.asList(getOrCreateAppDir().toString(), System.getProperty("user.home"), getJarDir());
+        final List<String> paths = Arrays.asList(System.getProperty("dayon.home"), System.getProperty("user.home"), getJarDir());
         final String fileName = "assisted.yaml";
         for (String path : paths) {
             final File presetFile = new File(path, fileName);

@@ -256,7 +256,7 @@ public abstract class BaseFrame extends JFrame {
                 if (desktop.isSupported(Desktop.Action.BROWSE)) {
                     desktop.browse(uri);
                 } else if (isFlat()) {
-                    new ProcessBuilder(getFlatpakBrowserCommand(), uri.toString()).start();
+                    new ProcessBuilder(FLATPACK_BROWSER, uri.toString()).start();
                 }
             }
         } catch (IOException ex) {

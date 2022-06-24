@@ -1,19 +1,21 @@
 package mpo.dayon.common;
 
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.SystemUtilities;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public interface Runner {
 
     static void logAppInfo(String appName) {
         System.setProperty("dayon.application.name", appName);
         Log.info("============================================================================================");
-        for (String line : SystemUtilities.getSystemProperties()) {
+        for (String line : getSystemProperties()) {
             Log.info(line);
         }
         Log.info("============================================================================================");
@@ -44,5 +46,35 @@ public interface Runner {
 
     static void disableDynamicScale() {
         System.setProperty("sun.java2d.uiScale", "1");
+    }
+
+    static File getOrCreateAppHomeDir() {
+        final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
+        if (homeDir == null) {
+            Log.warn("Home directory [user.home] is null!");
+            return null;
+        }
+
+        final File home = new File(homeDir);
+        if (!home.isDirectory()) {
+            Log.warn("Home directory [" + homeDir + "] is not a directory!");
+            return null;
+        }
+
+        File appHomeDir;
+        if (isSnapped()) {
+            final String classPath = System.getProperty(JAVA_CLASS_PATH);
+            final String userDataDir = String.format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
+            appHomeDir = new File(userDataDir, ".dayon");
+        } else {
+            appHomeDir = new File(home, ".dayon");
+        }
+
+        if (!appHomeDir.exists() && !appHomeDir.mkdir()) {
+            Log.warn("Could not create the application directory [" + appHomeDir.getAbsolutePath() + "]!");
+            return home;
+        }
+        System.setProperty("dayon.home", appHomeDir.getAbsolutePath());
+        return appHomeDir;
     }
 }

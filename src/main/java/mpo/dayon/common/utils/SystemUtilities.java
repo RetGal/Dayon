@@ -25,8 +25,10 @@ import static java.lang.Math.abs;
 public final class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
-    public static final String JAVA_VENDOR = "java.vendor";
-    public static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
+    
+    public static final String FLATPACK_BROWSER = "/app/bin/dayon.browser";
+    private static final String JAVA_VENDOR = "java.vendor";
+    private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
 
     private SystemUtilities() {
     }
@@ -35,37 +37,8 @@ public final class SystemUtilities {
         return URI.create(String.format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
     }
 
-    public static synchronized File getOrCreateAppDir() {
-        final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
-        if (homeDir == null) {
-            Log.warn("Home directory [user.home] is null!");
-            return null;
-        }
-
-        final File home = new File(homeDir);
-        if (!home.isDirectory()) {
-            Log.warn("Home directory [" + homeDir + "] is not a directory!");
-            return null;
-        }
-
-        File appDir;
-        if (isSnapped()) {
-            final String classPath = System.getProperty(JAVA_CLASS_PATH);
-            final String userDataDir = String.format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
-            appDir = new File(userDataDir, ".dayon");
-        } else {
-            appDir = new File(home, ".dayon");
-        }
-
-        if (!appDir.exists() && !appDir.mkdir()) {
-            Log.warn("Could not create the application directory [" + appDir.getAbsolutePath() + "]!");
-            return home;
-        }
-        return appDir;
-    }
-
     public static File getOrCreateAppFile(String name) {
-        final File file = new File(getOrCreateAppDir(), name);
+        final File file = new File(System.getProperty("dayon.home"), name);
         if (file.exists() && file.isDirectory()) {
             Log.warn("Could not create the application file [" + name + "]!");
             return null;
@@ -74,7 +47,7 @@ public final class SystemUtilities {
     }
 
     private static File getOrCreateTransferDir() {
-        final File transferDir = new File(getOrCreateAppDir(), ".transfer");
+        final File transferDir = new File(System.getProperty("dayon.home"), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else if (!transferDir.mkdir()) {
@@ -241,10 +214,6 @@ public final class SystemUtilities {
         return cp.substring(0, cp.indexOf("jar")) + "bin/dayon.browser";
     }
 
-    public static String getFlatpakBrowserCommand() {
-        return "/app/bin/dayon.browser";
-    }
-
     public static boolean isValidPortNumber(String portNumber) {
         try {
             int port = Integer.parseInt(portNumber);
@@ -310,7 +279,7 @@ public final class SystemUtilities {
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
-        byte[] bytSHA = objSHA.digest(input.getBytes());
+        byte[] bytSHA = objSHA != null ? objSHA.digest(input.getBytes()) : new byte[0];
         BigInteger intNumber = new BigInteger(1, bytSHA);
         String hash = intNumber.toString(16);
         return hash.substring(hash.length()-1).toUpperCase();
@@ -328,7 +297,9 @@ public final class SystemUtilities {
         } catch (IOException e) {
             Log.error("IOException", e);
         } finally {
-            Objects.requireNonNull(conn).disconnect();
+            if (conn != null) {
+                conn.disconnect();
+            }
         }
         return null;
     }
