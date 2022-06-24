@@ -30,7 +30,7 @@ public final class FatalErrorHandler {
                 info = translate(info);
             }
 
-            JOptionPane.showMessageDialog(frame, format("%s\n%s", translate("fatal.error.msg1"), translate("fatal.error.msg2", info)),
+            JOptionPane.showMessageDialog(frame, format("%s%n%s", translate("fatal.error.msg1"), translate("fatal.error.msg2", info)),
                     translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
         }
 

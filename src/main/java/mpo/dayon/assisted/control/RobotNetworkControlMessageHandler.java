@@ -170,10 +170,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		robot.keyRelease(VK_ALT);
 	}
 
-	private void releaseWindowsUnicode() {
-		robot.keyRelease(VK_ALT);
-	}
-
 	/**
 	 * Unicode characters are typed in hex on Linux ä => e4
 	 */
