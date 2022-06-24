@@ -18,10 +18,10 @@ import java.io.IOException;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
 class AssistedFrame extends BaseFrame {
-    private final Action startAction;
-    private final Action stopAction;
-    private final Action toggleMultiScreenCaptureAction;
-    private final Cursor cursor = this.getCursor();
+    private transient final Action startAction;
+    private transient final Action stopAction;
+    private transient final Action toggleMultiScreenCaptureAction;
+    private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
     AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction, Action toggleMultiScreenCaptureAction) {
@@ -74,7 +74,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onReady() {
-        this.setCursor(cursor);
+        this.setCursor(mouseCursor);
         startAction.setEnabled(true);
         stopAction.setEnabled(false);
         getStatusBar().setMessage(translate("ready"));
@@ -90,7 +90,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onConnected() {
-        this.setCursor(cursor);
+        this.setCursor(mouseCursor);
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
         getStatusBar().setMessage(translate("connected"));
@@ -98,7 +98,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onHostNotFound(String serverName) {
-        this.setCursor(cursor);
+        this.setCursor(mouseCursor);
         if (!connected) {
             startAction.setEnabled(true);
             stopAction.setEnabled(false);
@@ -107,7 +107,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onConnectionTimeout(String serverName, int serverPort) {
-        this.setCursor(cursor);
+        this.setCursor(mouseCursor);
         if (!connected) {
             stopAction.setEnabled(false);
             startAction.setEnabled(true);
@@ -116,7 +116,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onRefused(String serverName, int serverPort) {
-        this.setCursor(cursor);
+        this.setCursor(mouseCursor);
         if (!connected) {
             startAction.setEnabled(true);
             stopAction.setEnabled(false);
