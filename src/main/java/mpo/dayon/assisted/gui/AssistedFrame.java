@@ -18,9 +18,9 @@ import java.io.IOException;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
 class AssistedFrame extends BaseFrame {
-    private transient final Action startAction;
-    private transient final Action stopAction;
-    private transient final Action toggleMultiScreenCaptureAction;
+    private final transient Action startAction;
+    private final transient Action stopAction;
+    private final transient Action toggleMultiScreenCaptureAction;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
