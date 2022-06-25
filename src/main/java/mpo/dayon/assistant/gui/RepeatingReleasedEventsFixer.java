@@ -75,7 +75,7 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
 
     private final Map<Integer, ReleasedAction> map = new HashMap<>();
 
-    private static volatile RepeatingReleasedEventsFixer instance;
+    private static RepeatingReleasedEventsFixer instance;
 
     private RepeatingReleasedEventsFixer() {
         // singleton

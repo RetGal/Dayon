@@ -28,7 +28,7 @@ public abstract class RateCounter extends Counter<Double> {
 		synchronized (this) {
 			if (instantStart.get() != -1) {
 				final long elapsed = System.currentTimeMillis() - instantStart.get();
-				rate = 1000.0 * instantValue / (double) elapsed;
+				rate = 1000.0 * instantValue / elapsed;
 				instantStart.set(System.currentTimeMillis());
 				instantValue = 0;
 			}
