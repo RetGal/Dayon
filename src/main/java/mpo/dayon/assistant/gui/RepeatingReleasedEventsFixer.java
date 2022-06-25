@@ -73,7 +73,7 @@ import java.util.Map;
 
 public final class RepeatingReleasedEventsFixer implements AWTEventListener {
 
-    private final Map<Integer, ReleasedAction> _map = new HashMap<>();
+    private final Map<Integer, ReleasedAction> map = new HashMap<>();
 
     private static volatile RepeatingReleasedEventsFixer instance;
 
@@ -82,13 +82,11 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
     }
 
     public static RepeatingReleasedEventsFixer install() {
-        if (instance == null) {
-            synchronized (RepeatingReleasedEventsFixer.class) {
-                if (instance == null) {
-                    final RepeatingReleasedEventsFixer fixer = new RepeatingReleasedEventsFixer();
-                    Toolkit.getDefaultToolkit().addAWTEventListener(fixer, AWTEvent.KEY_EVENT_MASK);
-                    instance = fixer;
-                }
+        synchronized (RepeatingReleasedEventsFixer.class) {
+            if (instance == null) {
+                final RepeatingReleasedEventsFixer fixer = new RepeatingReleasedEventsFixer();
+                Toolkit.getDefaultToolkit().addAWTEventListener(fixer, AWTEvent.KEY_EVENT_MASK);
+                instance = fixer;
             }
         }
         return instance;
@@ -102,7 +100,9 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        assert event instanceof KeyEvent : "Shall only listen to KeyEvents, so no other events shall come here";
+        if (!(event instanceof KeyEvent)) {
+            throw new AssertionError("Shall only listen to KeyEvents, so no other events shall come here");
+        }
         assert assertEDT(); // REMEMBER THAT THIS IS SINGLE THREADED, so no need for synch.
 
         // ?: Is this one of our synthetic RELEASED events?
@@ -139,13 +139,13 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
             timer.addActionListener(action);
             timer.start();
 
-            _map.put(keyEvent.getKeyCode(), action);
+            map.put(keyEvent.getKeyCode(), action);
 
             // Consume the original
             keyEvent.consume();
         } else if (keyEvent.getID() == KeyEvent.KEY_PRESSED) {
             // Remember that this is single threaded (EDT), so we can't have races.
-            ReleasedAction action = _map.remove(keyEvent.getKeyCode());
+            ReleasedAction action = map.remove(keyEvent.getKeyCode());
             // ?: Do we have a corresponding RELEASED waiting?
             if (action != null) {
                 // -> Yes, so dump it
@@ -163,19 +163,19 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
      */
     private class ReleasedAction implements ActionListener {
 
-        private final KeyEvent _originalKeyEvent;
-        private Timer _timer;
+        private final KeyEvent originalKeyEvent;
+        private Timer timer;
 
         ReleasedAction(KeyEvent originalReleased, Timer timer) {
-            _timer = timer;
-            _originalKeyEvent = originalReleased;
+            this.timer = timer;
+            originalKeyEvent = originalReleased;
         }
 
         void cancel() {
             assert assertEDT();
-            _timer.stop();
-            _timer = null;
-            _map.remove(_originalKeyEvent.getKeyCode());
+            timer.stop();
+            timer = null;
+            map.remove(originalKeyEvent.getKeyCode());
         }
 
         @Override
@@ -184,16 +184,16 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
             // ?: Are we already cancelled?
             // (Judging by Timer and TimerQueue code, we can theoretically be raced to be posted onto EDT by TimerQueue,
             // due to some lag, unfair scheduling)
-            if (_timer == null) {
+            if (timer == null) {
                 // -> Yes, so don't post the new RELEASED event.
                 return;
             }
             // Stop Timer and clean.
             cancel();
             // Creating new KeyEvent (we've consumed the original).
-            KeyEvent newEvent = new RepostedKeyEvent((Component) _originalKeyEvent.getSource(),
-                    _originalKeyEvent.getID(), _originalKeyEvent.getWhen(), _originalKeyEvent.getModifiersEx(),
-                    _originalKeyEvent.getKeyCode(), _originalKeyEvent.getKeyChar(), _originalKeyEvent.getKeyLocation());
+            KeyEvent newEvent = new RepostedKeyEvent((Component) originalKeyEvent.getSource(),
+                    originalKeyEvent.getID(), originalKeyEvent.getWhen(), originalKeyEvent.getModifiersEx(),
+                    originalKeyEvent.getKeyCode(), originalKeyEvent.getKeyChar(), originalKeyEvent.getKeyLocation());
             // Posting to EventQueue.
             Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(newEvent);
             // System.out.println("Posted synthetic RELEASED [" + newEvent + "].");
