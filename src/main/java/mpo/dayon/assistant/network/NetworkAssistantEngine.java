@@ -121,7 +121,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
-    @java.lang.SuppressWarnings("squid:S2189")
+    // right, keep streams open - forever!
+    @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
     private void receivingLoop() throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
 
