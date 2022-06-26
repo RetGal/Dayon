@@ -56,10 +56,8 @@ public abstract class NetworkEngine {
 		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
 			Log.error("Fatal, can not init encryption", e);
 		}
-
-		SSLContext sslContext = SSLContext.getInstance("TLS");
+		SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
 		sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-
 		return sslContext;
 	}
 
