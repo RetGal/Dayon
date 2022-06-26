@@ -15,9 +15,7 @@ public interface Runner {
     static void logAppInfo(String appName) {
         System.setProperty("dayon.application.name", appName);
         Log.info("============================================================================================");
-        for (String line : getSystemProperties()) {
-            Log.info(line);
-        }
+        getSystemProperties().forEach(Log::info);
         Log.info("============================================================================================");
     }
 

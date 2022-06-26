@@ -2,6 +2,7 @@ package mpo.dayon.common;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
 import java.util.Locale;
 import java.util.Map;
 
@@ -59,5 +60,14 @@ class RunnerTest {
         setDebug(args);
         // then
         assertEquals("on", System.getProperty("dayon.debug"));
+    }
+
+    @Test
+    void shouldGetOrCreateAppHomeDir() {
+        // when
+        final File appHomeDir = getOrCreateAppHomeDir();
+        // then
+        assertNotNull(appHomeDir);
+        assertTrue(appHomeDir.getName().endsWith(".dayon"));
     }
 }
