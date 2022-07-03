@@ -2,7 +2,6 @@ package mpo.dayon.assisted.mouse;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
-import java.util.List;
 
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.event.Listeners;
