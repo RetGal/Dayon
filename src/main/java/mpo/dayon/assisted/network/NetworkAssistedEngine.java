@@ -301,6 +301,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    @Override
     protected void fireOnClipboardReceived() {
         // let the assistant know that we're done
         sender.ping();
