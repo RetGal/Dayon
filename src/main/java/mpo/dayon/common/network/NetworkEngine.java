@@ -2,6 +2,9 @@ package mpo.dayon.common.network;
 
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkClipboardFilesHelper;
+import mpo.dayon.common.network.message.NetworkClipboardFilesMessage;
+import mpo.dayon.common.network.message.NetworkMessage;
+import mpo.dayon.common.network.message.NetworkMessageType;
 import mpo.dayon.common.security.CustomTrustManager;
 
 import javax.net.ssl.KeyManagerFactory;
@@ -11,12 +14,17 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 
+import static java.lang.String.format;
+import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
+import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
 import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
+import static mpo.dayon.common.utils.SystemUtilities.getTempDir;
 
 /**
  * Both the assistant and the assisted are talking to each other using a very
@@ -39,7 +47,7 @@ public abstract class NetworkEngine {
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
 	}
 
-	protected NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
+	private NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
 		if (filesHelper.isDone()) {
 			setClipboardContents(filesHelper.getFiles(), clipboardOwner);
 			return new NetworkClipboardFilesHelper();
@@ -59,6 +67,36 @@ public abstract class NetworkEngine {
 		SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
 		sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
 		return sslContext;
+	}
+
+	protected void handleIncomingClipboardFiles(ObjectInputStream fileIn, ClipboardOwner clipboardOwner) throws IOException {
+		String tmpDir = getTempDir();
+		NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
+
+		//noinspection InfiniteLoopStatement
+		while (true) {
+			NetworkMessageType type;
+			if (filesHelper.isDone()) {
+				NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+				type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+				Log.debug("Received " + type.name());
+			} else {
+				type = CLIPBOARD_FILES;
+			}
+
+			if (type.equals(CLIPBOARD_FILES)) {
+				filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+						filesHelper, tmpDir), clipboardOwner);
+				if (filesHelper.isDone()) {
+					fireOnClipboardReceived();
+				}
+			} else if (!type.equals(PING)) {
+				throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
+			}
+		}
+	}
+
+	protected void fireOnClipboardReceived() {
 	}
 
 }

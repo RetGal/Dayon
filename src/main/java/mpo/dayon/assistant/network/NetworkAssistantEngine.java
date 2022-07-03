@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
-import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
-import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
 
@@ -210,30 +208,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
-            String tmpDir = getTempDir();
-            NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
-
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                NetworkMessageType type;
-                if (filesHelper.isDone()) {
-                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
-                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
-                    Log.debug("Received " + type.name());
-                } else {
-                    type = CLIPBOARD_FILES;
-                }
-
-                if (type.equals(CLIPBOARD_FILES)) {
-                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                            filesHelper, tmpDir), clipboardOwner);
-                    if (filesHelper.isDone()) {
-                        fireOnClipboardReceived();
-                    }
-                } else if (!type.equals(PING)) {
-                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
-                }
-            }
+            handleIncomingClipboardFiles(fileIn, clipboardOwner);
         } catch (IOException ex) {
             closeConnections();
         }
@@ -417,7 +392,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.getListeners().forEach(listener -> listener.onByteReceived(count));
     }
 
-    private void fireOnClipboardReceived() {
+    @Override
+    protected void fireOnClipboardReceived() {
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onClipboardReceived);
     }
 

@@ -28,8 +28,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
-import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
-import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistedEngine extends NetworkEngine
@@ -246,33 +244,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void fileReceivingLoop() {
-
         try {
-            String tmpDir = getTempDir();
-            NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                NetworkMessageType type;
-                if (filesHelper.isDone()) {
-                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
-                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
-                    Log.debug("Received " + type.name());
-                } else {
-                    type = CLIPBOARD_FILES;
-                }
-
-                if (type.equals(CLIPBOARD_FILES)) {
-                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                            filesHelper, tmpDir), clipboardOwner);
-                    if (filesHelper.isDone()) {
-                        // let the assistant know that we're done
-                        sender.ping();
-                    }
-                } else if (!type.equals(PING)) {
-                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
-                }
-            }
-
+            handleIncomingClipboardFiles(fileIn, clipboardOwner);
         } catch (IOException ex) {
             closeConnections();
         }
@@ -326,6 +299,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (sender != null) {
             sender.sendResizeScreen(width, height);
         }
+    }
+
+    protected void fireOnClipboardReceived() {
+        // let the assistant know that we're done
+        sender.ping();
     }
 
     private void fireOnConnecting(NetworkAssistedEngineConfiguration configuration) {
