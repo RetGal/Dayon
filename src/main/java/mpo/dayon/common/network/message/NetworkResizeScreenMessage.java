@@ -6,11 +6,11 @@ import java.io.ObjectOutputStream;
 
 public class NetworkResizeScreenMessage extends NetworkMessage {
 	private final int width;
-	private final int heigth;
+	private final int height;
 
-	public NetworkResizeScreenMessage(int width, int heigth) {
+	public NetworkResizeScreenMessage(int width, int height) {
 		this.width = width;
-		this.heigth = heigth;
+		this.height = height;
 	}
 
 	@Override
@@ -22,8 +22,8 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
 		return width;
 	}
 
-	public int getHeigth() {
-		return heigth;
+	public int getHeight() {
+		return height;
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
     public void marshall(ObjectOutputStream out) throws IOException {
 		marshallEnum(out, getType());
 		out.writeInt(width);
-		out.writeInt(heigth);
+		out.writeInt(height);
 	}
 
 	public static NetworkResizeScreenMessage unmarshall(ObjectInputStream in) throws IOException {
@@ -49,6 +49,6 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[width:%d height:%d]", width, heigth);
+		return String.format("[width:%d height:%d]", width, height);
 	}
 }

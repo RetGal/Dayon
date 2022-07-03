@@ -251,7 +251,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case RESIZE:
                 final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
                 fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
-                fireOnResizeScreen(resize.getWidth(), resize.getHeigth());
+                fireOnResizeScreen(resize.getWidth(), resize.getHeight());
                 break;
 
             case HELLO:

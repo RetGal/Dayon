@@ -152,13 +152,9 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 					if (reconfigured) {
 						cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
 								: new NullTileCache();
-
 						reconfigured = false;
+						Log.info("Compressor engine has been reconfigured [tile:" + getCapture().getId() + "] " + xconfiguration);
 					}
-				}
-
-				if (xreconfigured) {
-					Log.info("Compressor engine has been reconfigured [tile:" + getCapture().getId() + "] " + xconfiguration);
 				}
 
 				final Compressor compressor = Compressor.get(xconfiguration.getMethod());
