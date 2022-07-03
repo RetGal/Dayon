@@ -30,7 +30,7 @@ public class ControlEngine implements AssistantFrameListener {
 
 	@Override
     public void onMouseMove(final int xs, final int ys) {
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(xs, ys));
@@ -40,7 +40,7 @@ public class ControlEngine implements AssistantFrameListener {
 
 	@Override
     public void onMousePressed(final int xs, final int ys, final int button) {
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 				int xbutton = getActingMouseButton(button);
@@ -53,7 +53,7 @@ public class ControlEngine implements AssistantFrameListener {
 	
 	@Override
     public void onMouseReleased(final int x, final int y, final int button) {
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 				int xbutton = getActingMouseButton(button);
@@ -79,7 +79,7 @@ public class ControlEngine implements AssistantFrameListener {
 
 	@Override
     public void onMouseWheeled(final int x, final int y, final int rotations) {
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y, rotations));
@@ -97,7 +97,7 @@ public class ControlEngine implements AssistantFrameListener {
 	 */
 	@Override
     public void onKeyPressed(final int keyCode, final char keyChar) {
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 
@@ -129,7 +129,7 @@ public class ControlEngine implements AssistantFrameListener {
 			onKeyPressed(keyCode, keyChar);
 		}
 
-		executor.execute(new Executable(executor, null) {
+		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
 
