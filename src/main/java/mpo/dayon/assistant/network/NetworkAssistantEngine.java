@@ -24,7 +24,7 @@ import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
 
-public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantConfiguration> {
+public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantEngineConfiguration> {
 
     private final NetworkCaptureMessageHandler captureMessageHandler;
 
@@ -34,7 +34,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final Listeners<NetworkAssistantEngineListener> listeners = new Listeners<>();
 
-    private NetworkAssistantConfiguration configuration;
+    private NetworkAssistantEngineConfiguration configuration;
 
     private SSLServerSocketFactory ssf;
 
@@ -72,12 +72,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     @Override
-    public void configure(NetworkAssistantConfiguration configuration) {
+    public void configure(NetworkAssistantEngineConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @Override
-    public void reconfigure(NetworkAssistantConfiguration configuration) {
+    public void reconfigure(NetworkAssistantEngineConfiguration configuration) {
         this.configuration = configuration;
     }
 

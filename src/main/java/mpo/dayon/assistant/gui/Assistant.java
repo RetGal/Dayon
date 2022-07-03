@@ -3,7 +3,7 @@ package mpo.dayon.assistant.gui;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
-import mpo.dayon.assistant.network.NetworkAssistantConfiguration;
+import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
 import mpo.dayon.assistant.utils.NetworkUtilities;
@@ -72,7 +72,7 @@ public class Assistant implements ClipboardOwner {
 
     private AssistantConfiguration configuration;
 
-    private NetworkAssistantConfiguration networkConfiguration;
+    private NetworkAssistantEngineConfiguration networkConfiguration;
 
     private CaptureEngineConfiguration captureEngineConfiguration;
 
@@ -117,7 +117,7 @@ public class Assistant implements ClipboardOwner {
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
         network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
 
-        networkConfiguration = new NetworkAssistantConfiguration();
+        networkConfiguration = new NetworkAssistantEngineConfiguration();
         network.configure(networkConfiguration);
         network.addListener(new MyNetworkAssistantEngineListener());
 
@@ -308,7 +308,7 @@ public class Assistant implements ClipboardOwner {
                 });
 
                 if (ok) {
-                    final NetworkAssistantConfiguration xnetworkConfiguration = new NetworkAssistantConfiguration(
+                    final NetworkAssistantEngineConfiguration xnetworkConfiguration = new NetworkAssistantEngineConfiguration(
                             Integer.parseInt(portNumberTextField.getText()));
 
                     if (!xnetworkConfiguration.equals(networkConfiguration)) {
