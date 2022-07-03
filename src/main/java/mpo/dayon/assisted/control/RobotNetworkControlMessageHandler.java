@@ -28,12 +28,13 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	public RobotNetworkControlMessageHandler() {
 		try {
 			robot = new Robot();
+			robot.setAutoDelay(1);
 		} catch (AWTException ex) {
 			throw new IllegalStateException(ex);
 		}
 	}
 
-	public RobotNetworkControlMessageHandler(Robot robot) {
+	RobotNetworkControlMessageHandler(Robot robot) {
 		this.robot = robot;
 	}
 
@@ -159,7 +160,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in decimal on Windows ä => 228
 	 */
 	private void typeWindowsUnicode(int keyCode) {
-		robot.setAutoDelay(1);
 		robot.keyPress(VK_ALT);
 		// simulate a numpad key press for each digit
 		for (int i = 3; i >= 0; --i) {
@@ -174,7 +174,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 * Unicode characters are typed in hex on Linux ä => e4
 	 */
 	private void typeLinuxUnicode(int keyCode) {
-		robot.setAutoDelay(1);
 		robot.keyPress(VK_CONTROL);
 		robot.keyPress(VK_SHIFT);
 		robot.keyPress(VK_U);
