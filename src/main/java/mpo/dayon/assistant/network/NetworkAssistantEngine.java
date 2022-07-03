@@ -398,60 +398,42 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void fireOnReady() {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onReady();
-        }
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onReady);
     }
 
     private void fireOnStarting(int port) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onStarting(port);
-        }
+        listeners.getListeners().forEach(listener -> listener.onStarting(port));
     }
 
     private boolean fireOnAccepted(Socket connection) {
-        return listeners.getListeners().stream().allMatch(xListener -> xListener.onAccepted(connection));
+        return listeners.getListeners().stream().allMatch(listener -> listener.onAccepted(connection));
     }
 
     private void fireOnConnected(Socket connection) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onConnected(connection);
-        }
+        listeners.getListeners().forEach(listener -> listener.onConnected(connection));
     }
 
     private void fireOnByteReceived(int count) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onByteReceived(count);
-        }
+        listeners.getListeners().forEach(listener -> listener.onByteReceived(count));
     }
 
     private void fireOnClipboardReceived() {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onClipboardReceived();
-        }
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onClipboardReceived);
     }
 
     private void fireOnClipboardSent() {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onClipboardSent();
-        }
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onClipboardSent);
     }
 
     private void fireOnResizeScreen(int width, int height) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onResizeScreen(width, height);
-        }
+        listeners.getListeners().forEach(listener -> listener.onResizeScreen(width, height));
     }
 
     private void fireOnDisconnecting() {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onDisconnecting();
-        }
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onDisconnecting);
     }
 
     private void fireOnIOError(IOException error) {
-        for (final NetworkAssistantEngineListener xListener : listeners.getListeners()) {
-            xListener.onIOError(error);
-        }
+        listeners.getListeners().forEach(listener -> listener.onIOError(error));
     }
 }

@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 
-public class ConnectionSettingsDialog {
+class ConnectionSettingsDialog {
 
     private final JTabbedPane tabbedPane;
 

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TransferableFiles implements Transferable {
+class TransferableFiles implements Transferable {
 
     private final List<File> files;
     private static DataFlavor uriListFlavor;

@@ -3,7 +3,7 @@ package mpo.dayon.common.network.message;
 import java.io.Serializable;
 import java.util.Objects;
 
-public class FileMetaData implements Serializable {
+class FileMetaData implements Serializable {
     private final String fileName;
     private final long fileSize;
 

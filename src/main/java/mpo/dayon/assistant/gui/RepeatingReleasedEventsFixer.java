@@ -206,16 +206,16 @@ public final class RepeatingReleasedEventsFixer implements AWTEventListener {
      * again. (The problem is that it is not possible to state "inject this event from this point in the pipeline" - one
      * have to inject it to the event queue directly, thus it will come through this {@link AWTEventListener} too.
      */
-    public interface Reposted {
+    private interface Reposted {
         // marker
     }
 
     /**
      * Dead simple extension of {@link KeyEvent} that implements {@link Reposted}.
      */
-    public static class RepostedKeyEvent extends KeyEvent implements Reposted {
-        public RepostedKeyEvent(@SuppressWarnings("hiding") Component source, @SuppressWarnings("hiding") int id,
-                                long when, int modifiers, int keyCode, char keyChar, int keyLocation) {
+    static class RepostedKeyEvent extends KeyEvent implements Reposted {
+        RepostedKeyEvent(@SuppressWarnings("hiding") Component source, @SuppressWarnings("hiding") int id,
+                         long when, int modifiers, int keyCode, char keyChar, int keyLocation) {
             super(source, id, when, modifiers, keyCode, keyChar, keyLocation);
         }
     }

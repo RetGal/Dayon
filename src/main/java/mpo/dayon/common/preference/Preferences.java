@@ -45,7 +45,7 @@ public final class Preferences {
         // otherwise, use default values - until a persist() // is done later ...
     }
 
-    public boolean isNull() {
+    private boolean isNull() {
         return this == NULL;
     }
 
@@ -134,7 +134,7 @@ public final class Preferences {
             getEntries().put(name, REMOVE);
         }
 
-        public Map<String, String> getEntries() {
+        Map<String, String> getEntries() {
             return entries;
         }
     }

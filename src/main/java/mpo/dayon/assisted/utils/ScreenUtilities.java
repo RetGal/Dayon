@@ -156,8 +156,7 @@ public final class ScreenUtilities {
             final int factor = 256 / quantization.getLevels();
             for (int idx = 0; idx < 256; idx++) {
                 // DOWN (0, 32, 64, 96, ...)
-                // levels[quantization.ordinal()][idx] = (byte) (idx / factor *
-                // factor);
+                // levels[quantization.ordinal()][idx] = (byte) (idx / factor * factor);
                 // UP (31, 63,, 95, ...)
                 grays[quantization.ordinal()][idx] = (byte) (((1 + (idx / factor)) * factor) - 1);
             }

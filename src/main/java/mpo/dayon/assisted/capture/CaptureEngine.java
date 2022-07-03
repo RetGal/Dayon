@@ -220,15 +220,11 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     }
 
     private void fireOnCaptured(Capture capture) {
-        for (final CaptureEngineListener xListener : listeners.getListeners()) {
-            xListener.onCaptured(capture);
-        }
+        listeners.getListeners().forEach(listener -> listener.onCaptured(capture));
     }
 
     private void fireOnRawCaptured(int id, byte[] grays) {
-        for (final CaptureEngineListener xListener : listeners.getListeners()) {
-            xListener.onRawCaptured(id, grays);
-        }
+        listeners.getListeners().forEach(listener -> listener.onRawCaptured(id, grays));
     }
 
 }

@@ -1,17 +1,20 @@
 package mpo.dayon.common.utils;
 
+import static java.lang.Math.pow;
+import static java.lang.String.format;
+
 public abstract class UnitUtilities {
     private static final String DEC_UNIT = "%.2f %s";
 
     public enum BitUnit {
-        KBIT("Kbit", "kilo", Math.pow(10, 3)),
-        MBIT("Mbit", "mega", Math.pow(10, 6)),
-        GBIT("Gbit", "giga", Math.pow(10, 9)),
-        TBIT("Tbit", "tera", Math.pow(10, 12)),
-        PBIT("Pbit", "peta", Math.pow(10, 15)),
-        EBIT("Ebit", "exa", Math.pow(10, 18)),
-        ZBIT("Zbit", "zetta", Math.pow(10, 21)),
-        YBIT("Ybit", "yotta", Math.pow(10, 24));
+        KBIT("Kbit", "kilo", pow(10, 3)),
+        MBIT("Mbit", "mega", pow(10, 6)),
+        GBIT("Gbit", "giga", pow(10, 9)),
+        TBIT("Tbit", "tera", pow(10, 12)),
+        PBIT("Pbit", "peta", pow(10, 15)),
+        EBIT("Ebit", "exa", pow(10, 18)),
+        ZBIT("Zbit", "zetta", pow(10, 21)),
+        YBIT("Ybit", "yotta", pow(10, 24));
 
         private final String symbol;
         private final String name;
@@ -23,11 +26,11 @@ public abstract class UnitUtilities {
             this.value = value;
         }
 
-        public double getValue() {
+        double getValue() {
             return value;
         }
 
-        public String getSymbol() {
+        String getSymbol() {
             return symbol;
         }
     }
@@ -39,21 +42,21 @@ public abstract class UnitUtilities {
             final BitUnit unit = units[idx];
 
             if (bits >= unit.getValue()) {
-                return String.format(DEC_UNIT, bits / unit.getValue(), unit.getSymbol());
+                return format(DEC_UNIT, bits / unit.getValue(), unit.getSymbol());
             }
         }
-        return String.format(DEC_UNIT, bits, "bit");
+        return format(DEC_UNIT, bits, "bit");
     }
 
     public enum ByteUnit {
-        K("K", "kilo", Math.pow(2, 10), "%.0f K"),
-        M("M", "mega", Math.pow(2, 20),"%.0f M"),
-        G("G", "giga", Math.pow(2, 30),"%.1f G"),
-        T("T", "tera", Math.pow(2, 40),"%.1f T"),
-        P("P", "peta", Math.pow(2, 50),"%.2f P"),
-        E("E", "exa", Math.pow(2, 60),"%.2f E"),
-        Z("Z", "zetta", Math.pow(2, 70), "%.3f Z"),
-        Y("Y", "yotta", Math.pow(2, 80), "%.3f Y");
+        K("K", "kilo", pow(2, 10), "%.0f K"),
+        M("M", "mega", pow(2, 20),"%.0f M"),
+        G("G", "giga", pow(2, 30),"%.1f G"),
+        T("T", "tera", pow(2, 40),"%.1f T"),
+        P("P", "peta", pow(2, 50),"%.2f P"),
+        E("E", "exa", pow(2, 60),"%.2f E"),
+        Z("Z", "zetta", pow(2, 70), "%.3f Z"),
+        Y("Y", "yotta", pow(2, 80), "%.3f Y");
 
         private final String symbol;
         private final String name;
@@ -67,15 +70,15 @@ public abstract class UnitUtilities {
             this.formatter = formatter;
         }
 
-        public double getValue() {
+        double getValue() {
             return value;
         }
 
-        public String getSymbol() {
+        String getSymbol() {
             return symbol;
         }
 
-        public String getFormatter() {
+        String getFormatter() {
             return formatter;
         }
     }
@@ -92,16 +95,16 @@ public abstract class UnitUtilities {
 
             if (bytes >= unit.getValue()) {
                 if (withDecimal) {
-                    return String.format(DEC_UNIT, bytes / unit.getValue(), unit.getSymbol());
+                    return format(DEC_UNIT, bytes / unit.getValue(), unit.getSymbol());
                 }
-                return String.format(unit.getFormatter(), bytes / unit.getValue());
+                return format(unit.getFormatter(), bytes / unit.getValue());
             }
         }
 
         if (withDecimal) {
-            return String.format(DEC_UNIT, bytes, "");
+            return format(DEC_UNIT, bytes, "");
         }
-        return String.format("%.0f %s", bytes, "");
+        return format("%.0f %s", bytes, "");
     }
 
     /**
@@ -111,19 +114,19 @@ public abstract class UnitUtilities {
         double secs = millis / 1000.0;
 
         if (secs < 10.0) {
-            return String.format("%dms", millis);
+            return format("%dms", millis);
         }
         if (secs < 60) {
-            return String.format("%.2fs", secs);
+            return format("%.2fs", secs);
         }
         if (secs < 3600) {
-            return String.format("%dm%02ds", toMinutes(secs), Math.round(secs) % 60);
+            return format("%dm%02ds", toMinutes(secs), Math.round(secs) % 60);
         }
         if (secs < 86400) {
-            return String.format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, Math.round(secs) % 60);
+            return format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, Math.round(secs) % 60);
         }
         // noinspection NumericCastThatLosesPrecision
-        return String.format("%dd%02dh%02dm%02ds", (int) Math.floor(toHours(secs) / 24.0), toHours(secs) % 24,
+        return format("%dd%02dh%02dm%02ds", (int) Math.floor(toHours(secs) / 24.0), toHours(secs) % 24,
                 toMinutes(secs) % 60, Math.round(secs) % 60);
     }
 
@@ -142,13 +145,13 @@ public abstract class UnitUtilities {
      */
     public static String toElapsedNanoTime(long nanos) {
         if (nanos < 1000) {
-            return String.format("%dns", nanos);
+            return format("%dns", nanos);
         }
         if (nanos < 1000 * 1000) {
-            return String.format("%dus", nanos / 1000);
+            return format("%dus", nanos / 1000);
         }
         if (nanos < 1000 * 1000 * 1000) {
-            return String.format("%dms", nanos / 1000 / 1000);
+            return format("%dms", nanos / 1000 / 1000);
         }
         return toElapsedTime(nanos / 1000 / 1000);
     }

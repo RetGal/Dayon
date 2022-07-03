@@ -214,14 +214,14 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String composeLabelHtml(String label, String url) {
-        return String.format("<html>%s : <a href=''>%s</a></html>", label, url);
+        return format("<html>%s : <a href=''>%s</a></html>", label, url);
     }
 
     private String composeLabelHtmlWithBuildNumber(String label, String url, String buildNumber) {
         if (buildNumber.isEmpty()) {
             return composeLabelHtml(label, url);
         }
-        return String.format("<html>%s : <a href=''>%s</a> (build %s)</html>", label, url, buildNumber);
+        return format("<html>%s : <a href=''>%s</a> (build %s)</html>", label, url, buildNumber);
     }
 
     protected Action createShowHelpAction() {
@@ -268,11 +268,11 @@ public abstract class BaseFrame extends JFrame {
         return toolBar;
     }
 
-    public StatusBar getStatusBar() {
+    protected StatusBar getStatusBar() {
         return statusBar;
     }
 
-    public void setStatusBar(StatusBar statusBar) {
+    private void setStatusBar(StatusBar statusBar) {
         this.statusBar = statusBar;
     }
 

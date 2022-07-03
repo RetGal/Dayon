@@ -82,8 +82,7 @@ public class MouseEngine {
     }
 
     private boolean fireOnLocationUpdated(Point location) {
-        final List<MouseEngineListener> xListeners = listeners.getListeners();
-        return xListeners.stream().allMatch(xListener -> xListener.onLocationUpdated(location));
+        return listeners.getListeners().stream().allMatch(listener -> listener.onLocationUpdated(location));
     }
 
 }

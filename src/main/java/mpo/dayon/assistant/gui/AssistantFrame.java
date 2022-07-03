@@ -410,33 +410,25 @@ class AssistantFrame extends BaseFrame {
     private void fireOnMouseMove(int x, int y) {
         int xs = scaleXPosition(x);
         int ys = scaleYPosition(y);
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseMove(xs, ys);
-        }
+        listeners.getListeners().forEach(listener -> listener.onMouseMove(xs, ys));
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
         int xs = scaleXPosition(x);
         int ys = scaleYPosition(y);
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMousePressed(xs, ys, button);
-        }
+        listeners.getListeners().forEach(listener -> listener.onMousePressed(xs, ys, button));
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
         int xs = scaleXPosition(x);
         int ys = scaleYPosition(y);
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseReleased(xs, ys, button);
-        }
+        listeners.getListeners().forEach(listener -> listener.onMouseReleased(xs, ys, button));
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
         int xs = scaleXPosition(x);
         int ys = scaleYPosition(y);
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onMouseWheeled(xs, ys, rotations);
-        }
+        listeners.getListeners().forEach(listener -> listener.onMouseWheeled(xs, ys, rotations));
     }
 
     private int scaleYPosition(int y) {
@@ -448,15 +440,11 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void fireOnKeyPressed(int keyCode, char keyChar) {
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onKeyPressed(keyCode, keyChar);
-        }
+        listeners.getListeners().forEach(listener -> listener.onKeyPressed(keyCode, keyChar));
     }
 
     private void fireOnKeyReleased(int keyCode, char keyChar) {
-        for (final AssistantFrameListener xListener : listeners.getListeners()) {
-            xListener.onKeyReleased(keyCode, keyChar);
-        }
+        listeners.getListeners().forEach(listener -> listener.onKeyReleased(keyCode, keyChar));
     }
 
     private static class Spinner extends JPanel {

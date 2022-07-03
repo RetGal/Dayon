@@ -27,6 +27,7 @@ import java.security.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -208,7 +209,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                         break;
 
                     default:
-                        throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                        throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
                 }
             }
         } catch (IOException ex) {
@@ -228,7 +229,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public void closeConnections() {
+    private void closeConnections() {
         if (sender != null) {
             sender.cancel();
         }
@@ -257,7 +258,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                     type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
                     Log.debug("Received " + type.name());
                 } else {
-                    type = NetworkMessageType.CLIPBOARD_FILES;
+                    type = CLIPBOARD_FILES;
                 }
 
                 if (type.equals(CLIPBOARD_FILES)) {
@@ -268,7 +269,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                         sender.ping();
                     }
                 } else if (!type.equals(PING)) {
-                    throw new IllegalArgumentException(String.format(UNSUPPORTED_TYPE, type));
+                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
                 }
             }
 
@@ -281,7 +282,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      * The first message being sent to the assistant (e.g., version
      * identification).
      */
-    public void sendHello() {
+    private void sendHello() {
         if (sender != null) {
             sender.sendHello();
         }
@@ -328,44 +329,30 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void fireOnConnecting(NetworkAssistedEngineConfiguration configuration) {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onConnecting(configuration.getServerName(), configuration.getServerPort());
-        }
+        listeners.getListeners().forEach(listener -> listener.onConnecting(configuration.getServerName(), configuration.getServerPort()));
     }
 
     private void fireOnHostNotFound(NetworkAssistedEngineConfiguration configuration) {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onHostNotFound(configuration.getServerName());
-        }
+        listeners.getListeners().forEach(listener -> listener.onHostNotFound(configuration.getServerName()));
     }
 
     private void fireOnConnectionTimeout(NetworkAssistedEngineConfiguration configuration) {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onConnectionTimeout(configuration.getServerName(), configuration.getServerPort());
-        }
+        listeners.getListeners().forEach(listener -> listener.onConnectionTimeout(configuration.getServerName(), configuration.getServerPort()));
     }
 
     private void fireOnRefused(NetworkAssistedEngineConfiguration configuration) {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onRefused(configuration.getServerName(), configuration.getServerPort());
-        }
+        listeners.getListeners().forEach(listener -> listener.onRefused(configuration.getServerName(), configuration.getServerPort()));
     }
 
     private void fireOnConnected() {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onConnected();
-        }
+        listeners.getListeners().forEach(NetworkAssistedEngineListener::onConnected);
     }
 
     private void fireOnDisconnecting() {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onDisconnecting();
-        }
+        listeners.getListeners().forEach(NetworkAssistedEngineListener::onDisconnecting);
     }
 
     private void fireOnIOError(IOException ex) {
-        for (final NetworkAssistedEngineListener xListener : listeners.getListeners()) {
-            xListener.onIOError(ex);
-        }
+        listeners.getListeners().forEach(listener -> listener.onIOError(ex));
     }
 }

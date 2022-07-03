@@ -6,12 +6,9 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 
-import static java.lang.Thread.sleep;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class ControlEngineTest {
     private final NetworkAssistantEngine network = mock(NetworkAssistantEngine.class);
@@ -23,36 +20,64 @@ class ControlEngineTest {
     }
 
     @Test
-    void onMouseMove() throws InterruptedException {
+    void onMouseMove() {
         // when
         controlEngine.onMouseMove(1, 1);
-        sleep(100);
         // then
-        verify(network).sendMouseControl(any(NetworkMouseControlMessage.class));
+        verify(network, timeout(100).atLeastOnce()).sendMouseControl(any(NetworkMouseControlMessage.class));
     }
 
     @Test
-    void onMouseWheeled() throws InterruptedException {
+    void onMouseWheeled() {
         // when
         controlEngine.onMouseWheeled(1, 2, 3);
-        sleep(100);
         // then
-        verify(network).sendMouseControl(any(NetworkMouseControlMessage.class));
+        verify(network, timeout(100).atLeastOnce()).sendMouseControl(any(NetworkMouseControlMessage.class));
     }
 
     @Test
-    void onKeyPressed() throws InterruptedException {
+    void onMousePressed() {
+        // when
+        controlEngine.onMousePressed(1, 1, 1);
+        // then
+        verify(network, timeout(100).atLeastOnce()).sendMouseControl(any(NetworkMouseControlMessage.class));
+    }
+
+    @Test
+    void onMouseReleased() {
+        // when
+        controlEngine.onMouseReleased(1, 1, 2);
+        // then
+        verify(network, timeout(100).atLeastOnce()).sendMouseControl(any(NetworkMouseControlMessage.class));
+    }
+
+    @Test
+    void onKeyPressed() {
         // given
         final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
         // when
         final int keyB = 66;
         final char charB = 'B';
         controlEngine.onKeyPressed(keyB, charB);
-        sleep(100);
         // then
-        verify(network).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         assertTrue(keyMessageCaptor.getValue().isPressed());
         assertEquals(keyB, keyMessageCaptor.getValue().getKeyCode());
         assertEquals(charB, keyMessageCaptor.getValue().getKeyChar());
+    }
+
+    @Test
+    void onKeyReleased() {
+        // given
+        final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
+        // when
+        final int keyC = 67;
+        final char charC = 'C';
+        controlEngine.onKeyReleased(keyC, charC);
+        // then
+        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        assertTrue(keyMessageCaptor.getValue().isReleased());
+        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
+        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
     }
 }

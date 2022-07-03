@@ -130,9 +130,7 @@ public final class SystemUtilities {
         final int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
         final String format = "%" + size + "." + size + "s [%s]";
 
-        Collections.sort(propNames);
-
-        for (String propName : propNames) {
+        propNames.stream().sorted().forEach(propName -> {
             String propValue = getProperty(propName);
             // I want to display the actual content of the line separator...
             if (propName.equals("line.separator")) {
@@ -144,7 +142,7 @@ public final class SystemUtilities {
                 propValue = hex.toString();
             }
             props.add(format(format, propName, propValue));
-        }
+        });
         return props;
     }
 

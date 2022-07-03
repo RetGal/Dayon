@@ -121,9 +121,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 		}
 
 		private void fireOnDeCompressed(Capture capture, int cacheHits, double compressionRatio) {
-			for (final DeCompressorEngineListener xListener : listeners.getListeners()) {
-				xListener.onDeCompressed(capture, cacheHits, compressionRatio);
-			}
+			listeners.getListeners().forEach(listener -> listener.onDeCompressed(capture, cacheHits, compressionRatio));
 		}
 	}
 
