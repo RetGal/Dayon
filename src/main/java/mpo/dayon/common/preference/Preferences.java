@@ -89,7 +89,7 @@ public final class Preferences {
     }
 
     public int getIntPreference(String name, int defaultValue) {
-        final String prop = getStringProperty(props, name, null);
+        final String prop = getStringPreference(name, null);
         if (prop == null) {
             return defaultValue;
         }
@@ -97,7 +97,7 @@ public final class Preferences {
     }
 
     public <T extends Enum<T>> T getEnumPreference(String name, T defaultValue, T[] enums) {
-        final String prop = getStringProperty(props, name, null);
+        final String prop = getStringPreference(name, null);
         if (prop == null) {
             return defaultValue;
         }
@@ -106,7 +106,7 @@ public final class Preferences {
     }
 
     public double getDoublePreference(String name, double defaultValue) {
-        final String prop = getStringProperty(props, name, null);
+        final String prop = getStringPreference(name, null);
         if (prop == null) {
             return defaultValue;
         }
@@ -114,18 +114,11 @@ public final class Preferences {
     }
 
     public boolean getBooleanPreference(String name, boolean defaultValue) {
-        final String prop = getStringProperty(props, name, null);
+        final String prop = getStringPreference(name, null);
         if (prop == null) {
             return defaultValue;
         }
         return Boolean.parseBoolean(prop);
-    }
-
-    private static String getStringProperty(Properties props, String name, String defaultValue) {
-        if (props == null) {
-            return getProperty(name);
-        }
-        return props.getProperty(name, defaultValue);
     }
 
     private AtomicBoolean getWriteError() {
