@@ -10,15 +10,12 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.MessageFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
 
@@ -28,7 +25,6 @@ public final class SystemUtilities {
     public static final String FLATPACK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
-    private static final String DAYON_HOME = "dayon.home";
 
     private SystemUtilities() {
     }
@@ -37,20 +33,12 @@ public final class SystemUtilities {
         return URI.create(format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
     }
 
-    public static File getOrCreateAppFile(String name) throws IOException {
-        final File file = new File(getProperty(DAYON_HOME), name);
-        if (file.exists() && file.isDirectory()) {
-            throw new IOException(format("Error creating %s%s%s", getProperty(DAYON_HOME), File.separator, name));
-        }
-        return file;
-    }
-
     private static File getOrCreateTransferDir() throws IOException {
-        final File transferDir = new File(getProperty(DAYON_HOME), ".transfer");
+        final File transferDir = new File(getProperty("dayon.home"), ".transfer");
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else if (!transferDir.mkdir()) {
-            throw new IOException(format("Error creating %s%s%s", getProperty(DAYON_HOME), File.separator, ".transfer"));
+            throw new IOException(format("Error creating %s", transferDir.getName()));
         }
         return transferDir;
     }
@@ -74,54 +62,6 @@ public final class SystemUtilities {
                     .filter(item -> !folder.getPath().equals(item.getPath()))
                     .forEach(File::delete);
         }
-    }
-
-    private static String getStringProperty(Properties props, String name) {
-        final String value = getStringProperty(props, name, null);
-        if (value == null) {
-            throw new InvalidParameterException(MessageFormat.format("Missing value for property {0}!", name));
-        }
-        return value;
-    }
-
-    public static String getStringProperty(Properties props, String name, String defaultValue) {
-        if (props == null) {
-            return getProperty(name);
-        }
-        return props.getProperty(name, defaultValue);
-    }
-
-    public static int getIntProperty(Properties props, String name, int defaultValue) {
-        final String prop = getStringProperty(props, name, null);
-        if (prop == null) {
-            return defaultValue;
-        }
-        return abs(Integer.parseInt(prop));
-    }
-
-    public static boolean getBooleanProperty(Properties props, String name, boolean defaultValue) {
-        final String prop = getStringProperty(props, name, null);
-        if (prop == null) {
-            return defaultValue;
-        }
-        return Boolean.parseBoolean(prop);
-    }
-
-    public static double getDoubleProperty(Properties props, String name, double defaultValue) {
-        final String prop = getStringProperty(props, name, null);
-        if (prop == null) {
-            return defaultValue;
-        }
-        return abs(Double.parseDouble(prop));
-    }
-
-    public static <T extends Enum<T>> T getEnumProperty(Properties props, String name, T defaultValue, T[] enums) {
-        final String prop = getStringProperty(props, name, null);
-        if (prop == null) {
-            return defaultValue;
-        }
-        final int ordinal = Integer.parseInt(prop);
-        return Arrays.stream(enums).filter(anEnum -> ordinal == anEnum.ordinal()).findFirst().orElse(defaultValue);
     }
 
     public static List<String> getSystemProperties() {
@@ -264,7 +204,7 @@ public final class SystemUtilities {
         return true;
     }
 
-    public static String checksum(String input) throws NoSuchAlgorithmException {
+    static String checksum(String input) throws NoSuchAlgorithmException {
         MessageDigest objSHA = MessageDigest.getInstance("SHA-1");
         byte[] bytSHA = objSHA != null ? objSHA.digest(input.getBytes()) : new byte[0];
         BigInteger intNumber = new BigInteger(1, bytSHA);

@@ -2,10 +2,12 @@ package mpo.dayon.common.log;
 
 import mpo.dayon.common.log.console.ConsoleAppender;
 import mpo.dayon.common.log.file.FileAppender;
-import mpo.dayon.common.utils.SystemUtilities;
 
 import java.io.File;
 import java.io.IOException;
+
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 
 /**
  * Minimal logging interface - minimize the JAR size on the assisted side - at
@@ -26,18 +28,25 @@ public final class Log {
 
         if ("file".equals(mode)) {
             try {
-                final String filename = System.getProperty("dayon.application.name") + ".log";
-                final File file = SystemUtilities.getOrCreateAppFile(filename);
+                final File logFile = getOrCreateLogFile();
                 // console ...
-                info("Log file : " + file.getAbsolutePath());
-                out = new FileAppender(file.getAbsolutePath());
-                // file ...
-                info("Log file : " + file.getAbsolutePath());
+                info("Log logFile : " + logFile.getAbsolutePath());
+                out = new FileAppender(logFile.getAbsolutePath());
+                // logFile ...
+                info("Log logFile : " + logFile.getAbsolutePath());
             } catch (IOException ex) {
                 // console ...
                 warn("Log file setup error (fallback to console)!", ex);
             }
         }
+    }
+
+    private static File getOrCreateLogFile() throws IOException {
+        final File file = new File(getProperty("dayon.home"), getProperty("dayon.application.name") + ".log");
+        if (file.exists() && file.isDirectory()) {
+            throw new IOException(format("Error creating %s", file.getName()));
+        }
+        return file;
     }
 
     public static boolean isDebugEnabled() {

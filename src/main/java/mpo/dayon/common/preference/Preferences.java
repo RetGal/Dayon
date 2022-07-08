@@ -1,15 +1,14 @@
 package mpo.dayon.common.preference;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.SystemUtilities;
+
+import static java.lang.Math.abs;
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 
 public final class Preferences {
     private static final Preferences NULL = new Preferences();
@@ -54,23 +53,16 @@ public final class Preferences {
             return preferences;
         }
 
-        final String name = System.getProperty("dayon.application.name");
-
         try {
             final Preferences xpreferences;
-            final File file = SystemUtilities.getOrCreateAppFile(name + ".properties");
+            final File file = getOrCreatePreferencesFile();
 
-            if (file != null) {
-                if (file.exists()) {
-                    Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
-                } else {
-                    Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
-                }
-                xpreferences = new Preferences(file);
+            if (file.exists()) {
+                Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
             } else {
-                Log.warn("Preferences (missing) [" + name + ".properties]");
-                xpreferences = NULL;
+                Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
             }
+            xpreferences = new Preferences(file);
             setupPersister(xpreferences);
             preferences = xpreferences;
             return preferences;
@@ -81,24 +73,59 @@ public final class Preferences {
         }
     }
 
+    private static File getOrCreatePreferencesFile() throws IOException {
+        final File file = new File(getProperty("dayon.home"), getProperty("dayon.application.name") + ".properties");
+        if (file.exists() && file.isDirectory()) {
+            throw new IOException(format("Error creating %s", file.getName()));
+        }
+        return file;
+    }
+
     public String getStringPreference(String name, String defaultValue) {
-        return SystemUtilities.getStringProperty(getProps(), name, defaultValue);
+        if (props == null) {
+            return getProperty(name);
+        }
+        return props.getProperty(name, defaultValue);
     }
 
     public int getIntPreference(String name, int defaultValue) {
-        return SystemUtilities.getIntProperty(getProps(), name, defaultValue);
+        final String prop = getStringProperty(props, name, null);
+        if (prop == null) {
+            return defaultValue;
+        }
+        return abs(Integer.parseInt(prop));
     }
 
     public <T extends Enum<T>> T getEnumPreference(String name, T defaultValue, T[] enums) {
-        return SystemUtilities.getEnumProperty(getProps(), name, defaultValue, enums);
+        final String prop = getStringProperty(props, name, null);
+        if (prop == null) {
+            return defaultValue;
+        }
+        final int ordinal = Integer.parseInt(prop);
+        return Arrays.stream(enums).filter(anEnum -> ordinal == anEnum.ordinal()).findFirst().orElse(defaultValue);
     }
 
     public double getDoublePreference(String name, double defaultValue) {
-        return SystemUtilities.getDoubleProperty(getProps(), name, defaultValue);
+        final String prop = getStringProperty(props, name, null);
+        if (prop == null) {
+            return defaultValue;
+        }
+        return abs(Double.parseDouble(prop));
     }
 
     public boolean getBooleanPreference(String name, boolean defaultValue) {
-        return SystemUtilities.getBooleanProperty(getProps(), name, defaultValue);
+        final String prop = getStringProperty(props, name, null);
+        if (prop == null) {
+            return defaultValue;
+        }
+        return Boolean.parseBoolean(prop);
+    }
+
+    private static String getStringProperty(Properties props, String name, String defaultValue) {
+        if (props == null) {
+            return getProperty(name);
+        }
+        return props.getProperty(name, defaultValue);
     }
 
     private AtomicBoolean getWriteError() {
