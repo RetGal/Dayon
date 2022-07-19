@@ -12,6 +12,8 @@ import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.version.Version;
 
 import javax.net.ssl.*;
+
+import java.awt.Toolkit;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
 import java.net.ServerSocket;
@@ -166,6 +168,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         do {
             safeClose(connection); // we might have refused the accepted connection (!)
             connection = server.accept();
+            Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
 
