@@ -24,7 +24,7 @@ class AssistedFrame extends BaseFrame {
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
-    AssistedFrame(AssistedStartAction startAction, AssistedStopAction stopAction, Action toggleMultiScreenCaptureAction) {
+    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction) {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
         this.startAction = startAction;

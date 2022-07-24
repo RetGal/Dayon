@@ -17,6 +17,7 @@ import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
+import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.network.FileUtilities;
@@ -28,6 +29,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
@@ -80,7 +82,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
-            frame = new AssistedFrame(new AssistedStartAction(this), new AssistedStopAction(this), createToggleMultiScreenAction());
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
             FatalErrorHandler.attachFrame(frame);
             KeyboardErrorHandler.attachFrame(frame);
             frame.setVisible(true);
@@ -88,7 +90,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return configureConnection(serverName, portNumber, autoConnect);
     }
 
-    public NetworkAssistedEngineConfiguration getConfiguration() {
+    private NetworkAssistedEngineConfiguration getConfiguration() {
         return configuration;
     }
 
@@ -201,18 +203,69 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return multiScreen;
     }
 
-    boolean start() {
+    private Action createStopAction() {
+        final Action stopAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                stop();
+            }
+        };
+        stopAction.setEnabled(false);
+        stopAction.putValue(Action.NAME, "stop");
+        stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
+        stopAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
+        return stopAction;
+    }
+
+    private Action createStartAction() {
+        final Action startAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                onReady();
+                new NetWorker().execute();
+            }
+        };
+        startAction.putValue(Action.NAME, "start");
+        startAction.putValue(Action.SHORT_DESCRIPTION, translate("start.session"));
+        startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
+        return startAction;
+    }
+
+    private class NetWorker extends SwingWorker<String, String> {
+        @Override
+        protected String doInBackground() {
+            if (start() && !isCancelled()) {
+                connect();
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            try {
+                if (!isCancelled()) {
+                    super.get();
+                    Log.debug(format("NetWorker is done [%s]", getConfiguration().getServerName()));
+                }
+            } catch (InterruptedException | ExecutionException ie) {
+                Log.info("NetWorker was cancelled");
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean start() {
         // triggers network settings dialogue
         return start(null, null, false);
     }
 
-    void connect() {
+    private void connect() {
         frame.onConnecting(configuration.getServerName(), configuration.getServerPort());
         networkEngine.configure(configuration);
         networkEngine.connect();
     }
 
-    void stop() {
+    private void stop() {
         stop(configuration.getServerName());
     }
 
@@ -352,7 +405,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         KeyboardErrorHandler.warn(String.valueOf(message));
     }
 
-    void onReady() {
+    private void onReady() {
         frame.onReady();
     }
 

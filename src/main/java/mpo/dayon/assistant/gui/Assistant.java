@@ -158,16 +158,16 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setToggleFitScreenAction(createToggleFixScreenAction());
         assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
-        assistantActions.setStartAction(new AssistantStartAction(this));
-        assistantActions.setStopAction(new AssistantStopAction(this));
+        assistantActions.setStartAction(createStartAction());
+        assistantActions.setStopAction(createStopAction());
         return assistantActions;
     }
 
-    void startNetwork() {
+    private void startNetwork() {
         network.start();
     }
 
-    void stopNetwork() {
+    private void stopNetwork() {
         network.cancel();
     }
 
@@ -670,6 +670,33 @@ public class Assistant implements ClipboardOwner {
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
+    }
+
+    private Action createStartAction() {
+        final Action startAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                startNetwork();
+            }
+        };
+        startAction.putValue(Action.NAME, "start");
+        startAction.putValue(Action.SHORT_DESCRIPTION, translate("start.session"));
+        startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START));
+        return startAction;
+    }
+
+    private Action createStopAction() {
+        final Action stopAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                stopNetwork();
+            }
+        };
+        stopAction.setEnabled(false);
+        stopAction.putValue(Action.NAME, "stop");
+        stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
+        stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP));
+        return stopAction;
     }
 
     private JMenu createLookAndFeelSubmenu() {
