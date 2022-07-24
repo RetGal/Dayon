@@ -1,6 +1,5 @@
-package mpo.dayon.assisted.capture;
+package mpo.dayon.common.capture;
 
-import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.configuration.Configuration;
 import mpo.dayon.common.preference.Preferences;
 

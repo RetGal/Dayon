@@ -4,6 +4,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 import mpo.dayon.common.capture.Capture;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.concurrent.RunnableEx;

@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.network;
 
-import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;

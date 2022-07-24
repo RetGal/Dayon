@@ -7,7 +7,7 @@ import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
 import mpo.dayon.assistant.utils.NetworkUtilities;
-import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;

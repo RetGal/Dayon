@@ -2,7 +2,7 @@ package mpo.dayon.common.network.message;
 
 import java.io.*;
 
-import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.Gray8Bits;
 
 public class NetworkCaptureConfigurationMessage extends NetworkMessage {

@@ -1,7 +1,7 @@
 package mpo.dayon.assisted.gui;
 
 import mpo.dayon.assisted.capture.CaptureEngine;
-import mpo.dayon.assisted.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
 import mpo.dayon.assisted.compressor.CompressorEngine;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
