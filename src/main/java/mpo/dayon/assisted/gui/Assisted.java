@@ -234,10 +234,17 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private class NetWorker extends SwingWorker<String, String> {
         @Override
         protected String doInBackground() {
-            if (start() && !isCancelled()) {
-                connect();
+            if (isConfigured() && !isCancelled()) {
+                frame.onConnecting(configuration.getServerName(), configuration.getServerPort());
+                networkEngine.configure(configuration);
+                networkEngine.connect();
             }
             return null;
+        }
+
+        private boolean isConfigured() {
+            // triggers network settings dialogue
+            return start(null, null, false);
         }
 
         @Override
@@ -252,17 +259,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 Thread.currentThread().interrupt();
             }
         }
-    }
-
-    private boolean start() {
-        // triggers network settings dialogue
-        return start(null, null, false);
-    }
-
-    private void connect() {
-        frame.onConnecting(configuration.getServerName(), configuration.getServerPort());
-        networkEngine.configure(configuration);
-        networkEngine.connect();
     }
 
     private void stop() {
