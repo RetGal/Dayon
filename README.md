@@ -1,5 +1,4 @@
 # Dayon! 
-[![Build Status](https://travis-ci.org/RetGal/Dayon.svg?branch=master)](https://travis-ci.org/RetGal/Dayon)
 ![Java CI (Maven)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Maven)/badge.svg)
 ![Java CI (Ant)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Ant)/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RetGal_Dayon&metric=alert_status)](https://sonarcloud.io/dashboard?id=RetGal_Dayon)
