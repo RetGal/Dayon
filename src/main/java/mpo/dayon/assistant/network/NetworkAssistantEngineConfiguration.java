@@ -14,8 +14,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 	 * Default : takes its values from the current preferences.
 	 */
 	public NetworkAssistantEngineConfiguration() {
-		final Preferences prefs = Preferences.getPreferences();
-		port = prefs.getIntPreference(PREF_PORT_NUMBER, 8080);
+		port = Preferences.getPreferences().getIntPreference(PREF_PORT_NUMBER, 8080);
 	}
 
 	public NetworkAssistantEngineConfiguration(int port) {

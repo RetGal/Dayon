@@ -102,7 +102,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         receiver = new Thread(new RunnableEx() {
             @Override
-            protected void doRun() throws Exception {
+            protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
                 NetworkAssistantEngine.this.receivingLoop();
             }
         }, "NetworkReceiver");

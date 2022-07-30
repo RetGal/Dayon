@@ -4,7 +4,10 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 
 import javax.net.ssl.SSLException;
+import java.io.IOException;
 import java.net.SocketException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 public abstract class RunnableEx implements Runnable {
 	protected RunnableEx() {
@@ -21,5 +24,5 @@ public abstract class RunnableEx implements Runnable {
 		}
 	}
 
-	protected abstract void doRun() throws Exception;
+	protected abstract void doRun() throws IOException, InterruptedException, NoSuchAlgorithmException, KeyManagementException;
 }
