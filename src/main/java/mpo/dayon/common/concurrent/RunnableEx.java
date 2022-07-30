@@ -19,6 +19,9 @@ public abstract class RunnableEx implements Runnable {
 			doRun();
 		} catch (SocketException | SSLException ex) {
 			Log.error(ex.getMessage());
+		} catch (InterruptedException ex) {
+			Log.error("Interrupting [" + Thread.currentThread().getName() + "]");
+			Thread.currentThread().interrupt();
 		} catch (Exception ex) {
 			FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is dead!", ex);
 		}
