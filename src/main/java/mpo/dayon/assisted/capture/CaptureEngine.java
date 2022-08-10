@@ -14,6 +14,8 @@ import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.UnitUtilities;
 
+import static java.lang.Math.min;
+
 public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration> {
 
     private static final Dimension TILE_DIMENSION = new Dimension(32, 32);
@@ -182,20 +184,20 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         int tileId = 0;
 
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
-            final int th = Math.min(captureDimension.height - ty, TILE_DIMENSION.height);
+            final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
 
             for (int tx = 0; tx < captureDimension.width; tx += TILE_DIMENSION.width) {
-                final int tw = Math.min(captureDimension.width - tx, TILE_DIMENSION.width);
+                final int tw = min(captureDimension.width - tx, TILE_DIMENSION.width);
                 final int offset = ty * captureDimension.width + tx;
-                final byte[] data = createTile(capture, captureDimension.width, offset, tw, th);
-                final long cs = CaptureTile.computeChecksum(data, 0, data.length);
+                final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
+                final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
 
                 if (cs != previousCapture[tileId]) {
                     if (dirty == null) {
                         dirty = new CaptureTile[length];
                     }
                     final Position position = new Position(tx, ty);
-                    dirty[tileId] = new CaptureTile(captureId, tileId, cs, position, tw, th, data);
+                    dirty[tileId] = new CaptureTile(captureId, tileId, cs, position, tw, th, tileData);
                 }
                 ++tileId;
             }
@@ -206,13 +208,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     /**
      * Screen-rectangle buffer to tile-rectangle buffer.
      */
-    private static byte[] createTile(byte[] capture, int width, int offset, int tw, int th) {
+    private static byte[] createTile(byte[] capture, int width, int srcPos, int tw, int th) {
         final int capacity = tw * th;
         final byte[] tile = new byte[capacity];
-        int srcPos = offset;
+        final int maxSrcPos = capture.length;
         int destPos = 0;
 
-        while (destPos < capacity) {
+        while (destPos < capacity && srcPos < maxSrcPos) {
             System.arraycopy(capture, srcPos, tile, destPos, tw);
             srcPos += width;
             destPos += tw;
