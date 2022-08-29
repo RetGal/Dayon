@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Ddayon.log=file -cp $1 $2 $3 $4 $5
+java -Ddayon.log=file -cp "$@"

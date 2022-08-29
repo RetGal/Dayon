@@ -11,4 +11,4 @@ else
 fi
 JAVA_OPTS=""
 CLASSPATH="$DAYON_HOME/dayon.jar"
-${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp "${CLASSPATH}" "$1" "$2" "$3" "$4"
+${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp "${CLASSPATH}" "$@"
