@@ -1,13 +1,15 @@
 #!/bin/sh
+ASSISTANT_DESKTOP=/usr/share/applications/DayonAssistant.desktop
+ASSISTED_DESKTOP=/usr/share/applications/DayonAssisted.desktop
 if [ ! "$(whoami)" = "root" ]; then
-	echo "This script must be run as super user - e.g. 'sudo sh setup.sh'"
-	exit 77
-fi
-
-SHORTCUT_DIR=/usr/share/applications
-if [ ! -d "$SHORTCUT_DIR" ]; then
-	echo "Fatal: Unknown environment - '/usr/share/applications' not found."
-	exit 78
+  echo "Setting up desktop launchers for user '$(whoami)' only."
+  echo "Run as super user in order to install globally."
+  mkdir -p /home/"$(whoami)"/.local/share/applications
+  ASSISTANT_DESKTOP=/home/"$(whoami)"/.local/share/applications/DayonAssistant.desktop
+  ASSISTED_DESKTOP=/home/"$(whoami)"/.local/share/applications/DayonAssisted.desktop
+elif [ ! -d "/usr/share/applications" ]; then
+  echo "Fatal: Unknown environment - '/usr/share/applications' not found."
+  exit 78
 fi
 
 which java >/dev/null
@@ -24,7 +26,7 @@ if [ "$INSTALL_DIR" = "." ]; then
 fi
 chmod +x "${INSTALL_DIR}"/dayon*sh
 
-cat <<EOF > /usr/share/applications/DayonAssistant.desktop
+cat <<EOF > "${ASSISTANT_DESKTOP}"
 [Desktop Entry]
 Name=Dayon! Assistant
 Version=1.0
@@ -46,7 +48,7 @@ Encoding=UTF-8
 Categories=RemoteAccess;Network;
 EOF
 
-cat <<EOF > /usr/share/applications/DayonAssisted.desktop
+cat <<EOF > "${ASSISTED_DESKTOP}"
 [Desktop Entry]
 Name=Dayon! Assisted
 Version=1.0
