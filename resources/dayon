@@ -2,10 +2,9 @@
 realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
 }
-DAYON_HOME=$(dirname $(realpath "$0"))
+DAYON_HOME=$(dirname "$(realpath "$0")")
 JAVA_HOME=$(/usr/libexec/java_home)
 JAVA=${JAVA_HOME}/bin/java
-JAVA_OPTS=""
-CLASSPATH="$DAYON_HOME/dayon.jar"
-
+JAVA_OPTS=
+CLASSPATH=${DAYON_HOME}/dayon.jar
 ${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp "${CLASSPATH}" "$@"

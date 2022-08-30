@@ -12,8 +12,7 @@ elif [ ! -d "/usr/share/applications" ]; then
   exit 78
 fi
 
-which java >/dev/null
-if [ ! $? -eq 0 ]; then
+if ! which java >/dev/null; then
 	echo "***************************************************************************************"
 	echo "* Important: Dayon! requires a Java Runtime Environment (JRE) to run.                 *"
 	echo "* You will have to install a JRE afterwards - e.g. 'sudo apt-get install default-jre' *"
