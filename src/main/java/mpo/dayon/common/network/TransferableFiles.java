@@ -29,7 +29,7 @@ class TransferableFiles implements Transferable {
     private static final DataFlavor[] FLAVORS = new DataFlavor[]{
             DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
 
-    public TransferableFiles(List<File> files) {
+    TransferableFiles(List<File> files) {
         this.files = Collections.unmodifiableList(files);
     }
 

@@ -9,6 +9,7 @@ import mpo.dayon.common.log.Log;
 
 import static java.lang.Math.min;
 import static java.lang.String.format;
+import static java.util.Arrays.stream;
 
 public final class ScreenUtilities {
 
@@ -67,11 +68,7 @@ public final class ScreenUtilities {
     private static Rectangle getCombinedScreenSize() {
         Rectangle fullSize = new Rectangle();
         GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        for (GraphicsDevice gd : environment.getScreenDevices()) {
-            for (GraphicsConfiguration graphicsConfiguration : gd.getConfigurations()) {
-                Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize);
-            }
-        }
+        stream(environment.getScreenDevices()).flatMap(gd -> stream(gd.getConfigurations())).forEach(graphicsConfiguration -> Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize));
         return fullSize.getBounds();
     }
 

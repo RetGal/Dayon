@@ -2,6 +2,7 @@ package mpo.dayon.assisted.capture;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
@@ -72,7 +73,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public void addListener(CaptureEngineListener listener) {
         listeners.add(listener);
-        // We're keeping locally a previous state so we must be sure to send at
+        // We're keeping locally a previous state, so we must be sure to send at
         // least once the previous capture state to the new listener.
         synchronized (reconfigurationLOCK) {
             this.reconfigured = true;
@@ -96,9 +97,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         int captureId = 0;
         int captureCount = 0;
         int skipped = 0;
+        AtomicBoolean reset = new AtomicBoolean(false);
 
         while (true) {
-            boolean reset = false;
+            reset.set(false);
             synchronized (reconfigurationLOCK) {
                 if (reconfigured) {
                     // assuming everything has changed (!)
@@ -111,7 +113,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                     // I'm using a flag to tag the capture as a RESET - it is then easier
                     // to handle the reset message until the assistant without having to
                     // change anything (e.g., merging mechanism in the compressor engine).
-                    reset = true;
+                    reset.set(true);
                     Log.info("Capture engine has been reconfigured [tile:" + captureId + "] " + configuration);
                     reconfigured = false;
                 }
@@ -129,7 +131,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension());
 
             if (dirty != null) {
-                final Capture capture = new Capture(captureId, reset, skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
+                final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
                 fireOnCaptured(capture); // might update the capture (i.e., merging with previous not sent yet)
                 updatePreviousCapture(capture);
             }
@@ -182,16 +184,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         }
         CaptureTile[] dirty = null;
         int tileId = 0;
-
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
             final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
-
             for (int tx = 0; tx < captureDimension.width; tx += TILE_DIMENSION.width) {
                 final int tw = min(captureDimension.width - tx, TILE_DIMENSION.width);
                 final int offset = ty * captureDimension.width + tx;
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
-
                 if (cs != previousCapture[tileId]) {
                     if (dirty == null) {
                         dirty = new CaptureTile[length];

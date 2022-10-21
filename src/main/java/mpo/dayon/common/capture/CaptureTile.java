@@ -48,13 +48,11 @@ public class CaptureTile {
 
 	public CaptureTile(int captureId, int id, long checksum, Position position, int width, int height, byte[] capture) {
 		this.captureId = captureId;
-
 		this.id = id;
 		this.checksum = checksum;
 		this.position = position;
 		this.width = width;
 		this.height = height;
-
 		this.capture = new MemByteBuffer(capture);
 		this.singleLevel = computeSingleLevel(capture);
 		this.fromCache = false;
@@ -65,66 +63,52 @@ public class CaptureTile {
 	 */
 	public CaptureTile(int captureId, int id, XYWH xywh, MemByteBuffer capture) {
 		this.captureId = captureId;
-
 		this.id = id;
 		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-
 		this.capture = capture;
-		this.singleLevel = -1;
-
 		if (width * height != capture.size()) {
 			throw new IllegalArgumentException("Ouch!");
 		}
-
+		this.singleLevel = -1;
 		this.fromCache = false;
 	}
 
 	/**
-	 * Assisted to assistant : result of network data decompression (single
-	 * level tile).
+	 * Assisted to assistant : result of network data decompression (single level tile).
 	 */
 	public CaptureTile(int captureId, int id, XYWH xywh, byte singleLevel) {
 		this.captureId = captureId;
-
 		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-
 		final byte[] data = new byte[width * height];
 		Arrays.fill(data, singleLevel);
-
 		this.capture = new MemByteBuffer(data);
 		this.singleLevel = singleLevel;
 		this.fromCache = false;
 	}
 
 	/**
-	 * Assisted to assistant : result of network data decompression (from the
-	 * cache).
+	 * Assisted to assistant : result of network data decompression (from the cache).
 	 */
 	public CaptureTile(int captureId, int id, XYWH xywh, CaptureTile cached) {
 		this.captureId = captureId;
-
 		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-
-		this.singleLevel = -1;
-
 		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black image (!)
 				: cached.getCapture(); // sharing it (!)
-
 		if (width * height != capture.size()) {
 			throw new IllegalArgumentException("Ouch!");
 		}
-
+		this.singleLevel = -1;
 		this.fromCache = true;
 	}
 
@@ -181,13 +165,11 @@ public class CaptureTile {
 
 	private static byte computeSingleLevel(byte[] capture) {
 		final byte level = capture[0];
-
 		for (int idx = 1; idx < capture.length; idx++) {
 			if (capture[idx] != level) {
 				return -1; // multi-level
 			}
 		}
-
 		return level;
 	}
 
@@ -267,24 +249,16 @@ public class CaptureTile {
 	private static XYWH_Cache computeXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
 		final int x = (int) Math.ceil(captureWidth / (double) tileWidth);
 		final int y = (int) Math.ceil(captureHeight / (double) tileHeight);
-
 		final XYWH[] xywh = new XYWH[x * y];
-
 		int tileId = 0;
-
 		for (int ty = 0; ty < captureHeight; ty += tileHeight) {
 			final int th = Math.min(captureHeight - ty, tileHeight);
-
 			for (int tx = 0; tx < captureWidth; tx += tileWidth) {
 				final int tw = Math.min(captureWidth - tx, tileWidth);
-
 				xywh[tileId++] = new XYWH(tx, ty, tw, th);
 			}
 		}
-
 		final XYWH_Configuration configuration = new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight);
-
 		return new XYWH_Cache(configuration, xywh);
 	}
-
 }

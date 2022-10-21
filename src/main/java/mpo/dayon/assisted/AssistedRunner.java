@@ -49,16 +49,11 @@ class AssistedRunner implements Runner {
     private static Map<String, String> readPresetFile() {
         final List<String> paths = Arrays.asList(System.getProperty("dayon.home"), System.getProperty("user.home"), getJarDir());
         final String fileName = "assisted.yaml";
-        for (String path : paths) {
-            final File presetFile = new File(path, fileName);
-            if (presetFile.exists() && presetFile.isFile() && presetFile.canRead()) {
-                final Map<String, String> content = parseFileContent(presetFile);
-                if (!content.isEmpty()) {
-                    return content;
-                }
-            }
-        }
-        return Collections.emptyMap();
+        return paths.stream().map(path -> new File(path, fileName)).filter(AssistedRunner::isReadable).map(AssistedRunner::parseFileContent).filter(content -> !content.isEmpty()).findFirst().orElse(Collections.emptyMap());
+    }
+
+    private static boolean isReadable(File presetFile) {
+        return presetFile.exists() && presetFile.isFile() && presetFile.canRead();
     }
 
     private static Map<String, String> parseFileContent(File presetFile) {

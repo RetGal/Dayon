@@ -81,24 +81,16 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		executor.setRejectedExecutionHandler((runnable, poolExecutor) -> {
             if (!poolExecutor.isShutdown()) {
                 final List<Runnable> pendings = new ArrayList<>();
-
                 // pendings : oldest first (!)
                 poolExecutor.getQueue().drainTo(pendings);
-
                 final MyExecutable newer = (MyExecutable) runnable;
-
                 if (!pendings.isEmpty()) {
                     final Capture[] cpendings = new Capture[pendings.size()];
-
-                    int pos = 0;
-
-                    for (int idx = pendings.size() - 1; idx > -1; idx--) {
-                        cpendings[pos++] = ((MyExecutable) pendings.get(idx)).getCapture();
+					for (int pos = 0, idx = pendings.size() - 1; idx > -1; pos ++, idx--) {
+                        cpendings[pos] = ((MyExecutable) pendings.get(idx)).getCapture();
                     }
-
                     newer.getCapture().mergeDirtyTiles(cpendings);
                 }
-
                 poolExecutor.execute(newer);
             }
         });
@@ -144,11 +136,9 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			try {
 				final CompressorEngineConfiguration xconfiguration;
 				final boolean xreconfigured;
-
 				synchronized (reconfigurationLOCK) {
 					xconfiguration = configuration;
 					xreconfigured = reconfigured;
-
 					if (reconfigured) {
 						cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
 								: new NullTileCache();
@@ -156,15 +146,12 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 						Log.info("Compressor engine has been reconfigured [tile:" + getCapture().getId() + "] " + xconfiguration);
 					}
 				}
-
 				final Compressor compressor = Compressor.get(xconfiguration.getMethod());
-
 				final MemByteBuffer compressed = compressor.compress(cache, getCapture());
 
 				// Possibly blocking - no problem as we'll replace (and merge) in our queue
 				// the oldest capture (if any) until we can compress it and send it to the next
 				// stage of processing.
-
 				if (!xreconfigured) {
 					fireOnCompressed(getCapture(), compressor.getMethod(), null, compressed);
 				} else {

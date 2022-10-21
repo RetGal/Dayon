@@ -167,8 +167,7 @@ public final class SystemUtilities {
             return false;
         }
         try {
-            InetAddress inetAddress = InetAddress.getByName(serverName);
-            return inetAddress instanceof Inet4Address;
+            return InetAddress.getByName(serverName) instanceof Inet4Address;
         } catch (UnknownHostException e) {
             return false;
         }
@@ -176,8 +175,7 @@ public final class SystemUtilities {
 
     private static boolean isValidIpV6(String serverName) {
         try {
-            InetAddress inetAddress = InetAddress.getByName(serverName);
-            return inetAddress instanceof Inet6Address;
+            return InetAddress.getByName(serverName) instanceof Inet6Address;
         } catch (UnknownHostException e) {
             return false;
         }

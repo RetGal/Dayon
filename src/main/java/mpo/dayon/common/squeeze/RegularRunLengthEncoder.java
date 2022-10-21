@@ -7,14 +7,11 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
     public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) {
         final byte[] xCapture = capture.getInternal();
         final int len = capture.size();
-
         int pos = 0;
         int prev = Integer.MIN_VALUE;
-
         while (pos < len) {
             final int current = xCapture[pos];
             out.write(current);
-
             if (current != prev) {
                 prev = current;
                 ++pos;
@@ -22,11 +19,9 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
             {
                 int count = 0;
                 int noMatch = 0;
-
                 while (count < 255 && ++pos < len && (noMatch = xCapture[pos]) == current) {
                     ++count;
                 }
-
                 if (count == 255) {
                     out.write(255);
                     prev = Integer.MIN_VALUE;
@@ -54,10 +49,8 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
     public void runLengthDecode(MemByteBuffer out, MemByteBuffer encoded) {
         final byte[] xEncoded = encoded.getInternal();
         final int len = encoded.size();
-
         int pos = 0;
         int prev = Integer.MIN_VALUE;
-
         while (pos < len) {
             final int current = xEncoded[pos++];
             out.write(current);
@@ -70,5 +63,4 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
             }
         }
     }
-
 }

@@ -21,7 +21,7 @@ class ConnectionSettingsDialog {
 
     private final JTextField assistantTokenTextField;
 
-    public ConnectionSettingsDialog(NetworkAssistedEngineConfiguration configuration) {
+    ConnectionSettingsDialog(NetworkAssistedEngineConfiguration configuration) {
 
         JPanel connectionSettingsDialog = new JPanel(new GridLayout(2, 2, 10, 10));
         connectionSettingsDialog.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
@@ -68,7 +68,7 @@ class ConnectionSettingsDialog {
         return this.assistantTokenTextField.getText();
     }
 
-    public JTabbedPane getTabbedPane() {
+    JTabbedPane getTabbedPane() {
         return tabbedPane;
     }
 

@@ -41,13 +41,10 @@ public class Capture {
 	public Capture(int captureId, boolean reset, int skipped, int merged, Dimension captureDimension, Dimension tileDimension, CaptureTile[] dirty) {
 		this.id = captureId;
 		this.reset = reset;
-
 		this.skipped = new AtomicInteger(skipped);
 		this.merged = new AtomicInteger(merged);
-
 		this.captureDimension = captureDimension;
 		this.tileDimension = tileDimension;
-
 		this.dirty = dirty.clone();
 	}
 
@@ -90,11 +87,10 @@ public class Capture {
 	 * amount of byte.
 	 * <p/>
 	 * Note that the actual number of gray levels does not change that original
-	 * amount as I want to see the impact on the compression of using less
+	 * amount as I want to see the impact on the compression of using a smaller
 	 * number of gray levels.
 	 */
 	private int computeInitialByteCount() {
-
 		return Arrays.stream(dirty).filter(Objects::nonNull).mapToInt(tile -> tile.getCapture().size()).sum();
 	}
 
@@ -115,7 +111,6 @@ public class Capture {
 	}
 
 	public int getDirtyTileCount() {
-
 		return (int) Arrays.stream(dirty).filter(Objects::nonNull).count();
 	}
 
@@ -126,17 +121,13 @@ public class Capture {
 	public void mergeDirtyTiles(Capture[] olders) {
 		int xskipped = 0;
 		int xmerged = 0;
-
 		for (final Capture older : olders) {
 			doMergeDirtyTiles(older);
-
 			xskipped += older.getSkipped();
 			xmerged += older.getMerged();
 		}
-
 		skipped.addAndGet(xskipped);
 		merged.set(1 + xmerged);
-
 		Log.warn(String.format("Merged [id:%d] [count:%d] [skipped:%d][merged:%d]", id, olders.length, skipped.get(), merged.get()));
 	}
 
@@ -153,7 +144,6 @@ public class Capture {
 		// has been re-configured.
 		// In that case (for the sake of simplicity) a FULL capture will be
 		// sent.
-
 		if (dirty.length != older.getDirty().length) {
 			return; // we're keeping the newest (FULL capture anyway)
 		}
@@ -161,7 +151,6 @@ public class Capture {
 		for (int idx = 0; idx < dirty.length; idx++) {
 			final CaptureTile thisTile = dirty[idx];
 			final CaptureTile olderTile = older.getDirty()[idx];
-
 			if (olderTile != null && thisTile == null) {
 				dirty[idx] = olderTile;
 			}
@@ -173,40 +162,29 @@ public class Capture {
 	 */
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final byte[] buffer = new byte[captureDimension.width * captureDimension.height];
-
 		if (prevBuffer != null && captureDimension.width == prevWidth && captureDimension.height == prevHeight) {
 			System.arraycopy(prevBuffer, 0, buffer, 0, buffer.length);
 		}
-
 		for (final CaptureTile tile : dirty) {
 			if (tile != null) {
 				final MemByteBuffer src = tile.getCapture();
 				final int srcSize = src.size();
-
 				final int tw = tile.getWidth();
-
-				int srcPos = 0;
 				int destPos = tile.getY() * captureDimension.width + tile.getX();
-
-				while (srcPos < srcSize) {
+				for (int srcPos = 0; srcPos < srcSize; srcPos += tw) {
 					System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tw);
-
-					srcPos += tw;
 					destPos += captureDimension.width;
 				}
 			}
 		}
 
 		final DataBuffer dbuffer = new DataBufferByte(buffer, buffer.length);
-
 		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, captureDimension.width, captureDimension.height, captureDimension.width, // scanlineStride
 				1, // pixelStride
 				new int[] { 0 }, // bandOffsets
 				null);
-
 		final ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[] { 8 }, false, false, Transparency.OPAQUE,
 				DataBuffer.TYPE_BYTE);
-
 		return new AbstractMap.SimpleEntry<>(new BufferedImage(cm, raster, false, null), buffer);
 	}
 }

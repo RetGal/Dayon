@@ -54,8 +54,7 @@ public class MemByteBuffer extends OutputStream {
 	 */
 	@Override
     public void write(int val) {
-		final int newCount = count + 1;
-		increaseBuffer(newCount);
+		increaseBuffer(count + 1);
 		buffer[count++] = (byte) val;
 	}
 
@@ -63,8 +62,7 @@ public class MemByteBuffer extends OutputStream {
 	 * @see #write(int)
 	 */
 	private void write(int val1, int val2) {
-		final int newCount = count + 2;
-		increaseBuffer(newCount);
+		increaseBuffer(count + 2);
 		buffer[count++] = (byte) val1;
 		buffer[count++] = (byte) val2;
 	}
