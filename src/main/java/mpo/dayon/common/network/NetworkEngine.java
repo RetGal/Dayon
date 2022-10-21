@@ -55,6 +55,7 @@ public abstract class NetworkEngine {
 		return filesHelper;
 	}
 
+	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
 	protected SSLContext initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
 		try {

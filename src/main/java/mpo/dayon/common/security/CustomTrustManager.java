@@ -22,6 +22,7 @@ public class CustomTrustManager implements X509TrustManager {
 	private X509TrustManager defaultTm;
 	private X509TrustManager ownTm;
 
+	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
 	public CustomTrustManager() {
 				
 		TrustManagerFactory tmf;
