@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -380,8 +381,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                     return;
                 }
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                // noinspection unchecked
-                String text = (String) clipboard.getData(DataFlavor.stringFlavor);
+                String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 networkEngine.sendClipboardText(text, text.getBytes().length);
                 return;
@@ -398,7 +398,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     @Override
     public void digest(String message) {
-        KeyboardErrorHandler.warn(String.valueOf(message));
+        KeyboardErrorHandler.warn(valueOf(message));
     }
 
     private void onReady() {

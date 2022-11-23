@@ -41,6 +41,7 @@ import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
 import static java.lang.String.format;
+import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -295,7 +296,7 @@ public class Assistant implements ClipboardOwner {
                 final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
                 portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
                 final JTextField portNumberTextField = new JTextField();
-                portNumberTextField.setText(String.valueOf(networkConfiguration.getPort()));
+                portNumberTextField.setText(valueOf(networkConfiguration.getPort()));
                 pane.add(portNumberLbl);
                 pane.add(portNumberTextField);
 
@@ -373,8 +374,7 @@ public class Assistant implements ClipboardOwner {
                     frame.onClipboardSending();
                 }
             } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                // noinspection unchecked
-                String text = (String) clipboard.getData(DataFlavor.stringFlavor);
+                String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 // Ok as very few of that (!)
                 new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
@@ -411,7 +411,7 @@ public class Assistant implements ClipboardOwner {
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
                 final JTextField tickTextField = new JTextField();
-                tickTextField.setText(String.valueOf(captureEngineConfiguration.getCaptureTick()));
+                tickTextField.setText(valueOf(captureEngineConfiguration.getCaptureTick()));
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
@@ -488,13 +488,13 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel maxSizeLbl = new JLabel(translate("compression.cache.max"));
                 maxSizeLbl.setToolTipText(translate("compression.cache.max.tooltip"));
-                final JTextField maxSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCacheMaxSize()));
+                final JTextField maxSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCacheMaxSize()));
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
                 final JLabel purgeSizeLbl = new JLabel(translate("compression.cache.purge"));
                 purgeSizeLbl.setToolTipText(translate("compression.cache.purge.tooltip"));
-                final JTextField purgeSizeTf = new JTextField(String.valueOf(compressorEngineConfiguration.getCachePurgeSize()));
+                final JTextField purgeSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCachePurgeSize()));
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
 

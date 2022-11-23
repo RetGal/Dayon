@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 
+import static java.lang.String.format;
 import static java.util.Arrays.copyOf;
 
 public class NetworkClipboardFilesMessage extends NetworkMessage {
@@ -14,7 +15,8 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final List<File> files;
     private final List<FileMetaData> fileMetaDatas;
     private final Long remainingTotalFilesSize;
-    private static final int MAX_BUFFER_CAPACITY = 7168;
+    private static final int MAX_READ_BUFFER_CAPACITY = 7168;
+    private static final int MAX_SEND_BUFFER_CAPACITY = 3145728;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize, String basePath) {
         this.files = Collections.unmodifiableList(files);
@@ -37,16 +39,17 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
             String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             long fileSize = meta.getFileSize();
-            byte[] buffer;
-            Log.debug("Size/left: " + fileSize + "/" + helper.getFileBytesLeft());
-            buffer = helper.getFileBytesLeft() < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_BUFFER_CAPACITY];
+            Log.debug(format("FileSize/left: %s/%s", fileSize, helper.getFileBytesLeft()));
 
-            int read = readIntoBuffer(in, buffer);
+            byte[] buffer = helper.getFileBytesLeft() < MAX_READ_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_READ_BUFFER_CAPACITY];
+            BufferedInputStream bis = new BufferedInputStream(in);
+            int read = bis.read(buffer, 0, buffer.length);
+            Log.debug("Bytes read: " + read);
             final boolean append = helper.getFileBytesLeft() != fileSize;
             if (!append) {
                 Log.info("Received " + meta.getFileName());
             }
-            String tempFilePath = tmpDir + File.separator + helper.getTransferId() + fileName;
+            String tempFilePath = format("%s%s%s%s", tmpDir, File.separator, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
 
             long remainingFileSize = helper.getFileBytesLeft() - read;
@@ -61,7 +64,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
             if (remainingTotalFilesSize == 0) {
                 String rootPath = tmpDir + File.separator + helper.getTransferId();
-                helper.setFiles(Arrays.asList(new File(rootPath).listFiles()));
+                helper.setFiles(Arrays.asList(Objects.requireNonNull(new File(rootPath).listFiles())));
             }
 
         } catch (ClassNotFoundException e) {
@@ -69,19 +72,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         }
 
         return helper;
-    }
-
-    private static int readIntoBuffer(InputStream in, byte[] buffer) throws IOException {
-        if (buffer.length > 0) {
-            int chunk;
-            int read = in.read(buffer, 0, 1);
-            while (in.available() > 0 && read < buffer.length) {
-                chunk = Math.min(in.available(), buffer.length - read);
-                read += in.read(buffer, read, chunk);
-            }
-            return read;
-        }
-        return 0;
     }
 
     private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {
@@ -123,8 +113,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     @Override
     public void marshall(ObjectOutputStream out) throws IOException {
         marshallEnum(out, getType());
-        // ArrayList implements serializable, other List implementations might not..
-        out.writeObject((ArrayList<FileMetaData>) this.fileMetaDatas);
+        out.writeObject(this.fileMetaDatas);
         for (File file : this.files) {
             processFile(file, out);
         }
@@ -135,25 +124,25 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             sendFile(file, out);
         } else {
             for (File node : Objects.requireNonNull(file.listFiles())) {
-                if (node.isFile()) {
-                    sendFile(node, out);
-                } else {
-                    processFile(node, out);
-                }
+                processFile(node, out);
             }
         }
     }
 
     private void sendFile(File file, ObjectOutputStream out) throws IOException {
         long fileSize = file.length();
-        Log.debug("Total bytes to be sent: " + fileSize);
-        byte[] buffer = fileSize < MAX_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_BUFFER_CAPACITY];
-        try (InputStream input = Files.newInputStream(file.toPath())) {
+        Log.info("Sending " + file.getName());
+        Log.debug("Bytes to be sent: " + fileSize);
+        byte[] buffer = fileSize < MAX_SEND_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_SEND_BUFFER_CAPACITY];
+        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             int read;
-            while (input.available() > 0) {
-                read = readIntoBuffer(input, buffer);
-                out.write(copyOf(buffer, read));
+            long remainingSize = fileSize;
+            while (remainingSize > 0) {
+                Log.debug(format("FileSize/left: %s/%s", fileSize, remainingSize));
+                read = bis.read(buffer,0, buffer.length);
+                out.write(buffer);
                 Log.debug("Bytes sent: " + read);
+                remainingSize -= read;
             }
             out.flush();
         }
