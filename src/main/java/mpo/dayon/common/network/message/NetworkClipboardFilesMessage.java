@@ -47,7 +47,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             Log.debug("Bytes read: " + read);
             final boolean append = helper.getFileBytesLeft() != fileSize;
             if (!append) {
-                Log.info("Received " + meta.getFileName());
+                Log.info("Receiving " + meta.getFileName());
             }
             String tempFilePath = format("%s%s%s%s", tmpDir, File.separator, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
@@ -140,7 +140,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             while (remainingSize > 0) {
                 Log.debug(format("FileSize/left: %s/%s", fileSize, remainingSize));
                 read = bis.read(buffer,0, buffer.length);
-                out.write(buffer);
+                out.write(copyOf(buffer, read));
                 Log.debug("Bytes sent: " + read);
                 remainingSize -= read;
             }
