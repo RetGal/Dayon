@@ -64,7 +64,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             helper.setTotalFileBytesLeft(remainingTotalFilesSize);
 
             if (remainingTotalFilesSize == 0) {
-                String rootPath = format("%s%s", tmpDir, File.separator, helper.getTransferId());
+                String rootPath = format("%s%s%s", tmpDir, File.separator, helper.getTransferId());
                 helper.setFiles(Arrays.asList(Objects.requireNonNull(new File(rootPath).listFiles())));
             }
         } catch (ClassNotFoundException e) {
