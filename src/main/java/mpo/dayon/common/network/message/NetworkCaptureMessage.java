@@ -52,12 +52,11 @@ public class NetworkCaptureMessage extends NetworkMessage {
 										// compression (byte) +
 										// configuration-marker (byte) + len
 										// (int) + data (byte[])
-		} else {
-			return 10 + 11 + payload.size(); // type (byte) + capture-id (int) +
-												// compression (byte) +
-												// configuration (???) + len
-												// (int) + data (byte[])
 		}
+		return 10 + 11 + payload.size(); // type (byte) + capture-id (int) +
+										 // compression (byte) +
+										 // configuration (???) + len
+										 // (int) + data (byte[])
 	}
 
 	@Override
@@ -92,7 +91,7 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		final byte[] data = new byte[len];
 		int offset = 0;
 		int count;
-		while ((count = in.read(data, offset, data.length - offset)) > 0) {
+		while ((count = in.read(data, offset, len - offset)) > 0) {
 			offset += count;
 		}
 		return new NetworkCaptureMessage(id, compressionMethod, compressionConfiguration, new MemByteBuffer(data));

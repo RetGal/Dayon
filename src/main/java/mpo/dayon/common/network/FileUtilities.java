@@ -38,9 +38,8 @@ public final class FileUtilities {
         if (path == null) return null;
         if (File.separatorChar == '\\') {
             return path.replace('/', File.separatorChar);
-        } else {
-            return path.replace('\\', File.separatorChar);
         }
+        return path.replace('\\', File.separatorChar);
     }
 
 }
