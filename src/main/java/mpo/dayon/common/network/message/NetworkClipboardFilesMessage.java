@@ -7,6 +7,8 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
 
+import static java.lang.Math.min;
+import static java.lang.Math.toIntExact;
 import static java.lang.String.format;
 import static java.util.Arrays.copyOf;
 
@@ -16,7 +18,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final List<FileMetaData> fileMetaDatas;
     private final Long remainingTotalFilesSize;
     private static final int MAX_READ_BUFFER_CAPACITY = 7168;
-    private static final int MAX_SEND_BUFFER_CAPACITY = 3145728;
+    private static final int MAX_SEND_BUFFER_CAPACITY = 1048576;
 
     public NetworkClipboardFilesMessage(List<File> files, long remainingTotalFilesSize, String basePath) {
         this.files = Collections.unmodifiableList(files);
@@ -26,7 +28,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     @java.lang.SuppressWarnings("squid:S5135") // assistant and assisted trust each other
     public static NetworkClipboardFilesHelper unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper, String tmpDir) throws IOException {
-
         try {
             if (helper.getTransferId() == null) {
                 helper.setTransferId(UUID.randomUUID().toString());
@@ -37,17 +38,17 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             int position = helper.getPosition();
             FileMetaData meta = helper.getFileMetadatas().get(position);
 
-            String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             long fileSize = meta.getFileSize();
             Log.debug(format("FileSize/left: %s/%s", fileSize, helper.getFileBytesLeft()));
 
-            byte[] buffer = helper.getFileBytesLeft() < MAX_READ_BUFFER_CAPACITY ? new byte[Math.toIntExact(helper.getFileBytesLeft())] : new byte[MAX_READ_BUFFER_CAPACITY];
+            byte[] buffer = new byte[min(toIntExact(helper.getFileBytesLeft()), MAX_READ_BUFFER_CAPACITY)];
             BufferedInputStream bis = new BufferedInputStream(in);
             int read = bis.read(buffer, 0, buffer.length);
             Log.debug("Bytes read: " + read);
+            String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             final boolean append = helper.getFileBytesLeft() != fileSize;
             if (!append) {
-                Log.info("Receiving " + meta.getFileName());
+                Log.info("Receiving " + fileName);
             }
             String tempFilePath = format("%s%s%s%s", tmpDir, File.separator, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
@@ -56,21 +57,19 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
             if (remainingFileSize <= 0 && remainingTotalFilesSize > 0) {
                 position++;
+                helper.setPosition(position);
                 remainingFileSize = helper.getFileMetadatas().get(position).getFileSize();
             }
             helper.setFileBytesLeft(remainingFileSize);
             helper.setTotalFileBytesLeft(remainingTotalFilesSize);
-            helper.setPosition(position);
 
             if (remainingTotalFilesSize == 0) {
-                String rootPath = tmpDir + File.separator + helper.getTransferId();
+                String rootPath = format("%s%s", tmpDir, File.separator, helper.getTransferId());
                 helper.setFiles(Arrays.asList(Objects.requireNonNull(new File(rootPath).listFiles())));
             }
-
         } catch (ClassNotFoundException e) {
             Log.error(e.getMessage());
         }
-
         return helper;
     }
 
@@ -133,7 +132,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         long fileSize = file.length();
         Log.info("Sending " + file.getName());
         Log.debug("Bytes to be sent: " + fileSize);
-        byte[] buffer = fileSize < MAX_SEND_BUFFER_CAPACITY ? new byte[Math.toIntExact(fileSize)] : new byte[MAX_SEND_BUFFER_CAPACITY];
+        byte[] buffer = new byte[min(toIntExact(fileSize), MAX_SEND_BUFFER_CAPACITY)];
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             int read;
             long remainingSize = fileSize;
