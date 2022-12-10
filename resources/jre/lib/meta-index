@@ -2,30 +2,11 @@
 % WARNING: this file is auto-generated; do not edit
 % UNSUPPORTED: this file and its format may change and/or
 %   may be removed in a future release
+! cat.jar
+com/azul/
 # charsets.jar
 sun/awt
 sun/nio
-# crs-agent.jar
-META-INF/NOTICE
-META-INF/LICENSE
-META-INF/maven/com.fasterxml.jackson.core/jackson-databind/pom.xml
-META-INF/maven/com.azul.crs/crs-log/pom.properties
-META-INF/maven/com.fasterxml.jackson.core/jackson-core/pom.properties
-META-INF/maven/com.azul.crs/crs-client/pom.properties
-META-INF/maven/com.fasterxml.jackson.core/jackson-annotations/pom.properties
-META-INF/services/com.fasterxml.jackson.core.ObjectCodec
-META-INF/maven/com.fasterxml.jackson.core/jackson-databind/pom.properties
-com/azul/
-META-INF/maven/com.azul.crs/crs-shared/pom.xml
-META-INF/maven/com.azul.crs/crs-z-agent/pom.xml
-META-INF/maven/com.azul.crs/crs-client/pom.xml
-META-INF/maven/com.fasterxml.jackson.core/jackson-annotations/pom.xml
-META-INF/maven/com.azul.crs/crs-shared/pom.properties
-META-INF/services/com.fasterxml.jackson.core.JsonFactory
-META-INF/maven/com.fasterxml.jackson.core/jackson-core/pom.xml
-META-INF/maven/com.azul.crs/crs-z-agent/pom.properties
-META-INF/crslog.channels.cfg
-META-INF/maven/com.azul.crs/crs-log/pom.xml
 ! jce.jar
 javax/crypto
 sun/security

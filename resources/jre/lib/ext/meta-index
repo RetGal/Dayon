@@ -7,6 +7,9 @@ com/sun/java/accessibility/
 ! cldrdata.jar
 sun/text
 sun/util
+# crs-agent.jar
+com/azul/
+META-INF/crslog.channels.cfg
 # dnsns.jar
 sun/net
 META-INF/services/sun.net.spi.nameservice.NameServiceDescriptor
