@@ -176,9 +176,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, Dimension captureDimension) {
         final int x = (int) Math.ceil((float) captureDimension.width / TILE_DIMENSION.width);
         final int y = (int) Math.ceil((float) captureDimension.height / TILE_DIMENSION.height);
-        final int length = Math.max(x*y, previousCapture.length);
+        final int length = x*y;
         // change in screen resolution?
-        if (length > previousCapture.length) {
+        if (length != previousCapture.length) {
             previousCapture = new long[length];
             resetPreviousCapture();
         }
