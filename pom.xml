@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>11.0.6</version>
+    <version>11.0.7</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -34,7 +34,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.9</xz.version>
         <junit.jupiter.version>5.9.1</junit.jupiter.version>
-        <mockito.core.version>4.8.0</mockito.core.version>
+        <mockito.core.version>4.9.0</mockito.core.version>
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
     </properties>
 
