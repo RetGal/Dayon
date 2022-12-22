@@ -104,8 +104,6 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void connect() {
         try {
             start();
-            sendHello();
-            fireOnConnected();
         } catch (UnknownHostException e) {
             fireOnHostNotFound(configuration);
         } catch (SocketTimeoutException e) {
@@ -123,19 +121,22 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
         fireOnConnecting(configuration);
 
+        SSLSocketFactory ssf = initSSLContext().getSocketFactory();
+        SSLSocket socket = (SSLSocket) ssf.createSocket();
+        socket.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
+        in = initInputStream(socket);
+
         if (receiver == null) {
             Log.info("Getting the receivers ready");
             runReceivers();
         }
+        receiver.start();
 
-        SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        SSLSocket socket = (SSLSocket) ssf.createSocket();
-        socket.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
         sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()))); // the active part (!)
         sender.start(1);
         sender.ping();
-        in = initInputStream(socket);
-        receiver.start();
+        // The first message being sent to the assistant (e.g. version identification).
+        sender.sendHello();
 
         SSLSocket fileSocket = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileSocket.getOutputStream()))); // the active part (!)
@@ -143,6 +144,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileSender.ping();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileSocket.getInputStream()));
         fileReceiver.start();
+        fireOnConnected();
     }
 
     /**
@@ -248,16 +250,6 @@ public class NetworkAssistedEngine extends NetworkEngine
             handleIncomingClipboardFiles(fileIn, clipboardOwner);
         } catch (IOException ex) {
             closeConnections();
-        }
-    }
-
-    /**
-     * The first message being sent to the assistant (e.g., version
-     * identification).
-     */
-    private void sendHello() {
-        if (sender != null) {
-            sender.sendHello();
         }
     }
 
