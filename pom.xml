@@ -161,7 +161,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
+                        <version>3.10.1</version>
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <target>${maven.compiler.target}</target>
@@ -190,7 +190,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.2.3</version>
+                        <version>3.4.1</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -234,7 +234,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.3.0</version>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
                         </configuration>
@@ -264,7 +264,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>
@@ -325,7 +325,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.8.1</version>
+                        <version>3.10.1</version>
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <target>${maven.compiler.target}</target>
@@ -354,7 +354,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.2.3</version>
+                        <version>3.4.1</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -398,7 +398,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.3.0</version>
                         <configuration>
                             <includeEmptyDirs>true</includeEmptyDirs>
                         </configuration>
@@ -436,7 +436,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.6.0</version>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>
