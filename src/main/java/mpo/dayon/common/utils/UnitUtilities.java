@@ -115,7 +115,7 @@ public abstract class UnitUtilities {
         if (millis < 10000) {
             return format("%dms", millis);
         }
-        double secs = millis / 1000;
+        double secs = millis / 1000D;
         if (secs < 60) {
             return format("%.2fs", secs);
         }
