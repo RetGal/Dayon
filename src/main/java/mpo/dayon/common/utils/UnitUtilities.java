@@ -108,14 +108,14 @@ public abstract class UnitUtilities {
     }
 
     /**
-     * Converts a time in milli-seconds into ms, s, m, h or d.
+     * Converts a time in milliseconds into ms, s, m, h or d.
      */
     public static String toElapsedTime(long millis) {
-        double secs = millis / 1000.0;
 
-        if (secs < 10.0) {
+        if (millis < 10000) {
             return format("%dms", millis);
         }
+        double secs = millis / 1000;
         if (secs < 60) {
             return format("%.2fs", secs);
         }
@@ -132,28 +132,25 @@ public abstract class UnitUtilities {
 
     private static int toMinutes(double seconds) {
         // noinspection NumericCastThatLosesPrecision
-        return (int) Math.floor(seconds / 60.0);
+        return (int) Math.floor(seconds / 60);
     }
 
     private static int toHours(double seconds) {
         // noinspection NumericCastThatLosesPrecision
-        return (int) Math.floor(seconds / 3600.0);
+        return (int) Math.floor(seconds / 3600);
     }
 
     /**
-     * Converts a time in nano-seconds into ms, s, m, h or d.
+     * Converts a time in nanoseconds into ns, us, ms, s, m, h or d.
      */
     public static String toElapsedNanoTime(long nanos) {
         if (nanos < 1000) {
             return format("%dns", nanos);
         }
-        if (nanos < 1000 * 1000) {
+        if (nanos < 1000000) {
             return format("%dus", nanos / 1000);
         }
-        if (nanos < 1000 * 1000 * 1000) {
-            return format("%dms", nanos / 1000 / 1000);
-        }
-        return toElapsedTime(nanos / 1000 / 1000);
+        return toElapsedTime(nanos / 1000000);
     }
 
 }
