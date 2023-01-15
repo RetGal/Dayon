@@ -1,11 +1,19 @@
 package mpo.dayon.common.utils;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UnitUtilitiesTest {
+
+    @BeforeAll
+    static void setLocale() {
+        Locale.setDefault(new Locale("de", "CH"));
+    }
 
     @ParameterizedTest
     @CsvSource({ "1,1.00 bit", "1000,1.00 Kbit", "10000,10.00 Kbit", "1048576,1.05 Mbit" })
