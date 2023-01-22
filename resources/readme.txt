@@ -27,12 +27,13 @@ Running Dayon!
 
 Linux:
 
+  A JRE (Java 8 or newer) is required.
   If you want to install from the tar archive, then you may need to chmod +x setup.sh before executing it.
 
 
 OSX/macOS:
 
-  You might need to chmod +x the scripts dayon, dayon_assistant and dayon_assisted.
+  A JRE (Java 8 or newer) is required.
   You will also have to grant the "Screen Recording" permission to dayon_assisted:
   System Preferences => Security and Privacy => Privacy => Screen Recording
 
@@ -45,6 +46,8 @@ Project:
 	https://github.com/retgal/dayon
 	https://sourceforge.net/projects/dayonactive
 	https://snapcraft.io/dayon
+    https://flathub.org/apps/details/io.github.retgal.Dayon
 	https://code.launchpad.net/~regal/+archive/ubuntu/dayon
+    https://apps.microsoft.com/store/detail/dayon/9PBM5KW0C790
 
 Enjoy!
