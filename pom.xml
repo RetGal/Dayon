@@ -463,6 +463,12 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>assistant</id>
+            <properties>
+                <dayon.mainClass>mpo.dayon.assistant.AssistantRunner</dayon.mainClass>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
