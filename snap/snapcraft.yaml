@@ -11,9 +11,14 @@ description: |
   - assistant and assisted functionality in one package
   - secure, encrypted communication (TLS)
 license: GPL-3.0
-grade: stable
-base: core18
+grade: edge
+base: core22
 confinement: strict
+
+lint:
+  ignore:
+    - library:
+        - usr/lib/jvm/java-*/lib/*.so
 
 apps:
   assisted:
@@ -49,7 +54,8 @@ parts:
       [-Psnap]
     
     build-packages:
-      [default-jre]
+      - openjdk-11-jdk
+      - maven
    
     override-build: |
       snapcraftctl build
@@ -69,8 +75,4 @@ parts:
       [$exclude-original-jar]
       
     stage-packages:
-      [default-jre]
-
-    override-prime: |
-      snapcraftctl prime
-      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
+      [openjdk-11-jre]
