@@ -11,7 +11,7 @@ description: |
   - assistant and assisted functionality in one package
   - secure, encrypted communication (TLS)
 license: GPL-3.0
-grade: edge
+grade: devel
 base: core22
 confinement: strict
 
