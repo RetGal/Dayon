@@ -23,7 +23,7 @@ lint:
 apps:
   assisted:
     extensions:
-      [gnome-3-38]
+      [gnome]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3 $4
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
@@ -31,7 +31,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome-3-38]
+      [gnome]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1 $2
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
@@ -39,7 +39,7 @@ apps:
 
   browser:
     extensions:
-      [gnome-3-38]
+      [gnome]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
