@@ -11,19 +11,14 @@ description: |
   - assistant and assisted functionality in one package
   - secure, encrypted communication (TLS)
 license: GPL-3.0
-grade: devel
-base: core22
+grade: stable
+base: core18
 confinement: strict
-
-lint:
-  ignore:
-    - library:
-        - usr/lib/jvm/java-*/lib/*.so
 
 apps:
   assisted:
     extensions:
-      [gnome]
+      [gnome-3-28]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3 $4
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
@@ -31,7 +26,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome]
+      [gnome-3-28]
     command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1 $2
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
@@ -39,7 +34,7 @@ apps:
 
   browser:
     extensions:
-      [gnome]
+      [gnome-3-28]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
@@ -52,27 +47,30 @@ parts:
     source-type: git
     maven-options:
       [-Psnap]
-    
+
     build-packages:
-      - openjdk-11-jdk
-      - maven
-   
+      [default-jre]
+
     override-build: |
       snapcraftctl build
       cp target/dayon.browser $SNAPCRAFT_PART_INSTALL/bin/
       cp target/dayon.launcher $SNAPCRAFT_PART_INSTALL/bin/
       cp target/dayon.png $SNAPCRAFT_PART_INSTALL/bin/
-      
+
     override-pull: |
       snapcraftctl pull
       snapcraftctl set-version "$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)"
-      
+
     filesets:
       exclude-original-jar:
         [-jar/original-dayon.jar]
-    
+
     stage:
       [$exclude-original-jar]
-      
+
     stage-packages:
-      [openjdk-11-jre]
+      [default-jre]
+
+    override-prime: |
+      snapcraftctl prime
+      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
