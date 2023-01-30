@@ -1,0 +1,69 @@
+name: dayon
+title: Dayon!
+adopt-info: dayon
+summary: An easy-to-use, cross-platform remote desktop assistance solution
+description: |
+  An easy-to-use, cross-platform remote desktop support solution for everyone.
+  It can be used as free alternative to various commercial remote desktop and remote assistance products.
+  Its key features are
+  - no router or network configuration required on the assisted side
+  - friendly, multilingual (de/en/es/fr/it/ru/tr/zh) user interface
+  - assistant and assisted functionality in one package
+  - secure, encrypted communication (TLS)
+license: GPL-3.0
+grade: stable
+base: core22
+confinement: strict
+
+lint:
+  ignore:
+    - library:
+        - usr/lib/jvm/java-*/lib/*.so
+
+apps:
+  assisted:
+    extensions:
+      [gnome]
+    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assisted.AssistedRunner $1 $2 $3 $4
+    desktop: ../parts/dayon/build/target/dayon.assisted.desktop
+    plugs:
+      [home, network, network-bind, desktop]
+
+  assistant:
+    extensions:
+      [gnome]
+    command: bin/dayon.launcher $SNAP/jar/dayon.jar mpo.dayon.assistant.AssistantRunner $1 $2
+    desktop: ../parts/dayon/build/target/dayon.assistant.desktop
+    plugs:
+      [home, network, network-bind, desktop]
+
+  browser:
+    extensions:
+      [gnome]
+    command: bin/dayon.browser
+    plugs:
+      [home, network, desktop]
+
+parts:
+  dayon:
+    plugin: maven
+    source: https://github.com/retgal/dayon.git
+    source-tag: master
+    source-type: git
+    maven-parameters:
+      [-Psnap]
+
+    build-packages:
+      - openjdk-11-jdk
+      - maven
+
+    override-build: |
+      craftctl default
+      cp target/dayon.browser $CRAFT_PART_INSTALL/bin/
+      cp target/dayon.launcher $CRAFT_PART_INSTALL/bin/
+      cp target/dayon.png $CRAFT_PART_INSTALL/bin/
+      rm $CRAFT_PART_INSTALL/jar/original-dayon.jar
+
+    stage-packages:
+      [openjdk-11-jre]
+
