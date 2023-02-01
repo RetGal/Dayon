@@ -103,10 +103,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				pressedKeys.add(VK_CONTROL);
 				robot.keyPress(VK_ALT);
 				pressedKeys.add(VK_ALT);
-				Log.debug("KeyCode ALT_GRAPH " + message);
+				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			Log.debug("KeyCode " + message);
+			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {
 				robot.keyPress(keyCode);
 				pressedKeys.add(keyCode);
@@ -115,10 +115,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("Proceeding with plan B");
 			}
 		}
-		Log.debug("Undefined KeyCode " + message);
+		Log.debug("Undefined KeyCode  %s", () -> String.valueOf(message));
 		if (message.getKeyChar() != CHAR_UNDEFINED) {
 			int dec = message.getKeyChar();
-			Log.debug("KeyChar as unicode " + dec + " " + message);
+			Log.debug("KeyChar as unicode " + dec + " %s", () -> String.valueOf(message));
 			pressedKeys.forEach(robot::keyRelease);
 			typeUnicode(dec);
 			pressedKeys.forEach(robot::keyPress);
@@ -143,10 +143,10 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				pressedKeys.remove(VK_ALT);
 				robot.keyRelease(VK_CONTROL);
 				pressedKeys.remove(VK_CONTROL);
-				Log.debug("KeyCode ALT_GRAPH " + message);
+				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			Log.debug("KeyCode " + message);
+			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {
 				robot.keyRelease(keyCode);
 				pressedKeys.remove(keyCode);

@@ -35,7 +35,7 @@ class TransferableFiles implements Transferable {
 
     @Override
     public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
-        Log.debug("getTransferData " + flavor.toString());
+        Log.debug("getTransferData %s", () -> String.valueOf(flavor));
         if (flavor.equals(DataFlavor.javaFileListFlavor)) {
             return files;
         }

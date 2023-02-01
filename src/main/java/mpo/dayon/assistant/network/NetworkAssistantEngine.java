@@ -140,7 +140,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (true) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                Log.debug(format("Received %s", type.name()));
+                Log.debug("Received %s", () -> type.name());
 
                 if (introduced) {
                     processIntroduced(type, in);

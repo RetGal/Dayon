@@ -36,13 +36,13 @@ public abstract class NetworkEngine {
 	protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
 	protected void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
-		Log.debug("setClipboardContents " + string);
+		Log.debug("setClipboardContents %s", () -> string);
 		StringSelection stringSelection = new StringSelection(string);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
 	}
 
 	private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
-		Log.debug("setClipboardContents " + files.toString());
+		Log.debug("setClipboardContents %s", () -> String.valueOf(files));
 		TransferableFiles transferableFiles = new TransferableFiles(files);
 		Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
 	}

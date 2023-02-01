@@ -5,6 +5,7 @@ import mpo.dayon.common.log.file.FileAppender;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Supplier;
 
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
@@ -56,6 +57,12 @@ public final class Log {
     public static void debug(String message) {
         if (DEBUG) {
             out.append(LogLevel.DEBUG, message);
+        }
+    }
+
+    public static void debug(String message, Supplier<String> messageSupplier) {
+        if (DEBUG) {
+            out.append(LogLevel.DEBUG, format(message, messageSupplier.get()));
         }
     }
 

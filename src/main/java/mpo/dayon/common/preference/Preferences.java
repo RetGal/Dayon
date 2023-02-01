@@ -198,7 +198,7 @@ public final class Preferences {
                         }
                     }
                     if (cloned != null) {
-                        Log.debug("Writing the preferences [" + preferences.getFile().getAbsolutePath() + "]");
+                        Log.debug("Writing the preferences [%s]", () -> preferences.getFile().getAbsolutePath());
                         try (PrintWriter out = new PrintWriter(preferences.getFile())) {
                             cloned.store(out, null);
                             out.flush();
