@@ -40,6 +40,16 @@ class RunnerTest {
     }
 
     @Test
+    void shouldIgnoreNull() {
+        // given
+        String before = Locale.getDefault().toLanguageTag();
+        // when
+        overrideLocale(null);
+        // then
+        assertEquals(before, Locale.getDefault().toLanguageTag());
+    }
+
+    @Test
     void shouldExtractProgramArgs() {
         // given
         String[] args = {"lang=en,", "foo=BAR", "spam"};
