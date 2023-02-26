@@ -115,7 +115,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("Proceeding with plan B");
 			}
 		}
-		Log.debug("Undefined KeyCode  %s", () -> String.valueOf(message));
+		Log.debug("Undefined KeyCode %s", () -> String.valueOf(message));
 		if (message.getKeyChar() != CHAR_UNDEFINED) {
 			int dec = message.getKeyChar();
 			Log.debug("KeyChar as unicode " + dec + " %s", () -> String.valueOf(message));
@@ -180,7 +180,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		robot.keyRelease(VK_U);
 		char[] charArray = Integer.toHexString(keyCode).toCharArray();
 		// simulate a key press/release for each char
-		// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), KeRelease(52)
+		// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), keyRelease(52)
 		for (char c : charArray) {
 			int code = Character.toUpperCase(c);
 			robot.keyPress(code);
