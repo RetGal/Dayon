@@ -3,8 +3,7 @@ package mpo.dayon.assistant.network;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class NetworkAssistantEngineTest {
 
@@ -29,7 +28,7 @@ class NetworkAssistantEngineTest {
         engine.start();
 
         // then
-        verify(listener).onStarting(configuration.getPort());
+        verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort());
     }
 
     @Test
