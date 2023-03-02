@@ -62,8 +62,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-    private static final String LOCALHOST = "127.0.0.1";
-
     private int port;
 
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
@@ -85,10 +83,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     public void addListener(NetworkAssistantEngineListener listener) {
         listeners.add(listener);
-    }
-
-    public String getLocalhost() {
-        return LOCALHOST;
     }
 
     /**

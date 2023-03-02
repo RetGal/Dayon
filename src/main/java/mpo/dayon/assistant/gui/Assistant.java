@@ -248,7 +248,7 @@ public class Assistant implements ClipboardOwner {
         };
 
         ip.putValue(Action.NAME, "whatIsMyIpAddress");
-        ip.putValue("DISPLAY_NAME", network.getLocalhost()); // always a selection
+        ip.putValue("DISPLAY_NAME", "127.0.0.1"); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         return ip;

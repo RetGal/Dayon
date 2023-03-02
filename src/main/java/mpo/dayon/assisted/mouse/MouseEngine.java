@@ -1,15 +1,13 @@
 package mpo.dayon.assisted.mouse;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
-
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 
+import java.awt.*;
+
 public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
-
     private final Thread thread;
 
     public MouseEngine() {
@@ -43,22 +41,16 @@ public class MouseEngine {
     private void mainLoop() throws InterruptedException {
         long start = System.currentTimeMillis();
         int captureCount = 0;
-
         Point previous = new Point(-1, -1);
 
         //noinspection InfiniteLoopStatement
         while (true) {
             final Point current = MouseInfo.getPointerInfo().getLocation();
-
             ++captureCount;
-
             if (!current.equals(previous) && fireOnLocationUpdated(current)) {
                 previous = current;
             }
-
-            final int delayedCaptureCount = syncOnTick(start, captureCount);
-
-            captureCount += delayedCaptureCount;
+            captureCount += syncOnTick(start, captureCount);
         }
     }
 
@@ -68,7 +60,6 @@ public class MouseEngine {
         while (true) {
             final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * 50L;
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
-
             if (capturePause < 0) {
                 ++delayedCaptureCount;
             } else if (capturePause > 0) {
@@ -76,7 +67,6 @@ public class MouseEngine {
                 break;
             }
         }
-
         return delayedCaptureCount;
     }
 
