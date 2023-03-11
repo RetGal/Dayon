@@ -45,7 +45,7 @@ public class CustomTrustManager implements X509TrustManager {
 			ownTm = getDefaultX509TrustManager(tmf);
 		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
 			Log.error(e.getMessage());
-			throw new RuntimeException(e);
+			throw new UnsupportedOperationException(e);
 		}
 	}
 	

@@ -57,7 +57,7 @@ public abstract class DialogFactory {
 			try {
 				validationMessage = validator == null ? null : validator.validate();
 			} catch (NoSuchAlgorithmException e) {
-				throw new RuntimeException(e);
+				throw new UnsupportedOperationException(e);
 			}
 			if (validationMessage == null) {
                 result[0] = true;
