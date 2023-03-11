@@ -70,7 +70,7 @@ class SystemUtilitiesTest {
 	}
 
 	@Test
-	void isValidTokenShouldReturnFalseForEmptyToken() {
+	void isValidTokenShouldReturnFalseForEmptyToken() throws NoSuchAlgorithmException {
 		// given
 		String token = "";
 
@@ -80,14 +80,14 @@ class SystemUtilitiesTest {
 
 	@ParameterizedTest
 	@CsvSource({ "SQL3", "COVID", "1CHECK2" })
-	void isValidTokenShouldReturnFalseForInvalidToken(String token) {
+	void isValidTokenShouldReturnFalseForInvalidToken(String token) throws NoSuchAlgorithmException {
 		// when, then
 		assertFalse(isValidToken(token));
 	}
 
 	@ParameterizedTest
 	@CsvSource({ "TQP3", "1CHECKE" })
-	void isValidTokenShouldReturnTrueForValidToken(String token) {
+	void isValidTokenShouldReturnTrueForValidToken(String token) throws NoSuchAlgorithmException {
 		// when, then
 		assertTrue(isValidToken(token));
 	}

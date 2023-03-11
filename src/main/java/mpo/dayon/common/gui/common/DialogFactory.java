@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.security.NoSuchAlgorithmException;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -33,7 +34,7 @@ public abstract class DialogFactory {
 		 * @return {@code null} if the validation is fine; otherwise an error
 		 *         message.
 		 */
-		String validate();
+		String validate() throws NoSuchAlgorithmException;
 	}
 
 	/**
@@ -52,8 +53,13 @@ public abstract class DialogFactory {
 		final boolean[] result = new boolean[1];
 
 		ok.addActionListener(ev -> {
-            final String validationMessage = (validator == null ? null : validator.validate());
-            if (validationMessage == null) {
+			final String validationMessage;
+			try {
+				validationMessage = validator == null ? null : validator.validate();
+			} catch (NoSuchAlgorithmException e) {
+				throw new RuntimeException(e);
+			}
+			if (validationMessage == null) {
                 result[0] = true;
                 dialog.dispose();
             } else {

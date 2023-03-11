@@ -124,9 +124,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
         ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(configuration);
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
-            final String token = connectionSettingsDialog.getToken();
-            if (!token.trim().isEmpty()) {
-                return isValidToken(token.trim()) ? null : translate("connection.settings.invalidToken");
+            final String token = connectionSettingsDialog.getToken().trim();
+            if (!token.isEmpty()) {
+                return isValidToken(token) ? null : translate("connection.settings.invalidToken");
             } else {
                 String validationErrorMessage = validateIpAddress(connectionSettingsDialog.getIpAddress());
                 if (validationErrorMessage != null) {

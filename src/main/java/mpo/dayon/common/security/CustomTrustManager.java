@@ -19,8 +19,8 @@ public class CustomTrustManager implements X509TrustManager {
 	public static final String KEY_STORE_PATH = "/trust/X509";
 	public static final String KEY_STORE_PASS = "spasspass";
 
-	private X509TrustManager defaultTm;
-	private X509TrustManager ownTm;
+	private final X509TrustManager defaultTm;
+	private final X509TrustManager ownTm;
 
 	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
 	public CustomTrustManager() {
@@ -45,6 +45,7 @@ public class CustomTrustManager implements X509TrustManager {
 			ownTm = getDefaultX509TrustManager(tmf);
 		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
 			Log.error(e.getMessage());
+			throw new RuntimeException(e);
 		}
 	}
 	

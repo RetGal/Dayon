@@ -64,6 +64,7 @@ public abstract class NetworkEngine {
 			kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
 		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
 			Log.error("Fatal, can not init encryption", e);
+			throw new RuntimeException(e);
 		}
 		SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
 		sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());

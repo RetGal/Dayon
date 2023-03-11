@@ -191,15 +191,8 @@ public final class SystemUtilities {
         return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("(\\d{1,3})"));
     }
 
-    public static boolean isValidToken(String token) {
-        try {
-            if (token.trim().isEmpty() || !token.substring(token.length()-1).equals(checksum(token.substring(0, token.length()-1)))) {
-                return false;
-            }
-        } catch (NumberFormatException | NoSuchAlgorithmException ex) {
-            return false;
-        }
-        return true;
+    public static boolean isValidToken(String token) throws NoSuchAlgorithmException {
+        return (!token.isEmpty() && token.substring(token.length()-1).equals(checksum(token.substring(0, token.length()-1))));
     }
 
     static String checksum(String input) throws NoSuchAlgorithmException {
