@@ -32,10 +32,9 @@ class AssistedTest {
     @Test
     void startWithoutConfig() {
         // given
-        boolean value;
         if (!GraphicsEnvironment.isHeadless()) {
             // when
-            value = assisted.start("localhost", null, false);
+            boolean value = assisted.start("localhost", null, false);
 
             // then
             verify(logApp).append(LogLevel.INFO, "Assisted start");
@@ -47,10 +46,9 @@ class AssistedTest {
     @Test
     void startAutoconnect() {
         // given
-        boolean value;
         if (!GraphicsEnvironment.isHeadless()) {
             // when
-            value = assisted.start("localhost", "12345", true);
+            boolean value = assisted.start("localhost", "12345", true);
 
             // then
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:12345]");
@@ -62,10 +60,9 @@ class AssistedTest {
     @Test
     void startAutoconnectFalse() {
         // given
-        boolean value;
         if (!GraphicsEnvironment.isHeadless()) {
             // when
-            value = assisted.start("localhost", "23456", false);
+            boolean value = assisted.start("localhost", "23456", false);
 
             // then
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:23456]");
