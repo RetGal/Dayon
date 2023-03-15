@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.awt.*;
 import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,39 +32,45 @@ class AssistedTest {
     @Test
     void startWithoutConfig() {
         // given
+        boolean value;
+        if (!GraphicsEnvironment.isHeadless()) {
+            // when
+            value = assisted.start("localhost", null, false);
 
-        // when
-        final boolean value = assisted.start("localhost", null, false);
-
-        // then
-        verify(logApp).append(LogLevel.INFO, "Assisted start");
-        verify(logApp, never()).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:null]");
-        assertTrue(value);
+            // then
+            verify(logApp).append(LogLevel.INFO, "Assisted start");
+            verify(logApp, never()).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:null]");
+            assertTrue(value);
+        }
     }
 
     @Test
     void startAutoconnect() {
         // given
+        boolean value;
+        if (!GraphicsEnvironment.isHeadless()) {
+            // when
+            value = assisted.start("localhost", "12345", true);
 
-        // when
-        final boolean value = assisted.start("localhost", "12345", true);
-
-        // then
-        verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:12345]");
-        verify(logApp).append(LogLevel.INFO, "Connecting to [localhost][12345]...");
-        assertTrue(value);
+            // then
+            verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:12345]");
+            verify(logApp).append(LogLevel.INFO, "Connecting to [localhost][12345]...");
+            assertTrue(value);
+        }
     }
 
     @Test
     void startAutoconnectFalse() {
         // given
+        boolean value;
+        if (!GraphicsEnvironment.isHeadless()) {
+            // when
+            value = assisted.start("localhost", "23456", false);
 
-        // when
-        final boolean value = assisted.start("localhost", "23456", false);
-
-        // then
-        verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:23456]");
-        verify(logApp, never()).append(LogLevel.INFO, "Connecting to [localhost][23456]...");
-        assertTrue(value);
+            // then
+            verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:23456]");
+            verify(logApp, never()).append(LogLevel.INFO, "Connecting to [localhost][23456]...");
+            assertTrue(value);
+        }
     }
 }
