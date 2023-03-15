@@ -62,8 +62,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
-    private int port;
-
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
         this.captureMessageHandler = captureMessageHandler;
         this.mouseMessageHandler = mouseMessageHandler;
@@ -92,8 +90,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
-        port = configuration.getPort();
-
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
@@ -152,11 +148,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void awaitConnections() throws NoSuchAlgorithmException, IOException, KeyManagementException {
-        fireOnStarting(port);
+        fireOnStarting(configuration.getPort());
 
         ssf = initSSLContext().getServerSocketFactory();
-        Log.info(format("Dayon! server [port:%d]", port));
-        server = ssf.createServerSocket(port);
+        Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
+        server = ssf.createServerSocket(configuration.getPort());
         Log.info("Accepting ...");
 
         do {
@@ -193,10 +189,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
     private void fileReceivingLoop() {
         fileIn = null;
-        Log.info(format("Dayon! file server [port:%d]", port));
+        Log.info(format("Dayon! file server [port:%d]", configuration.getPort()));
 
         try {
-            fileServer = ssf.createServerSocket(port);
+            fileServer = ssf.createServerSocket(configuration.getPort());
             fileConnection = fileServer.accept();
 
             fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream())));

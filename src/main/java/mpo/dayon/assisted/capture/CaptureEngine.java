@@ -16,6 +16,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.UnitUtilities;
 
 import static java.lang.Math.min;
+import static java.lang.String.format;
 
 public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration> {
 
@@ -114,7 +115,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                     // to handle the reset message until the assistant without having to
                     // change anything (e.g., merging mechanism in the compressor engine).
                     reset.set(true);
-                    Log.info("Capture engine has been reconfigured [tile:" + captureId + "] " + configuration);
+                    Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId , configuration));
                     reconfigured = false;
                 }
             }
@@ -151,7 +152,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
             if (capturePause < 0) {
                 ++delayedCaptureCount;
-                Log.warn("Skipping capture (" + (captureId + delayedCaptureCount) + ") " + UnitUtilities.toElapsedTime(-capturePause));
+                Log.warn(format("Skipping capture (%d) %s", captureId + delayedCaptureCount, UnitUtilities.toElapsedTime(-capturePause)));
             } else if (capturePause > 0) {
                 Thread.sleep(capturePause);
                 return delayedCaptureCount;

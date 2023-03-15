@@ -32,9 +32,8 @@ public final class Log {
                 final File logFile = getOrCreateLogFile();
                 // console ...
                 info("Log logFile : " + logFile.getAbsolutePath());
+                // logFile ...§
                 out = new FileAppender(logFile.getAbsolutePath());
-                // logFile ...
-                info("Log logFile : " + logFile.getAbsolutePath());
             } catch (IOException ex) {
                 // console ...
                 warn("Log file setup error (fallback to console)!", ex);

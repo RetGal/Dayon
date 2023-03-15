@@ -31,7 +31,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 
 	private TileCache cache;
 
-	public void addListener(DeCompressorEngineListener listener) {
+	public DeCompressorEngine(DeCompressorEngineListener listener) {
 		listeners.add(listener);
 	}
 

@@ -111,8 +111,7 @@ public class Assistant implements ClipboardOwner {
 
         counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
 
-        DeCompressorEngine decompressor = new DeCompressorEngine();
-        decompressor.addListener(new MyDeCompressorEngineListener());
+        DeCompressorEngine decompressor = new DeCompressorEngine(new MyDeCompressorEngineListener());
         decompressor.start(8);
 
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
@@ -216,11 +215,10 @@ public class Assistant implements ClipboardOwner {
                 }
 
                 final List<String> addrs = NetworkUtilities.getInetAddresses();
-                for (String addr : addrs) {
-                    final JMenuItem menuItem = new JMenuItem(addr);
+                addrs.stream().map(JMenuItem::new).forEach(menuItem -> {
                     menuItem.addActionListener(ev14 -> button.setText(menuItem.getText()));
                     choices.add(menuItem);
-                }
+                });
 
                 choices.addSeparator();
                 choices.add(getJMenuItemCopyIpAndPort(button));
@@ -658,11 +656,10 @@ public class Assistant implements ClipboardOwner {
                         button.setFont(new Font("Sans Serif", Font.PLAIN, 18));
                         button.setToolTipText(translate("token.copy.msg"));
                     }
-                } else {
-                    final StringSelection value = new StringSelection(token);
-                    final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                    clipboard.setContents(value, value);
                 }
+                final StringSelection value = new StringSelection(token);
+                final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                clipboard.setContents(value, value);
             }
         };
 
