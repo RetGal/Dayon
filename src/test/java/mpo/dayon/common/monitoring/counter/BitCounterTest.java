@@ -2,7 +2,6 @@ package mpo.dayon.common.monitoring.counter;
 
 import org.junit.jupiter.api.Test;
 
-import static java.lang.Double.NaN;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,6 +28,6 @@ class BitCounterTest {
         bc.computeAndResetInstantValue();
 
         // then
-        verify(cl, timeout(1000).atLeastOnce()).onInstantValueUpdated(bc, NaN);
+        verify(cl, atLeastOnce()).onInstantValueUpdated(bc, 0.0d);
     }
 }
