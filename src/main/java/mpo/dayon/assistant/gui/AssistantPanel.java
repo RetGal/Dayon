@@ -52,24 +52,23 @@ class AssistantPanel extends JPanel {
 		SwingUtilities.invokeLater(() -> {
             final int captureImageWidth = captureImage.getWidth();
             final int captureImageHeight = captureImage.getHeight();
-            if (AssistantPanel.this.captureWidth != captureImageWidth || AssistantPanel.this.captureHeight != captureImageHeight) {
-                AssistantPanel.this.captureImage = null;
-                AssistantPanel.this.captureWidth = captureImageWidth;
-                AssistantPanel.this.captureHeight = captureImageHeight;
+            if (captureWidth != captureImageWidth || captureHeight != captureImageHeight) {
+                this.captureWidth = captureImageWidth;
+                this.captureHeight = captureImageHeight;
                 final Dimension size = new Dimension(captureImageWidth, captureImageHeight);
                 setSize(size);
                 setPreferredSize(size);
             }
-            AssistantPanel.this.captureImage = captureImage;
+            this.captureImage = captureImage;
             repaint();
         });
 	}
 
 	void onMouseLocationUpdated(final int x, final int y) {
 		SwingUtilities.invokeLater(() -> {
-            AssistantPanel.this.mouseX = x;
-            AssistantPanel.this.mouseY = y;
-            repaint(AssistantPanel.this.mouseX, AssistantPanel.this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
+            this.mouseX = x;
+            this.mouseY = y;
+            repaint(x, y, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
         });
 	}
 }
