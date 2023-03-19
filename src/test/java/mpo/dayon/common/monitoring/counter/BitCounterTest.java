@@ -29,6 +29,6 @@ class BitCounterTest {
         bc.computeAndResetInstantValue();
 
         // then
-        verify(cl, atLeastOnce()).onInstantValueUpdated(bc, NaN);
+        verify(cl, timeout(1000).atLeastOnce()).onInstantValueUpdated(bc, NaN);
     }
 }
