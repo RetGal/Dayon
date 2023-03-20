@@ -52,27 +52,18 @@ class ControlEngineTest {
     }
 
     @Test
-    void onKeyPressed() {
+    void onKeyPressedAndReleased() {
         // given
         final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
-        // when
-        final int keyB = 66;
-        final char charB = 'B';
-        controlEngine.onKeyPressed(keyB, charB);
-        // then
-        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
-        assertTrue(keyMessageCaptor.getValue().isPressed());
-        assertEquals(keyB, keyMessageCaptor.getValue().getKeyCode());
-        assertEquals(charB, keyMessageCaptor.getValue().getKeyChar());
-    }
-
-    @Test
-    void onKeyReleased() {
-        // given
         final int keyC = 67;
         final char charC = 'C';
+        // when
         controlEngine.onKeyPressed(keyC, charC);
-        final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
+        // then
+        verify(network, timeout(200).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        assertTrue(keyMessageCaptor.getValue().isPressed());
+        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
+        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
         // when
         controlEngine.onKeyReleased(keyC, charC);
         // then
