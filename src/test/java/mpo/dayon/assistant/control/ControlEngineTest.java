@@ -61,14 +61,14 @@ class ControlEngineTest {
         // when
         controlEngine.onKeyPressed(keyC, charC);
         // then
-        verify(network, timeout(200).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         assertTrue(keyMessageCaptor.getValue().isPressed());
         assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
         assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
         // when
         controlEngine.onKeyReleased(keyC, charC);
         // then
-        verify(network, timeout(400).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         assertTrue(keyMessageCaptor.getValue().isReleased());
         assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
         assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
