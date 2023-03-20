@@ -67,7 +67,7 @@ class ControlEngineTest {
         // when
         controlEngine.onKeyReleased(keyC, charC);
         // then
-        verify(network, timeout(2000).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(200).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         assertTrue(keyMessageCaptor.getValue().isReleased());
         assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
         assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
@@ -76,11 +76,11 @@ class ControlEngineTest {
     @Test
     void onKeyReleasedOfPreviouslyUnpressedKey() {
         // given
-        final int keyC = 68;
-        final char charC = 'D';
+        final int keyD = 68;
+        final char charD = 'D';
         final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
         // when
-        controlEngine.onKeyReleased(keyC, charC);
+        controlEngine.onKeyReleased(keyD, charD);
         // then
         verify(network, never()).sendKeyControl(keyMessageCaptor.capture());
     }
