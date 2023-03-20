@@ -12,10 +12,11 @@ import static org.mockito.Mockito.*;
 
 class ControlEngineTest {
     private final NetworkAssistantEngine network = mock(NetworkAssistantEngine.class);
-    private final ControlEngine controlEngine = new ControlEngine(network);
+    private ControlEngine controlEngine;
 
     @BeforeEach
     void init() {
+        controlEngine = new ControlEngine(network);
         controlEngine.start();
     }
 
