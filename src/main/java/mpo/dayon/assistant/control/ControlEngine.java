@@ -1,18 +1,22 @@
 package mpo.dayon.assistant.control;
 
 import java.awt.event.MouseEvent;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import mpo.dayon.assistant.gui.AssistantFrameListener;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
+import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
+
+import static java.lang.String.format;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.PRESSED;
+import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.RELEASED;
 
 public class ControlEngine implements AssistantFrameListener {
 	private final NetworkAssistantEngine network;
@@ -24,7 +28,7 @@ public class ControlEngine implements AssistantFrameListener {
 	}
 
 	public void start() {
-		executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
+		executor = new ThreadPoolExecutor(1, 1, 0L, MILLISECONDS, new LinkedBlockingQueue<>());
 		executor.setThreadFactory(new DefaultThreadFactoryEx("ControlEngine"));
 	}
 
@@ -90,7 +94,7 @@ public class ControlEngine implements AssistantFrameListener {
 	/**
 	 * Fix missing pair'd PRESSED event from RELEASED
 	 */
-	private final Set<Integer> pressedKeys = new HashSet<>();
+	private final HashMap<Integer, Character> pressedKeys = new HashMap<>();
 
 	/**
 	 * From AWT thread (!)
@@ -100,9 +104,8 @@ public class ControlEngine implements AssistantFrameListener {
 		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
-
-				pressedKeys.add(keyCode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.PRESSED, keyCode, keyChar));
+				pressedKeys.put(keyCode, keyChar);
+				network.sendKeyControl(new NetworkKeyControlMessage(PRESSED, keyCode, keyChar));
 			}
 		});
 	}
@@ -121,20 +124,21 @@ public class ControlEngine implements AssistantFrameListener {
 		// [Windows] key and the like (e.g.,CTRL-ALT-DEL, etc...) at all ...
 		// -------------------------------------------------------------------------------------------------------------
 		if (keyCode == -1) {
-			pressedKeys.forEach(pressedKey -> onKeyReleased(pressedKey, keyChar));
+			Log.warn(format("Got keyCode %s keyChar '%s' - releasing all keys", keyCode, keyChar));
+			pressedKeys.forEach((kCode, kChar) -> onKeyReleased(kCode, kChar));
 			return;
 		}
 
-		if (!pressedKeys.contains(keyCode)) {
-			onKeyPressed(keyCode, keyChar);
+		if (!pressedKeys.containsKey(keyCode)) {
+			Log.warn(format("Not releasing unpressed keyCode %s keyChar '%s'", keyCode, keyChar));
+			return;
 		}
 
 		executor.execute(new Executable(executor) {
 			@Override
             protected void execute() {
-
 				pressedKeys.remove(keyCode);
-				network.sendKeyControl(new NetworkKeyControlMessage(NetworkKeyControlMessage.KeyState.RELEASED, keyCode, keyChar));
+				network.sendKeyControl(new NetworkKeyControlMessage(RELEASED, keyCode, keyChar));
 			}
 		});
 	}

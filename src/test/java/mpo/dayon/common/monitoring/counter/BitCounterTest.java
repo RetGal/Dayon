@@ -22,12 +22,12 @@ class BitCounterTest {
         BitCounter bc = new BitCounter(null, null);
         CounterListener cl = mock(CounterListener.class);
         bc.addListener(cl);
-        bc.start(1000);
+        bc.start(1);
 
         // when
         bc.computeAndResetInstantValue();
 
         // then
-        verify(cl, atLeastOnce()).onInstantValueUpdated(bc, 0.0d);
+        verify(cl, timeout(100).atLeastOnce()).onInstantValueUpdated(bc, 0.0d);
     }
 }
