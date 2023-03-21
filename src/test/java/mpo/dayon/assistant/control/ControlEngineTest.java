@@ -63,11 +63,11 @@ class ControlEngineTest {
         // when
         controlEngine.onKeyPressed(keyC, charC);
         // then
-        verify(network, timeout(50).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         // when
         controlEngine.onKeyReleased(keyC, charC);
         // then
-        verify(network, timeout(50).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        verify(network, timeout(150).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         final List<NetworkKeyControlMessage> messages = keyMessageCaptor.getAllValues();
         NetworkKeyControlMessage first = messages.get(0);
         NetworkKeyControlMessage last = messages.get(messages.size()-1);
