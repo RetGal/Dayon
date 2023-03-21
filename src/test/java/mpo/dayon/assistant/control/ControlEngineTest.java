@@ -6,6 +6,8 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.*;
 import org.mockito.ArgumentCaptor;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -61,17 +63,20 @@ class ControlEngineTest {
         // when
         controlEngine.onKeyPressed(keyC, charC);
         // then
-        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
-        assertTrue(keyMessageCaptor.getValue().isPressed());
-        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
-        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
+        verify(network, timeout(50).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
         // when
         controlEngine.onKeyReleased(keyC, charC);
         // then
-        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
-        assertTrue(keyMessageCaptor.getValue().isReleased());
-        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
-        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
+        verify(network, timeout(50).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
+        final List<NetworkKeyControlMessage> messages = keyMessageCaptor.getAllValues();
+        NetworkKeyControlMessage first = messages.get(0);
+        NetworkKeyControlMessage last = messages.get(messages.size()-1);
+        assertTrue(first.isPressed());
+        assertEquals(keyC, first.getKeyCode());
+        assertEquals(charC, first.getKeyChar());
+        assertTrue(last.isReleased());
+        assertEquals(keyC, last.getKeyCode());
+        assertEquals(charC, last.getKeyChar());
     }
 
     @Test
