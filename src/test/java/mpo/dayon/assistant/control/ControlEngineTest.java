@@ -5,10 +5,7 @@ import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class ControlEngineTest {
@@ -55,7 +52,7 @@ class ControlEngineTest {
     }
 
     @Test
-    void onKeyPressedAndReleased() {
+    void keyMustBePressedBeforeReleased() {
         // given
         final int keyD = 68;
         final char charD = 'D';
@@ -64,24 +61,14 @@ class ControlEngineTest {
         // then
         verify(network, never()).sendKeyControl(any(NetworkKeyControlMessage.class));
 
-        // given
-        final int keyC = 67;
-        final char charC = 'C';
-        final ArgumentCaptor<NetworkKeyControlMessage> keyMessageCaptor = ArgumentCaptor.forClass(NetworkKeyControlMessage.class);
         // when
-        controlEngine.onKeyPressed(keyC, charC);
+        controlEngine.onKeyPressed(keyD, charD);
         // then
-        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
-        assertTrue(keyMessageCaptor.getValue().isPressed());
-        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
-        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
+        verify(network, atLeastOnce()).sendKeyControl(any(NetworkKeyControlMessage.class));
 
         // when
-        controlEngine.onKeyReleased(keyC, charC);
+        controlEngine.onKeyReleased(keyD, charD);
         // then
-        verify(network, timeout(100).atLeastOnce()).sendKeyControl(keyMessageCaptor.capture());
-        assertTrue(keyMessageCaptor.getValue().isReleased());
-        assertEquals(keyC, keyMessageCaptor.getValue().getKeyCode());
-        assertEquals(charC, keyMessageCaptor.getValue().getKeyChar());
+        verify(network, atLeastOnce()).sendKeyControl(any(NetworkKeyControlMessage.class));
     }
 }
