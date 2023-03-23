@@ -125,7 +125,7 @@ public class ControlEngine implements AssistantFrameListener {
 		// -------------------------------------------------------------------------------------------------------------
 		if (keyCode == -1) {
 			Log.warn(format("Got keyCode %s keyChar '%s' - releasing all keys", keyCode, keyChar));
-			pressedKeys.forEach((kCode, kChar) -> onKeyReleased(kCode, kChar));
+			pressedKeys.forEach(this::onKeyReleased);
 			return;
 		}
 
