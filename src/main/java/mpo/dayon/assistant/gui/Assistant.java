@@ -368,14 +368,14 @@ public class Assistant implements ClipboardOwner {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: " + totalFilesSize);
                     // Ok as very few of that (!)
-                    new Thread(() -> network.setRemoteClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "setRemoteClipboardFiles").start();
+                    new Thread(() -> network.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
                     frame.onClipboardSending();
                 }
             } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 // Ok as very few of that (!)
-                new Thread(() -> network.setRemoteClipboardText(text, text.getBytes().length), "setRemoteClipboardText").start();
+                new Thread(() -> network.sendClipboardText(text), "sendClipboardText").start();
                 frame.onClipboardSending();
             } else {
                 Log.debug("Clipboard contains no supported data");

@@ -1,7 +1,7 @@
 package mpo.dayon.assistant.network;
 
-import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
@@ -11,19 +11,16 @@ import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.version.Version;
 
-import javax.net.ssl.*;
-
-import java.awt.Toolkit;
+import javax.net.ssl.SSLServerSocketFactory;
+import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.security.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 import static java.lang.String.format;
-import static mpo.dayon.common.utils.SystemUtilities.*;
+import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantEngineConfiguration> {
@@ -39,28 +36,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private NetworkAssistantEngineConfiguration configuration;
 
     private SSLServerSocketFactory ssf;
-
-    private Thread receiver; // in
-
-    private NetworkSender sender; // out
-
-    private ServerSocket server;
-
-    private Socket connection;
-
-    private ObjectInputStream in;
-
-    private Thread fileReceiver; // file in
-
-    private NetworkSender fileSender; // file out
-
-    private ServerSocket fileServer;
-
-    private Socket fileConnection;
-
-    private ObjectInputStream fileIn;
-
-    private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
         this.captureMessageHandler = captureMessageHandler;
@@ -105,7 +80,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
      */
     public void cancel() {
         Log.info("Cancelling the network assistant engine...");
-
         cancelling.set(true);
         safeClose(server, connection, fileServer, fileConnection);
         fireOnDisconnecting();
@@ -166,14 +140,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         server = null;
     }
 
-    private ObjectInputStream initInputStream() throws IOException {
-        try {
-            return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-        } catch (StreamCorruptedException ex) {
-            throw new IOException("version.wrong");
-        }
-    }
-
     private void startFileReceiver() {
         fileReceiver = new Thread(new RunnableEx() {
             @Override
@@ -204,15 +170,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             handleIncomingClipboardFiles(fileIn, clipboardOwner);
         } catch (IOException ex) {
             closeConnections();
-        }
-    }
-
-    private void handleIOException(IOException ex) {
-        if (!cancelling.get()) {
-            Log.error("IO error (not cancelled)", ex);
-            fireOnIOError(ex);
-        } else {
-            Log.info("Stopped network receiver (cancelled)");
         }
     }
 
@@ -285,23 +242,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private void closeConnections() {
-        if (sender != null) {
-            sender.cancel();
-        }
-        receiver = safeInterrupt(receiver);
-        safeClose(in, connection, server);
-
-        if (fileSender != null) {
-            fileSender.cancel();
-        }
-        fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn, fileConnection, fileServer);
-
-        cancelling.set(false);
-    }
-
-
     /**
      * Might be blocking if the sender queue is full (!)
      */
@@ -347,24 +287,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    /**
-     * Might be blocking if the sender queue is full (!)
-     */
-    public void setRemoteClipboardText(String text, int size) {
-        if (sender != null) {
-            sender.sendClipboardContentText(text, size);
-        }
-    }
-
-    /**
-     * Might be blocking if the sender queue is full (!)
-     */
-    public void setRemoteClipboardFiles(List<File> files, long size, String basePath) {
-        if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size, basePath);
-        }
-    }
-
     private void fireOnReady() {
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onReady);
     }
@@ -402,7 +324,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onDisconnecting);
     }
 
-    private void fireOnIOError(IOException error) {
+    @Override
+    protected void fireOnIOError(IOException error) {
         listeners.getListeners().forEach(listener -> listener.onIOError(error));
     }
 }
