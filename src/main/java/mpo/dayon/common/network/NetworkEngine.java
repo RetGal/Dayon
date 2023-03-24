@@ -57,7 +57,7 @@ public abstract class NetworkEngine {
 
     protected Socket fileConnection;
 
-    protected final transient AtomicBoolean cancelling = new AtomicBoolean(false);
+    protected final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     /**
      * Might be blocking if the sender queue is full (!)
