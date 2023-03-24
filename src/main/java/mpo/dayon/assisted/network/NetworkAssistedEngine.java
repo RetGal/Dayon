@@ -16,19 +16,17 @@ import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLSocketFactory;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.security.*;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 
 import static java.lang.String.format;
-import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistedEngine extends NetworkEngine
         implements Configurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
@@ -45,20 +43,6 @@ public class NetworkAssistedEngine extends NetworkEngine
     private final ClipboardOwner clipboardOwner;
 
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
-
-    private Thread receiver; // in
-
-    private NetworkSender sender; // out
-
-    private ObjectInputStream in;
-
-    private Thread fileReceiver; // file in
-
-    private NetworkSender fileSender; // file out
-
-    private ObjectInputStream fileIn;
-
-    private final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
@@ -122,9 +106,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         fireOnConnecting(configuration);
 
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        SSLSocket socket = (SSLSocket) ssf.createSocket();
-        socket.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
-        in = initInputStream(socket);
+        connection = ssf.createSocket();
+        connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
+        in = initInputStream();
 
         if (receiver == null) {
             Log.info("Getting the receivers ready");
@@ -132,17 +116,17 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
         receiver.start();
 
-        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(socket.getOutputStream()))); // the active part (!)
+        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()))); // the active part (!)
         sender.start(1);
         sender.ping();
         // The first message being sent to the assistant (e.g. version identification).
         sender.sendHello();
 
-        SSLSocket fileSocket = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileSocket.getOutputStream()))); // the active part (!)
+        fileConnection = ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()))); // the active part (!)
         fileSender.start(1);
         fileSender.ping();
-        fileIn = new ObjectInputStream(new BufferedInputStream(fileSocket.getInputStream()));
+        fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
         fireOnConnected();
     }
@@ -155,14 +139,6 @@ public class NetworkAssistedEngine extends NetworkEngine
         cancelling.set(true);
         closeConnections();
         fireOnDisconnecting();
-    }
-
-    private ObjectInputStream initInputStream(SSLSocket connection) throws IOException {
-        try {
-            return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
-        } catch (StreamCorruptedException ex) {
-            throw new IOException("version.wrong");
-        }
     }
 
     private void receivingLoop() {
@@ -220,31 +196,6 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void handleIOException(IOException ex) {
-        if (!cancelling.get()) {
-            Log.error("IO error (not cancelled)", ex);
-            fireOnIOError(ex);
-        } else {
-            Log.info("Stopped network receiver (cancelled)");
-        }
-    }
-
-    private void closeConnections() {
-        if (sender != null) {
-            sender.cancel();
-        }
-        receiver = safeInterrupt(receiver);
-        safeClose(in);
-
-        if (fileSender != null) {
-            fileSender.cancel();
-        }
-        fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn);
-
-        cancelling.set(false);
-    }
-
     private void fileReceivingLoop() {
         try {
             handleIncomingClipboardFiles(fileIn, clipboardOwner);
@@ -273,18 +224,6 @@ public class NetworkAssistedEngine extends NetworkEngine
     @Override
     public boolean onLocationUpdated(Point location) {
         return sender == null || sender.sendMouseLocation(location);
-    }
-
-    public void sendClipboardText(String text, int size) {
-        if (sender != null) {
-            sender.sendClipboardContentText(text, size);
-        }
-    }
-
-    public void sendClipboardFiles(List<File> files, long size, String basePath) {
-        if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size, basePath);
-        }
     }
 
     public void sendResizeScreen(int width, int height) {
@@ -323,7 +262,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         listeners.getListeners().forEach(NetworkAssistedEngineListener::onDisconnecting);
     }
 
-    private void fireOnIOError(IOException ex) {
+    @Override
+    protected void fireOnIOError(IOException ex) {
         listeners.getListeners().forEach(listener -> listener.onIOError(ex));
     }
 }

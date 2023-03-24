@@ -10,8 +10,9 @@ public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
     private final Thread thread;
 
-    public MouseEngine() {
-        this.thread = new Thread(new RunnableEx() {
+    public MouseEngine(MouseEngineListener listener) {
+        listeners.add(listener);
+        thread = new Thread(new RunnableEx() {
             @Override
             protected void doRun() {
                 try {
@@ -21,10 +22,6 @@ public class MouseEngine {
                 }
             }
         }, "MouseEngine");
-    }
-
-    public void addListener(MouseEngineListener listener) {
-        listeners.add(listener);
     }
 
     public void start() {

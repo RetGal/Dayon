@@ -315,8 +315,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             return;
         }
 
-        final MouseEngine mouseEngine = new MouseEngine();
-        mouseEngine.addListener(networkEngine);
+        final MouseEngine mouseEngine = new MouseEngine(networkEngine);
         mouseEngine.start();
 
         initNewCaptureEngine(shareAllScreens.get());
@@ -383,7 +382,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
-                networkEngine.sendClipboardText(text, text.getBytes().length);
+                networkEngine.sendClipboardText(text);
                 return;
             } else {
                 Log.debug("Clipboard contains no supported data");
@@ -393,7 +392,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
         String text = "\uD83E\uDD84";
         Log.debug("Sending a unicorn: " + text);
-        networkEngine.sendClipboardText(text, text.getBytes().length);
+        networkEngine.sendClipboardText(text);
     }
 
     @Override
