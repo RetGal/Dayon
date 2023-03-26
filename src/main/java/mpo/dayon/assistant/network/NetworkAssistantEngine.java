@@ -7,7 +7,6 @@ import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
-import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.version.Version;
 
@@ -93,11 +92,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         try {
             awaitConnections();
             startFileReceiver();
-            sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream())));
-            sender.start(8);
-            sender.ping();
-
-            in = initInputStream();
+            initSender(8);
+            initInputStream();
             boolean introduced = false;
 
             //noinspection InfiniteLoopStatement
@@ -160,11 +156,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         try {
             fileServer = ssf.createServerSocket(configuration.getPort());
             fileConnection = fileServer.accept();
-
-            fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream())));
-            fileSender.start(1);
-            fileSender.ping();
-
+            initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
             handleIncomingClipboardFiles(fileIn, clipboardOwner);

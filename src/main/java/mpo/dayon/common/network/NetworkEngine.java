@@ -113,6 +113,18 @@ public abstract class NetworkEngine {
         return sslContext;
     }
 
+    protected void initSender(int queueSize) throws IOException {
+        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream())));
+        sender.start(queueSize);
+        sender.ping();
+    }
+
+    protected void initFileSender() throws IOException {
+        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream())));
+        fileSender.start(1);
+        fileSender.ping();
+    }
+
     protected void handleIncomingClipboardFiles(ObjectInputStream fileIn, ClipboardOwner clipboardOwner) throws IOException {
         String tmpDir = getTempDir();
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
@@ -158,9 +170,9 @@ public abstract class NetworkEngine {
         cancelling.set(false);
     }
 
-    protected ObjectInputStream initInputStream() throws IOException {
+    protected void initInputStream() throws IOException {
         try {
-            return new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+            in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {
             throw new IOException("version.wrong");
         }

@@ -23,8 +23,7 @@ public abstract class NetworkMessage {
 	}
 
 	public static void unmarshallMagicNumber(ObjectInputStream in) throws IOException {
-		final int magicNumber = in.readByte();
-		if (magicNumber != NetworkMessage.MAGIC_NUMBER) {
+		if (NetworkMessage.MAGIC_NUMBER != in.readByte()) {
 			throw new IOException("Protocol error!");
 		}
 	}

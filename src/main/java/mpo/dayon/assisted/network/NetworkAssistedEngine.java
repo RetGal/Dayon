@@ -12,7 +12,6 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
-import mpo.dayon.common.network.NetworkSender;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
@@ -104,11 +103,10 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
         fireOnConnecting(configuration);
-
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
         connection = ssf.createSocket();
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
-        in = initInputStream();
+        initInputStream();
 
         if (receiver == null) {
             Log.info("Getting the receivers ready");
@@ -116,16 +114,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
         receiver.start();
 
-        sender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(connection.getOutputStream()))); // the active part (!)
-        sender.start(1);
-        sender.ping();
+        initSender(1);
         // The first message being sent to the assistant (e.g. version identification).
         sender.sendHello();
 
         fileConnection = ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream()))); // the active part (!)
-        fileSender.start(1);
-        fileSender.ping();
+        initFileSender();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
         fireOnConnected();
