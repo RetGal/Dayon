@@ -66,6 +66,9 @@ class AssistantPanel extends JPanel {
 
 	void onMouseLocationUpdated(final int x, final int y) {
 		SwingUtilities.invokeLater(() -> {
+			if (this.mouseX > -1 && this.mouseY > -1) {
+				repaint(this.mouseX, this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
+			}
             this.mouseX = x;
             this.mouseY = y;
             repaint(x, y, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
