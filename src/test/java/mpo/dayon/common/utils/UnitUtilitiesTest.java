@@ -1,5 +1,6 @@
 package mpo.dayon.common.utils;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,9 +11,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UnitUtilitiesTest {
 
+    private static Locale defaultLocale;
+
     @BeforeAll
-    static void setLocale() {
+    static void getLocale() {
+        defaultLocale = Locale.getDefault();
         Locale.setDefault(new Locale("de", "CH"));
+    }
+
+    @AfterAll
+    static void resetLocale() {
+        Locale.setDefault(defaultLocale);
     }
 
     @ParameterizedTest

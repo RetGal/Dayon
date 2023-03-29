@@ -1,11 +1,28 @@
 package mpo.dayon.common.monitoring.counter;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
+import java.util.Locale;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class BitCounterTest {
+
+    private static Locale defaultLocale;
+
+    @BeforeAll
+    static void getLocale() {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(new Locale("de", "CH"));
+    }
+
+    @AfterAll
+    static void resetLocale() {
+        Locale.setDefault(defaultLocale);
+    }
 
     @Test
     void formatRate() {
