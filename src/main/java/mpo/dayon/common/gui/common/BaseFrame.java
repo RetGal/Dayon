@@ -73,8 +73,7 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), MIN_WIDTH),
                 Math.max(configuration.getHeight(), MIN_HEIGHT));
         this.setSize(dimension.width, dimension.height);
-        String titleString = frameType.equals(FrameType.ASSISTANT) ? translate("assistant") : translate("assisted");
-        updateTitle(titleString, Version.get());
+        updateTitle(translate(frameType.getPrefix()), Version.get());
     }
 
     private void updateTitle(String titleString, Version version) {

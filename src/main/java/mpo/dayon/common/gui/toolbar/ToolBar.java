@@ -10,6 +10,7 @@ public class ToolBar extends JToolBar {
 	public ToolBar() {
 		setFloatable(false);
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+		setBorder(null);
 	}
 
 	public void addAction(Action action) {

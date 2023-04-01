@@ -1,7 +1,9 @@
 package mpo.dayon.assistant.gui;
 
 import mpo.dayon.common.event.Listeners;
-import mpo.dayon.common.gui.common.*;
+import mpo.dayon.common.gui.common.BaseFrame;
+import mpo.dayon.common.gui.common.FrameType;
+import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.monitoring.counter.Counter;
@@ -33,7 +35,7 @@ class AssistantFrame extends BaseFrame {
     private final JScrollPane assistantPanelWrapper;
 
     private final AssistantPanel assistantPanel;
-    
+
     private final transient AssistantActions actions;
 
     private Timer sessionTimer;
@@ -313,7 +315,7 @@ class AssistantFrame extends BaseFrame {
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
-            getStatusBar().setSessionDuration(format("%02d:%02d:%02d", seconds/3600, (seconds % 3600)/60, seconds % 60));
+            getStatusBar().setSessionDuration(format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60));
         });
         sessionTimer.start();
     }
@@ -331,13 +333,8 @@ class AssistantFrame extends BaseFrame {
         removeCenter();
         validate();
         repaint();
-        if (error.getMessage() != null) {
-            JOptionPane.showMessageDialog(this, translate("comm.error.msg1", translate(error.getMessage())), translate("comm.error"),
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, translate("comm.error.msg1", "!"), translate("comm.error"),
-                    JOptionPane.ERROR_MESSAGE);
-        }
+        String errorMessage = error.getMessage() != null ? translate("comm.error.msg1", translate(error.getMessage())) : translate("comm.error.msg1", "!");
+        JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }
 
     void computeScaleFactors(int sourceWidth, int sourceHeight) {

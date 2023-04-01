@@ -88,7 +88,6 @@ public abstract class DialogFactory {
 
 		final JPanel payloadPaneEx = new JPanel(new BorderLayout());
 		payloadPaneEx.add(payloadPane, BorderLayout.CENTER);
-		payloadPaneEx.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 
 		final JPanel payloadPaneExEx = new JPanel(new BorderLayout());
 		if (bordered) {

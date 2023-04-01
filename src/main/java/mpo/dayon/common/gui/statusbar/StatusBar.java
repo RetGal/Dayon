@@ -21,7 +21,6 @@ public class StatusBar extends JPanel {
 
 	public StatusBar() {
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		setBorder(new EtchedBorderPainter());
 		add(Box.createHorizontalStrut(5));
 		add(message);
 		add(Box.createHorizontalGlue());
@@ -86,16 +85,4 @@ public class StatusBar extends JPanel {
 		}
 	}
 
-	private static class EtchedBorderPainter extends EtchedBorder {
-
-		@Override
-		public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-			g.translate(x, y);
-			g.setColor(etchType == LOWERED ? getShadowColor(c) : getHighlightColor(c));
-			g.drawLine(0, 0, width, 0);
-			g.setColor(etchType == LOWERED ? getHighlightColor(c) : getShadowColor(c));
-			g.drawLine(1, 1, width, 1);
-			g.translate(-x, -y);
-		}
-	}
 }
