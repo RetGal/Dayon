@@ -97,24 +97,18 @@ public final class Compressor {
      */
     private static int computeMarkerCount(CaptureTile[] tiles, int from) {
         final CaptureTile tile = tiles[from++];
-
         if (tile == null) {
             int count = 0;
-
             while (count < 128 && from < tiles.length && tiles[from++] == null) {
                 ++count;
             }
-
             return -count;
-        } else {
-            int count = 1;
-
-            while (count < 127 && from < tiles.length && tiles[from++] != null) {
-                ++count;
-            }
-
-            return count;
         }
+        int count = 1;
+        while (count < 127 && from < tiles.length && tiles[from++] != null) {
+            ++count;
+        }
+        return count;
     }
 
     private static void encodeTile(TileCache cache, RunLengthEncoder encoder, MemByteBuffer encoded, CaptureTile tile) {

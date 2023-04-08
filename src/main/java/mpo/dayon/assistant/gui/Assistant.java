@@ -43,6 +43,7 @@ import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -51,7 +52,6 @@ public class Assistant implements ClipboardOwner {
     private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
     private static final String QUICKSTART_PAGE = translate("quickstart.html");
-    private static final String APP = "assistant";
 
     private final NetworkAssistantEngine network;
 
@@ -257,13 +257,13 @@ public class Assistant implements ClipboardOwner {
         help.addActionListener(ev1 -> {
             try {
                 if (isSnapped()) {
-                    new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(QUICKSTART_PAGE, APP).toString()).start();
+                    new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
                 } else if (Desktop.isDesktopSupported()) {
                     final Desktop desktop = Desktop.getDesktop();
                     if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                        desktop.browse(getQuickStartURI(QUICKSTART_PAGE, APP));
+                        desktop.browse(getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()));
                     } else if (isFlat()) {
-                        new ProcessBuilder(FLATPACK_BROWSER, getQuickStartURI(QUICKSTART_PAGE, APP).toString()).start();
+                        new ProcessBuilder(FLATPACK_BROWSER, getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
                     }
                 }
             } catch (IOException ex) {

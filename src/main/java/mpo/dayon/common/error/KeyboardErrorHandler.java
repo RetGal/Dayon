@@ -27,9 +27,8 @@ public final class KeyboardErrorHandler {
 
         if (frame != null) {
             final JLabel label = new JLabel();
-            int timerDelay = 1000;
             ActionListener ac = new ActionListener() {
-                int timeLeft = 4;
+                private int timeLeft = 4;
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
@@ -44,7 +43,7 @@ public final class KeyboardErrorHandler {
                 }
             };
 
-            Timer timer = new Timer(timerDelay, ac);
+            Timer timer = new Timer(1000, ac);
             timer.setInitialDelay(0);
             timer.start();
 
