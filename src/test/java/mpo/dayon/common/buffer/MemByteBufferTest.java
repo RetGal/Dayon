@@ -36,15 +36,32 @@ class MemByteBufferTest {
     }
 
     @Test
+    void writeByteArray() {
+        buffer.write(new byte[BEAST]);
+        assertEquals(BEAST, buffer.size());
+    }
+
+    @Test
     void fill() {
         buffer.fill(3, BEAST);
         assertEquals(3, buffer.size());
     }
 
     @Test
+    void writeLenAsShort() {
+        final int mark = 10;
+        buffer.fill(12, 8);
+        assertEquals(8, buffer.getInternal()[mark]);
+        buffer.writeLenAsShort(mark);
+        assertEquals(0, buffer.getInternal()[mark]);
+        assertEquals(12, buffer.size());
+    }
+
+    @Test
     void copyConstructor() throws IOException {
+        buffer.fill(33, BEAST);
         try(MemByteBuffer memBuffer = new MemByteBuffer(buffer.getInternal())) {
-            assertEquals(32, memBuffer.size());
+            assertEquals(64, memBuffer.size());
             assertEquals(buffer.getInternal().length, memBuffer.getInternal().length);
         }
     }
