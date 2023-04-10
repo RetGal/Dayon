@@ -1,13 +1,24 @@
 #!/bin/sh
-DAYON_HOME=$(dirname "$(realpath "$0")")
+cross_realpath() {
+  if ! realpath "${1}" 2>/dev/null; then
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+  fi
+}
+DAYON_HOME=$(dirname "$(cross_realpath "$0")")
 if which java >/dev/null; then
   JAVA=$(which java)
 elif [ ! -f /etc/alternatives/java ]; then
-  JAVA=/app/jre/bin/java
+  if [ ! -d /usr/libexec/java_home ]; then
+    if [ -f /app/jre/bin/java ]; then
+      JAVA=/app/jre/bin/java
+    else
+      JAVA=$(cross_realpath "jrex/bin/java")
+    fi
+  else
+    JAVA=/usr/libexec/java_home/bin/java
+  fi
 else
-  JAVA_HOME=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/java' '{print $1}')
-  #JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64/jre"
-  JAVA=${JAVA_HOME}/bin/java
+  JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/java' '{print $1}')/bin/java
 fi
 JAVA_OPTS=
 CLASSPATH="${DAYON_HOME}/dayon.jar"

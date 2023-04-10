@@ -77,6 +77,7 @@
 				<exclude name="deb/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
+				<exclude name="jrex/"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
@@ -91,9 +92,7 @@
 				<exclude name="deb/"/>
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
-				<exclude name="dayon"/>
-				<exclude name="dayon_assisted"/>
-				<exclude name="dayon_assistant"/>
+				<exclude name="jrex/"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 				<exclude name="readme.txt"/>
 				<exclude name="setup.sh"/>
@@ -117,6 +116,7 @@
 		<copy todir="${dir.dist}/tar/dayon">
 			<fileset dir="${dir.dist}">
 				<exclude name="jre/"/>
+				<exclude name="jrex/"/>
 				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
@@ -124,16 +124,12 @@
 			<tarfileset dir="${dir.dist}/tar">
 				<include name="**/*"/>
 				<exclude name="**/*.sh"/>
-				<exclude name="**/dayon"/>
-				<exclude name="**/dayon_assistant"/>
-				<exclude name="**/dayon_assisted"/>
 				<exclude name="**/favicon.ico"/>
 			</tarfileset>
 			<tarfileset dir="${dir.dist}/tar" filemode="755">
-				<include name="**/*.sh"/>
-				<include name="**/dayon"/>
-				<include name="**/dayon_assistant"/>
-				<include name="**/dayon_assisted"/>
+				<include name="**/dayon.sh"/>
+				<include name="**/dayon_assistant.sh"/>
+				<include name="**/dayon_assisted.sh"/>
 			</tarfileset>
 		</tar>
 		<delete dir="${dir.dist}/tar"/>
