@@ -34,7 +34,7 @@ Linux:
 OSX/macOS:
 
   A JRE (Java 8 or newer) is required.
-  You will also have to grant the "Screen Recording" permission to dayon_assisted:
+  You will also have to grant the "Screen Recording" permission to dayon_assisted.sh:
   System Preferences => Security and Privacy => Privacy => Screen Recording
 
 
