@@ -184,13 +184,14 @@
         <h3>用户端(Assisted)自动连接</h3>
         <h4>通过命令行参数</h4>
         <p>
-            可以通过命令行参数传递主控端(Assistant)的主机名或IP地址和端口：<br>
-            <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)<br>
-            如果是Snap版本，请使用：<code>dayon.assisted ah=example.com ap=4242</code>；如果您是从tge压缩包安装的
-            请使用：<code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)<br>
-            <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)<br>
-            或者快速启动版本请使用：<br>
-            <code>dayon_assisted.exe ah=example.org ap=80</code><br>
+            可以通过命令行参数传递主控端(Assistant)的主机名或IP地址和端口：
+        <ul>
+            <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
+            <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
+            <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux 快速启动版本)</li>
+            <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
+            <li><code>assisted.exe ah=example.com ap=4242</code> (Windows 快速启动版本)</li>
+        </ul>
             如果使用这些参数启动，程序将直接连接到给定的远程主机。
         <h4>通过配置文件</h4>
         <p>

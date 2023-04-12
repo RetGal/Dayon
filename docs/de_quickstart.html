@@ -322,19 +322,14 @@
         <h4>Via Kommandozeilenparameter</h4>
         <p>
           Der Hostname oder IP-Adresse und der Port des Assistenten können via Kommandozeilenparameter übergeben werden:
-         <br/>
-          <code>dayon_assisted ah=example.com ap=4242</code> (Linux/Mac OS)
-         <br/>
-          Als Snap installiert, lautet der Befehl <code>dayon.assisted ah=example.com ap=4242</code>, aus einem .tgz Archiv installiert hingegen:
-          <code>./dayon_assisted.sh ah=example.com ap=4242</code> (Linux)
-         <br/>
-          <code>java -jar dayon.jar ah=example.com ap=4567</code> (Windows)
-         <br/>
-          oder bei der Quick Launch Version:
-         <br/>
-          <code>dayon_assisted.exe ah=example.org ap=80</code>
-         <br/>
-          Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der übergebenen Host.
+        <ul>
+        <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
+        <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
+        <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
+        <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
+        <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
+        </ul>
+          Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der angegebenen Host.
         </p>
 
         <h4>Via Konfigurationsdatei</h4>
