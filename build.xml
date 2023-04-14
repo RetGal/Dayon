@@ -58,7 +58,7 @@
 
 	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
-			<zipgroupfileset dir="${dir.binfile}/lib" includes="xz-1.9.jar"/>
+			<zipgroupfileset dir="${dir.binfile}/lib" includes="xz-1.9.jar,WaifUPnP.jar"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
