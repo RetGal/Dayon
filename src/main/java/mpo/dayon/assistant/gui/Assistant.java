@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.gui;
 
+import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
@@ -36,12 +37,15 @@ import java.net.Socket;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static java.lang.Thread.sleep;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
@@ -92,6 +96,8 @@ public class Assistant implements ClipboardOwner {
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
 
     private String token;
+
+    private Boolean upnpEnabled;
 
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
@@ -144,12 +150,25 @@ public class Assistant implements ClipboardOwner {
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(control);
         frame.setVisible(true);
+        initUpnp();
+    }
+
+    private boolean isUpnpEnabled() {
+        while (upnpEnabled == null) {
+            try {
+                sleep(10L);
+            } catch (InterruptedException e) {
+                Log.warn("Swallowed", e);
+                Thread.currentThread().interrupt();
+            }
+        }
+        return upnpEnabled;
     }
 
     private AssistantActions createAssistantActions() {
         AssistantActions assistantActions = new AssistantActions();
         assistantActions.setIpAddressAction(createWhatIsMyIpAction());
-        assistantActions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction());
+        assistantActions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction(this));
         assistantActions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
         assistantActions.setCompressionEngineConfigurationAction(createCompressionConfigurationAction());
         assistantActions.setResetAction(createResetAction());
@@ -163,11 +182,8 @@ public class Assistant implements ClipboardOwner {
         return assistantActions;
     }
 
-    private void startNetwork() {
-        network.start();
-    }
-
     private void stopNetwork() {
+        frame.hideSpinner();
         network.cancel();
     }
 
@@ -191,13 +207,16 @@ public class Assistant implements ClipboardOwner {
                         final Cursor cursor = frame.getCursor();
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         try {
-                            final URL url = new URL(WHATSMYIP_SERVER_URL);
-                            try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                                publicIp = lines.readLine();
+                            publicIp = UPnP.getExternalIP();
+                            if (publicIp == null) {
+                                final URL url = new URL(WHATSMYIP_SERVER_URL);
+                                try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                                    publicIp = lines.readLine();
+                                }
                             }
                         } catch (IOException ex) {
                             Log.error("Could not determine public IP", ex);
-                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg1"), translate("ipAddress"),
+                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
                                     JOptionPane.ERROR_MESSAGE);
                         } finally {
                             frame.setCursor(cursor);
@@ -284,19 +303,28 @@ public class Assistant implements ClipboardOwner {
         return menuItem;
     }
 
-    private Action createNetworkAssistantConfigurationAction() {
+    private Action createNetworkAssistantConfigurationAction(Assistant assistant) {
         final Action exit = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+
                 final JPanel pane = new JPanel();
-                pane.setLayout(new GridLayout(1, 2, 10, 10));
+                pane.setLayout(new GridLayout(4, 1, 10, -10));
+                final JPanel subPane = new JPanel();
+                subPane.setLayout(new GridLayout(1, 2, 10, 10));
                 final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
                 portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
                 final JTextField portNumberTextField = new JTextField();
                 portNumberTextField.setText(valueOf(networkConfiguration.getPort()));
-                pane.add(portNumberLbl);
-                pane.add(portNumberTextField);
+                final JLabel upnpStatus = new JLabel(format(translate("connection.settings.upnp." + assistant.isUpnpEnabled()), UPnP.getDefaultGatewayIP()));
+                final JLabel upnpHint = new JLabel(translate("connection.settings.portforward." + assistant.isUpnpEnabled()));
+                subPane.add(portNumberLbl);
+                subPane.add(portNumberTextField);
+                pane.add(upnpStatus);
+                pane.add(upnpHint);
+                pane.add(new JLabel(""));
+                pane.add(subPane);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), pane, true, () -> {
                     final String portNumber = portNumberTextField.getText();
@@ -307,13 +335,13 @@ public class Assistant implements ClipboardOwner {
                 });
 
                 if (ok) {
-                    final NetworkAssistantEngineConfiguration xnetworkConfiguration = new NetworkAssistantEngineConfiguration(
+                    final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
                             Integer.parseInt(portNumberTextField.getText()));
 
-                    if (!xnetworkConfiguration.equals(networkConfiguration)) {
-                        networkConfiguration = xnetworkConfiguration;
+                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
+                        network.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+                        networkConfiguration = newNetworkConfiguration;
                         networkConfiguration.persist();
-
                         network.reconfigure(networkConfiguration);
                     }
                 }
@@ -673,7 +701,7 @@ public class Assistant implements ClipboardOwner {
         final Action startAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                startNetwork();
+                new Assistant.NetWorker().execute();
             }
         };
         startAction.putValue(Action.NAME, "start");
@@ -728,6 +756,42 @@ public class Assistant implements ClipboardOwner {
         } catch (Exception ex) {
             Log.warn("Could not set the L&F [" + lnf.getName() + "]", ex);
         }
+    }
+
+    private class NetWorker extends SwingWorker<String, String> {
+        @Override
+        protected String doInBackground() {
+            if (!isCancelled()) {
+                startNetwork();
+            }
+            return null;
+        }
+
+        private void startNetwork() {
+            frame.onGettingReady();
+            network.start();
+        }
+
+        @Override
+        protected void done() {
+            try {
+                if (!isCancelled()) {
+                    super.get();
+                    Log.debug("NetWorker is done");
+                }
+            } catch (InterruptedException | ExecutionException ie) {
+                Log.info("NetWorker was cancelled");
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private void initUpnp() {
+        CompletableFuture.supplyAsync(() -> {
+            upnpEnabled = Boolean.valueOf(UPnP.isUPnPAvailable());
+            Log.info(format("UPnP is %s", isUpnpEnabled() ? "enabled" : "disabled"));
+            return upnpEnabled;
+        });
     }
 
     private String margin(String in) {

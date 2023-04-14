@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.network;
 
+import com.dosse.upnp.UPnP;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -36,6 +37,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private SSLServerSocketFactory ssf;
 
+    private static final String APP_NAME = "Dayon!";
+
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
         this.captureMessageHandler = captureMessageHandler;
         this.mouseMessageHandler = mouseMessageHandler;
@@ -64,6 +67,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
+        if (UPnP.isUPnPAvailable() && !UPnP.isMappedTCP(configuration.getPort())) {
+            UPnP.openPortTCP(configuration.getPort(), APP_NAME);
+        }
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
@@ -82,6 +88,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         cancelling.set(true);
         safeClose(server, connection, fileServer, fileConnection);
         fireOnDisconnecting();
+    }
+
+    public boolean manageRouterPorts(int oldPort, int newPort) {
+        if (UPnP.isUPnPAvailable()) {
+            UPnP.closePortTCP(oldPort);
+            return UPnP.openPortTCP(newPort, APP_NAME);
+        }
+        return false;
     }
 
     // right, keep streams open - forever!
@@ -112,6 +126,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             handleIOException(ex);
         } finally {
             closeConnections();
+            UPnP.closePortTCP(configuration.getPort());
             fireOnReady();
         }
 

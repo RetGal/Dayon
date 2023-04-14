@@ -255,7 +255,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onReady() {
-        removeCenter();
+        hideSpinner();
         validate();
         repaint();
         actions.getStartAction().setEnabled(true);
@@ -269,13 +269,20 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onHttpStarting(int port) {
-        actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(true);
         actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
+        getStatusBar().setMessage(translate("listening", port));
+    }
+
+    void onGettingReady() {
+        showSpinner();
+        actions.getStartAction().setEnabled(false);
+    }
+
+    private void showSpinner() {
         center = new Spinner();
         add(center, BorderLayout.CENTER);
-        getStatusBar().setMessage(translate("listening", port));
     }
 
     boolean onAccepted(Socket connection) {
@@ -284,7 +291,7 @@ class AssistantFrame extends BaseFrame {
                 getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
             return false;
         }
-        removeCenter();
+        hideSpinner();
         getStatusBar().setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
@@ -330,7 +337,7 @@ class AssistantFrame extends BaseFrame {
         actions.getResetAction().setEnabled(false);
         disableControls();
         stopSessionTimer();
-        removeCenter();
+        hideSpinner();
         validate();
         repaint();
         String errorMessage = error.getMessage() != null ? translate("comm.error.msg1", translate(error.getMessage())) : translate("comm.error.msg1", "!");
@@ -385,7 +392,7 @@ class AssistantFrame extends BaseFrame {
         }
     }
 
-    private void removeCenter() {
+    void hideSpinner() {
         if (center != null) {
             remove(center);
         }
