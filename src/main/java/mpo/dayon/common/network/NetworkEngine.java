@@ -7,16 +7,13 @@ import mpo.dayon.common.network.message.NetworkMessage;
 import mpo.dayon.common.network.message.NetworkMessageType;
 import mpo.dayon.common.security.CustomTrustManager;
 
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
+import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.security.*;
+import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -33,7 +30,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
  * simple asynchronous network message layer. The network engine is handling
  * both the sending and the receiving sides.
  */
-public abstract class NetworkEngine {
+public abstract class NetworkEngine implements HandshakeCompletedListener {
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
@@ -49,13 +46,13 @@ public abstract class NetworkEngine {
 
     protected ObjectInputStream fileIn;
 
-    protected ServerSocket server;
+    protected SSLServerSocket server;
 
-    protected Socket connection;
+    protected SSLSocket connection;
 
-    protected ServerSocket fileServer;
+    protected SSLServerSocket fileServer;
 
-    protected Socket fileConnection;
+    protected SSLSocket fileConnection;
 
     protected final AtomicBoolean cancelling = new AtomicBoolean(false);
 
@@ -188,6 +185,23 @@ public abstract class NetworkEngine {
     }
 
     protected void fireOnIOError(IOException error) {
+    }
+
+    protected void fireOnCertError(String fingerprint) {
+    }
+
+    @Override
+    public void handshakeCompleted(HandshakeCompletedEvent event) {
+        try {
+            String fingerprint = CustomTrustManager.calculateFingerprint(event.getPeerCertificates()[0]);
+            if (!CustomTrustManager.isValidFingerprint(fingerprint)) {
+                Log.warn(format("Peer certificate does not match fingerprint '%s' !", fingerprint));
+                fireOnCertError(fingerprint);
+            }
+        } catch (SSLPeerUnverifiedException | NoSuchAlgorithmException | CertificateEncodingException e) {
+            Log.error(e.getMessage());
+            throw new IllegalArgumentException(e);
+        }
     }
 
 }

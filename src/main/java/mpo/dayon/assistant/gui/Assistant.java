@@ -923,5 +923,10 @@ public class Assistant implements ClipboardOwner {
         public void onIOError(IOException error) {
             frame.onIOError(error);
         }
+
+        @Override
+        public void onUntrustedConnection(String fingerprint) {
+            frame.onUntrustedConnection(fingerprint);
+        }
     }
 }

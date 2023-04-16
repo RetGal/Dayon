@@ -15,7 +15,7 @@ import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
@@ -104,7 +104,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
         fireOnConnecting(configuration);
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
-        connection = ssf.createSocket();
+        connection = (SSLSocket) ssf.createSocket();
+        connection.addHandshakeCompletedListener(this);
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
         initInputStream();
 
@@ -118,7 +119,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         // The first message being sent to the assistant (e.g. version identification).
         sender.sendHello();
 
-        fileConnection = ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         initFileSender();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
@@ -259,5 +260,10 @@ public class NetworkAssistedEngine extends NetworkEngine
     @Override
     protected void fireOnIOError(IOException ex) {
         listeners.getListeners().forEach(listener -> listener.onIOError(ex));
+    }
+
+    @Override
+    protected void fireOnCertError(String fingerprint) {
+        listeners.getListeners().forEach(listener -> listener.onUntrustedConnection(fingerprint));
     }
 }

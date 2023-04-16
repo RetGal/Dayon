@@ -28,6 +28,8 @@ public final class ImageNames {
 	public static final String UP = "up.png";
 	public static final String USERS = "users_48.png";
 	public static final String WAITING = "waiting.gif";
+
+	public static final String WARNING = "warning.png";
 	public static final String WIN = "win.png";
 
 }

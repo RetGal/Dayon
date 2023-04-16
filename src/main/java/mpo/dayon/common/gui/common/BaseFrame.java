@@ -1,10 +1,6 @@
 package mpo.dayon.common.gui.common;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Desktop;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.io.IOException;
@@ -273,6 +269,10 @@ public abstract class BaseFrame extends JFrame {
 
     private void setStatusBar(StatusBar statusBar) {
         this.statusBar = statusBar;
+    }
+
+    public void onUntrustedConnection(String fingerprint) {
+        toolBar.setMessage(fingerprint);
     }
 
     private static class FeedbackMouseAdapter extends MouseAdapter {

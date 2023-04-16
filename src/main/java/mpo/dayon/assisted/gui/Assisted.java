@@ -444,5 +444,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             stop(getConfiguration().getServerName());
             frame.onDisconnecting();
         }
+
+        @Override
+        public void onUntrustedConnection(String fingerprint) {
+            frame.onUntrustedConnection(fingerprint);
+        }
     }
 }
