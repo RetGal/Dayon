@@ -96,20 +96,22 @@
         </p>
 
         <p>
-          Dayon! Assistant se comporte comme une application serveur (vers laquelle l'<em>assistée</em>
-          va se connecter). Vous devez donc configurer le réseau pour rendre votre application visible depuis l'extérieur.
-          Par défaut, le serveur écoute le <strong>Port</strong> 8080, mais vous pouvez le modifier si nécessaire. Ensuite, il faudra
-          autoriser ce port dans votre <strong>parefeu</strong> et sans doute configurer un service <strong>NAT</strong> sur votre routeur DSL.
+          Dayon! Assistant agit comme une application serveur typique (l'<em>assisté</em> va se connecter) et en tant que tel, vous devez configurer votre réseau
+          pour le rendre visible du monde extérieur.<br/><br/>
+          Par défaut, le serveur écoute le <strong>port</strong> 8080, mais vous pouvez le modifier si nécessaire.
+          Depuis la version 12, Dayon! crée indépendamment une règle de transfert de port correspondante. La condition préalable est que <strong>UPnP</strong> soit activé.
+          Sinon, il sera toujours nécessaire de rediriger le port (TCP) via <strong>NAT</strong> sur le <strong>routeur</strong> vers l'ordinateur correspondant.
           <br/><br/>
-          Consultez <a href="https://portforward.com/router.htm">portforward.com</a> pour un guide étape par étape pour les plus courants modèles de routeurs.
+          Consultez <a href="https://portforward.com/router.htm">portforward.com</a> pour un guide étape par étape des modèles de routeur les plus courants.
         </p>
 
         <p>
-          <strong>Optional:</strong> Ajuster le port pour les connexions entrantes:
+          <strong>Optional:</strong> Ajuster le port pour les connexions entrantes: (à gauche avec UPnP, à droite sans)
         </p>
 
         <p>
-          <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings"/>
+          <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings avec UPnP"/>
+          <img src="assistant_network_settings.jpg" alt="Dayon! Assistant: Network Settings sans UPnp"/>
         </p>
 
         <p>
