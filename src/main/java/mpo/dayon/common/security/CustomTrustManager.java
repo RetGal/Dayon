@@ -45,8 +45,13 @@ public class CustomTrustManager implements X509TrustManager {
 			KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			InputStream myKeys = getClass().getResourceAsStream(KEY_STORE_PATH);
 			myTrustStore.load(myKeys, KEY_STORE_PASS.toCharArray());
-			myKeys.close();
-			fingerprint = calculateFingerprint(myTrustStore.getCertificate("mykey"));
+			if (myKeys != null) {
+				myKeys.close();
+			}
+
+			if (fingerprint == null) {
+				fingerprint = calculateFingerprint(myTrustStore.getCertificate("mykey"));
+			}
 
 			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
 			tmf.init(myTrustStore);
@@ -101,7 +106,7 @@ public class CustomTrustManager implements X509TrustManager {
 
 	public static String calculateFingerprint(final Certificate cert) throws NoSuchAlgorithmException,
 			CertificateEncodingException {
-		MessageDigest md = MessageDigest.getInstance("SHA-1");
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		byte[] peer = cert.getEncoded();
 		md.update(peer);
 		byte[] bytSHA = md.digest();
