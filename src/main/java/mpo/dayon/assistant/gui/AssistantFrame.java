@@ -56,6 +56,8 @@ class AssistantFrame extends BaseFrame {
 
     private Dimension canvas;
 
+    private ToolBar toolbar;
+
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
@@ -183,7 +185,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     private ToolBar createToolBar() {
-        final ToolBar toolbar = new ToolBar();
+        toolbar = new ToolBar();
         toolbar.addAction(actions.getStartAction());
         toolbar.addAction(actions.getStopAction());
         toolbar.addSeparator();
@@ -200,6 +202,8 @@ class AssistantFrame extends BaseFrame {
         toolbar.addAction(createShowHelpAction());
         toolbar.addSeparator();
         toolbar.addAction(actions.getTokenAction());
+        toolbar.addSeparator();
+        toolbar.add(toolbar.getMessage());
         toolbar.addGlue();
         toolbar.addAction(actions.getIpAddressAction());
         toolbar.addSeparator();
@@ -329,12 +333,14 @@ class AssistantFrame extends BaseFrame {
 
     void onDisconnecting() {
         stopSessionTimer();
+        toolbar.clearMessage();
     }
 
     void onIOError(IOException error) {
         actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(false);
         actions.getResetAction().setEnabled(false);
+        toolbar.clearMessage();
         disableControls();
         stopSessionTimer();
         hideSpinner();

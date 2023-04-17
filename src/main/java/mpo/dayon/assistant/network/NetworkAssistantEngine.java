@@ -11,7 +11,9 @@ import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.version.Version;
 
+import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.io.*;
@@ -137,12 +139,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         ssf = initSSLContext().getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
-        server = ssf.createServerSocket(configuration.getPort());
+        server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
+        server.setWantClientAuth(true);
         Log.info("Accepting ...");
 
         do {
             safeClose(connection); // we might have refused the accepted connection (!)
-            connection = server.accept();
+            connection = (SSLSocket) server.accept();
+            connection.addHandshakeCompletedListener(this);
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
@@ -169,8 +173,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.info(format("Dayon! file server [port:%d]", configuration.getPort()));
 
         try {
-            fileServer = ssf.createServerSocket(configuration.getPort());
-            fileConnection = fileServer.accept();
+            fileServer = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
+            fileConnection = (SSLSocket) fileServer.accept();
             initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
@@ -334,5 +338,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @Override
     protected void fireOnIOError(IOException error) {
         listeners.getListeners().forEach(listener -> listener.onIOError(error));
+    }
+
+    @Override
+    protected void fireOnCertError(String fingerprint) {
+        listeners.getListeners().forEach(listener -> listener.onUntrustedConnection(fingerprint));
     }
 }

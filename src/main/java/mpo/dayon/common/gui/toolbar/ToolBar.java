@@ -1,11 +1,18 @@
 package mpo.dayon.common.gui.toolbar;
 
-import java.awt.Insets;
+import mpo.dayon.common.gui.common.ImageNames;
+
+import java.awt.*;
 
 import javax.swing.*;
 
+import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
+
 public class ToolBar extends JToolBar {
 	public static final Insets ZERO_INSETS = new Insets(1, 1, 1, 1);
+
+	private final JLabel message = new JLabel();
 
 	public ToolBar() {
 		setFloatable(false);
@@ -39,4 +46,21 @@ public class ToolBar extends JToolBar {
 	public void addGlue() {
 		add(Box.createHorizontalGlue());
 	}
+
+	public JLabel getMessage() {
+		return message;
+	}
+
+	public void clearMessage() {
+		this.message.setIcon(null);
+		this.message.setText(null);
+		this.message.setToolTipText(null);
+	}
+
+	public void setMessage(String fingerprint) {
+		this.message.setIcon(getOrCreateIcon(ImageNames.WARNING));
+		this.message.setText(translate("connection.suspicious"));
+		this.message.setToolTipText(translate("connection.fingerprint.mismatch", fingerprint));
+	}
+
 }

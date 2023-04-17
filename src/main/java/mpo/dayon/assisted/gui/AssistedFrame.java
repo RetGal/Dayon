@@ -24,6 +24,8 @@ class AssistedFrame extends BaseFrame {
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
+    private ToolBar toolbar;
+
     AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction) {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
@@ -35,7 +37,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     private ToolBar createToolBar() {
-        final ToolBar toolbar = new ToolBar();
+        toolbar = new ToolBar();
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
@@ -50,6 +52,8 @@ class AssistedFrame extends BaseFrame {
         toolbar.addSeparator();
         toolbar.addAction(createShowInfoAction());
         toolbar.addAction(createShowHelpAction());
+        toolbar.addSeparator();
+        toolbar.add(toolbar.getMessage());
         toolbar.addGlue();
         toolbar.addAction(createExitAction());
         return toolbar;
@@ -125,6 +129,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onDisconnecting() {
+        toolbar.clearMessage();
         onReady();
     }
 
