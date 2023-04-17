@@ -1,6 +1,8 @@
 package mpo.dayon.common.version;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
 import static mpo.dayon.common.version.Version.isProd;
@@ -90,11 +92,12 @@ class VersionTest {
         assertFalse(isCompatibleVersion(other.getMajor(), other.getMinor(), that));
     }
 
-    @Test
-    void isCompatibleVersionShouldReturnTrueForHardCodedCompatibleVerions() {
+    @ParameterizedTest
+    @CsvSource({ "11.0.0,1.10.8", "12.0.0,1.10.8", "12.0.0,11.0.7", "11.0.7,12.0.0" })
+    void isCompatibleVersionShouldReturnTrueForHardCodedCompatibleVersions(String thatV, String otherV) {
         // given
-        Version that = new Version("11.0.0");
-        Version other = new Version("1.10.8");
+        Version that = new Version(thatV);
+        Version other = new Version(otherV);
 
         // when then
         assertTrue(isCompatibleVersion(other.getMajor(), other.getMinor(), that));

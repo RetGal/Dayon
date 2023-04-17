@@ -86,7 +86,7 @@ public class Version {
         if (!isProd(major, minor) || !isProd(that.getMajor(), that.getMajor())) {
             return true;
         }
-        if (that.getMajor() == 11 && (major == 1 && minor == 10)) {
+        if (that.getMajor() > 10 && (major > 10 || (major == 1 && minor == 10))) {
             return true;
         }
         return that.getMajor() == major && that.getMinor() == minor;
