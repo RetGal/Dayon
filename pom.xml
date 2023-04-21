@@ -29,7 +29,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <dayon.mainClass>mpo.dayon.assisted.AssistedRunner</dayon.mainClass>
+        <dayon.mainClass>mpo.dayon.common.Runner</dayon.mainClass>
         <sonar.organization>retgal-github</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.9</xz.version>
