@@ -218,6 +218,12 @@
                                                 <exclude>META-INF/**</exclude>
                                             </excludes>
                                         </filter>
+                                        <filter>
+                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/**</exclude>
+                                            </excludes>
+                                        </filter>
                                     </filters>
                                 </configuration>
                             </execution>
@@ -378,6 +384,12 @@
                                     <filters>
                                         <filter>
                                             <artifact>org.tukaani:xz</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/**</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
+                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
                                             </excludes>
