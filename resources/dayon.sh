@@ -21,5 +21,13 @@ else
   JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/java' '{print $1}')/bin/java
 fi
 JAVA_OPTS=
+case "$@" in
+  *log=console*)
+    LOG=
+    ;;
+  *)
+    LOG="-Ddayon.log=file"
+    ;;
+esac
 CLASSPATH="${DAYON_HOME}/dayon.jar"
-${JAVA} ${JAVA_OPTS} -Ddayon.log=file -cp "${CLASSPATH}" "$@"
+${JAVA} ${JAVA_OPTS} ${LOG} -cp "${CLASSPATH}" "$@"
