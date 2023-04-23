@@ -1,7 +1,11 @@
 package mpo.dayon.common;
 
+import mpo.dayon.assistant.AssistantRunner;
+import mpo.dayon.assisted.AssistedRunner;
+import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Locale;
@@ -11,6 +15,29 @@ import java.util.stream.Collectors;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public interface Runner {
+
+    public static void main(String[] args) {
+        Runner.setDebug(args);
+        Runner.disableDynamicScale();
+        Runner.getOrCreateAppHomeDir();
+        Map<String, String> programArgs = Runner.extractProgramArgs(args);
+        Runner.overrideLocale(programArgs.get("lang"));
+        if (hasAssistant(args)) {
+            Runner.logAppInfo("dayon_assistant");
+            try {
+                SwingUtilities.invokeLater(AssistantRunner::launchAssistant);
+            } catch (Exception ex) {
+                FatalErrorHandler.bye("The assistant is dead!", ex);
+            }
+        } else {
+            Runner.logAppInfo("dayon_assisted");
+            try {
+                SwingUtilities.invokeLater(() -> AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
+            } catch (Exception ex) {
+                FatalErrorHandler.bye("The assisted is dead!", ex);
+            }
+        }
+    }
 
     static void logAppInfo(String appName) {
         System.setProperty("dayon.application.name", appName);
@@ -40,6 +67,10 @@ public interface Runner {
         if (Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("debug"))) {
             System.setProperty("dayon.debug", "on");
         }
+    }
+
+    static boolean hasAssistant(String[] args) {
+        return Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("assistant"));
     }
 
     static void disableDynamicScale() {

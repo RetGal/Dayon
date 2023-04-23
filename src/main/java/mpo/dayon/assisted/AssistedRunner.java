@@ -2,10 +2,8 @@ package mpo.dayon.assisted;
 
 import mpo.dayon.assisted.gui.Assisted;
 import mpo.dayon.common.Runner;
-import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 
-import javax.swing.SwingUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,22 +17,13 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.getJarDir;
 
-class AssistedRunner implements Runner {
+public class AssistedRunner {
+
     public static void main(String[] args) {
-        try {
-            Runner.setDebug(args);
-            Map<String, String> programArgs = Runner.extractProgramArgs(args);
-            Runner.overrideLocale(programArgs.get("lang"));
-            Runner.disableDynamicScale();
-            Runner.getOrCreateAppHomeDir();
-            Runner.logAppInfo("dayon_assisted");
-            SwingUtilities.invokeLater(() -> launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
-        } catch (Exception ex) {
-            FatalErrorHandler.bye("The assisted is dead!", ex);
-        }
+        Runner.main(args);
     }
 
-    private static void launchAssisted(String assistantHost, String assistantPort) {
+    public static void launchAssisted(String assistantHost, String assistantPort) {
         final Assisted assisted = new Assisted();
         assisted.setup();
         // cli args have precedence

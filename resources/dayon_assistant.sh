@@ -10,4 +10,4 @@ if [ ! -f "${ABS_PATH}/dayon.sh" ]; then
 else
   ABS_PATH=${ABS_PATH}/dayon.sh
 fi
-"${ABS_PATH}" mpo.dayon.assistant.AssistantRunner "$@"
+"${ABS_PATH}" "assistant" "$@"

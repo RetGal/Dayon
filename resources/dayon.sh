@@ -29,5 +29,5 @@ case "$@" in
     LOG="-Ddayon.log=file"
     ;;
 esac
-CLASSPATH="${DAYON_HOME}/dayon.jar"
-${JAVA} ${JAVA_OPTS} ${LOG} -cp "${CLASSPATH}" "$@"
+JAR="${DAYON_HOME}/dayon.jar"
+${JAVA} ${JAVA_OPTS} ${LOG} -jar "${JAR}" "$@"
