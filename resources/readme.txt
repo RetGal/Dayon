@@ -46,8 +46,8 @@ Project:
 	https://github.com/retgal/dayon
 	https://sourceforge.net/projects/dayonactive
 	https://snapcraft.io/dayon
-    https://flathub.org/apps/details/io.github.retgal.Dayon
+	https://flathub.org/apps/details/io.github.retgal.Dayon
 	https://code.launchpad.net/~regal/+archive/ubuntu/dayon
-    https://apps.microsoft.com/store/detail/dayon/9PBM5KW0C790
+	https://apps.microsoft.com/store/detail/dayon/9PBM5KW0C790
 
 Enjoy!
