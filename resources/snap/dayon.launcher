@@ -1,2 +1,10 @@
 #!/bin/sh
-java -Ddayon.log=file -jar "$@"
+case "$@" in
+  *log=console*)
+    LOG=
+    ;;
+  *)
+    LOG="-Ddayon.log=file"
+    ;;
+esac
+java ${LOG} -jar "$@"
