@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Ddayon.log=file -cp "$@"
+java -Ddayon.log=file -jar "$@"
