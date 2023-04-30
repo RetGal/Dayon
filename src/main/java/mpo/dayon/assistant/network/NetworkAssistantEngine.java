@@ -140,12 +140,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         ssf = initSSLContext().getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
         server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
-        server.setWantClientAuth(true);
+        server.setNeedClientAuth(true);
         Log.info("Accepting ...");
 
         do {
             safeClose(connection); // we might have refused the accepted connection (!)
             connection = (SSLSocket) server.accept();
+            connection.setNeedClientAuth(true);
             connection.addHandshakeCompletedListener(this);
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));

@@ -105,6 +105,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         fireOnConnecting(configuration);
         SSLSocketFactory ssf = initSSLContext().getSocketFactory();
         connection = (SSLSocket) ssf.createSocket();
+        connection.setNeedClientAuth(true);
         connection.addHandshakeCompletedListener(this);
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
         initInputStream();
