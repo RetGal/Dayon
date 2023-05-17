@@ -29,9 +29,9 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v11.0 (Ballsy Beaver) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v12.0 (Adorable Asteroid) - released more than ten years after the initial release.
 
-This version comes with a new, access token based network configuration of the assisted.
+This version comes with UPnP support for the assistant side. If enabled, the port forwarding rules will be created automatically.
 
 The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
