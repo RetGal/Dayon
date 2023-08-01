@@ -2,6 +2,7 @@ package mpo.dayon.common.security;
 
 import mpo.dayon.common.log.Log;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Array;
@@ -21,9 +22,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
+import static sun.security.rsa.RSAUtil.KeyType.RSA;
+
 public class CustomTrustManager implements X509TrustManager {
 
-	public static final String KEY_STORE_PATH = "/trust/X509";
+	public static final String KEY_STORE_PATH = "/tmp/keystore.jks"; //"/trust/X509";
+	public static final String TRUST_STORE_PATH = "/tmp/truststore.jks"; //"/trust/X509";
 	public static final String KEY_STORE_PASS = "spasspass";
 
 	private final X509TrustManager defaultTm;
@@ -43,7 +47,7 @@ public class CustomTrustManager implements X509TrustManager {
 
 			// do the same with our own trust store this time
 			KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			InputStream myKeys = getClass().getResourceAsStream(KEY_STORE_PATH);
+			InputStream myKeys = new FileInputStream(TRUST_STORE_PATH);
 			myTrustStore.load(myKeys, KEY_STORE_PASS.toCharArray());
 			if (myKeys != null) {
 				myKeys.close();
@@ -80,24 +84,24 @@ public class CustomTrustManager implements X509TrustManager {
 
 	@Override
 	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		try {
+/*		try {
 			// check with own TM first
 			ownTm.checkServerTrusted(chain, authType);
 		} catch (CertificateException e) {
 			// this will throw another CertificateException if this fails too.
 			defaultTm.checkServerTrusted(chain, authType);
-		}
+		}*/
 	}
 
 	@Override
 	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-		try {
+/*		try {
 			// check with own TM first
 			ownTm.checkClientTrusted(chain, authType);
 		} catch (CertificateException e) {
 			// this will throw another CertificateException if this fails too.
 			defaultTm.checkClientTrusted(chain, authType);
-		}
+		}*/
 	}
 
 	public static boolean isValidFingerprint(String fingerprint) {
