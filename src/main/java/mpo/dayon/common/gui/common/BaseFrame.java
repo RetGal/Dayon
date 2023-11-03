@@ -22,9 +22,6 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
-    private static final int MIN_WIDTH = 550;
-    private static final int MIN_HEIGHT = 300;
-
     private transient FrameConfiguration configuration;
 
     private transient Position position;
@@ -42,7 +39,6 @@ public abstract class BaseFrame extends JFrame {
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
-
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
@@ -66,8 +62,8 @@ public abstract class BaseFrame extends JFrame {
         this.configuration = new FrameConfiguration(frameType);
         this.position = new Position(configuration.getX(), configuration.getY());
         this.setLocation(position.getX(), position.getY());
-        this.dimension = new Dimension(Math.max(configuration.getWidth(), MIN_WIDTH),
-                Math.max(configuration.getHeight(), MIN_HEIGHT));
+        this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
+                Math.max(configuration.getHeight(), frameType.getMinHeight()));
         this.setSize(dimension.width, dimension.height);
         updateTitle(translate(frameType.getPrefix()), Version.get());
     }
@@ -83,16 +79,20 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupToolBar(ToolBar toolBar) {
-        this.toolBar = toolBar;
+        toolBar.addAction(createShowInfoAction());
+        toolBar.addAction(createShowHelpAction());
+        toolBar.addSeparator();
+        toolBar.addAction(createExitAction());
         add(toolBar, BorderLayout.NORTH);
+        this.toolBar = toolBar;
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
-        this.setStatusBar(statusBar);
         add(statusBar, BorderLayout.SOUTH);
+        this.statusBar = statusBar;
     }
 
-    protected Action createExitAction() {
+    private Action createExitAction() {
         final Action exit = new AbstractAction() {
 
             @Override
@@ -100,11 +100,8 @@ public abstract class BaseFrame extends JFrame {
                 doExit();
             }
         };
-
-        exit.putValue(Action.NAME, "exit");
         exit.putValue(Action.SHORT_DESCRIPTION, translate("exit.dayon"));
         exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.EXIT));
-
         return exit;
     }
 
@@ -112,7 +109,7 @@ public abstract class BaseFrame extends JFrame {
     private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
-    protected Action createShowInfoAction() {
+    private Action createShowInfoAction() {
         final Action showSystemInfo = new AbstractAction() {
 
             @Override
@@ -174,8 +171,6 @@ public abstract class BaseFrame extends JFrame {
 
             }
         };
-
-        showSystemInfo.putValue(Action.NAME, "showSystemInfo");
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
         showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
 
@@ -219,15 +214,13 @@ public abstract class BaseFrame extends JFrame {
         return format("<html>%s : <a href=''>%s</a> (build %s)</html>", label, url, buildNumber);
     }
 
-    protected Action createShowHelpAction() {
+    private Action createShowHelpAction() {
         final Action showHelp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 browse(SystemUtilities.getQuickStartURI(translate("quickstart.html"), frameType.getPrefix()));
             }
         };
-
-        showHelp.putValue(Action.NAME, "showHelp");
         showHelp.putValue(Action.SHORT_DESCRIPTION, translate("help"));
         showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.HELP));
 
@@ -267,12 +260,8 @@ public abstract class BaseFrame extends JFrame {
         return statusBar;
     }
 
-    private void setStatusBar(StatusBar statusBar) {
-        this.statusBar = statusBar;
-    }
-
-    public void onUntrustedConnection(String fingerprint) {
-        toolBar.setMessage(fingerprint);
+    public void setFingerprints(String fingerprints) {
+        toolBar.setFingerprints(fingerprints);
     }
 
     private static class FeedbackMouseAdapter extends MouseAdapter {

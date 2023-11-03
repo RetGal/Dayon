@@ -1,18 +1,20 @@
 package mpo.dayon.common.gui.toolbar;
 
-import mpo.dayon.common.gui.common.ImageNames;
-
 import java.awt.*;
 
 import javax.swing.*;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 
 public class ToolBar extends JToolBar {
 	public static final Insets ZERO_INSETS = new Insets(1, 1, 1, 1);
 
-	private final JLabel message = new JLabel();
+	private static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
+
+	private final JLabel fingerprint = new JLabel();
 
 	public ToolBar() {
 		setFloatable(false);
@@ -24,6 +26,7 @@ public class ToolBar extends JToolBar {
 		final JButton button = new JButton();
 		addButtonProperties(action, button);
 		button.setDisabledIcon(null);
+		button.setFont(DEFAULT_FONT);
 		add(button);
 	}
 
@@ -47,20 +50,20 @@ public class ToolBar extends JToolBar {
 		add(Box.createHorizontalGlue());
 	}
 
-	public JLabel getMessage() {
-		return message;
+	public JLabel getFingerprints() {
+		return fingerprint;
 	}
 
-	public void clearMessage() {
-		this.message.setIcon(null);
-		this.message.setText(null);
-		this.message.setToolTipText(null);
+	public void clearFingerprints() {
+		this.fingerprint.setText("");
+		this.fingerprint.setIcon(null);
 	}
 
-	public void setMessage(String fingerprint) {
-		this.message.setIcon(getOrCreateIcon(ImageNames.WARNING));
-		this.message.setText(translate("connection.suspicious"));
-		this.message.setToolTipText(translate("connection.fingerprint.mismatch", fingerprint));
+	public void setFingerprints(String hash) {
+		fingerprint.setIcon(getOrCreateIcon(FINGERPRINT));
+		fingerprint.setText(format("%s ", hash));
+		fingerprint.setToolTipText(translate("connection.peer.fingerprints"));
+		fingerprint.setFont(DEFAULT_FONT);
 	}
 
 }

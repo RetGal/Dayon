@@ -29,9 +29,9 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v11.0 (Ballsy Beaver) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v12.0 (Adorable Asteroid) - released more than ten years after the initial release.
 
-This version comes with a new, access token based network configuration of the assisted.
+This version comes with UPnP support for the assistant side. If enabled, the port forwarding rules will be created automatically.
 
 The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
@@ -90,6 +90,6 @@ You don't have to be a programmer!
 
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/resources/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/resources/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
-Also improvements of the existing translations and documentation are very welcome! For example, my current knowledge of Chinese is far below zero - and my knowledge of Russian or Turkish just fractions better..
+Also, improvements of the existing translations and documentation are very welcome! For example, my current knowledge of Chinese is far below zero - and my knowledge of Russian or Turkish just fractions better..
 
 Some additional testing, especially on macOS would also be highly appreciated.

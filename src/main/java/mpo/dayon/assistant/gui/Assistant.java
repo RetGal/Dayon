@@ -99,6 +99,8 @@ public class Assistant implements ClipboardOwner {
 
     private Boolean upnpEnabled;
 
+    private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
+
     public Assistant() {
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
@@ -179,6 +181,7 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
         assistantActions.setStartAction(createStartAction());
         assistantActions.setStopAction(createStopAction());
+        assistantActions.setToggleCompatibilityModeAction(createToggleCompatibilityModeAction());
         return assistantActions;
     }
 
@@ -208,7 +211,7 @@ public class Assistant implements ClipboardOwner {
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         try {
                             publicIp = UPnP.getExternalIP();
-                            if (publicIp == null) {
+                            if (publicIp == null || publicIp.startsWith("192.168") || publicIp.startsWith("10.")) {
                                 final URL url = new URL(WHATSMYIP_SERVER_URL);
                                 try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                     publicIp = lines.readLine();
@@ -223,7 +226,6 @@ public class Assistant implements ClipboardOwner {
                         }
                         if (publicIp != null) {
                             button.setText(publicIp);
-                            button.setFont(new Font("Sans Serif", Font.PLAIN, 18));
                         }
                     });
                     choices.add(menuItem);
@@ -263,8 +265,6 @@ public class Assistant implements ClipboardOwner {
                 choices.setLocation(choicesLocation.x - xOffset, choicesLocation.y + yOffset);
             }
         };
-
-        ip.putValue(Action.NAME, "whatIsMyIpAddress");
         ip.putValue("DISPLAY_NAME", "127.0.0.1"); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
@@ -304,7 +304,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createNetworkAssistantConfigurationAction(Assistant assistant) {
-        final Action exit = new AbstractAction() {
+        final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
@@ -347,11 +347,10 @@ public class Assistant implements ClipboardOwner {
                 }
             }
         };
-
-        exit.putValue(Action.NAME, margin(translate("connection.network")));
-        exit.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
-        exit.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
-        return exit;
+        conf.putValue(Action.NAME, margin(translate("connection.network")));
+        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
+        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
+        return conf;
     }
 
     private Action createRemoteClipboardRequestAction() {
@@ -361,8 +360,6 @@ public class Assistant implements ClipboardOwner {
                 sendRemoteClipboardRequest();
             }
         };
-
-        getRemoteClipboard.putValue(Action.NAME, "getClipboard");
         getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.getRemote"));
         getRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.DOWN));
         return getRemoteClipboard;
@@ -375,8 +372,6 @@ public class Assistant implements ClipboardOwner {
                 sendLocalClipboard();
             }
         };
-
-        setRemoteClipboard.putValue(Action.NAME, "setClipboard");
         setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.setRemote"));
         setRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UP));
         return setRemoteClipboard;
@@ -468,13 +463,11 @@ public class Assistant implements ClipboardOwner {
                     if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
                         captureEngineConfiguration = newCaptureEngineConfiguration;
                         captureEngineConfiguration.persist();
-
                         sendCaptureConfiguration(captureEngineConfiguration);
                     }
                 }
             }
         };
-
         configure.putValue(Action.NAME, margin(translate("capture")));
         configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
@@ -565,7 +558,6 @@ public class Assistant implements ClipboardOwner {
                 }
             }
         };
-
         configure.putValue(Action.NAME, margin(translate("compression")));
         configure.putValue(Action.SHORT_DESCRIPTION, translate("compression.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
@@ -608,8 +600,6 @@ public class Assistant implements ClipboardOwner {
                 sendCaptureConfiguration(captureEngineConfiguration);
             }
         };
-
-        configure.putValue(Action.NAME, "resetCapture");
         configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.reset"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.RESET_CAPTURE));
         return configure;
@@ -628,8 +618,6 @@ public class Assistant implements ClipboardOwner {
                 frame.repaint();
             }
         };
-
-        fitScreen.putValue(Action.NAME, "toggleScreenMode");
         fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
         fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
         return fitScreen;
@@ -650,8 +638,6 @@ public class Assistant implements ClipboardOwner {
                 choices.show(caller, 0, caller.getHeight());
             }
         };
-
-        settings.putValue(Action.NAME, translate("settings"));
         settings.putValue(Action.SHORT_DESCRIPTION, translate("settings"));
         settings.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.SETTINGS));
         return settings;
@@ -690,8 +676,6 @@ public class Assistant implements ClipboardOwner {
                 clipboard.setContents(value, value);
             }
         };
-
-        tokenAction.putValue(Action.NAME, "createToken");
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
@@ -704,7 +688,6 @@ public class Assistant implements ClipboardOwner {
                 new Assistant.NetWorker().execute();
             }
         };
-        startAction.putValue(Action.NAME, "start");
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("start.session"));
         startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START));
         return startAction;
@@ -718,7 +701,6 @@ public class Assistant implements ClipboardOwner {
             }
         };
         stopAction.setEnabled(false);
-        stopAction.putValue(Action.NAME, "stop");
         stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
         stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP));
         return stopAction;
@@ -758,6 +740,19 @@ public class Assistant implements ClipboardOwner {
         }
     }
 
+    private Action createToggleCompatibilityModeAction() {
+        final Action compatibilityMode = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                compatibilityModeActive.set(!compatibilityModeActive.get());
+                frame.repaint();
+            }
+        };
+        compatibilityMode.putValue(Action.SHORT_DESCRIPTION, translate("compatibility.mode"));
+        compatibilityMode.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPATIBILITY));
+        return compatibilityMode;
+    }
+
     private class NetWorker extends SwingWorker<String, String> {
         @Override
         protected String doInBackground() {
@@ -769,7 +764,7 @@ public class Assistant implements ClipboardOwner {
 
         private void startNetwork() {
             frame.onGettingReady();
-            network.start();
+            network.start(compatibilityModeActive.get());
         }
 
         @Override
@@ -788,14 +783,14 @@ public class Assistant implements ClipboardOwner {
 
     private void initUpnp() {
         CompletableFuture.supplyAsync(() -> {
-            upnpEnabled = Boolean.valueOf(UPnP.isUPnPAvailable());
+            upnpEnabled = UPnP.isUPnPAvailable();
             Log.info(format("UPnP is %s", isUpnpEnabled() ? "enabled" : "disabled"));
             return upnpEnabled;
         });
     }
 
     private String margin(String in) {
-        return " " + in;
+        return format(" %s", in);
     }
 
     private class MyDeCompressorEngineListener implements DeCompressorEngineListener {
@@ -879,6 +874,14 @@ public class Assistant implements ClipboardOwner {
             frame.onSessionStarted();
         }
 
+        @Override
+        public void onFingerprinted(String fingerprints) {
+            if (null == fingerprints) {
+                fingerprints = translate("compatibility.mode.enable");
+            }
+            frame.setFingerprints(fingerprints);
+        }
+
         /**
          * Should not block as called from the network receiving thread (!)
          */
@@ -924,9 +927,5 @@ public class Assistant implements ClipboardOwner {
             frame.onIOError(error);
         }
 
-        @Override
-        public void onUntrustedConnection(String fingerprint) {
-            frame.onUntrustedConnection(fingerprint);
-        }
     }
 }

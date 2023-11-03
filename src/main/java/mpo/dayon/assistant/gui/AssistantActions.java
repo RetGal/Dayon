@@ -16,6 +16,7 @@ class AssistantActions {
     private Action stopAction;
     private Action settingsAction;
     private Action tokenAction;
+    private Action toggleCompatibilityModeAction;
 
     public Action getIpAddressAction() {
         return ipAddressAction;
@@ -111,5 +112,13 @@ class AssistantActions {
 
     public void setTokenAction(Action tokenAction) {
         this.tokenAction = tokenAction;
+    }
+
+    public Action getToggleCompatibilityModeAction() {
+        return toggleCompatibilityModeAction;
+    }
+
+    public void setToggleCompatibilityModeAction(Action toggleCompatibilityModeAction) {
+        this.toggleCompatibilityModeAction = toggleCompatibilityModeAction;
     }
 }

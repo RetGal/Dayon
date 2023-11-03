@@ -196,18 +196,15 @@ class AssistantFrame extends BaseFrame {
         toolbar.addToggleAction(actions.getToggleFitScreenAction());
         toolbar.addAction(actions.getResetAction());
         toolbar.addSeparator();
+        toolbar.addToggleAction(actions.getToggleCompatibilityModeAction());
         toolbar.addAction(actions.getSettingsAction());
-        toolbar.addSeparator();
-        toolbar.addAction(createShowInfoAction());
-        toolbar.addAction(createShowHelpAction());
         toolbar.addSeparator();
         toolbar.addAction(actions.getTokenAction());
         toolbar.addSeparator();
-        toolbar.add(toolbar.getMessage());
+        toolbar.add(toolbar.getFingerprints());
         toolbar.addGlue();
         toolbar.addAction(actions.getIpAddressAction());
         toolbar.addSeparator();
-        toolbar.addAction(createExitAction());
         return toolbar;
     }
 
@@ -234,7 +231,6 @@ class AssistantFrame extends BaseFrame {
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
             }
         };
-        remoteControl.putValue(Action.NAME, "toggleControlMode");
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
         remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
@@ -252,7 +248,6 @@ class AssistantFrame extends BaseFrame {
                 windowsKeyActivated.set(!windowsKeyActivated.get());
             }
         };
-        sendWindowsKey.putValue(Action.NAME, "sendWindowsKey");
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
         return sendWindowsKey;
@@ -265,6 +260,7 @@ class AssistantFrame extends BaseFrame {
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
         actions.getNetworkConfigurationAction().setEnabled(true);
+        actions.getToggleCompatibilityModeAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
         actions.getResetAction().setEnabled(false);
@@ -275,7 +271,9 @@ class AssistantFrame extends BaseFrame {
     void onHttpStarting(int port) {
         actions.getStopAction().setEnabled(true);
         actions.getNetworkConfigurationAction().setEnabled(false);
+        actions.getToggleCompatibilityModeAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
+        toolbar.clearFingerprints();
         getStatusBar().setMessage(translate("listening", port));
     }
 
@@ -333,14 +331,12 @@ class AssistantFrame extends BaseFrame {
 
     void onDisconnecting() {
         stopSessionTimer();
-        toolbar.clearMessage();
     }
 
     void onIOError(IOException error) {
         actions.getStartAction().setEnabled(false);
         actions.getStopAction().setEnabled(false);
         actions.getResetAction().setEnabled(false);
-        toolbar.clearMessage();
         disableControls();
         stopSessionTimer();
         hideSpinner();
