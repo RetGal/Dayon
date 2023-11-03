@@ -211,7 +211,7 @@ public class Assistant implements ClipboardOwner {
                         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                         try {
                             publicIp = UPnP.getExternalIP();
-                            if (isValidPublicIp()) {
+                            if (isInvalidPublicIp()) {
                                 final URL url = new URL(WHATSMYIP_SERVER_URL);
                                 try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                                     publicIp = lines.readLine();
@@ -265,8 +265,8 @@ public class Assistant implements ClipboardOwner {
                 choices.setLocation(choicesLocation.x - xOffset, choicesLocation.y + yOffset);
             }
 
-            private boolean isValidPublicIp() {
-                return ! (publicIp == null || publicIp.startsWith("192.168") || publicIp.startsWith("10."));
+            private boolean isInvalidPublicIp() {
+                return publicIp == null || publicIp.startsWith("192.168") || publicIp.startsWith("10.");
             }
         };
         ip.putValue("DISPLAY_NAME", "127.0.0.1"); // always a selection
