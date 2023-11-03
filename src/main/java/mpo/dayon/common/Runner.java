@@ -116,6 +116,7 @@ public interface Runner {
     static void prepareKeystore(File appHomeDir) {
         if (appHomeDir == null) {
             Log.error("Skipping keystore creation, application directory is missing!");
+            return;
         }
         Path keystore = Paths.get(format("%s%skeystore.jks", appHomeDir.getAbsolutePath(), File.separator));
         if (!Files.exists(keystore)) {
