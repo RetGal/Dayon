@@ -26,10 +26,12 @@ public class CustomTrustManager implements X509TrustManager {
 
 	@Override
 	public void checkServerTrusted(X509Certificate[] chain, String authType) {
+		// we want to trust our self-signed certificates
 	}
 
 	@Override
 	public void checkClientTrusted(X509Certificate[] chain, String authType) {
+		// we want to trust our self-signed certificates
 	}
 
 	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
