@@ -23,7 +23,6 @@ class AssistedFrame extends BaseFrame {
     private final transient Action toggleMultiScreenCaptureAction;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
-
     private ToolBar toolbar;
 
     AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction) {
@@ -42,30 +41,23 @@ class AssistedFrame extends BaseFrame {
         toolbar.addAction(stopAction);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
             toolbar.addSeparator();
-        }
-        if (ScreenUtilities.getNumberOfScreens() > 1) {
-            toolbar.addToggleAction(toggleMultiScreenCaptureAction);
-        }
-        if (File.separatorChar == '\\') {
-            toolbar.addAction(createShowUacSettingsAction());
+            if (ScreenUtilities.getNumberOfScreens() > 1) {
+                toolbar.addToggleAction(toggleMultiScreenCaptureAction);
+            }
+            if (File.separatorChar == '\\') {
+                toolbar.addAction(createShowUacSettingsAction());
+            }
         }
         toolbar.addSeparator();
-        toolbar.addAction(createShowInfoAction());
-        toolbar.addAction(createShowHelpAction());
-        toolbar.addSeparator();
-        toolbar.add(toolbar.getMessage());
+        toolbar.add(toolbar.getFingerprints());
         toolbar.addGlue();
-        toolbar.addAction(createExitAction());
         return toolbar;
     }
 
     private Action createShowUacSettingsAction() {
         final Action showUacSettings = new AssistedAbstractAction();
-
-        showUacSettings.putValue(Action.NAME, "showUacSettings");
         showUacSettings.putValue(Action.SHORT_DESCRIPTION, translate("uacSettings"));
         showUacSettings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SHIELD));
-
         return showUacSettings;
     }
 
@@ -93,10 +85,11 @@ class AssistedFrame extends BaseFrame {
         connected = false;
     }
 
-    void onConnected() {
+    void onConnected(String fingerprints) {
         this.setCursor(mouseCursor);
         startAction.setEnabled(false);
         stopAction.setEnabled(true);
+        setFingerprints(fingerprints);
         getStatusBar().setMessage(translate("connected"));
         connected = true;
     }
@@ -129,18 +122,18 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onDisconnecting() {
-        toolbar.clearMessage();
+        toolbar.clearFingerprints();
         onReady();
     }
 
     private static class AssistedAbstractAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent ev) {
-        try {
-            Runtime.getRuntime().exec(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe");
-        } catch (IOException e) {
-            Log.error(e.getMessage());
-        }
+            try {
+                Runtime.getRuntime().exec(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe");
+            } catch (IOException e) {
+                Log.error(e.getMessage());
+            }
         }
     }
 }

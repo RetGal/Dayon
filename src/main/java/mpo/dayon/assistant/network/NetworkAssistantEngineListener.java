@@ -50,5 +50,5 @@ public interface NetworkAssistantEngineListener extends Listener {
 
 	void onIOError(IOException error);
 
-	void onUntrustedConnection(String fingerprint);
+	void onFingerprinted(String fingerprints);
 }

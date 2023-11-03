@@ -29,7 +29,7 @@ public interface NetworkAssistedEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onConnected();
+	void onConnected(String fingerprints);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)
@@ -40,7 +40,5 @@ public interface NetworkAssistedEngineListener extends Listener {
 	 * Should not block as called from the network receiving thread (!)
 	 */
 	void onIOError(IOException error);
-
-	void onUntrustedConnection(String fingerprint);
 
 }

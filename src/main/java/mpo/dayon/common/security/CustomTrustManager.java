@@ -2,119 +2,74 @@ package mpo.dayon.common.security;
 
 import mpo.dayon.common.log.Log;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
+import java.io.*;
 import java.math.BigInteger;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.*;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
-import java.util.stream.Stream;
 
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.*;
 
-import static sun.security.rsa.RSAUtil.KeyType.RSA;
+import static java.lang.String.format;
+import static java.lang.System.getProperty;
 
 public class CustomTrustManager implements X509TrustManager {
-
-	public static final String KEY_STORE_PATH = "/tmp/keystore.jks"; //"/trust/X509";
-	public static final String TRUST_STORE_PATH = "/tmp/truststore.jks"; //"/trust/X509";
-	public static final String KEY_STORE_PASS = "spasspass";
-
-	private final X509TrustManager defaultTm;
-	private final X509TrustManager ownTm;
-	private static String fingerprint;
-
-	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
-	public CustomTrustManager() {
-
-		TrustManagerFactory tmf;
-		try {
-			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			// using null here initializes the TMF with the default trust store.
-			tmf.init((KeyStore) null);
-			// get hold of the default trust manager
-			defaultTm = getDefaultX509TrustManager(tmf);
-
-			// do the same with our own trust store this time
-			KeyStore myTrustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			InputStream myKeys = new FileInputStream(TRUST_STORE_PATH);
-			myTrustStore.load(myKeys, KEY_STORE_PASS.toCharArray());
-			if (myKeys != null) {
-				myKeys.close();
-			}
-
-			if (fingerprint == null) {
-				fingerprint = calculateFingerprint(myTrustStore.getCertificate("mykey"));
-			}
-
-			tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-			tmf.init(myTrustStore);
-			// get hold of the default trust manager
-			ownTm = getDefaultX509TrustManager(tmf);
-		} catch (NoSuchAlgorithmException | KeyStoreException | CertificateException | IOException e) {
-			Log.error(e.getMessage());
-			throw new UnsupportedOperationException(e);
-		}
-	}
-
-	private X509TrustManager getDefaultX509TrustManager(TrustManagerFactory tmf) throws NoSuchAlgorithmException {
-		for (TrustManager tm : tmf.getTrustManagers()) {
-			if (tm instanceof X509TrustManager) {
-				return (X509TrustManager) tm;
-			}
-		}
-		throw new NoSuchAlgorithmException();
-	}
-
 	@Override
 	public X509Certificate[] getAcceptedIssuers() {
-		return Stream.concat(Arrays.stream(ownTm.getAcceptedIssuers()), Arrays.stream(defaultTm.getAcceptedIssuers()))
-				.toArray(size -> (X509Certificate[]) Array.newInstance(ownTm.getAcceptedIssuers().getClass().getComponentType(), size));
+		return new X509Certificate[]{};
 	}
 
 	@Override
-	public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-/*		try {
-			// check with own TM first
-			ownTm.checkServerTrusted(chain, authType);
-		} catch (CertificateException e) {
-			// this will throw another CertificateException if this fails too.
-			defaultTm.checkServerTrusted(chain, authType);
-		}*/
+	public void checkServerTrusted(X509Certificate[] chain, String authType) {
 	}
 
 	@Override
-	public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-/*		try {
-			// check with own TM first
-			ownTm.checkClientTrusted(chain, authType);
-		} catch (CertificateException e) {
-			// this will throw another CertificateException if this fails too.
-			defaultTm.checkClientTrusted(chain, authType);
-		}*/
+	public void checkClientTrusted(X509Certificate[] chain, String authType) {
 	}
 
-	public static boolean isValidFingerprint(String fingerprint) {
-		return fingerprint != null && fingerprint.equals(CustomTrustManager.fingerprint);
+	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
+	public static SSLContext initSslContext(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException {
+		String keyStorePass = "spasspass";
+		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		try {
+			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+			final Path keystorePath = Paths.get(new File(getProperty("dayon.home"), "keystore.jks").getAbsolutePath());
+			if (compatibilityMode || ! keystorePath.toFile().exists()) {
+				keyStore.load(CustomTrustManager.class.getResourceAsStream("/trust/X509"), keyStorePass.toCharArray());
+			} else {
+				keyStore.load(Files.newInputStream(keystorePath), keyStorePass.toCharArray());
+			}
+			kmf.init(keyStore, keyStorePass.toCharArray());
+		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
+			Log.error("Fatal, can not init encryption", e);
+			throw new UnsupportedOperationException(e);
+		}
+		SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
+		sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
+		return sslContext;
 	}
 
-	public static String calculateFingerprint(final Certificate cert) throws NoSuchAlgorithmException,
+	public static String calculateFingerprints(SSLSession session, String side) throws NoSuchAlgorithmException,
+			CertificateEncodingException, SSLPeerUnverifiedException {
+		if (session != null && session.getSessionContext() != null) {
+			return side.equals("NetworkAssistedEngine") ? format("%s:%s", calculateFingerprint(session.getPeerCertificates()[0]), calculateFingerprint(session.getLocalCertificates()[0])) :
+					format("%s:%s",calculateFingerprint(session.getLocalCertificates()[0]), calculateFingerprint(session.getPeerCertificates()[0]));
+		}
+		return null;
+	}
+
+	private static String calculateFingerprint(final Certificate cert) throws NoSuchAlgorithmException,
 			CertificateEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");
 		byte[] peer = cert.getEncoded();
 		md.update(peer);
 		byte[] bytSHA = md.digest();
 		BigInteger intNumber = new BigInteger(1, bytSHA);
-		return intNumber.toString(16);
+		return intNumber.toString(16).substring(7, 13).toUpperCase();
 	}
 }

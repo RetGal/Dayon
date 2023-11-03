@@ -60,7 +60,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         try {
             UIManager.setLookAndFeel(lnf);
         } catch (Exception ex) {
-            Log.warn("Could not set the [" + lnf + "] L&F!", ex);
+            Log.warn(format("Could not set the [%s] L&F", lnf), ex);
         }
     }
 
@@ -198,7 +198,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 }
             }
         };
-        multiScreen.putValue(Action.NAME, "shareAllScreens");
         multiScreen.putValue(Action.SHORT_DESCRIPTION, translate("share.all.screens"));
         multiScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.LNF));
         return multiScreen;
@@ -212,7 +211,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
             }
         };
         stopAction.setEnabled(false);
-        stopAction.putValue(Action.NAME, "stop");
         stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
         stopAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
         return stopAction;
@@ -226,7 +224,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 new NetWorker().execute();
             }
         };
-        startAction.putValue(Action.NAME, "start");
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
         startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
         return startAction;
@@ -430,8 +427,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         @Override
-        public void onConnected() {
-            frame.onConnected();
+        public void onConnected(String fingerprints) {
+            frame.onConnected(fingerprints);
         }
 
         @Override
@@ -443,11 +440,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         public void onIOError(IOException error) {
             stop(getConfiguration().getServerName());
             frame.onDisconnecting();
-        }
-
-        @Override
-        public void onUntrustedConnection(String fingerprint) {
-            frame.onUntrustedConnection(fingerprint);
         }
     }
 }
