@@ -312,6 +312,7 @@ public class Assistant implements ClipboardOwner {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+                String upnpActive = String.valueOf(assistant.isUpnpEnabled());
 
                 final JPanel pane = new JPanel();
                 pane.setLayout(new GridLayout(4, 1, 10, -10));
@@ -321,8 +322,8 @@ public class Assistant implements ClipboardOwner {
                 portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
                 final JTextField portNumberTextField = new JTextField();
                 portNumberTextField.setText(valueOf(networkConfiguration.getPort()));
-                final JLabel upnpStatus = new JLabel(format(translate("connection.settings.upnp." + assistant.isUpnpEnabled()), UPnP.getDefaultGatewayIP()));
-                final JLabel upnpHint = new JLabel(translate("connection.settings.portforward." + assistant.isUpnpEnabled()));
+                final JLabel upnpStatus = new JLabel(format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()));
+                final JLabel upnpHint = new JLabel(translate(format("connection.settings.portforward.%s", upnpActive)));
                 subPane.add(portNumberLbl);
                 subPane.add(portNumberTextField);
                 pane.add(upnpStatus);
