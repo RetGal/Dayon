@@ -90,6 +90,6 @@ You don't have to be a programmer!
 
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/resources/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/resources/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
-Also improvements of the existing translations and documentation are very welcome! For example, my current knowledge of Chinese is far below zero - and my knowledge of Russian or Turkish just fractions better..
+Also, improvements of the existing translations and documentation are very welcome! For example, my current knowledge of Chinese is far below zero - and my knowledge of Russian or Turkish just fractions better..
 
 Some additional testing, especially on macOS would also be highly appreciated.

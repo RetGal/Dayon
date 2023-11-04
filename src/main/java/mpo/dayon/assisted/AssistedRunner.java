@@ -49,7 +49,7 @@ public class AssistedRunner {
         try (Stream<String> lines = Files.lines(presetFile.toPath())) {
             final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), s -> s[1].trim()));
             if (content.containsKey("host") && content.containsKey("port")) {
-                Log.info(format("Using connection settings from %s", presetFile.getPath()));
+                Log.info(format("Using connection settings from [%s]", presetFile.getPath()));
                 return content;
             }
         } catch (IOException e) {

@@ -34,7 +34,7 @@ public class CompressorEngineConfiguration extends Configuration {
 
         // Note: did not exist in version = 0 => no migration is required.
 
-        this.method = prefs.getEnumPreference(PREF_METHOD, CompressionMethod.ZIP, CompressionMethod.values());
+        this.method = prefs.getEnumPreference(PREF_METHOD, CompressionMethod.XZ, CompressionMethod.values());
 
         this.useCache = prefs.getBooleanPreference(PREF_USE_CACHE, true);
         this.maxSize = prefs.getIntPreference(PREF_CACHE_MAX_SIZE, RegularTileCache.DEFAULT_MAX_SIZE);

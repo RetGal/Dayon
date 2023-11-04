@@ -93,7 +93,7 @@ class VersionTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "11.0.0,1.10.8", "12.0.0,1.10.8", "12.0.0,11.0.7", "11.0.7,12.0.0" })
+    @CsvSource({ "11.0.0,1.10.8", "12.0.0,1.10.8", "12.0.0,11.0.7", "11.0.7,12.0.0", "12.0.1,13.0.0" })
     void isCompatibleVersionShouldReturnTrueForHardCodedCompatibleVersions(String thatV, String otherV) {
         // given
         Version that = new Version(thatV);

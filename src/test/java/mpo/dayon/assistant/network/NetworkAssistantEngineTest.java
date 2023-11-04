@@ -25,7 +25,7 @@ class NetworkAssistantEngineTest {
         engine.reconfigure(configuration);
 
         // when
-        engine.start();
+        engine.start(false);
 
         // then
         verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort());

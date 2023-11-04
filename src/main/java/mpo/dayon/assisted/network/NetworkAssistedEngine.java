@@ -13,6 +13,7 @@ import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
+import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
 import javax.net.ssl.*;
@@ -24,6 +25,7 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 
 import static java.lang.String.format;
 
@@ -76,7 +78,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     @Override
     public void configure(NetworkAssistedEngineConfiguration configuration) {
-        Log.info("New configuration (configuration)");
+        Log.debug(format("New configuration %s", configuration));
         this.configuration = configuration;
     }
 
@@ -94,19 +96,18 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (IOException e) {
             closeConnections();
             fireOnRefused(configuration);
-        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+        } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
         }
     }
 
     @SuppressWarnings("java:S2095") // our sockets MUST NOT be closed
-    private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException {
-        Log.info("Connecting to [" + configuration.getServerName() + "][" + configuration.getServerPort() + "]...");
+    private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
+        Log.info(format("Connecting to [%s][%s]...", configuration.getServerName(), configuration.getServerPort()));
         fireOnConnecting(configuration);
-        SSLSocketFactory ssf = initSSLContext().getSocketFactory();
+        SSLSocketFactory ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         connection = (SSLSocket) ssf.createSocket();
         connection.setNeedClientAuth(true);
-        connection.addHandshakeCompletedListener(this);
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
         initInputStream();
 
@@ -124,7 +125,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         initFileSender();
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
         fileReceiver.start();
-        fireOnConnected();
+        fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
     }
 
     /**
@@ -228,6 +229,10 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    private void fireOnConnected(String fingerprints) {
+        listeners.getListeners().forEach(listener -> listener.onConnected(fingerprints));
+    }
+
     @Override
     protected void fireOnClipboardReceived() {
         // let the assistant know that we're done
@@ -250,10 +255,6 @@ public class NetworkAssistedEngine extends NetworkEngine
         listeners.getListeners().forEach(listener -> listener.onRefused(configuration.getServerName(), configuration.getServerPort()));
     }
 
-    private void fireOnConnected() {
-        listeners.getListeners().forEach(NetworkAssistedEngineListener::onConnected);
-    }
-
     private void fireOnDisconnecting() {
         listeners.getListeners().forEach(NetworkAssistedEngineListener::onDisconnecting);
     }
@@ -263,8 +264,4 @@ public class NetworkAssistedEngine extends NetworkEngine
         listeners.getListeners().forEach(listener -> listener.onIOError(ex));
     }
 
-    @Override
-    protected void fireOnCertError(String fingerprint) {
-        listeners.getListeners().forEach(listener -> listener.onUntrustedConnection(fingerprint));
-    }
 }

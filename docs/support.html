@@ -37,9 +37,7 @@
         <ul>
           <li>
             There's currently no way to send certain key combinations to the
-            assisted computer (e.g.,
-            <code>Ctrl-Alt-Del</code>
-            ).
+            assisted computer (e.g.,<code>Ctrl-Alt-Del</code>).
           </li>
           <li>
             Ideally, the computers of the assistant and the assisted use both
@@ -52,25 +50,18 @@
 
         <h3>Dayon! Home Directory</h3>
         <p>
-          The directory
-          <code>.dayon</code>
-          is created within the default home directory of the logged-in user or
-          within the directory referenced by the JAVA property
-          <code>user.home</code>
-          and contains the saved user preferences and default log file(s).
+          The directory <code>.dayon</code> is created within the default home directory of the logged-in user or
+          within the directory referenced by the JAVA property <code>user.home</code> and contains the saved user
+          preferences and default log file(s).
         </p>
 
         <h3>CRC Checksum</h3>
         <p>
           On the assisted side, the screen is divided into different areas
-          called
-          <em>tiles</em>
-          . Only tiles that have changed from the previous capture are sent over
+          called <em>tiles</em>. Only tiles that have changed from the previous capture are sent over
           the network to the assistant side. To determine if a tile is different
-          I'm currently computing a CRC code (i.e., a unique integer value
-          representing the pixels of the tile) that is not perfect for the sake
-          of speed. So it might happen that some
-          <em>changed</em>
+          I'm currently computing a CRC code (i.e., a unique integer value representing the pixels of the tile)
+          that is not perfect for the sake of speed. So it might happen that some <em>changed</em>
           tiles are not sent to the assistant.
         </p>
 
@@ -78,8 +69,7 @@
           Until now I've detected that issue during strong testing for very few
           pixels. Visually, I've not noticed anything serious. But in case
           things are going mad you can then restart the assisted or before try
-          the
-          <code>reset</code> action (<strong>trash bin icon</strong>)
+          the <code>reset</code> action (<strong>trash bin icon</strong>)
           that should clear every cached data and resend a full screen capture
           from scratch.
         </p>
@@ -117,6 +107,20 @@
           <li>Memory usage</li>
           <li>Duration of the active or the last support session</li>
         </ol>
+
+        <h3>Certificate fingerprints</h3>
+        <p>
+          To prevent "men in the middle" attacks, the certificate fingerprints of the two connecting sides are displayed.
+          The two fingerprints must match - if they don't, then something strange is going on.
+          This additional security feature was introduced with version 13 of Dayon!.
+        </p>
+        <p>
+          <img src="dayon_fingerprints.jpg" alt="Fingerprints"/>
+        </p>
+        <p>
+          <strong>Caution</strong>: To ensure connection with older clients, the compatibility mode
+          <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/compatibility.png" alt="compatibility"/> needs to be activated.
+        </p>
 
         <h3>Connection establishment</h3>
         <p>

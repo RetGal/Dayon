@@ -36,8 +36,7 @@
         <h3>Bekannte Einschränkungen</h3>
         <ul>
           <li>
-            Es existiert keine Möglichkeit gewisse Tastenkombinationen wie etwa
-            <code>Ctrl-Alt-Del</code>
+            Es existiert keine Möglichkeit gewisse Tastenkombinationen wie etwa <code>Ctrl-Alt-Del</code>
             an den entfernten Computer zu senden.
           </li>
 
@@ -53,30 +52,20 @@
 
         <h3>Dayon! Heimverzeichnis</h3>
         <p>
-          Das Verzeichnis
-          <code>.dayon</code>
-          wird im Standardbenutzerverzeichnis des eingelogten Benutzers oder via
-          JAVA-Property definierten Benutzerverzeichnis
-          <code>user.home</code>
-          erstellt und enthält nebst den gespeicherten Einstellungen auch die
-          Logdatei(en).
+          Das Verzeichnis <code>.dayon</code> wird im Standardbenutzerverzeichnis des eingelogten Benutzers oder via
+          JAVA-Property definierten Benutzerverzeichnis <code>user.home</code> erstellt und enthält nebst den
+          gespeicherten Einstellungen auch die Logdatei(en).
         </p>
 
         <h3>CRC Checksumme</h3>
         <p>
-          Auf der Seite des
-          <em>Assistierten</em>
-          wird der Bildschirm in
-          <em>Kacheln</em>
-          genannte Bereiche aufgeteilt. Bloss veränderte Kacheln werden über das
-          Netzwerk zum
-          <em>Assistenten</em>
-          gesendet. Um zu entscheiden ob sich eine Kachel seit der letzten
+          Auf der Seite des <em>Assistierten</em> wird der Bildschirm in <em>Kacheln</em>
+          genannte Bereiche aufgeteilt. Bloss veränderte Kacheln werden über das Netzwerk zum
+          <em>Assistenten</em> gesendet. Um zu entscheiden ob sich eine Kachel seit der letzten
           Erfassung verändert hat, wird ein CRC-Code berechnet (ein eindeutiger
           Wert für die in einer Kachel enthaltenen Pixel). Dieses Verfahren ist
           hinsichtlich der Verarbeitungsgeschwindigkeit nicht die optimale
-          Lösung. Es kann mitunter vorkommen, dass einige
-          <em>veränderte</em>
+          Lösung. Es kann mitunter vorkommen, dass einige <em>veränderte</em>
           Kacheln nicht an den Assistenten gesandt werden.
         </p>
 
@@ -103,11 +92,9 @@
             Anzahl Kacheln: Anzahl übermittelter Kacheln (inkl. Puffer-Treffer).
           </li>
           <li>
-            Anzahl übersprungener Bildschirmaufnahmen: Anzahl
-            Bildschirmaufnahmen, welche wegen eines zu kurzen
-            Aktualisierungsintervall (für die entsprechende Hardware)
-            übersprungen worden sind. Um diese Anzahl zu reduzieren, erhöhen Sie
-            das Erfassungsintervall.
+            Anzahl übersprungener Bildschirmaufnahmen: Anzahl Bildschirmaufnahmen, welche wegen eines zu kurzen
+            Aktualisierungsintervall (für die entsprechende Hardware) übersprungen worden sind.
+            Um diese Anzahl zu reduzieren, erhöhen Sie das Erfassungsintervall.
           </li>
 
           <li>
@@ -121,6 +108,20 @@
           <li>Speicherbelegung</li>
           <li>Dauer der aktuellen oder der letzten Sitzung</li>
         </ol>
+
+        <h3>Zertifikatsfingerabdrücke</h3>
+        <p>
+          Um "Men in the Middle"-Angriffe zu verhindern, werden die Zertifikatsfingerabdrücke der beiden verbindenden Seiten angezeigt.
+          Die beiden Fingerabdrücke müssen übereinstimmen - tun sie es nicht, dann ist etwas Merkwürdiges im Gange.
+          Diese zusätzliche Sicherheitsfunktion wurde mit Version 13 von Dayon eingeführt.
+        </p>
+        <p>
+          <img src="dayon_fingerprints.jpg" alt="Fingerprints"/>
+        </p>
+        <p>
+          <strong>Achtung</strong>: Um die Verbindung mit älteren Clients zu ermöglichen, muss der Kompatibilitätsmodus
+          <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/compatibility.png" alt="compatibility"/> aktiviert werden.
+        </p>
 
         <h3>Schematische Darstellung des Verbindungsaufbaus</h3>
         <p>

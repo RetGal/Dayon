@@ -7,19 +7,24 @@ import mpo.dayon.common.log.Log;
 
 import javax.swing.*;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public interface Runner {
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         Runner.setDebug(args);
         Runner.disableDynamicScale();
-        Runner.getOrCreateAppHomeDir();
+        final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         Runner.overrideLocale(programArgs.get("lang"));
         if (hasAssistant(args)) {
@@ -37,6 +42,7 @@ public interface Runner {
                 FatalErrorHandler.bye("The assisted is dead!", ex);
             }
         }
+        prepareKeystore(appHomeDir);
     }
 
     static void logAppInfo(String appName) {
@@ -86,24 +92,41 @@ public interface Runner {
 
         final File home = new File(homeDir);
         if (!home.isDirectory()) {
-            Log.warn("Home directory [" + homeDir + "] is not a directory!");
+            Log.warn(format("Home directory [%s] is not a directory!", homeDir));
             return null;
         }
 
         File appHomeDir;
         if (isSnapped()) {
             final String classPath = System.getProperty(JAVA_CLASS_PATH);
-            final String userDataDir = String.format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
+            final String userDataDir = format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
             appHomeDir = new File(userDataDir, ".dayon");
         } else {
             appHomeDir = new File(home, ".dayon");
         }
 
         if (!appHomeDir.exists() && !appHomeDir.mkdir()) {
-            Log.warn("Could not create the application directory [" + appHomeDir.getAbsolutePath() + "]!");
+            Log.warn(format("Could not create the application directory [%s]!", appHomeDir.getAbsolutePath()));
             return home;
         }
         System.setProperty("dayon.home", appHomeDir.getAbsolutePath());
         return appHomeDir;
+    }
+
+    static void prepareKeystore(File appHomeDir) {
+        if (appHomeDir == null) {
+            Log.error("Skipping keystore creation, application directory is missing!");
+            return;
+        }
+        Path keystore = Paths.get(format("%s%skeystore.jks", appHomeDir.getAbsolutePath(), File.separator));
+        if (!Files.exists(keystore)) {
+            Log.info(format("Creating new keystore [%s]", keystore));
+            ProcessBuilder builder = new ProcessBuilder("keytool", "-genkeypair", "-dname", "cn=Dayon!, ou=Dayon!, o=Dayon!, c=Dayon!, l=Dayon!", "-keyalg", "RSA", "-keysize", "4096", "-alias", "genkey",  "-validity", "3210", "-keystore", keystore.toString(), "-storepass", "spasspass");
+            try {
+                builder.directory(appHomeDir).start();
+            } catch (IOException e) {
+                Log.error(format("Failed to create keystore [%s]", keystore));
+            }
+        }
     }
 }

@@ -5,24 +5,19 @@ import mpo.dayon.common.network.message.NetworkClipboardFilesHelper;
 import mpo.dayon.common.network.message.NetworkClipboardFilesMessage;
 import mpo.dayon.common.network.message.NetworkMessage;
 import mpo.dayon.common.network.message.NetworkMessageType;
-import mpo.dayon.common.security.CustomTrustManager;
 
-import javax.net.ssl.*;
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLSocket;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.io.*;
-import java.security.*;
-import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.network.message.NetworkMessageType.CLIPBOARD_FILES;
 import static mpo.dayon.common.network.message.NetworkMessageType.PING;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PASS;
-import static mpo.dayon.common.security.CustomTrustManager.KEY_STORE_PATH;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 /**
@@ -30,7 +25,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
  * simple asynchronous network message layer. The network engine is handling
  * both the sending and the receiving sides.
  */
-public abstract class NetworkEngine implements HandshakeCompletedListener {
+public abstract class NetworkEngine {
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
@@ -92,22 +87,6 @@ public abstract class NetworkEngine implements HandshakeCompletedListener {
             return new NetworkClipboardFilesHelper();
         }
         return filesHelper;
-    }
-
-    @java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
-    protected SSLContext initSSLContext() throws NoSuchAlgorithmException, IOException, KeyManagementException {
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-        try {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(NetworkEngine.class.getResourceAsStream(KEY_STORE_PATH), KEY_STORE_PASS.toCharArray());
-            kmf.init(keyStore, KEY_STORE_PASS.toCharArray());
-        } catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
-            Log.error("Fatal, can not init encryption", e);
-            throw new UnsupportedOperationException(e);
-        }
-        SSLContext sslContext = SSLContext.getInstance("TLSv1.3");
-        sslContext.init(kmf.getKeyManagers(), new TrustManager[]{new CustomTrustManager()}, new SecureRandom());
-        return sslContext;
     }
 
     protected void initSender(int queueSize) throws IOException {
@@ -185,23 +164,6 @@ public abstract class NetworkEngine implements HandshakeCompletedListener {
     }
 
     protected void fireOnIOError(IOException error) {
-    }
-
-    protected void fireOnCertError(String fingerprint) {
-    }
-
-    @Override
-    public void handshakeCompleted(HandshakeCompletedEvent event) {
-        try {
-            String fingerprint = CustomTrustManager.calculateFingerprint(event.getPeerCertificates()[0]);
-            if (!CustomTrustManager.isValidFingerprint(fingerprint)) {
-                Log.warn(format("Peer certificate does not match fingerprint '%s' !", fingerprint));
-                fireOnCertError(fingerprint);
-            }
-        } catch (SSLPeerUnverifiedException | NoSuchAlgorithmException | CertificateEncodingException e) {
-            Log.error(e.getMessage());
-            throw new IllegalArgumentException(e);
-        }
     }
 
 }

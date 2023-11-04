@@ -9,6 +9,7 @@ import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
+import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
 
 import javax.net.ssl.SSLServerSocket;
@@ -20,6 +21,7 @@ import java.io.*;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
@@ -65,7 +67,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     /**
      * Called from a GUI action => do not block the AWT thread (!)
      */
-    public void start() {
+    public void start(boolean compatibilityMode) {
         if (cancelling.get() || receiver != null) {
             return;
         }
@@ -75,7 +77,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
-                NetworkAssistantEngine.this.receivingLoop();
+                NetworkAssistantEngine.this.receivingLoop(compatibilityMode);
             }
         }, "NetworkReceiver");
 
@@ -102,15 +104,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     // right, keep streams open - forever!
     @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
-    private void receivingLoop() throws NoSuchAlgorithmException, KeyManagementException {
+    private void receivingLoop(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
+        boolean introduced = false;
 
         try {
-            awaitConnections();
+            awaitConnections(compatibilityMode);
             startFileReceiver();
             initSender(8);
             initInputStream();
-            boolean introduced = false;
 
             //noinspection InfiniteLoopStatement
             while (true) {
@@ -126,6 +128,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
         } catch (IOException ex) {
             handleIOException(ex);
+        } catch (CertificateEncodingException ex) {
+            Log.error(ex.getMessage());
         } finally {
             closeConnections();
             UPnP.closePortTCP(configuration.getPort());
@@ -134,21 +138,27 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     }
 
-    private void awaitConnections() throws NoSuchAlgorithmException, IOException, KeyManagementException {
+    private void awaitConnections(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
         fireOnStarting(configuration.getPort());
-
-        ssf = initSSLContext().getServerSocketFactory();
+        ssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
+        if (compatibilityMode) {
+            Log.warn("Compatibility mode enabled, using legacy certificate");
+        }
         server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
         server.setNeedClientAuth(true);
-        Log.info("Accepting ...");
+        Log.info("Accepting...");
 
         do {
             safeClose(connection); // we might have refused the accepted connection (!)
             connection = (SSLSocket) server.accept();
             connection.setNeedClientAuth(true);
-            connection.addHandshakeCompletedListener(this);
             Toolkit.getDefaultToolkit().beep();
+            if (!connection.getSession().isValid()) {
+                fireOnFingerprinted(null);
+                throw new IOException("Certificate error, try enabling compatibility mode!");
+            }
+            fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
 
@@ -341,8 +351,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.getListeners().forEach(listener -> listener.onIOError(error));
     }
 
-    @Override
-    protected void fireOnCertError(String fingerprint) {
-        listeners.getListeners().forEach(listener -> listener.onUntrustedConnection(fingerprint));
+    private void fireOnFingerprinted(String fingerprints) {
+        listeners.getListeners().forEach(listener -> listener.onFingerprinted(fingerprints));
     }
 }
