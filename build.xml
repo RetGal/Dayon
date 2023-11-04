@@ -13,7 +13,7 @@
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.source" value="1.8"/>
 	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="12.0.1"/>
+	<property name="version" value="13.0.0"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -67,7 +67,6 @@
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="jrex/"/>
-				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
 		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
@@ -82,7 +81,6 @@
 				<exclude name="snap/"/>
 				<exclude name="jre/"/>
 				<exclude name="jrex/"/>
-				<exclude name="license/azul_zulu_license.txt"/>
 				<exclude name="readme.txt"/>
 				<exclude name="setup.sh"/>
 			</fileset>
@@ -106,7 +104,6 @@
 			<fileset dir="${dir.dist}">
 				<exclude name="jre/"/>
 				<exclude name="jrex/"/>
-				<exclude name="license/azul_zulu_license.txt"/>
 			</fileset>
 		</copy>
 		<tar destfile="${dir.dist}/dayon.${version}.tgz" longfile="gnu" compression="gzip">
