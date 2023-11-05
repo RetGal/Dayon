@@ -125,7 +125,7 @@ public interface Runner {
             try {
                 builder.directory(appHomeDir).start();
             } catch (IOException e) {
-                Log.error(format("Failed to create keystore [%s]", keystore));
+                Log.error(format("Failed to create keystore [%s]", keystore), e);
             }
         }
     }
