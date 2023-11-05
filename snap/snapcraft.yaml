@@ -20,7 +20,7 @@ apps:
     extensions:
       [gnome-3-28]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
     command: bin/dayon.launcher $SNAP/jar/dayon.jar $1 $2 $3 $4 $5
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
@@ -31,7 +31,7 @@ apps:
     extensions:
       [gnome-3-28]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-amd64
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
     command: bin/dayon.launcher $SNAP/jar/dayon.jar assistant $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
