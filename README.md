@@ -14,7 +14,7 @@ As quick launch versions for Windows, they are also available as individual bina
 - easy setup (no router or network configuration needed on the assisted side)
 - intuitive, multilingual user interface (de, en, es, fr, it, ru, tr, zh)
 - assistant and assisted functionality in one package
-- secure, encrypted communication (TLS)
+- secure, encrypted communication (TLS 1.3)
 - very low bandwidth usage
 - cross-platform
 - open source
@@ -29,9 +29,9 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases) is v12.0 (Adorable Asteroid) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases) is v13.0 (Beard Butter) - released more than ten years after the initial release.
 
-This version comes with UPnP support for the assistant side. If enabled, the port forwarding rules will be created automatically.
+This version offers improved security through individually created certificates with fingerprints that can be compared. However, a compatibility mode is available for connection with older versions.
 
 The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
 
