@@ -116,6 +116,7 @@
 				<include name="**/dayon.sh"/>
 				<include name="**/dayon_assistant.sh"/>
 				<include name="**/dayon_assisted.sh"/>
+				<include name="**/setup.sh"/>
 			</tarfileset>
 		</tar>
 		<delete dir="${dir.dist}/tar"/>
