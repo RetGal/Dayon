@@ -5,7 +5,7 @@ cross_realpath() {
   fi
 }
 DAYON_HOME=$(dirname "$(cross_realpath "$0")")
-if which java >/dev/null; then
+if which java >/dev/null 2>&1; then
   JAVA=$(which java)
 elif [ ! -f /etc/alternatives/java ]; then
   if [ ! -d /usr/libexec/java_home ]; then
@@ -18,7 +18,7 @@ elif [ ! -f /etc/alternatives/java ]; then
     JAVA=/usr/libexec/java_home/bin/java
   fi
 else
-  JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}' | awk -F'/bin/java' '{print $1}')/bin/java
+  JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}')
 fi
 JAVA_OPTS="-Xmx256M"
 case "$@" in
