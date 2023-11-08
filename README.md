@@ -14,7 +14,7 @@ As quick launch versions for Windows, they are also available as individual bina
 - easy setup (no router or network configuration needed on the assisted side)
 - intuitive, multilingual user interface (de, en, es, fr, it, ru, tr, zh)
 - assistant and assisted functionality in one package
-- secure, encrypted communication (TLS 1.3)
+- secure, end-to-end encrypted communication (TLS 1.3)
 - very low bandwidth usage
 - cross-platform
 - open source
@@ -44,6 +44,10 @@ as snap:
 as flatpak:
 
 [Flathub](https://flathub.org/apps/details/io.github.retgal.Dayon)
+
+as nix:
+
+[Nixhub](https://www.nixhub.io/packages/dayon)
 
 or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 
