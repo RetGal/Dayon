@@ -1,6 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
+title: ''
+labels: ''
+assignees: ''
 
 ---
 
@@ -21,7 +24,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. iOS]
- - Version [e.g. 1.5.1]
+ - Version [e.g. 12.0.1]
+ - App variant [e.g. installer, snap, flatpack, ms store, nix, deb, tgz, quick launch, jar, assistant.sh, assisted.sh ]
+ - Java version
 
 **Additional context**
 Add any other context about the problem here.
