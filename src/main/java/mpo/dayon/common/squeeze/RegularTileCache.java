@@ -86,7 +86,7 @@ public class RegularTileCache implements TileCache {
      */
     @Override
     public void onCaptureProcessed() {
-        if (tiles.size() > 0 && tiles.size() >= maxSize) {
+        if (!tiles.isEmpty() && tiles.size() >= maxSize) {
             Log.info("Purging the cache...");
             while (tiles.size() > purgeSize) {
                 tiles.remove(lru.removeFirst());

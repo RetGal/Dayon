@@ -22,7 +22,7 @@ public final class Babylon {
         String value;
         try {
             value = bundle.getString(tag);
-            if (value.trim().length() == 0) {
+            if (value.trim().isEmpty()) {
                 value = tag;
             }
         } catch (MissingResourceException ignored) {
