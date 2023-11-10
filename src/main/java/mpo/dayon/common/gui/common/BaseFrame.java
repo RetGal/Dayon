@@ -36,6 +36,8 @@ public abstract class BaseFrame extends JFrame {
 
     private StatusBar statusBar;
 
+    private Locale locale;
+
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
@@ -65,17 +67,16 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
                 Math.max(configuration.getHeight(), frameType.getMinHeight()));
         this.setSize(dimension.width, dimension.height);
-        updateTitle(translate(frameType.getPrefix()), Version.get());
+        setTitle();
+        new Timer(5000, e -> setTitle()).start();
     }
 
-    private void updateTitle(String titleString, Version version) {
-        setTitle(titleString, version);
-        new Timer(5000, e -> setTitle(titleString, version)).start();
-    }
-
-    private void setTitle(String titleString, Version version) {
-        Locale locale = InputContext.getInstance().getLocale();
-        setTitle(format("Dayon! (%s) %s %s", titleString, version, locale != null ? locale.toString() : ""));
+    private void setTitle() {
+        Locale currentLocale = InputContext.getInstance().getLocale();
+        if (currentLocale != locale) {
+            locale = currentLocale;
+            setTitle(format("Dayon! (%s) %s %s", translate(frameType.getPrefix()), Version.get(), locale != null ? locale.toString() : ""));
+        }
     }
 
     protected void setupToolBar(ToolBar toolBar) {
