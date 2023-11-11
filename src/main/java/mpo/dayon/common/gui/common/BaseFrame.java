@@ -22,6 +22,14 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
+    private static final String HTTP_HOME = "https://github.com/retgal/dayon";
+
+    private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
+
+    private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
+
+    protected static final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
+
     private transient FrameConfiguration configuration;
 
     private transient Position position;
@@ -32,11 +40,9 @@ public abstract class BaseFrame extends JFrame {
 
     private ToolBar toolBar;
 
-    protected static final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
-
     private StatusBar statusBar;
 
-    private Locale locale;
+    private Locale currentLocale;
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -72,10 +78,10 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void setTitle() {
-        Locale currentLocale = InputContext.getInstance().getLocale();
-        if (currentLocale != locale) {
-            locale = currentLocale;
-            setTitle(format("Dayon! (%s) %s %s", translate(frameType.getPrefix()), Version.get(), locale != null ? locale.toString() : ""));
+        Locale newLocale = InputContext.getInstance().getLocale();
+        if (newLocale != currentLocale) {
+            currentLocale = newLocale;
+            setTitle(format("Dayon! (%s) %s %s", translate(frameType.getPrefix()), Version.get(), currentLocale != null ? currentLocale.toString() : ""));
         }
     }
 
@@ -105,10 +111,6 @@ public abstract class BaseFrame extends JFrame {
         exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.EXIT));
         return exit;
     }
-
-    private static final String HTTP_HOME = "https://github.com/retgal/dayon";
-    private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
-    private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
     private Action createShowInfoAction() {
         final Action showSystemInfo = new AbstractAction() {
