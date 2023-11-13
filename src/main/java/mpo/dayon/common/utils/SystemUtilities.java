@@ -93,7 +93,7 @@ public final class SystemUtilities {
     public static String getRamInfo() {
         final double freeMG = Runtime.getRuntime().freeMemory();
         final double totalMG = Runtime.getRuntime().totalMemory();
-        return UnitUtilities.toByteSize(totalMG - freeMG, false) + " of " + UnitUtilities.toByteSize(totalMG, false);
+        return format("%s of %s", UnitUtilities.toByteSize(totalMG - freeMG, false), UnitUtilities.toByteSize(totalMG, false));
     }
 
     public static void safeClose(Closeable... closeables) {

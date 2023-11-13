@@ -6,16 +6,19 @@ import java.util.TimerTask;
 import mpo.dayon.common.monitoring.counter.Counter;
 
 public final class BigBrother {
-    private static final BigBrother INSTANCE = new BigBrother();
-
-    private final Timer timer = new Timer("BigBrother");
 
     private BigBrother() {
     }
 
-    public static BigBrother get() {
-        return INSTANCE;
+    private static class Helper {
+        private static final BigBrother INSTANCE = new BigBrother();
     }
+
+    public static BigBrother get() {
+        return Helper.INSTANCE;
+    }
+
+    private final Timer timer = new Timer("BigBrother");
 
     /**
      * @param instantRatePeriod millis
