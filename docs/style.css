@@ -1,6 +1,8 @@
 body {
 	font:12px/20px Verdana, Arial, Helvetica, sans-serif;
 	text-align:center;
+    padding: 0;
+    margin: 0;
 }
 
 img {
@@ -11,13 +13,12 @@ img {
 	text-align:left;
 	margin:0 auto;
 	width:75%;
-	background-color:#fff;
 }
 
 #top {
 	height:130px;
 	padding-bottom:1.0em;
-	background:#fff url('dayon.png') no-repeat left;
+	background:url('dayon.png') no-repeat left;
 	text-align:right;
 }
 
@@ -47,7 +48,6 @@ img {
 
 #content {
 	padding-top:1.0em;
-	background-color:#fff;
 }
 
 #content ul {
@@ -78,7 +78,7 @@ img {
 
 #intro {
 	min-height:120px;
-	background:url('intro.jpg') no-repeat 5px 5px;	
+	background:url('intro.png') no-repeat 5px 5px;
 }
 
 #intro p {
