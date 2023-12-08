@@ -11,106 +11,137 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-      <div id="content">
-        <h2>Remote Assistance Service</h2>
-        <div id="intro">
-          <p>
-            Dayon! is an open-source and cross-platform (JAVA) solution that
-            allows watching and controlling a remote computer. In this sense, it
-            is very much similar to existing remote desktop solutions.
-          </p>
-
-          <p>But I guess it's got some features that makes it valuable.</p>
-          <p>
-            You'll find more details on this <a href="quickstart.html">page</a>.
-          </p>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="de_index.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+          <a href="fr_index.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+          <a href="zh_index.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
         </div>
-
-        <h2>Features</h2>
-        <div id="features">
-          <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Easy Setup</h3>
-          <p>
-            Dayon! is dedicated to people who are quite new in the computer
-            world. There's no need to set up the network (i.e., no firewall
-            setup, no router configuration, no NAT setup) on their computer.
-            Dayon! is acting there as a client connecting to the monitoring
-            computer.
-          </p>
-
-          <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Low Network Bandwidth</h3>
-          <p>
-            Dayon! is sending compressed and cached gray (up to 256 levels)
-            pictures to minimize the network usage offering as much as possible
-            a real-time experience over the Internet. Those pictures are far
-            enough for monitoring and explaining the different menus, icons and
-            discovering the computer setup, etc...
-          </p>
-        </div>
-
-        <h2>Status (13)</h2>
+        <a href="index.html">Home</a><br/>
+        <a href="quickstart.html">Quick Start</a><br/>
+        <a href="download.html">Download</a><br/>
+        <a href="support.html">Support</a><br/>
+        <a href="feedback.html">Feedback</a><br/>
+        <a href="privacy.html">Privacy</a><br/>
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+      </nav>
+    </div>
+  </div>
+  <div id="container">
+    <div id="top">
+      <a href="de_index.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+      <a href="fr_index.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+      <a href="zh_index.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
+    </div>
+    <div id="menu">
+      <a href="index.html">Home</a>
+      <a href="quickstart.html">Quick Start</a>
+      <a href="download.html">Download</a>
+      <a href="support.html">Support</a>
+      <a href="feedback.html">Feedback</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+      <h2>Remote Assistance Service</h2>
+      <div id="intro">
         <p>
-          Since release 1.9 (Promiscuous Potato), a portable "quick launch"
-          version is available in addition to the conventional installation
-          program. There are two separate "quick launch" Windows binaries, one
-          for the assisted and one the assistant. They are called "quick
-          launch", because they allow the assisted or assistant part to be run
-          without prior installation (require the presence of an JRE, however).
-          They are 100% compatible with the conventional Dayon! Versions.
-          Since release 12 (Adorable Asteroid), similar portable versions are
-          available for Linux as well.
-          <br/><br/>
-          Due to the lack of Apple hardware, the clipboard transfer feature
-          could only be tested with Windows 10 and 11, Debian and Ubuntu - Feedback
-          from macOS users would be very welcome!
+          Dayon! is an open-source and cross-platform (JAVA) solution that
+          allows watching and controlling a remote computer. In this sense, it
+          is very much similar to existing remote desktop solutions.
         </p>
 
-        <h2>Rational</h2>
+        <p>But I guess it's got some features that makes it valuable.</p>
         <p>
-          Marc Polizzi has developed Dayon! when he was living in the
-          Philippines and was communicating with his family and friends back in
-          Europe over Skype.
-        </p>
-
-        <p>
-          He didn't want them to set up their firewall and DSL/cable router and NAT
-          and whatever else required for him to access their computer over a remote
-          desktop connection. So he decided to implement something very simple in
-          his spare time while also considering a low-bandwidth, high-latency network.
-        </p>
-
-        <p>
-          Several years later, I found this program on
-          <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
-          when I was looking for free cross-platform remote assistance solution.
-          While using Dayon! to assist users running Windows 7 and later, I
-          realised that it had some serious flaws. As the latest version (1.2)
-          has been released back in early 2009, I decided to contact the author.
-          With his consent I moved the source code of the project over to
-          <a href="https://github.com/retgal/dayon">GitHub</a>
-          in late 2016 and took over the further development.
-        </p>
-
-        <p>
-          I updated the used libs to newer versions, did some refactoring on the
-          code, fixed some issues and created a new installer for the Windows
-          platform. Since version 1.4, the communication between the assistant
-          and the assisted is encrypted.
-        </p>
-
-        <p>
-          By the way, Dayon! means "Come in!" in Visayas - a local Philippine dialect.
-        </p>
-        <h2>License</h2>
-        <p>
-          This program is a free software licensed under the
-          <a href="https://opensource.org/licenses/GPL-3.0">GPL license</a>.
-          <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
-            <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy"  src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width: 100px; float: right; margin-top: -60px;"/>
-          </a>
+          You'll find more details on this <a href="quickstart.html">page</a>.
         </p>
       </div>
 
-      <div id="footer"></div>
+      <h2>Features</h2>
+      <div id="features">
+        <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Easy Setup</h3>
+        <p>
+          Dayon! is dedicated to people who are quite new in the computer
+          world. There's no need to set up the network (i.e., no firewall
+          setup, no router configuration, no NAT setup) on their computer.
+          Dayon! is acting there as a client connecting to the monitoring
+          computer.
+        </p>
+
+        <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Low Network Bandwidth</h3>
+        <p>
+          Dayon! is sending compressed and cached gray (up to 256 levels)
+          pictures to minimize the network usage offering as much as possible
+          a real-time experience over the Internet. Those pictures are far
+          enough for monitoring and explaining the different menus, icons and
+          discovering the computer setup, etc...
+        </p>
+      </div>
+
+      <h2>Status (13)</h2>
+      <p>
+        Since release 1.9 (Promiscuous Potato), a portable "quick launch"
+        version is available in addition to the conventional installation
+        program. There are two separate "quick launch" Windows binaries, one
+        for the assisted and one the assistant. They are called "quick
+        launch", because they allow the assisted or assistant part to be run
+        without prior installation (require the presence of an JRE, however).
+        They are 100% compatible with the conventional Dayon! Versions.
+        Since release 12 (Adorable Asteroid), similar portable versions are
+        available for Linux as well.
+        <br/><br/>
+        Due to the lack of Apple hardware, the clipboard transfer feature
+        could only be tested with Windows 10 and 11, Debian and Ubuntu - Feedback
+        from macOS users would be very welcome!
+      </p>
+
+      <h2>Rational</h2>
+      <p>
+        Marc Polizzi has developed Dayon! when he was living in the
+        Philippines and was communicating with his family and friends back in
+        Europe over Skype.
+      </p>
+
+      <p>
+        He didn't want them to set up their firewall, DSL/cable router and NAT
+        and whatever else required for him to access their computer over a remote
+        desktop connection. So he decided to implement something very simple in
+        his spare time while also considering a low-bandwidth, high-latency network.
+      </p>
+
+      <p>
+        Several years later, I found this program on
+        <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+        when I was looking for free cross-platform remote assistance solution.
+        While using Dayon! to assist users running Windows 7 and later, I
+        realised that it had some serious flaws. As the latest version (1.2)
+        has been released back in early 2009, I decided to contact the author.
+        With his consent I moved the source code of the project to
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+        in late 2016 and took over the further development.
+      </p>
+
+      <p>
+        By the way, Dayon! means "Come in!" in Visayas - a local Philippine dialect.
+      </p>
+      <h2>License</h2>
+      <p>
+        This program is a free software licensed under the
+        <a href="https://opensource.org/licenses/GPL-3.0">GPL license</a>.
+        <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
+          <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy"  src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width: 100px; float: right; margin-top: -60px;"/>
+        </a>
+      </p>
     </div>
+    <div id="footer"></div>
+  </div>
   </body>
 </html>
