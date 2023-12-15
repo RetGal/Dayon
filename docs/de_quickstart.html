@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
-<head>
+  <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="description" content="Remote Support für Familie und Freunde."/>
@@ -9,15 +9,22 @@
     <title>Dayon! - Fernwartung für Familie und Freunde</title>
     <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-</head>
-<body>
-<div id="container">
-    <div id="top">
-        <a href="quickstart.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
-        <a href="fr_quickstart.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
-        <a href="zh_quickstart.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
-    </div>
-    <div id="menu">
+  </head>
+  <body>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="index.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+          <a href="fr_index.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+          <a href="zh_index.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
+        </div>
         <a href="de_index.html">Home</a>
         <a href="de_quickstart.html">Schnellstart</a>
         <a href="de_download.html">Download</a>
@@ -25,345 +32,365 @@
         <a href="de_feedback.html">Feedback</a>
         <a href="de_privacy.html">Datenschutz</a>
         <a href="https://github.com/retgal/dayon">GitHub</a>
+      </nav>
+    </div>
+  </div>
+  <div id="container">
+    <div id="top">
+      <a href="quickstart.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+      <a href="fr_quickstart.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+      <a href="zh_quickstart.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
+    </div>
+    <div id="menu">
+      <a href="de_index.html">Home</a>
+      <a href="de_quickstart.html">Schnellstart</a>
+      <a href="de_download.html">Download</a>
+      <a href="de_support.html">Support</a>
+      <a href="de_feedback.html">Feedback</a>
+      <a href="de_privacy.html">Datenschutz</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
-        <h2>Schnellstart</h2>
-        <p>
-            Typischerweise kommuniziert der <em>Assistent</em> via Skype, telefonisch oder mittels eines
-            Instant-Messengers mit dem <em>Assistierten</em>. Während Dayon! es dem <em>Assistenten</em> erlaubt,
-            live den Bildschirm des <em>Assistierten</em> zu sehen und die Kontrolle über dessen Maus und Tastatur zu übernehmen.
-        </p>
+      <h2>Schnellstart</h2>
+      <p>
+        Typischerweise kommuniziert der <em>Assistent</em> via Skype, telefonisch oder mittels eines
+        Instant-Messengers mit dem <em>Assistierten</em>. Während Dayon! es dem <em>Assistenten</em> erlaubt,
+        live den Bildschirm des <em>Assistierten</em> zu sehen und die Kontrolle über dessen Maus und Tastatur zu
+        übernehmen.
+      </p>
 
-        <p>
-            Beachten Sie bitte, dass für diese Dokumentation englischsprachge Screenshots verwendet werden. Die
-            Applikation ist aber komplett auf Deutsch verfügbar und die Benutzeroberfläche wird aufgrund der
-            Anwendersprache lokalisiert. Die Symbole sind in allen Sprachen identisch.
-        </p>
+      <p>
+        Beachten Sie bitte, dass für diese Dokumentation englischsprachge Screenshots verwendet werden. Die
+        Applikation ist aber komplett auf Deutsch verfügbar und die Benutzeroberfläche wird aufgrund der
+        Anwendersprache lokalisiert. Die Symbole sind in allen Sprachen identisch.
+      </p>
 
-        <p>
-            <strong>Achtung</strong>: Diese Dokumentation bezieht sich auf die jeweils aktuellste Programmversion.<br/><br/>
-        </p>
+      <p>
+        <strong>Achtung</strong>: Diese Dokumentation bezieht sich auf die jeweils aktuellste Programmversion.<br/><br/>
+      </p>
 
-        <p>
-            <img src="assisted.png" alt="Assistierter"/>&nbsp;<a id="assisted-setup" class="no"><strong>Konfiguration Assistierter</strong></a>
-        </p>
+      <p>
+        <img src="assisted.png" alt="Assistierter"/>&nbsp;<a id="assisted-setup" class="no"><strong>Konfiguration
+        Assistierter</strong></a>
+      </p>
 
-        <p>
-            Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen
-            allfällige Netzwerkkonfigurationen auf dieser Seite.
-        </p>
+      <p>
+        Der Assistierte (Dayon!) ist eine Client-Anwendung, welche den Assistenten kontaktiert. Dadurch entfallen
+        allfällige Netzwerkkonfigurationen auf dieser Seite.
+      </p>
 
-        <p>
-            Dayon! herunter laden und installieren. Danach die <em>Dayon!</em> Applikation starten.
-            (Sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) klicken Sie auf das "Play" Symbol.
-        </p>
+      <p>
+        Dayon! herunter laden und installieren. Danach die <em>Dayon!</em> Applikation starten.
+        (Sie sollten eine entsprechende Verknüpfung auf ihrem Desktop vorfinden) klicken Sie auf das "Play" Symbol.
+      </p>
 
-        <p>
-            <img src="assisted_ready.jpg" alt="Dayon! Assistierter : Ready"/>
-        </p>
+      <p>
+        <img src="assisted_ready.jpg" alt="Dayon! Assistierter : Ready"/>
+      </p>
 
-        <p>
-            Tragen Sie das vom <em>Assistenten</em> mitgeteilten Token ein und quittieren Sie mit OK:<br/>
-        </p>
+      <p>
+        Tragen Sie das vom <em>Assistenten</em> mitgeteilten Token ein und quittieren Sie mit OK:<br/>
+      </p>
 
-        <p>
-            <img src="assisted_token.jpg" alt="Dayon! Assistierter : Token"/>
-            <br/>
-            (sollten Sie sich vor kurzem bereits mit diesem <em>Assistenten</em> verbunden haben, dann können Sie das
-            Feld auch leer lassen)
-        </p>
+      <p>
+        <img src="assisted_token.jpg" alt="Dayon! Assistierter : Token"/>
+        <br/>
+        (sollten Sie sich vor kurzem bereits mit diesem <em>Assistenten</em> verbunden haben, dann können Sie das
+        Feld auch leer lassen)
+      </p>
 
-        <p>
-            <strong>Alternative Variante (verbinden ohne Token):</strong> Tragen Sie stattdessen die vom
-            <em>Assistenten</em> mitgeteilte IP-Adresse und Portnummer ein und quittieren Sie mit OK:<br/>
-        </p>
+      <p>
+        <strong>Alternative Variante (verbinden ohne Token):</strong> Tragen Sie stattdessen die vom
+        <em>Assistenten</em> mitgeteilte IP-Adresse und Portnummer ein und quittieren Sie mit OK:<br/>
+      </p>
 
-        <p>
-            <img src="assisted_network.jpg" alt="Dayon! Assistierter : Network"/><br/>
-            (beide Eingabefelder können mittels Doppelklick geleert werden)
-        </p>
+      <p>
+        <img src="assisted_network.jpg" alt="Dayon! Assistierter : Network"/><br/>
+        (beide Eingabefelder können mittels Doppelklick geleert werden)
+      </p>
 
-        <p>
-            Kurz nach dem Klick auf <em>OK</em> werden Sie mit ihrem <em>Assistenten</em> verbunden sein.
-            Viel Vergnügen!<br/><br/>
-        </p>
+      <p>
+        Kurz nach dem Klick auf <em>OK</em> werden Sie mit ihrem <em>Assistenten</em> verbunden sein.
+        Viel Vergnügen!<br/><br/>
+      </p>
 
-        <p>
-            <img src="assistant.png" alt="Assistent"/>&nbsp;<a id="assistant-setup" class="no">
-            <strong>Konfiguration Assistent</strong></a>
-        </p>
+      <p>
+        <img src="assistant.png" alt="Assistent"/>&nbsp;<a id="assistant-setup" class="no">
+        <strong>Konfiguration Assistent</strong></a>
+      </p>
 
-        <p>
-            Der Assistent (Dayon.Assistant) fungiert als eine typische Server-Anwendung (der <em>Assistierte</em>
-            verbindet sich mit dieser).
-            Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand notwendig. Das Netzwerk des
-            <em>Assistenten</em>
-            (der, welcher Hilfe anbietet) muss so konfiguriert werden, dass es vom Internet her erreichbar ist.
-        </p>
+      <p>
+        Der Assistent (Dayon.Assistant) fungiert als eine typische Server-Anwendung (der <em>Assistierte</em>
+        verbindet sich mit dieser).
+        Auf dieser Seite der Verbindung ist etwas Konfigurationsaufwand notwendig. Das Netzwerk des
+        <em>Assistenten</em>
+        (der, welcher Hilfe anbietet) muss so konfiguriert werden, dass es vom Internet her erreichbar ist.
+      </p>
 
-        <p>
-            Standardmässig horcht der Server auf <strong>Port</strong> 8080, Sie können diesen aber bei Bedarf ändern.
-            Seit Version 12, richtet Dayon! eine entsprechende Portweiterleitung selbständig ein. Voraussetzung dafür
-            ist aber, dass <strong>UPnP</strong> aktiviert ist. Ansonsten wird es weiterhin notwendig sein, den Port
-            (TCP) via <strong>NAT</strong> auf dem<strong>Router</strong> an den entsprechenden Rechner weiterzuleiten.<br/><br/>
-            Bebilderte Schritt-für-Schritt-Anleitungen für das Einrichten von Portweiterleitungen für die gängigsten
-            Router Modelle finden Sie beispielsweise auf <a href="https://portforward.com/router.htm">portforward.com</a>.
-        </p>
+      <p>
+        Standardmässig horcht der Server auf <strong>Port</strong> 8080, Sie können diesen aber bei Bedarf ändern.
+        Seit Version 12, richtet Dayon! eine entsprechende Portweiterleitung selbständig ein. Voraussetzung dafür
+        ist aber, dass <strong>UPnP</strong> aktiviert ist. Ansonsten wird es weiterhin notwendig sein, den Port
+        (TCP) via <strong>NAT</strong> auf dem<strong>Router</strong> an den entsprechenden Rechner
+        weiterzuleiten.<br/><br/>
+        Bebilderte Schritt-für-Schritt-Anleitungen für das Einrichten von Portweiterleitungen für die gängigsten
+        Router Modelle finden Sie beispielsweise auf <a href="https://portforward.com/router.htm">portforward.com</a>.
+      </p>
 
-        <p>
-            <strong>Optional:</strong> Port für eingehende Verbindungen anpassen: (links mit aktiviertem UPnP, rechts
-            ohne)
-        </p>
+      <p>
+        <strong>Optional:</strong> Port für eingehende Verbindungen anpassen: (links mit aktiviertem UPnP, rechts
+        ohne)
+      </p>
 
-        <p>
-            <img src="assistant_network_settings_upnp.jpg" alt="Dayon! Assistent: Network Settings mit UPnP"/>
-            <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Assistent: Network Settings ohne UPnP"/>
-        </p>
+      <p>
+        <img src="assistant_network_settings_upnp.jpg" alt="Dayon! Assistent: Network Settings mit UPnP"/>
+        <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Assistent: Network Settings ohne UPnP"/>
+      </p>
 
-        <p>
-            Generieren Sie als Nächstes mittels Mausklick auf den Schlüssel ein Zugangstoken:
-        </p>
+      <p>
+        Generieren Sie als Nächstes mittels Mausklick auf den Schlüssel ein Zugangstoken:
+      </p>
 
-        <p>
-            <img src="assistant_create_token.jpg" alt="Dayon! Assistent: Token erstellen"/>
-        </p>
+      <p>
+        <img src="assistant_create_token.jpg" alt="Dayon! Assistent: Token erstellen"/>
+      </p>
 
-        <p>
-            Kopieren Sie das generierte Token mittels Mausklick in die Zwischenablage:
-        </p>
+      <p>
+        Kopieren Sie das generierte Token mittels Mausklick in die Zwischenablage:
+      </p>
 
-        <p>
-            <img src="assistant_copy_token.jpg" alt="Dayon! Assistent: Token kopieren"/>
-        </p>
+      <p>
+        <img src="assistant_copy_token.jpg" alt="Dayon! Assistent: Token kopieren"/>
+      </p>
 
-        <p>
-            Das wär's bereits - teilen Sie dieses <strong>Token</strong> dem <em>Assistierten</em> via Mail, IM oder
-            Telefon mit.
-        </p>
+      <p>
+        Das wär's bereits - teilen Sie dieses <strong>Token</strong> dem <em>Assistierten</em> via Mail, IM oder
+        Telefon mit.
+      </p>
 
-        <p>
-            <strong>Für ungeduldige:</strong> <a href="#assistant-start">Hier</a> erfahren Sie, wie Sie den Assistenten
-            <a href="#assistant-start">empfangsbereit machen</a>.
-        </p>
+      <p>
+        <strong>Für ungeduldige:</strong> <a href="#assistant-start">Hier</a> erfahren Sie, wie Sie den Assistenten
+        <a href="#assistant-start">empfangsbereit machen</a>.
+      </p>
 
-        <p>
-            <strong>Alternative Variante (verbinden ohne Token):</strong> Um die öffentliche <strong>IP-Adresse</strong>
-            ihres Rechners zu ermitteln, mit welchem sich der <em>Assistierte</em> verbinden wird, klicken Sie auf
-            <strong>Ermittle meine IP-Adresse (öffentlich)</strong>. Fürs Testen im LAN genügt hingegen die private
-            IP-Adresse:
-        </p>
+      <p>
+        <strong>Alternative Variante (verbinden ohne Token):</strong> Um die öffentliche <strong>IP-Adresse</strong>
+        ihres Rechners zu ermitteln, mit welchem sich der <em>Assistierte</em> verbinden wird, klicken Sie auf
+        <strong>Ermittle meine IP-Adresse (öffentlich)</strong>. Fürs Testen im LAN genügt hingegen die private
+        IP-Adresse:
+      </p>
 
-        <p>
-            <img src="assistant_network_addresses.jpg" alt="Dayon! Assistent: Network IP-Adressees"/>
-        </p>
+      <p>
+        <img src="assistant_network_addresses.jpg" alt="Dayon! Assistent: Network IP-Adressees"/>
+      </p>
 
-        <p>
-            Wie Sie im nächsten Bild erkennen, enthält das Menü auch eine Rubrik <strong>Kopiere IP-Adresse &
-            Portnummer</strong>, welche die IP-Adresse und die zuvor konfigurierte Portnummer in die Zwischenablage
-            beispielsweise einfach in ihre <strong>Chat-Sitzung</strong> (z.B. Skype) oder in eine E-Mail einfügen.
-        </p>
+      <p>
+        Wie Sie im nächsten Bild erkennen, enthält das Menü auch eine Rubrik <strong>Kopiere IP-Adresse &
+        Portnummer</strong>, welche die IP-Adresse und die zuvor konfigurierte Portnummer in die Zwischenablage
+        beispielsweise einfach in ihre <strong>Chat-Sitzung</strong> (z.B. Skype) oder in eine E-Mail einfügen.
+      </p>
 
-        <p>
-            <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistent: Network IP-Adresse Actions"/>
-        </p>
+      <p>
+        <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistent: Network IP-Adresse Actions"/>
+      </p>
 
-        <p>
-            <em>
-                Beachten Sie dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen
-                verfügbaren Netzwerkschnittstellen horcht; Sie benötigen diese Angaben jedoch, um Sie dem Assistierten
-                zu kommunizieren. (mehr zu diesem Thema später).
-            </em>
-        </p>
+      <p>
+        <em>
+          Beachten Sie dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen
+          verfügbaren Netzwerkschnittstellen horcht; Sie benötigen diese Angaben jedoch, um Sie dem Assistierten
+          zu kommunizieren. (mehr zu diesem Thema später).
+        </em>
+      </p>
 
-        <p>
-            Damit wäre die Netzwerkkonfiguration bereits abgeschlossen.<br/>
-            <strong>Für ungeduldige:</strong> <a href="#assistant-start">Hier</a> erfahren Sie, wie Sie den Assistenten
-            <a href="#assistant-start">empfangsbereit machen</a>.
-        </p>
+      <p>
+        Damit wäre die Netzwerkkonfiguration bereits abgeschlossen.<br/>
+        <strong>Für ungeduldige:</strong> <a href="#assistant-start">Hier</a> erfahren Sie, wie Sie den Assistenten
+        <a href="#assistant-start">empfangsbereit machen</a>.
+      </p>
 
-        <p>
-            Ansonsten lassen Sie uns zuerst einen Blick die erweiterten Konfigurationsmöglichkeiten des
-            <em>Assistierten</em>werfen.<br/><br/>
-        </p>
+      <p>
+        Ansonsten lassen Sie uns zuerst einen Blick die erweiterten Konfigurationsmöglichkeiten des
+        <em>Assistierten</em>werfen.<br/><br/>
+      </p>
 
-        <p>
-            <img src="assistant.png" alt="Assistent"/>&nbsp;<a id="assistant-details" class="no"><strong>Mehr zur
-            Konfiguration des Assistenten</strong></a>
-        </p>
+      <p>
+        <img src="assistant.png" alt="Assistent"/>&nbsp;<a id="assistant-details" class="no"><strong>Mehr zur
+        Konfiguration des Assistenten</strong></a>
+      </p>
 
-        <p>
-            Hier kann der <em>Assistent</em> definieren, wie der Bildschirm des <em>Assistierten</em>
-            <strong>erfasst</strong> werden soll; Es kann sowohl der Intervall (in Millisekunden) zwischen
-            zwei Aufnahmen (Tick), als auch die Anzahl Graustufen definiert werden.
-        </p>
+      <p>
+        Hier kann der <em>Assistent</em> definieren, wie der Bildschirm des <em>Assistierten</em>
+        <strong>erfasst</strong> werden soll; Es kann sowohl der Intervall (in Millisekunden) zwischen
+        zwei Aufnahmen (Tick), als auch die Anzahl Graustufen definiert werden.
+      </p>
 
-        <p>
-            <img src="assistant_capture_settings.jpg" alt="Dayon! Assistent: Capture Settings"/>
-        </p>
+      <p>
+        <img src="assistant_capture_settings.jpg" alt="Dayon! Assistent: Capture Settings"/>
+      </p>
 
-        <p>
-            Da kann die <strong>Komprimierung</strong> festgelegt werden; Es stehen zwei verschiedene Methoden zur Auswahl:
-            ZIP und XZ. XZ erzielt einen wesentlich besseren Komprimierungsgrad, benötigt aber mehr Rechenleistung
-            (CPU-Last und Arbeitsspeicher), da der Algorithmus aufwändiger als ZIP ist und XZ in JAVA implementiert ist.
-            (während ZIP via nativem Code vom JDK implementiert ist).
-        </p>
+      <p>
+        Da kann die <strong>Komprimierung</strong> festgelegt werden; Es stehen zwei verschiedene Methoden zur Auswahl:
+        ZIP und XZ. XZ erzielt einen wesentlich besseren Komprimierungsgrad, benötigt aber mehr Rechenleistung
+        (CPU-Last und Arbeitsspeicher), da der Algorithmus aufwändiger als ZIP ist und XZ in JAVA implementiert ist.
+        (während ZIP via nativem Code vom JDK implementiert ist).
+      </p>
 
-        <p>
-            Zusätzlich wird ein <strong>Puffer</strong> (Cache) verwendet, um nicht immer aufs neue dieselben,
-            unveränderten Bitmaps übertragen zu müssen. Hierfür wird der Bildschirm in zahlreiche <em>Kacheln</em>
-            aufgeteilt. Jede dieser Kacheln kann separat gepuffert werden. Die maximale Anzahl zwischen gespeicherten
-            Kacheln kann definiert werden. Eine einzelne Kachel besteht aus 32x32 Pixel (Bildpunkten) in maximal
-            256 Graustufen - das entspricht rund 1 KB.
-        </p>
+      <p>
+        Zusätzlich wird ein <strong>Puffer</strong> (Cache) verwendet, um nicht immer aufs neue dieselben,
+        unveränderten Bitmaps übertragen zu müssen. Hierfür wird der Bildschirm in zahlreiche <em>Kacheln</em>
+        aufgeteilt. Jede dieser Kacheln kann separat gepuffert werden. Die maximale Anzahl zwischen gespeicherten
+        Kacheln kann definiert werden. Eine einzelne Kachel besteht aus 32x32 Pixel (Bildpunkten) in maximal
+        256 Graustufen - das entspricht rund 1 KB.
+      </p>
 
-        <p>
-            <img src="assistant_compression_settings.jpg" alt="Dayon! Assistent : Compression Settings"/>
-        </p>
+      <p>
+        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistent : Compression Settings"/>
+      </p>
 
-        <p>
-            <a id="assistant-start" class="no">Das wär's. Mit einem Klick auf den Play-Button (der erste von links)
-                machen Sie den <em>Assistent</em> empfangsbereit:</a>
-        </p>
+      <p>
+        <a id="assistant-start" class="no">Das wär's. Mit einem Klick auf den Play-Button (der erste von links)
+          machen Sie den <em>Assistent</em> empfangsbereit:</a>
+      </p>
 
-        <p>
-            <img src="assistant_start.jpg" alt="Dayon! Assistent : Start"/>
-        </p>
+      <p>
+        <img src="assistant_start.jpg" alt="Dayon! Assistent : Start"/>
+      </p>
 
-        <p>
-            Nun können Sie den <em>Assistierten</em> zum Verbinden auffordern. Kurz darauf dürften Sie über die
-            eingehende Verbindung informiert werden:
-        </p>
+      <p>
+        Nun können Sie den <em>Assistierten</em> zum Verbinden auffordern. Kurz darauf dürften Sie über die
+        eingehende Verbindung informiert werden:
+      </p>
 
-        <p>
-            <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistent : Incoming Connection"/>
-        </p>
+      <p>
+        <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistent : Incoming Connection"/>
+      </p>
 
-        <p>
-            Nun sind Sie mit dem entfernten Computer verbunden und sehen dessen Desktop:
-        </p>
+      <p>
+        Nun sind Sie mit dem entfernten Computer verbunden und sehen dessen Desktop:
+      </p>
 
-        <p>
-            <img src="assistant_connected.jpg" alt="Dayon! Assistent : Running"/>
-        </p>
+      <p>
+        <img src="assistant_connected.jpg" alt="Dayon! Assistent : Running"/>
+      </p>
 
-        <p>
-            Wenn der Desktop des <em>Assistierten</em> nicht vollständig in das Fenster passt, können Sie die
-            Darstellung skalieren:
-        </p>
+      <p>
+        Wenn der Desktop des <em>Assistierten</em> nicht vollständig in das Fenster passt, können Sie die
+        Darstellung skalieren:
+      </p>
 
-        <p>
-            <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle"/>
-        </p>
+      <p>
+        <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle"/>
+      </p>
 
-        <p>
-            Standardmässig ist die <strong>Fernsteuerung</strong> nicht aktiv; Sie können Sie jederzeit mit diesem
-            Symbol aktivieren bzw. deaktivieren:
-        </p>
+      <p>
+        Standardmässig ist die <strong>Fernsteuerung</strong> nicht aktiv; Sie können Sie jederzeit mit diesem
+        Symbol aktivieren bzw. deaktivieren:
+      </p>
 
-        <p>
-            <img src="assistant_control.jpg" alt="Dayon! Assistent : Control Toggle"/>
-        </p>
+      <p>
+        <img src="assistant_control.jpg" alt="Dayon! Assistent : Control Toggle"/>
+      </p>
 
-        <p></p>
-        <h2>Erweiterte Funktionen</h2>
-        <p>
-            Voraussetzung: Die folgenden Funktionen setzen eine bestehende Verbindung zum <em>Assistierten</em> voraus.
-        </p>
+      <p></p>
+      <h2>Erweiterte Funktionen</h2>
+      <p>
+        Voraussetzung: Die folgenden Funktionen setzen eine bestehende Verbindung zum <em>Assistierten</em> voraus.
+      </p>
 
-        <p></p>
-        <h3>Übertragen der Zwischenablage</h3>
-        <p>
-            Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des <em>Assistenten</em>
-            an den Assistierten (Up) oder die Zwischenablage des <em>Assistierten</em> an den <em>Assistenten</em>
-            (Down) übertragen werden.
-        </p>
+      <p></p>
+      <h3>Übertragen der Zwischenablage</h3>
+      <p>
+        Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des <em>Assistenten</em>
+        an den Assistierten (Up) oder die Zwischenablage des <em>Assistierten</em> an den <em>Assistenten</em>
+        (Down) übertragen werden.
+      </p>
 
-        <p>
-            <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer"/>
-        </p>
+      <p>
+        <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer"/>
+      </p>
 
-        <p></p>
-        <h4>Unterstützt werden zur Zeit:</h4>
-        <ul>
-            <li>
-                <strong>Text</strong>: Lokal oder im Fenster des <em>Assistierten</em> Text markieren, kopieren (
-                <code>ctl + C</code>) Up oder Down klicken. Anschliessend kann der übertagene Text in einer lokalen
-                oder entfernten Anwendung eingefügt werden (<code>ctrl + v</code>).
-            </li>
+      <p></p>
+      <h4>Unterstützt werden zur Zeit:</h4>
+      <ul>
+        <li>
+          <strong>Text</strong>: Lokal oder im Fenster des <em>Assistierten</em> Text markieren, kopieren (
+          <code>ctl + C</code>) Up oder Down klicken. Anschliessend kann der übertagene Text in einer lokalen
+          oder entfernten Anwendung eingefügt werden (<code>ctrl + v</code>).
+        </li>
 
-            <li>
-                <strong>Dateien</strong>: Lokal oder im Fenster des <em>Assistierten</em> eine oder mehrere Dateien,
-                resp. Ordner markieren, kopieren (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die
-                Datei/en am Zielort eingefügt werden.
-            </li>
-        </ul>
+        <li>
+          <strong>Dateien</strong>: Lokal oder im Fenster des <em>Assistierten</em> eine oder mehrere Dateien,
+          resp. Ordner markieren, kopieren (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die
+          Datei/en am Zielort eingefügt werden.
+        </li>
+      </ul>
 
-        <p>
-            <strong>Achtung</strong>: Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
-            Zwischenablage
-            nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>) funktioniert in
-            diesen Fällen nicht.
-            Meistens wird der Inhalt dennoch übertragen. Werfen Sie einen Blick in das <code>/tmp</code> Verzeichnis und
-            suchen Sie nach einem UUID-Ordner (ähnlich wie <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
-            Darin befinden sich die übertragenen Dateien.
-        </p>
+      <p>
+        <strong>Achtung</strong>: Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
+        Zwischenablage
+        nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>) funktioniert in
+        diesen Fällen nicht.
+        Meistens wird der Inhalt dennoch übertragen. Werfen Sie einen Blick in das <code>/tmp</code> Verzeichnis und
+        suchen Sie nach einem UUID-Ordner (ähnlich wie <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
+        Darin befinden sich die übertragenen Dateien.
+      </p>
 
-        <p></p>
-        <h3>Windowstastendruck übertragen</h3>
-        <p>
-            Um das Drücken der Windows-Taste zu übertragen, klicken Sie in der Bedienleiste des <em>Assistenten</em> auf
-            das Windows-Symbol:
-        </p>
+      <p></p>
+      <h3>Windowstastendruck übertragen</h3>
+      <p>
+        Um das Drücken der Windows-Taste zu übertragen, klicken Sie in der Bedienleiste des <em>Assistenten</em> auf
+        das Windows-Symbol:
+      </p>
 
-        <p>
-            <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key"/>
-        </p>
+      <p>
+        <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key"/>
+      </p>
 
-        <p>
-            Die Taste bleibt gedrückt, bis Sie erneut auf das Symbol klicken. Auf diese Weise können Sie auch
-            Windows-Tastenkombinationen senden.<br/>
-            Wenn Sie beispielsweise alle Fenster des <em>Assistierten</em> minimieren möchten, klicken Sie auf das
-            Windows-Symbol, danach drücken Sie die <code>M</code> Taste und klicken schliesslich erneut auf das Windows-Symbol.
-        </p>
+      <p>
+        Die Taste bleibt gedrückt, bis Sie erneut auf das Symbol klicken. Auf diese Weise können Sie auch
+        Windows-Tastenkombinationen senden.<br/>
+        Wenn Sie beispielsweise alle Fenster des <em>Assistierten</em> minimieren möchten, klicken Sie auf das
+        Windows-Symbol, danach drücken Sie die <code>M</code> Taste und klicken schliesslich erneut auf das
+        Windows-Symbol.
+      </p>
 
-        <p></p>
-        <h3>Automatische Verbindung des Assistierten</h3>
-        <h4>Via Kommandozeilenparameter</h4>
-        <p>
-            Der Hostname oder IP-Adresse und der Port des Assistenten können via Kommandozeilenparameter übergeben werden:
-        <ul>
-            <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
-            <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
-            <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
-            <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
-            <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
-        </ul>
-        Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der
-        angegebenen Host.
-        </p>
+      <p></p>
+      <h3>Automatische Verbindung des Assistierten</h3>
+      <h4>Via Kommandozeilenparameter</h4>
+      <p>
+        Der Hostname oder IP-Adresse und der Port des Assistenten können via Kommandozeilenparameter übergeben werden:
+      <ul>
+        <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
+        <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
+        <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
+        <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
+        <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
+      </ul>
+      Wird der Assisterte mit diesen Parametern gestartet, so verbindet er sich ohne Rückfrage direkt mit der
+      angegebenen Host.
+      </p>
 
-        <h4>Via Konfigurationsdatei</h4>
-        <p>
-            Ab Version v11.0.5, können die Verbindungsparameter in einer <code>YAML</code>-Datei hinterlegt werden.
-            Die Struktur ist äusserst simpel:
-        </p>
+      <h4>Via Konfigurationsdatei</h4>
+      <p>
+        Ab Version v11.0.5, können die Verbindungsparameter in einer <code>YAML</code>-Datei hinterlegt werden.
+        Die Struktur ist äusserst simpel:
+      </p>
 
-        <pre>
-host: an.example.com
-port: 8080</pre>
-        Diese Datei kann unter dem Namen <code><a href="assisted.yaml">assisted.yaml</a></code> entweder im Dayon!
-        Heimverzeichnis, im Benutzerverzeichnis, oder im selben Verzeichnis wie die <code>.jar</code>, resp.
-        <code>.exe</code> Datei abgelegt werden. Diese Reihenfolge entspricht auch der Priorität, mit welcher Sie
-        berücksichtigt werden, falls mehrere Konfigurationen existieren. (die erste gewinnt)<br/>
-        Um zu verhindern, dass sich der Assistierte direkt nach dem Start automatisch verbindet, kann
-        <code><a href="assisted.yaml">assisted.yaml</a></code> um die folgende Zeile ergänzt werden:
-        <pre>autoConnect: false</pre>
-        <p>
-            Das wär's - weitere Informationen finden Sie auf der <a href="de_support.html">Support</a> Seite!
-        </p>
+      <pre>
+  host: an.example.com
+  port: 8080</pre>
+      Diese Datei kann unter dem Namen <code><a href="assisted.yaml">assisted.yaml</a></code> entweder im Dayon!
+      Heimverzeichnis, im Benutzerverzeichnis, oder im selben Verzeichnis wie die <code>.jar</code>, resp.
+      <code>.exe</code> Datei abgelegt werden. Diese Reihenfolge entspricht auch der Priorität, mit welcher Sie
+      berücksichtigt werden, falls mehrere Konfigurationen existieren. (die erste gewinnt)<br/>
+      Um zu verhindern, dass sich der Assistierte direkt nach dem Start automatisch verbindet, kann
+      <code><a href="assisted.yaml">assisted.yaml</a></code> um die folgende Zeile ergänzt werden:
+      <pre>autoConnect: false</pre>
+      <p>
+        Das wär's - weitere Informationen finden Sie auf der <a href="de_support.html">Support</a> Seite!
+      </p>
     </div>
-
     <div id="footer"></div>
-</div>
-</body>
+  </div>
+  </body>
 </html>
