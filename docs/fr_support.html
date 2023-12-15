@@ -11,123 +11,147 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-    <div id="container">
-      <div id="top">
-        <a href="de_support.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
-        <a href="support.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
-        <a href="zh_support.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
-      </div>
-      <div id="menu">
-        <a href="fr_index.html">Accueil</a>
-        <a href="fr_quickstart.html">Premiers Pas</a>
-        <a href="fr_download.html">Télécharger</a>
-        <a href="fr_support.html">Aide</a>
-        <a href="fr_feedback.html">Réactions</a>
-        <a href="fr_privacy.html">Confidentialité</a>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="de_index.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+          <a href="index.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+          <a href="zh_index.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
+        </div>
+        <a href="fr_index.html">Accueil</a><br/>
+        <a href="fr_quickstart.html">Premiers Pas</a><br/>
+        <a href="fr_download.html">Télécharger</a><br/>
+        <a href="fr_support.html">Aide</a><br/>
+        <a href="fr_feedback.html">Réactions</a><br/>
+        <a href="fr_privacy.html">Confidentialité</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
-      </div>
-      <div id="content">
-        <h2>Aide</h2>
-        <p>
-          Vous pouvez poster une question ou ouvrir une quiestion sur
-          <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
-        </p>
-
-        <h3>Problèmes Connus</h3>
-        <ul>
-          <li>
-            Il n'y a actuellement aucun moyen d'envoyer certaines combinaisons
-            clés à l'ordinateur assisté. (par example <code>Ctrl-Alt-Del</code>).
-          </li>
-          <li>
-            Idéalement, les ordinateurs de l'assistant et de l'assisté utilisent
-            tous les deux la même langue de saisie. L'utilisation de différentes
-            dispositions de clavier peut entraîner des problèmes, en particulier
-            lors de la saisie de caractères spéciaux. La disposition du clavier
-            utilisée est visible dans la barre de titre de l'application
-            respective.
-          </li>
-        </ul>
-
-        <h3>Dayon! Répertoire de base</h3>
-        <p>
-          Le répertoire <code>.dayon</code>
-          est créé dans le répertoire de base par défaut de l'utilisateur
-          connecté ou dans le répertoire référencé par la propriété JAVA
-          <code>user.home</code>
-          et contient les préférences utilisateur enregistrées et fichier(s) de
-          journal par défaut.
-        </p>
-
-        <h3>Somme de contrôle CRC</h3>
-        <p>
-          Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <em>tuiles</em>.
-          Seules les tuiles qui ont été modifiées depuis la capture précédente
-          sont envoyées sur le Côté assistant. Pour déterminer si une tuile est
-          différente, je suis en train de calculer un code CRC (C'est-à-dire,
-          une valeur entière unique représentant les pixels de la tuile) qui
-          n'est pas parfaite Par souci de rapidité. Il se peut donc que
-          certaines tuiles <em>changées</em> ne soient pas envoyées à l'assistant.
-        </p>
-
-        <p>
-          Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour
-          très peu de pixels. Visuellement, je n'ai rien remarqué de sérieux.
-          Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer
-          L'aide ou avant d'essayer l'action
-          <code>reset</code> (<strong>l'icône poubelle</strong>)
-          Qui devrait effacer toutes les données en cache et renvoyer une
-          capture plein écran à partir de zéro.
-        </p>
-
-        <h3>Compteurs de statistiques</h3>
-        <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
-        <p>
-          La barre d'état du cadre assistant affiche un ensemble de compteurs.
-        </p>
-        <ol>
-          <li>Bande passante réseau</li>
-          <li>Compression Ratio : combien de fois la capture initiale (diff only) a été comprimé</li>
-          <li>
-            Number of Tiles : le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
-          </li>
-          <li>
-            Number of Skipped Capture : le nombre de captures d'écran qui ont été
-            ignorées En raison d'un taux trop élevé (c'est-à-dire, une valeur de
-            cotation faible) pour les CPU. Pour minimiser cette, vous devez
-            ralentir le taux de capture en utilisant une valeur plus grande.
-          </li>
-          <li>
-            Number of Merged Capture : le nombre de captures d'écran fusionnées
-            avant d'être transmis. Ceci est dû à un taux de capture trop élevé
-            pour le courant méthode de compression. Pour minimiser ce nombre,
-            vous devez ralentir la capture taux et/ou changer la méthode de
-            compression en utilisant un plus rapide.
-          </li>
-          <li>Utilisation de la mémoire</li>
-          <li>Durée de la session d'assistance active ou de la dernière</li>
-        </ol>
-
-        <h3>Empreintes des certificats</h3>
-        <p>
-          Pour éviter les attaques "Men in the Middle", les empreintes digitales des certificats des deux côtés qui se connectent sont affichées.
-          Les deux empreintes digitales doivent correspondre - si elles ne correspondent pas, cela signifie que quelque chose d'étrange est en cours.
-          Cette fonction de sécurité supplémentaire a été introduite dans la version 13 de Dayon.
-        </p>
-        <p>
-          <img src="dayon_fingerprints.jpg" alt="Certificate Fingerprints"/>
-        </p>
-        <p>
-          <strong>Attention</strong> : pour permettre la connexion avec des clients plus anciens, le mode de compatibilité
-          <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/compatibility.png" alt="compatibility"/> doit être activé.
-        </p>
-
-        <h3>Etablissement de la connexion</h3>
-        <p>
-          <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
-        </p>
-      </div>
-      <div id="footer"></div>
+      </nav>
     </div>
+  </div>
+  <div id="container">
+    <div id="top">
+      <a href="de_support.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+      <a href="support.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+      <a href="zh_support.html"><img src="china.png" width="32" height="32" alt="简体中文"/></a>
+    </div>
+    <div id="menu">
+      <a href="fr_index.html">Accueil</a>
+      <a href="fr_quickstart.html">Premiers Pas</a>
+      <a href="fr_download.html">Télécharger</a>
+      <a href="fr_support.html">Aide</a>
+      <a href="fr_feedback.html">Réactions</a>
+      <a href="fr_privacy.html">Confidentialité</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+      <h2>Aide</h2>
+      <p>
+        Vous pouvez poster une question ou ouvrir une quiestion sur
+        <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+      </p>
+
+      <h3>Problèmes Connus</h3>
+      <ul>
+        <li>
+          Il n'y a actuellement aucun moyen d'envoyer certaines combinaisons
+          clés à l'ordinateur assisté. (par example <code>Ctrl-Alt-Del</code>).
+        </li>
+        <li>
+          Idéalement, les ordinateurs de l'assistant et de l'assisté utilisent
+          tous les deux la même langue de saisie. L'utilisation de différentes
+          dispositions de clavier peut entraîner des problèmes, en particulier
+          lors de la saisie de caractères spéciaux. La disposition du clavier
+          utilisée est visible dans la barre de titre de l'application
+          respective.
+        </li>
+      </ul>
+
+      <h3>Dayon! Répertoire de base</h3>
+      <p>
+        Le répertoire <code>.dayon</code>
+        est créé dans le répertoire de base par défaut de l'utilisateur
+        connecté ou dans le répertoire référencé par la propriété JAVA
+        <code>user.home</code>
+        et contient les préférences utilisateur enregistrées et fichier(s) de
+        journal par défaut.
+      </p>
+
+      <h3>Somme de contrôle CRC</h3>
+      <p>
+        Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <em>tuiles</em>.
+        Seules les tuiles qui ont été modifiées depuis la capture précédente
+        sont envoyées sur le Côté assistant. Pour déterminer si une tuile est
+        différente, je suis en train de calculer un code CRC (C'est-à-dire,
+        une valeur entière unique représentant les pixels de la tuile) qui
+        n'est pas parfaite Par souci de rapidité. Il se peut donc que
+        certaines tuiles <em>changées</em> ne soient pas envoyées à l'assistant.
+      </p>
+
+      <p>
+        Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour
+        très peu de pixels. Visuellement, je n'ai rien remarqué de sérieux.
+        Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer
+        L'aide ou avant d'essayer l'action
+        <code>reset</code> (<strong>l'icône poubelle</strong>)
+        Qui devrait effacer toutes les données en cache et renvoyer une
+        capture plein écran à partir de zéro.
+      </p>
+
+      <h3>Compteurs de statistiques</h3>
+      <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
+      <p>
+        La barre d'état du cadre assistant affiche un ensemble de compteurs.
+      </p>
+      <ol>
+        <li>Bande passante réseau</li>
+        <li>Compression Ratio : combien de fois la capture initiale (diff only) a été comprimé</li>
+        <li>
+          Number of Tiles : le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
+        </li>
+        <li>
+          Number of Skipped Capture : le nombre de captures d'écran qui ont été
+          ignorées En raison d'un taux trop élevé (c'est-à-dire, une valeur de
+          cotation faible) pour les CPU. Pour minimiser cette, vous devez
+          ralentir le taux de capture en utilisant une valeur plus grande.
+        </li>
+        <li>
+          Number of Merged Capture : le nombre de captures d'écran fusionnées
+          avant d'être transmis. Ceci est dû à un taux de capture trop élevé
+          pour le courant méthode de compression. Pour minimiser ce nombre,
+          vous devez ralentir la capture taux et/ou changer la méthode de
+          compression en utilisant un plus rapide.
+        </li>
+        <li>Utilisation de la mémoire</li>
+        <li>Durée de la session d'assistance active ou de la dernière</li>
+      </ol>
+
+      <h3>Empreintes des certificats</h3>
+      <p>
+        Pour éviter les attaques "Men in the Middle", les empreintes digitales des certificats des deux côtés qui se connectent sont affichées.
+        Les deux empreintes digitales doivent correspondre - si elles ne correspondent pas, cela signifie que quelque chose d'étrange est en cours.
+        Cette fonction de sécurité supplémentaire a été introduite dans la version 13 de Dayon.
+      </p>
+      <p>
+        <img src="dayon_fingerprints.jpg" alt="Certificate Fingerprints"/>
+      </p>
+      <p>
+        <strong>Attention</strong> : pour permettre la connexion avec des clients plus anciens, le mode de compatibilité
+        <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/compatibility.png" alt="compatibility"/> doit être activé.
+      </p>
+
+      <h3>Etablissement de la connexion</h3>
+      <p>
+        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
+      </p>
+    </div>
+    <div id="footer"></div>
+  </div>
   </body>
 </html>
