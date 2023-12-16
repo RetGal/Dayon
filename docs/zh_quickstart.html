@@ -1,32 +1,56 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="description" content="Remote assistance made easy!">
-    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Dayon! - 为您的家人和朋友提供远程协助</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150">
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-<div id="container">
-    <div id="top">
-        <a href="quickstart.html"><img src="great_britain.png" width="32" height="32" alt="English"></a>
-        <a href="de_quickstart.html"><img src="germany.png" width="32" height="32" alt="Deutsch"></a>
-        <a href="fr_quickstart.html"><img src="france.png" width="32" height="32" alt="Français"></a>
-    </div>
-    <div id="menu">
-        <a href="zh_index.html">首页</a>
-        <a href="zh_quickstart.html">快速入门</a>
-        <a href="zh_download.html">下载</a>
-        <a href="zh_support.html">支持</a>
-        <a href="zh_feedback.html">反馈</a>
-        <a href="zh_privacy.html">隐私</a>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      <meta name="description" content="Remote assistance made easy!">
+      <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title>Dayon! - 为您的家人和朋友提供远程协助</title>
+      <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150">
+      <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+  </head>
+  <body>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="de_download.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+          <a href="fr_download.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+          <a href="download.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+        </div>
+        <a href="zh_index.html">首页</a><br/>
+        <a href="zh_quickstart.html">快速入门</a><br/>
+        <a href="zh_download.html">下载</a><br/>
+        <a href="zh_support.html">支持</a><br/>
+        <a href="zh_feedback.html">反馈</a><br/>
+        <a href="zh_privacy.html">隐私</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
+      </nav>
     </div>
-    <div id="content">
+  </div>
+  <div id="container">
+      <div id="top">
+          <a href="de_download.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+          <a href="fr_download.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+          <a href="download.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+      </div>
+      <div id="menu">
+          <a href="zh_index.html">首页</a>
+          <a href="zh_quickstart.html">快速入门</a>
+          <a href="zh_download.html">下载</a>
+          <a href="zh_support.html">支持</a>
+          <a href="zh_feedback.html">反馈</a>
+          <a href="zh_privacy.html">隐私</a>
+          <a href="https://github.com/retgal/dayon">GitHub</a>
+      </div>
+      <div id="content">
         <h2>快速入门</h2>
         <p>
             设想的情景：<strong style="color:red">帮助者</strong>(使用 Dayon! 主控端 Assistant) 使用远程桌面应用 Dayon! <strong style="color:blue">帮助</strong> <strong style="color:red">被帮助者</strong>(下文称为用户，使用 Dayon! 用户端 Assisted)
@@ -115,7 +139,7 @@
              的端口号告诉被帮助的用户，这样用户才能发起连接（稍后会详细介绍）。
         <p>
             关于网络配置要提的就是这些。<br>
-            <strong>对于那些不耐烦的人：</strong> <a href="#assistant-start">戳这里</a> 直达 <em>Assistant 主控端 </em> 
+            <strong>对于那些不耐烦的人：</strong> <a href="#assistant-start">戳这里</a> 直达 <em>Assistant 主控端 </em>
             如何开始监听会话。
         <p>
             但首先让我们一起了解下高级配置选项。
@@ -123,7 +147,7 @@
         <p>
             <img src="assistant.png" alt="Assistant"> &nbsp; <a id="assistant-details" class="no"><strong>主控端高级设置</strong></a>
         <p>
-            使用该表单来设置 Assisted 用户端 的<strong>屏幕捕获</strong>；你可以配置 两次屏幕捕获（又名滴答）之间的时间间隔（以毫秒为单位）以及画面灰度级数。 
+            使用该表单来设置 Assisted 用户端 的<strong>屏幕捕获</strong>；你可以配置 两次屏幕捕获（又名滴答）之间的时间间隔（以毫秒为单位）以及画面灰度级数。
         <p>
             <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings">
         <p>
@@ -163,7 +187,7 @@
         <h3>剪贴板传输</h3>
         <p>
             通过单击向上或向下按钮，可以将 本机(你的)的剪贴板内容 发送到 用户计算机的剪贴板上 (向上的按钮) 或者 获取 用
-            户计算机剪贴板内容 到 本机的剪贴板 (向下的按钮)。 
+            户计算机剪贴板内容 到 本机的剪贴板 (向下的按钮)。
         <p>
             <img src="assistant_clipboard.jpg" alt="Dayon! Assistent : Clipboard transfer">
         <p>
@@ -218,6 +242,6 @@ autoConnect: false</pre>
             That's all folks !  更多信息请查看 <a href="zh_support.html">支持</a> 页面。
     </div>
     <div id="footer"></div>
-</div>
+  </div>
 </body>
 </html>

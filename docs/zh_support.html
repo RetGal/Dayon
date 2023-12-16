@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh">
-<head>
+  <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="description" content="Remote assistance made easy!"/>
@@ -9,13 +9,37 @@
     <title>Dayon! - 为您的家人和朋友提供远程协助</title>
     <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-</head>
-<body>
-<div id="container">
+  </head>
+  <body>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="de_download.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+          <a href="fr_download.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+          <a href="download.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
+        </div>
+        <a href="zh_index.html">首页</a><br/>
+        <a href="zh_quickstart.html">快速入门</a><br/>
+        <a href="zh_download.html">下载</a><br/>
+        <a href="zh_support.html">支持</a><br/>
+        <a href="zh_feedback.html">反馈</a><br/>
+        <a href="zh_privacy.html">隐私</a><br/>
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+      </nav>
+    </div>
+  </div>
+  <div id="container">
     <div id="top">
-        <a href="support.html"><img src="great_britain.png" width="32" height="32" alt="English"></a>
-        <a href="de_support.html"><img src="germany.png" width="32" height="32" alt="Deutsch"></a>
-        <a href="fr_support.html"><img src="france.png" width="32" height="32" alt="Français"></a>
+        <a href="de_download.html"><img src="germany.png" width="32" height="32" alt="Deutsch"/></a>
+        <a href="fr_download.html"><img src="france.png" width="32" height="32" alt="Français"/></a>
+        <a href="download.html"><img src="great_britain.png" width="32" height="32" alt="English"/></a>
     </div>
     <div id="menu">
         <a href="zh_index.html">首页</a>
@@ -53,8 +77,8 @@
         <p>主控端(Assistant)下方状态栏正在显示一组计数器。
         <ol>
             <li>网络带宽使用情况
-            <li>压缩比：初始捕获（仅差异）已被压缩的次数 
-            <li>“图块”数量：通过网络传输的“图块”数量以及缓存命中率。 
+            <li>压缩比：初始捕获（仅差异）已被压缩的次数
+            <li>“图块”数量：通过网络传输的“图块”数量以及缓存命中率。
             <li>跳过的捕获：由于屏幕捕获间隔设置过低(即主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔设置太低)导致远程计算机无法捕获的画面数量。为了减少画面丢失，你必须增加屏幕捕获间隔，增大 Assistant-首选项-屏幕捕获 中的捕获间隔值。
             <li>合并的“图块”：传输前就被合并的截屏。这是由于设置的屏幕捕获频率对当前所选的压缩方法来说太高了(压缩速度 << 捕获速度)。为了减少由此导致的画面丢失(或失真)，你必须提高 主控端Assistant-首选项-屏幕捕获中的屏幕捕获间隔 或 更改 主控端Assistant-首选项-压缩-压缩算法 使用更快的压缩算法。
             <li>内存
@@ -81,6 +105,6 @@
         </p>
     </div>
     <div id="footer"></div>
-</div>
-</body>
+  </div>
+  </body>
 </html>
