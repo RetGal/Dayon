@@ -69,8 +69,8 @@ class RunnerTest {
         Map<String, String> programArgs = extractProgramArgs(args);
         // then
         assertEquals(2, programArgs.size(), "Unexpected number of extracted ProgramArgs");
-        assertEquals("en", programArgs.get("lang"), "Key 'lang' shold have value 'en'");
-        assertEquals("BAR", programArgs.get("foo"), "Key 'foo' shold have value 'BAR'");
+        assertEquals("en", programArgs.get("lang"), "Key 'lang' should have value 'en'");
+        assertEquals("BAR", programArgs.get("foo"), "Key 'foo' should have value 'BAR'");
     }
 
     @Test

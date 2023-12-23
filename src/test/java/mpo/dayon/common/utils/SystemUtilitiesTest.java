@@ -1,5 +1,6 @@
 package mpo.dayon.common.utils;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -7,6 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 
 class SystemUtilitiesTest {
@@ -105,4 +110,17 @@ class SystemUtilitiesTest {
 		// when, then
 		assertTrue(isValidPortNumber(port));
 	}
+
+	@Test
+	void shouldObtainWritableTempDir() throws IOException {
+		// when, then
+		assertTrue(Files.isWritable(new File(getTempDir()).toPath()), "TempDir should be writable");
+	}
+
+	@Test
+	void shouldObtainJarDir() throws IOException {
+		// when, then
+		assertTrue(new File(format("%s%sdayon.jar", getJarDir(), File.separator)).exists(), "JarDir should contain dayon.jar");
+	}
+
 }

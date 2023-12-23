@@ -24,6 +24,14 @@ class MemByteBufferTest {
     }
 
     @Test
+    void write() {
+        final int val = 234;
+        buffer.write(val);
+        assertEquals(1, buffer.size());
+        assertEquals((byte) val, buffer.getInternal()[0]);
+    }
+
+    @Test
     void writeInt() {
         buffer.writeInt(BEAST);
         assertEquals(4, buffer.size());
