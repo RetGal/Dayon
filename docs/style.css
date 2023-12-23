@@ -17,13 +17,21 @@ img {
 
 #top {
   height:130px;
+  margin-top: 17px;
   padding-bottom:1.0em;
   background:url('dayon.png') no-repeat left;
   text-align:right;
 }
 
-#top img {
-  margin:16px 0 0 4px;
+#top a {
+  margin-left: 10px;
+  font-size:150%;
+  text-decoration:none;
+  color:#666;
+}
+
+#top a:hover {
+  color:#307fe1;
 }
 
 #menu {
