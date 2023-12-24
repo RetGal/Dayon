@@ -1,13 +1,13 @@
-# Dayon! 
+# <img src="docs/dayon.png" alt="Dayon!"/>
 ![Java CI (Maven)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Maven)/badge.svg)
 ![Java CI (Ant)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Ant)/badge.svg)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=RetGal_Dayon&metric=alert_status)](https://sonarcloud.io/dashboard?id=RetGal_Dayon)
 [![dayon](https://snapcraft.io/dayon/badge.svg)](https://snapcraft.io/dayon)
 
-Dayon! is an easy to use, cross-platform remote desktop assistance solution.
+Dayon! is an easy-to-use, cross-platform remote desktop assistance solution.
 
 It consists of two parts - one for the assistant and one for the assisted. Both are included in one single package.
-As quick launch versions for Windows, they are also available as individual binaries and as snap for various linux distributions.
+As quick launch versions for Windows, they are also available as individual binaries, as snap, flatpak or nix for various linux distributions.
 
 ## Key features
 
