@@ -25,7 +25,6 @@ public class AssistedRunner {
 
     public static void launchAssisted(String assistantHost, String assistantPort) {
         final Assisted assisted = new Assisted();
-        assisted.setup();
         // cli args have precedence
         if (assistantHost == null || assistantPort == null) {
             final Map<String, String> config = readPresetFile();

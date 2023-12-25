@@ -55,12 +55,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
-    public void setup() {
+    public Assisted() {
         final String lnf = getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
         } catch (Exception ex) {
-            Log.warn(format("Could not set the [%s] L&F", lnf), ex);
+            Log.warn(format("Could not set the L&F [%s]", lnf), ex);
         }
     }
 

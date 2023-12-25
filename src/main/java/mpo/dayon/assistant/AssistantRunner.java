@@ -13,15 +13,12 @@ public class AssistantRunner {
 
 	private static String[] appendAssistant(String[] args) {
 		String[] combined = Arrays.copyOf(args, args.length + 1);
-		String[] additional = new String[1];
-		additional[0] = "assistant";
+		String[] additional = new String[]{"assistant"};
 		System.arraycopy(additional, 0, combined, args.length, 1);
 		return combined;
 	}
 
 	public static void launchAssistant() {
-		final Assistant assistant = new Assistant();
-		assistant.configure();
-		assistant.start();
+		new Assistant();
 	}
 }

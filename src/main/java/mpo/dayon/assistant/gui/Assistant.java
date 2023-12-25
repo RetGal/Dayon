@@ -59,8 +59,6 @@ public class Assistant implements ClipboardOwner {
 
     private final NetworkAssistantEngine network;
 
-    private final ControlEngine control;
-
     private final BitCounter receivedBitCounter;
 
     private final TileCounter receivedTileCounter;
@@ -73,7 +71,7 @@ public class Assistant implements ClipboardOwner {
 
     private AssistantFrame frame;
 
-    private AssistantActions actions;
+    private final AssistantActions actions;
 
     private AssistantConfiguration configuration;
 
@@ -90,8 +88,6 @@ public class Assistant implements ClipboardOwner {
     private int prevWidth = -1;
 
     private int prevHeight = -1;
-
-    private final Set<Counter<?>> counters;
 
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
 
@@ -117,7 +113,7 @@ public class Assistant implements ClipboardOwner {
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
 
-        counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
+        Set<Counter<?>> counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
 
         DeCompressorEngine decompressor = new DeCompressorEngine(new MyDeCompressorEngineListener());
         decompressor.start(8);
@@ -129,14 +125,9 @@ public class Assistant implements ClipboardOwner {
         network.configure(networkConfiguration);
         network.addListener(new MyNetworkAssistantEngineListener());
 
-        control = new ControlEngine(network);
-        control.start();
-
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
-    }
 
-    public void configure() {
         this.configuration = new AssistantConfiguration();
         final String lnf = configuration.getLookAndFeelClassName();
         try {
@@ -144,13 +135,11 @@ public class Assistant implements ClipboardOwner {
         } catch (Exception ex) {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
-    }
 
-    public void start() {
         actions = createAssistantActions();
         frame = new AssistantFrame(actions, counters);
         FatalErrorHandler.attachFrame(frame);
-        frame.addListener(control);
+        frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
         initUpnp();
     }
@@ -716,32 +705,33 @@ public class Assistant implements ClipboardOwner {
         submenu.setIcon(getOrCreateIcon(ImageNames.LNF));
         submenu.setToolTipText(translate("lnf.switch"));
 
-        final LookAndFeel current = UIManager.getLookAndFeel();
-        submenu.add(new JMenuItem(current.getName()));
+        final String current = UIManager.getLookAndFeel().getName();
+        submenu.add(new JMenuItem(current));
         submenu.addSeparator();
 
         for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (info.getName().equals(current.getName())) {
+            String lnf = info.getName();
+            if (lnf.equals(current)) {
                 continue;
             }
-            final JMenuItem mi = new JMenuItem(info.getName());
-            mi.addActionListener(ev1 -> switchLookAndFeel(info));
-            mi.setText(info.getName());
+            final JMenuItem mi = new JMenuItem(lnf);
+            mi.addActionListener(ev1 -> switchLookAndFeel(lnf));
+            mi.setText(lnf);
             submenu.add(mi);
         }
         return submenu;
     }
 
-    private void switchLookAndFeel(UIManager.LookAndFeelInfo lnf) {
+    private void switchLookAndFeel(String lnf) {
         try {
             if (frame != null) {
-                UIManager.setLookAndFeel(lnf.getClassName());
+                UIManager.setLookAndFeel(lnf);
                 SwingUtilities.updateComponentTreeUI(frame);
-                configuration = new AssistantConfiguration(lnf.getClassName());
+                configuration = new AssistantConfiguration(lnf);
                 configuration.persist();
             }
         } catch (Exception ex) {
-            Log.warn("Could not set the L&F [" + lnf.getName() + "]", ex);
+            Log.warn(format("Could not set the L&F [%s]", lnf), ex);
         }
     }
 

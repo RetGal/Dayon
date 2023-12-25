@@ -17,8 +17,8 @@ import static org.mockito.Mockito.verify;
 
 class AssistedTest {
 
-    Assisted assisted;
-    LogAppender logApp;
+    private Assisted assisted;
+    private LogAppender logApp;
 
     @BeforeEach
     void init() throws NoSuchFieldException, IllegalAccessException {
@@ -33,13 +33,10 @@ class AssistedTest {
     void startWithoutConfig() {
         // given
         if (!GraphicsEnvironment.isHeadless()) {
-            // when
-            boolean value = assisted.start("localhost", null, false);
-
-            // then
+            // when  then
+            assertTrue(assisted.start("localhost", null, false));
             verify(logApp).append(LogLevel.INFO, "Assisted start");
             verify(logApp, never()).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:null]");
-            assertTrue(value);
         }
     }
 
@@ -47,13 +44,10 @@ class AssistedTest {
     void startAutoconnect() {
         // given
         if (!GraphicsEnvironment.isHeadless()) {
-            // when
-            boolean value = assisted.start("localhost", "12345", true);
-
-            // then
+            // when then
+            assertTrue(assisted.start("localhost", "12345", true));
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:12345]");
             verify(logApp).append(LogLevel.INFO, "Connecting to [localhost][12345]...");
-            assertTrue(value);
         }
     }
 
@@ -61,13 +55,10 @@ class AssistedTest {
     void startAutoconnectFalse() {
         // given
         if (!GraphicsEnvironment.isHeadless()) {
-            // when
-            boolean value = assisted.start("localhost", "23456", false);
-
-            // then
+            // when then
+            assertTrue(assisted.start("localhost", "23456", false));
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:23456]");
             verify(logApp, never()).append(LogLevel.INFO, "Connecting to [localhost][23456]...");
-            assertTrue(value);
         }
     }
 }
