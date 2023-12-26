@@ -11,9 +11,9 @@ public final class ImageUtilities {
     private static final Map<String, ImageIcon> ICON_CACHE = new HashMap<>();
 
     public static ImageIcon getOrCreateIcon(String name) {
-        final String rname = "/images/" + name;
         ImageIcon icon = ICON_CACHE.get(name);
         if (icon == null) {
+            final String rname = "/images/" + name;
             try {
                 icon = new ImageIcon(ImageUtilities.class.getResource(rname));
             } catch (NullPointerException ex) {

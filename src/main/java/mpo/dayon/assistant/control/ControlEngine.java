@@ -21,13 +21,10 @@ import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState
 public class ControlEngine implements AssistantFrameListener {
 	private final NetworkAssistantEngine network;
 
-	private ThreadPoolExecutor executor;
+	private final ThreadPoolExecutor executor;
 
 	public ControlEngine(NetworkAssistantEngine network) {
 		this.network = network;
-	}
-
-	public void start() {
 		executor = new ThreadPoolExecutor(1, 1, 0L, MILLISECONDS, new LinkedBlockingQueue<>());
 		executor.setThreadFactory(new DefaultThreadFactoryEx("ControlEngine"));
 	}

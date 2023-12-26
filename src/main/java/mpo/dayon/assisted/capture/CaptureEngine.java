@@ -116,7 +116,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                     // to handle the reset message until the assistant without having to
                     // change anything (e.g., merging mechanism in the compressor engine).
                     reset.set(true);
-                    Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId , configuration));
+                    Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId, configuration));
                     reconfigured = false;
                 }
             }
@@ -194,8 +194,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
-                    final Position position = new Position(tx, ty);
-                    dirty[tileId] = new CaptureTile(captureId, tileId, cs, position, tw, th, tileData);
+                    dirty[tileId] = new CaptureTile(captureId, tileId, cs, new Position(tx, ty), tw, th, tileData);
                 }
                 ++tileId;
             }

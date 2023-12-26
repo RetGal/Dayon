@@ -3,7 +3,6 @@ package mpo.dayon.common.gui.common;
 import mpo.dayon.common.preference.Preferences;
 
 import java.awt.*;
-import java.util.Objects;
 
 class FrameConfiguration {
 
@@ -59,7 +58,7 @@ class FrameConfiguration {
 
         final FrameConfiguration that = (FrameConfiguration) o;
 
-        return dimension.height == Objects.requireNonNull(that).getHeight() && dimension.width == that.getWidth() && position.getX() == that.getX() && position.getY() == that.getY();
+        return dimension.height == that.getHeight() && dimension.width == that.getWidth() && position.getX() == that.getX() && position.getY() == that.getY();
     }
 
     public int hashCode() {

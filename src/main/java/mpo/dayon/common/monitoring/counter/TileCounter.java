@@ -18,13 +18,11 @@ public class TileCounter extends AbsoluteValueCounter {
 
 		final int tiles = (int) (value >> 32 & 0xffffffffL);
 		final int hits = (int) (value & 0xffffffffL);
-
 		final double percent = 100.0 * (hits / (double) tiles);
 
 		if (Double.isNaN(percent)) {
 			return String.format("%d (-%%)", tiles);
 		}
-
 		return String.format("%d (%.1f%%)", tiles, percent);
 	}
 

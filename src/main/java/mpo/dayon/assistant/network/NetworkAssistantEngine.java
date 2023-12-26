@@ -94,12 +94,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
-    public boolean manageRouterPorts(int oldPort, int newPort) {
+    public void manageRouterPorts(int oldPort, int newPort) {
         if (UPnP.isUPnPAvailable()) {
             UPnP.closePortTCP(oldPort);
-            return UPnP.openPortTCP(newPort, APP_NAME);
+            UPnP.openPortTCP(newPort, APP_NAME);
         }
-        return false;
     }
 
     // right, keep streams open - forever!

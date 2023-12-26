@@ -49,9 +49,6 @@ public final class Log {
         return file;
     }
 
-    public static boolean isDebugEnabled() {
-        return DEBUG;
-    }
 
     public static void debug(String message) {
         if (DEBUG) {

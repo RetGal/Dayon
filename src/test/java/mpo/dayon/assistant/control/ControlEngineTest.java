@@ -16,7 +16,6 @@ class ControlEngineTest {
     void init() {
         network = mock(NetworkAssistantEngine.class);
         controlEngine = new ControlEngine(network);
-        controlEngine.start();
     }
 
     @Test
