@@ -4,7 +4,7 @@ import mpo.dayon.common.capture.Gray8Bits;
 
 import java.awt.*;
 
-interface CaptureFactory {
+public interface CaptureFactory {
 
 	Dimension getDimension();
 
