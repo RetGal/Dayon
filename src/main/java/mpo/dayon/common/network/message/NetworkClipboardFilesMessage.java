@@ -89,8 +89,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private void extractFileMetaData(File node, List<FileMetaData> fileMetaDatas, String basePath) {
         if (node.isFile()) {
             fileMetaDatas.add(new FileMetaData(node.getPath(), node.length(), basePath));
-        }
-        if (node.isDirectory()) {
+        } else if (node.isDirectory()) {
             Arrays.stream(Objects.requireNonNull(node.listFiles())).parallel().forEachOrdered(file -> extractFileMetaData(file, fileMetaDatas, basePath));
         }
     }

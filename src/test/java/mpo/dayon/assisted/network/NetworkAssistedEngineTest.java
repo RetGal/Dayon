@@ -8,8 +8,8 @@ import static org.mockito.Mockito.verify;
 
 class NetworkAssistedEngineTest {
 
-    NetworkAssistedEngine engine;
-    NetworkAssistedEngineListener listener;
+    private NetworkAssistedEngine engine;
+    private NetworkAssistedEngineListener listener;
 
     @BeforeEach
     void init() {

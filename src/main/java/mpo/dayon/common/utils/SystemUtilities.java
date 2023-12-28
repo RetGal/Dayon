@@ -6,7 +6,6 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,11 +17,12 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class SystemUtilities {
 
     public static final String JAVA_CLASS_PATH = "java.class.path";
-    public static final String FLATPACK_BROWSER = "/app/bin/dayon.browser";
+    public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
 
@@ -87,7 +87,7 @@ public final class SystemUtilities {
     }
 
     public static String getSystemPropertiesEx() {
-        return getSystemProperties().stream().map(line -> line + getProperty("line.separator")).collect(Collectors.joining());
+        return getSystemProperties().stream().map(line -> line + System.lineSeparator()).collect(Collectors.joining());
     }
 
     public static String getRamInfo() {
@@ -209,7 +209,6 @@ public final class SystemUtilities {
         conn.setInstanceFollowRedirects(false);
         conn.setReadTimeout(3000);
         conn.disconnect();
-        return new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))
-                .readLine().trim();
+        return new BufferedReader(new InputStreamReader(conn.getInputStream(), UTF_8)).readLine().trim();
     }
 }

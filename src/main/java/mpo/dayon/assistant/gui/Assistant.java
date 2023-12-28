@@ -275,7 +275,7 @@ public class Assistant implements ClipboardOwner {
                     if (desktop.isSupported(Desktop.Action.BROWSE)) {
                         desktop.browse(getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()));
                     } else if (isFlat()) {
-                        new ProcessBuilder(FLATPACK_BROWSER, getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
+                        new ProcessBuilder(FLATPAK_BROWSER, getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
                     }
                 }
             } catch (IOException ex) {

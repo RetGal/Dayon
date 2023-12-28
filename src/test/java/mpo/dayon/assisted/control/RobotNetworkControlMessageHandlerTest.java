@@ -15,8 +15,8 @@ import static org.mockito.Mockito.verify;
 
 class RobotNetworkControlMessageHandlerTest {
 
-    Robot robot = mock(Robot.class);
-    RobotNetworkControlMessageHandler controlMessageHandler = new RobotNetworkControlMessageHandler(robot);
+    private final Robot robot = mock(Robot.class);
+    private final RobotNetworkControlMessageHandler controlMessageHandler = new RobotNetworkControlMessageHandler(robot);
 
     @Test
     void testHandleMessagePress0() {

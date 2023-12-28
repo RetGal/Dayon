@@ -7,8 +7,8 @@ import static org.mockito.Mockito.*;
 
 class NetworkAssistantEngineTest {
 
-    NetworkAssistantEngine engine;
-    NetworkAssistantEngineListener listener;
+    private NetworkAssistantEngine engine;
+    private NetworkAssistantEngineListener listener;
 
     @BeforeEach
     void init() {

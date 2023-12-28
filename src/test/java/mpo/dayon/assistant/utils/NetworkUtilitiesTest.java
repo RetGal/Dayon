@@ -18,6 +18,6 @@ class NetworkUtilitiesTest {
 
         // then
         assertFalse(inetAddresses.isEmpty());
-        assertEquals(loopBack, inetAddresses.get(inetAddresses.size()-1).toString());
+        assertEquals(loopBack, inetAddresses.get(inetAddresses.size()-1));
     }
 }

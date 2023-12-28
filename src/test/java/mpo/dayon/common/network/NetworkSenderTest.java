@@ -34,7 +34,7 @@ class NetworkSenderTest {
     private NetworkSender sender;
 
     @BeforeEach
-    void init() throws IOException {
+    void init() {
         outMock = Mockito.mock(ObjectOutputStream.class);
         valueCaptor = ArgumentCaptor.forClass(int.class);
         sender = new NetworkSender(outMock);
