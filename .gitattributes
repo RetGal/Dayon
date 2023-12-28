@@ -1,2 +1,2 @@
-resources/jre/* linguist-vendored
-resources/jrex/* linguist-vendored
+resources/jre/** linguist-vendored
+resources/jrex/** linguist-vendored
