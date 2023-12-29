@@ -33,9 +33,9 @@ The ![latest version](https://github.com/RetGal/Dayon/releases) is v13.0 (Beard 
 
 This version offers improved security through individually created certificates with fingerprints that can be compared. However, a compatibility mode is available for connection with older versions.
 
-The app is available directly from the <a href="https://www.microsoft.com/store/apps/9PBM5KW0C790">Microsoft Store</a>:
+The app is available directly from the [Microsoft Store](https://apps.microsoft.com/detail/9PBM5KW0C790):
 
-<a href='//www.microsoft.com/store/apps/9pbm5kw0c790?cid=storebadge&ocid=badge'><img src='https://developer.microsoft.com/store/badges/images/English_get_L.png' alt='English badge' width="127" height="52"/></a>
+[<img src='https://developer.microsoft.com/store/badges/images/English_get_L.png' alt='English badge' width="127" height="52"/>](https://apps.microsoft.com/detail/9PBM5KW0C790)
 
 as snap:
 
@@ -43,7 +43,7 @@ as snap:
 
 as flatpak:
 
-[Flathub](https://flathub.org/apps/details/io.github.retgal.Dayon)
+[<img src="https://flathub.org/assets/badges/flathub-badge-en.svg" width="180"/>](https://flathub.org/apps/details/io.github.retgal.Dayon)
 
 as nix:
 
