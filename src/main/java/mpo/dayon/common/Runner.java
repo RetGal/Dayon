@@ -11,10 +11,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -128,5 +127,39 @@ public interface Runner {
                 Log.error(format("Failed to create keystore [%s]", keystore), e);
             }
         }
+    }
+
+    static Map<String, String> readPresetFile(String presetFile) {
+        final List<String> paths = Arrays.asList(System.getProperty("dayon.home"), System.getProperty("user.home"), getJarDir());
+        return paths.stream().map(path -> new File(path, presetFile)).filter(Runner::isReadable).map(Runner::parsePresetFileContent).filter(content -> !content.isEmpty()).findFirst().orElse(Collections.emptyMap());
+    }
+
+    static boolean isReadable(File presetFile) {
+        return presetFile.exists() && presetFile.isFile() && presetFile.canRead();
+    }
+
+    static Map<String, String> parsePresetFileContent(File presetFile) {
+        try (Stream<String> lines = Files.lines(presetFile.toPath())) {
+            final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), Runner::parseValue));
+            if ((content.containsKey("host") && content.containsKey("port")) || content.containsKey("tokenServerUrl")) {
+                Log.info(format("Using connection settings from [%s]", presetFile.getPath()));
+                return content;
+            }
+        } catch (IOException e) {
+            Log.warn(e.getMessage());
+        }
+        return Collections.emptyMap();
+    }
+
+    static String parseValue(String[] s) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < s.length; i++) {
+            sb.append(s[i].trim().replaceAll("^[\"']+|[\"']+$", "")).append(":");
+        }
+        return sb.deleteCharAt(sb.length()-1).toString();
+    }
+
+    static boolean isAutoConnect(Map<String, String> config) {
+        return !config.containsKey("autoConnect") || !config.get("autoConnect").equalsIgnoreCase("false");
     }
 }

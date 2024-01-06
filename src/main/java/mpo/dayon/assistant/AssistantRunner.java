@@ -5,6 +5,8 @@ import mpo.dayon.common.Runner;
 
 import java.util.Arrays;
 
+import static mpo.dayon.common.Runner.readPresetFile;
+
 public class AssistantRunner {
 
 	public static void main(String[] args) {
@@ -19,6 +21,6 @@ public class AssistantRunner {
 	}
 
 	public static void launchAssistant() {
-		new Assistant();
+		new Assistant(readPresetFile("assistant.yaml").get("tokenServerUrl"));
 	}
 }

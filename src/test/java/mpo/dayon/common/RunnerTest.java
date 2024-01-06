@@ -5,10 +5,17 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 import static mpo.dayon.common.Runner.*;
+import static mpo.dayon.common.utils.SystemUtilities.getJarDir;
 import static org.junit.jupiter.api.Assertions.*;
 
 class RunnerTest {
@@ -91,5 +98,20 @@ class RunnerTest {
         // then
         assertNotNull(appHomeDir);
         assertTrue(appHomeDir.getName().endsWith(".dayon"), "No AppHomeDir found");
+    }
+
+    @Test
+    void  readPresetFile() throws IOException {
+        // given
+        List<String> lines = Arrays.asList("host: \"localhost\"", "port: 8888", "tokenServerUrl: 'https://foo.bar'");
+        final Path path = Paths.get(getJarDir(), "test.yaml");
+        Files.write(path, lines);
+        // when
+        final Map<String, String> content = Runner.readPresetFile(path.toString());
+        // then
+        assertEquals("localhost", content.get("host"));
+        assertEquals("8888", content.get("port"));
+        assertEquals("https://foo.bar", content.get("tokenServerUrl"));
+        assertTrue(isAutoConnect(content));
     }
 }

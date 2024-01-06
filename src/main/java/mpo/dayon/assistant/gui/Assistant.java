@@ -53,9 +53,10 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?port=%s";
+    private static final String PORT_PARAM = "?port=%s";
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
     private static final String QUICKSTART_PAGE = translate("quickstart.html");
+    private final String tokenServerUrl;
 
     private final NetworkAssistantEngine network;
 
@@ -97,7 +98,14 @@ public class Assistant implements ClipboardOwner {
 
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
-    public Assistant() {
+    public Assistant(String tokenServerUrl) {
+        if (tokenServerUrl != null) {
+            this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
+            System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
+        } else {
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
+        }
+
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
 
@@ -648,7 +656,7 @@ public class Assistant implements ClipboardOwner {
                     final Cursor cursor = frame.getCursor();
                     frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     try {
-                        final URL url = new URL(format(TOKEN_SERVER_URL, networkConfiguration.getPort()));
+                        final URL url = new URL(format(tokenServerUrl, networkConfiguration.getPort()));
                         try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
                             token = lines.readLine();
                         }

@@ -24,7 +24,7 @@ public final class SystemUtilities {
     public static final String JAVA_CLASS_PATH = "java.class.path";
     public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
-    private static final String TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/?token=%s";
+    public static final String DEFAULT_TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/";
 
     private SystemUtilities() {
     }
@@ -203,8 +203,8 @@ public final class SystemUtilities {
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
-    public static String resolveToken(String token) throws IOException {
-        URL url = new URL(format(TOKEN_SERVER_URL, token));
+    public static String resolveToken(String tokenServerUrl, String token) throws IOException {
+        URL url = new URL(format(tokenServerUrl, token));
         HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         conn.setInstanceFollowRedirects(false);
         conn.setReadTimeout(3000);

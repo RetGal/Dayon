@@ -39,6 +39,11 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
+
+    private static final String TOKEN_PARAM = "?token=%s";
+
+    private final String tokenServerUrl;
+
     private AssistedFrame frame;
 
     private NetworkAssistedEngineConfiguration configuration;
@@ -55,7 +60,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
-    public Assisted() {
+    public Assisted(String tokenServerUrl) {
+        if (tokenServerUrl != null) {
+            this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
+            System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
+        } else {
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
+        }
         final String lnf = getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
@@ -167,7 +178,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             String connectionParams = null;
             try {
-                connectionParams = resolveToken(token);
+                connectionParams = resolveToken(tokenServerUrl, token);
             } catch (IOException ie){
                 Log.warn("Could not resolve token " + token);
             }

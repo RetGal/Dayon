@@ -24,7 +24,7 @@ class AssistedTest {
     void init() throws NoSuchFieldException, IllegalAccessException {
         final Field out = Log.class.getDeclaredField("out");
         out.setAccessible(true);
-        assisted = new Assisted();
+        assisted = new Assisted(null);
         logApp = Mockito.spy(new ConsoleAppender());
         out.set("out", logApp);
     }
