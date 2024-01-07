@@ -154,7 +154,7 @@ public interface Runner {
     static String parseValue(String[] s) {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < s.length; i++) {
-            sb.append(s[i].trim().replaceAll("(^[\"']|[\"']$)", "")).append(":");
+            sb.append(s[i].trim().replaceAll("(^[\"'])|([\"']$)", "")).append(":");
         }
         return sb.deleteCharAt(sb.length()-1).toString();
     }
