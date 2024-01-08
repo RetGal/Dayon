@@ -7,14 +7,13 @@ if (isset($_GET['port'])) {
     $port = clean($_GET['port'], 6);
     if (isValidPort($port)) {
         $pdo = new PDO('sqlite:'.DB_NAME);
+        createDatabase($pdo);
         echo createToken($pdo, $port),"\n";
         if (rand(0, 5) == 5) {
             removeOldTokens($pdo);
         }
     }
-}
-
-if (isset($_GET['token'])) {
+} else if (isset($_GET['token'])) {
     $token = clean($_GET['token'], 7);
     $pdo = new PDO('sqlite:'.DB_NAME);
     echo readToken($token, $pdo),"\n";
@@ -97,5 +96,12 @@ function updateToken($token, $address, $pdo) {
 	$stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
 	$stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
 	$stmt->execute();
+}
+
+function createDatabase($pdo) {
+    $sql = "CREATE TABLE IF NOT EXISTS `tokens` (`token` TEXT,`assistant` TEXT,`port` INTEGER,`assisted` TEXT,`ts` INTEGER, PRIMARY KEY(`token`))";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+    // print_r($stmt->errorInfo());
 }
 ?>
