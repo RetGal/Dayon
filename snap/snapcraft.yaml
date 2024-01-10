@@ -23,7 +23,7 @@ lint:
 apps:
   assisted:
     extensions:
-      [gnome]
+      [gnome-3-28]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
@@ -34,7 +34,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome]
+      [gnome-3-28]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
@@ -45,7 +45,7 @@ apps:
 
   browser:
     extensions:
-      [gnome]
+      [gnome-3-28]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
