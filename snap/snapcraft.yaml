@@ -12,13 +12,8 @@ description: |
   - secure, end-to-end encrypted communication (TLS 1.3)
 license: GPL-3.0
 grade: stable
-base: core22
+base: core18
 confinement: strict
-
-lint:
-  ignore:
-    - library:
-        - usr/lib/jvm/java-*/lib/*.so
 
 apps:
   assisted:
@@ -56,19 +51,32 @@ parts:
     source: https://github.com/retgal/dayon.git
     source-tag: master
     source-type: git
-    maven-parameters:
+    maven-options:
       [-Psnap]
 
     build-packages:
-      - openjdk-11-jdk
-      - maven
+      [default-jre]
 
     override-build: |
-      craftctl default
-      cp target/dayon.browser $CRAFT_PART_INSTALL/bin/
-      cp target/dayon.launcher $CRAFT_PART_INSTALL/bin/
-      cp target/dayon.png $CRAFT_PART_INSTALL/bin/
-      rm $CRAFT_PART_INSTALL/jar/original-dayon.jar
+      snapcraftctl build
+      cp target/dayon.browser $SNAPCRAFT_PART_INSTALL/bin/
+      cp target/dayon.launcher $SNAPCRAFT_PART_INSTALL/bin/
+      cp target/dayon.png $SNAPCRAFT_PART_INSTALL/bin/
+
+    override-pull: |
+      snapcraftctl pull
+      snapcraftctl set-version "$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)"
+
+    filesets:
+      exclude-original-jar:
+        [-jar/original-dayon.jar]
+
+    stage:
+      [$exclude-original-jar]
 
     stage-packages:
-      [openjdk-11-jre]
+      [default-jre]
+
+    override-prime: |
+      snapcraftctl prime
+      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
