@@ -1,6 +1,6 @@
-<div id="header" align="center">
+<p align="center">
   <img src="docs/dayon.banner.png" width="100%"/>
-</div>
+</p>
 
 ![Java CI (Maven)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Maven)/badge.svg)
 ![Java CI (Ant)](https://github.com/RetGal/Dayon/workflows/Java%20CI%20(Ant)/badge.svg)
