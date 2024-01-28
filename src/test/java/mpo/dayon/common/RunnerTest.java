@@ -101,7 +101,7 @@ class RunnerTest {
     }
 
     @Test
-    void  readPresetFile() throws IOException {
+    void readPresetFile() throws IOException {
         // given
         List<String> lines = Arrays.asList("host: \"localhost\"", "port: 8888", "tokenServerUrl: 'https://foo.bar'");
         final Path path = Paths.get(getJarDir(), "test.yaml");
@@ -113,5 +113,17 @@ class RunnerTest {
         assertEquals("8888", content.get("port"));
         assertEquals("https://foo.bar", content.get("tokenServerUrl"));
         assertTrue(isAutoConnect(content));
+    }
+
+    @Test
+    void isReadableFileShouldReturnFalseForInexistingFile() {
+        // given when then
+        assertFalse(Runner.isReadableFile(new File("snafu")));
+    }
+
+    @Test
+    void isReadableFileShouldReturnFalseForDirectory() {
+        // given when then
+        assertFalse(Runner.isReadableFile(new File(System.getProperty("java.io.tmpdir"))));
     }
 }

@@ -131,11 +131,11 @@ public interface Runner {
 
     static Map<String, String> readPresetFile(String presetFile) {
         final List<String> paths = Arrays.asList(System.getProperty("dayon.home"), System.getProperty("user.home"), getJarDir());
-        return paths.stream().map(path -> new File(path, presetFile)).filter(Runner::isReadable).map(Runner::parsePresetFileContent).filter(content -> !content.isEmpty()).findFirst().orElse(Collections.emptyMap());
+        return paths.stream().map(path -> new File(path, presetFile)).filter(Runner::isReadableFile).map(Runner::parsePresetFileContent).filter(content -> !content.isEmpty()).findFirst().orElse(Collections.emptyMap());
     }
 
-    static boolean isReadable(File presetFile) {
-        return presetFile.exists() && presetFile.isFile() && presetFile.canRead();
+    static boolean isReadableFile(File presetFile) {
+        return presetFile.isFile() && presetFile.canRead();
     }
 
     static Map<String, String> parsePresetFileContent(File presetFile) {
