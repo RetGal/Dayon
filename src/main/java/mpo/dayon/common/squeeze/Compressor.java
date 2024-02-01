@@ -14,17 +14,17 @@ public final class Compressor {
     /**
      * NONE. (testing only)
      */
-     private static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NULL_Zipper());
+     private static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NullZipper());
 
     /**
      * ZIP (with regular run-length-encoding).
      */
-    private static final Compressor ZIP_COMPRESSOR = new Compressor(CompressionMethod.ZIP, new RegularRunLengthEncoder(), new ZIP_Zipper());
+    private static final Compressor ZIP_COMPRESSOR = new Compressor(CompressionMethod.ZIP, new RegularRunLengthEncoder(), new ZipZipper());
 
     /**
      * XZ.
      */
-    private static final Compressor XZ_COMPRESSOR = new Compressor(CompressionMethod.XZ, new NullRunLengthEncoder(), new XZ_Zipper());
+    private static final Compressor XZ_COMPRESSOR = new Compressor(CompressionMethod.XZ, new NullRunLengthEncoder(), new XzZipper());
 
     private final CompressionMethod method;
 

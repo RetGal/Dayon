@@ -5,7 +5,7 @@ import org.tukaani.xz.*;
 
 import java.io.*;
 
-public class XZ_Zipper implements Zipper {
+public class XzZipper implements Zipper {
 	@Override
     public MemByteBuffer zip(MemByteBuffer unCompressed) throws IOException {
 		try (MemByteBuffer compressed = new MemByteBuffer()) {
