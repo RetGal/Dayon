@@ -120,7 +120,8 @@ public interface Runner {
         Path keystore = Paths.get(format("%s%skeystore.jks", appHomeDir.getAbsolutePath(), File.separator));
         if (!Files.exists(keystore)) {
             Log.info(format("Creating new keystore [%s]", keystore));
-            ProcessBuilder builder = new ProcessBuilder("keytool", "-genkeypair", "-dname", "cn=Dayon!, ou=Dayon!, o=Dayon!, c=Dayon!, l=Dayon!", "-keyalg", "RSA", "-keysize", "4096", "-alias", "genkey",  "-validity", "3210", "-keystore", keystore.toString(), "-storepass", "spasspass");
+            String keytool = Paths.get(format("%s%sbin%skeytool", System.getProperty("java.home"), File.separator, File.separator)).toString();
+            ProcessBuilder builder = new ProcessBuilder(keytool, "-genkeypair", "-dname", "cn=Dayon!, ou=Dayon!, o=Dayon!, c=Dayon!, l=Dayon!", "-keyalg", "RSA", "-keysize", "4096", "-alias", "genkey",  "-validity", "3210", "-keystore", keystore.toString(), "-storepass", "spasspass");
             try {
                 builder.directory(appHomeDir).start();
             } catch (IOException e) {
