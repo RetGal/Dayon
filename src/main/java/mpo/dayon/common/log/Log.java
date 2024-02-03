@@ -43,7 +43,7 @@ public final class Log {
 
     private static File getOrCreateLogFile() throws IOException {
         final File file = new File(getProperty("dayon.home"), getProperty("dayon.application.name") + ".log");
-        if (file.exists() && file.isDirectory()) {
+        if (file.isDirectory()) {
             throw new IOException(format("Error creating %s", file.getName()));
         }
         return file;

@@ -8,9 +8,8 @@ public abstract class LogAppender {
 	private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
 	protected String format(LogLevel level, String message) {
-		message = (message == null) ? "" : message;
 		return String.format("[%20.20s] [%5.5s] (%s) %s", Thread.currentThread().getName(), level,
-				dateFormat.format(Date.from(Instant.now())), message);
+				dateFormat.format(Date.from(Instant.now())), (message == null) ? "" : message);
 	}
 
 	public void append(LogLevel level, String message) {
