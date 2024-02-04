@@ -22,7 +22,6 @@ public interface Runner {
 
     static void main(String[] args) {
         Runner.setDebug(args);
-        Runner.disableDynamicScale();
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         Runner.overrideLocale(programArgs.get("lang"));
@@ -76,10 +75,6 @@ public interface Runner {
 
     static boolean hasAssistant(String[] args) {
         return Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("assistant"));
-    }
-
-    static void disableDynamicScale() {
-        System.setProperty("sun.java2d.uiScale", "1");
     }
 
     static File getOrCreateAppHomeDir() {
