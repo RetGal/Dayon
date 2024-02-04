@@ -17,7 +17,7 @@
             <email>reto@galante.ch</email>
         </developer>
     </developers>
-    <inceptionYear>2016-2023</inceptionYear>
+    <inceptionYear>2016-2024</inceptionYear>
     <licenses>
         <license>
             <name>GPL-3</name>
@@ -27,8 +27,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <dayon.mainClass>mpo.dayon.common.Runner</dayon.mainClass>
         <sonar.organization>retgal-github</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
