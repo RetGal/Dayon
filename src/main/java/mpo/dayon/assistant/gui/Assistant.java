@@ -713,29 +713,28 @@ public class Assistant implements ClipboardOwner {
         submenu.setIcon(getOrCreateIcon(ImageNames.LNF));
         submenu.setToolTipText(translate("lnf.switch"));
 
-        final String current = UIManager.getLookAndFeel().getName();
-        submenu.add(new JMenuItem(current));
+        final LookAndFeel current = UIManager.getLookAndFeel();
+        submenu.add(new JMenuItem(current.getName()));
         submenu.addSeparator();
 
         for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            String lnf = info.getName();
-            if (lnf.equals(current)) {
+            if (info.getName().equals(current.getName())) {
                 continue;
             }
-            final JMenuItem mi = new JMenuItem(lnf);
-            mi.addActionListener(ev1 -> switchLookAndFeel(lnf));
-            mi.setText(lnf);
+            final JMenuItem mi = new JMenuItem(info.getName());
+            mi.addActionListener(ev1 -> switchLookAndFeel(info));
+            mi.setText(info.getName());
             submenu.add(mi);
         }
         return submenu;
     }
 
-    private void switchLookAndFeel(String lnf) {
+    private void switchLookAndFeel(UIManager.LookAndFeelInfo lnf) {
         try {
             if (frame != null) {
-                UIManager.setLookAndFeel(lnf);
+                UIManager.setLookAndFeel(lnf.getClassName());
                 SwingUtilities.updateComponentTreeUI(frame);
-                configuration = new AssistantConfiguration(lnf);
+                configuration = new AssistantConfiguration(lnf.getClassName());
                 configuration.persist();
             }
         } catch (Exception ex) {
