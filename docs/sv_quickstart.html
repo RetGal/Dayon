@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="description" content="Distanshjälp, helt enkelt!"/>
+    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Dayon! - Distanshjälp för din familj och dina vänner</title>
+    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+  </head>
+  <body>
+  <input id="toggle" type="checkbox"/>
+  <label for="toggle" class="hamburger">
+    <div class="top-bun"></div>
+    <div class="meat"></div>
+    <div class="bottom-bun"></div>
+  </label>
+  <div class="nav">
+    <div class="nav-wrapper">
+      <nav>
+        <div class="ls">
+          <a href="de_quickstart.html" title="Deutsch">DE</a>
+          <a href="fr_quickstart.html" title="Français">FR</a>
+          <a href="quickstart.html" title="English">EN</a>
+          <a href="zh_quickstart.html" title="简体中文">汉语</a>
+        </div>
+        <a href="sv_index.html">Home</a><br/>
+        <a href="sv_quickstart.html">Quick Start</a><br/>
+        <a href="sv_download.html">Download</a><br/>
+        <a href="sv_support.html">Support</a><br/>
+        <a href="sv_feedback.html">Feedback</a><br/>
+        <a href="sv_privacy.html">Privacy</a><br/>
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+      </nav>
+    </div>
+  </div>
+  <div id="container">
+    <div id="top">
+      <a href="de_quickstart.html" title="Deutsch">DE</a>
+      <a href="fr_quickstart.html" title="Français">FR</a>
+      <a href="quickstart.html" title="English">EN</a>
+      <a href="zh_quickstart.html" title="简体中文">汉语</a>
+    </div>
+    <div id="menu">
+      <a href="sv_index.html">Home</a>
+      <a href="sv_quickstart.html">Quick Start</a>
+      <a href="sv_download.html">Download</a>
+      <a href="sv_support.html">Support</a>
+      <a href="sv_feedback.html">Feedback</a>
+      <a href="sv_privacy.html">Privacy</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+    </div>
+    <div id="content">
+      <h2>Komma igång</h2>
+      <p>
+Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via Skype, telefon, chat eller vad de nu gillar bäst. Genom att starta Dayon! så kan <em>hjälpgivaren</em> se skärmen och styra <em>hjälpmottagarens</em> dator.
+      </p>
+
+      <p>
+        I den här dokumentationen visar skärmdumpen den engelska språkversionen av programmet.
+        Programmet är också språkanpassat till franska, tyska, spanska, ryska och svenska.
+        Den återgår till engelska om det konfigurerade användarspråket inte är något av ovanstående.
+      </p>
+
+      <p>
+        <strong>Observera</strong>: Denna dokumentation hänvisar till den senaste programversionen.
+        <br/>
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted.png" alt="hjälptagare"/> &nbsp;
+        <a id="assisted-setup" class="no"><strong>Använda hjälptagarens dator</strong></a>
+      </p>
+
+      <p>
+        Dayon! Hjälptagare är en klientapplikation som anropar yttervärlden. Därför behövs ingen särskild nätverkskonfigurering göras för att kunna installera och använda programmet.
+      </p>
+
+      <p>
+        Ladda ned och installera Dayon!. Starta sedan <em>Dayon! Hjälptagare</em> (du borde ha en genväg på skrivbordet) och klicka "play"-knappen uppe till vänster.
+      </p>
+
+      <p>
+        <img src="assisted_ready.jpg" alt="Dayon! Hjälptagare : Klar"/>
+      </p>
+
+      <p>
+        Ange anslutningsnyckeln som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted_token.jpg" alt="Dayon! Hjälptagare : Anslutningsnyckel"/>
+        <br/>
+        (om du redan anslutit till denna <em>hjälpgivare</em> nyligen, så kan du lämna fältet tomt)
+      </p>
+
+      <p>
+        <strong>Alternativ variant (anslutning utan anslutningsnyckel):</strong>
+        Ange både den IP-adress och den port som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted_network.jpg" alt="Dayon! Hjälptagare : Nätverk"/>
+        <br/>
+        (båda fälten kan rensas genom att dubbelklicka i dem)
+      </p>
+
+      <p>
+        Du kommer att anslutas till <em>hjälpgivaren</em> inom kort, som sedan kan se din skärm. Grattis!
+        <br/>
+        <br/>
+      </p>
+
+      <p>
+        <img src="assistant.png" alt="Hjälpgivare"/> &nbsp;
+        <a id="assistant-setup" class="no"><strong>Använda hjälpgivarens dator</strong></a>
+      </p>
+
+      <p>
+        Dayon! Hjäpgivare agerar som en typisk serverapplikation (som <em>hjälptagaren</em> ansluer till) och därför behöver du konfigurera ditt nätverk så att hjälpgivaren kan bli synlig för yttervärlden.<br/><br/>
+        Servern lyssnar som standard på <strong>Port</strong> 8080, men du kan ändra det om det skulle behövas.
+        Alltsedan version 12 skapar Dayon! portmappningsregeln (port forward) åt dig. Förutsättningen är att <strong>UPnP</strong> är aktiverat i ditt nätverk.
+        Annars måste portmappning (port forward) ändå ske, (TCP) via <strong>NAT</strong> på <strong>routern</strong> till datorn.
+        <br/><br/>
+        Kolla in <a href="https://portforward.com/router.htm">portforward.com</a> för en stegvis guide för de vanligaste routermodellerna.
+      </p>
+
+      <p>
+        <strong>Valfritt:</strong> Ändra port för inkommande anslutningar: (till vänster med UPnP, till höger utan UPnP)
+      </p>
+
+      <p>
+        <img src="assistant_network_settings_upnp.jpg" alt="Dayon! Hjälpgivare: Nätverksinställning med UPnP"/>
+        <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Hjälpgivare: Nätverksinställning utan UPnP"/>
+      </p>
+
+      <p>
+        Skapa en anslutningsnyckel genom att klicka på nyckeln:
+      </p>
+
+      <p>
+        <img src="assistant_create_token.jpg" alt="Dayon! Hjälpgivare: Skapa anslutningsnyckel"/>
+      </p>
+
+      <p>
+        Kopiera den skapade anslutningsnyckeln till urklipp med ett musklick:
+      </p>
+
+      <p>
+        <img src="assistant_copy_token.jpg" alt="Dayon! Hjälpgivare: Kopiera anslutningsnyckel"/>
+      </p>
+
+      <p>
+        Det var allt - meddela <strong>anslutningsnyckeln</strong> till <em>hjälptagaren</em> via epost, chat eller telefon.
+      </p>
+
+      <p>
+        <strong>För den otålige:</strong> <a href="#assistant-start">Här</a> får du lära dig hur du får
+        <em>hjälpgivaren</em> <a href="#assistant-start">att lyssna efter inkommande anslutningar</a>.
+      </p>
+
+      <p>
+        <strong>Alternativ variant (anslut utan anslutningsnyckel):</strong> Du måste bestämma vilken <strong>IP-adress</strong> du vill meddela <em>hjälptagaren</em> för att ansluta sig till <em>hjälpgivaren</em>; du ska normalt sett ange din <strong>publika</strong> IP-adress, men om du vill testa inom ditt lokala nätverk så kanske du vill använda en annan IP-adress. Du kan få reda på din <strong>publika IP-adress</strong> i följande meny:
+      </p>
+
+      <p>
+        <img src="assistant_network_addresses.jpg" alt="Dayon! Hjälpgivare: IP-Adress"/>
+      </p>
+
+      <p>
+        Som du kan se i den följande bilden, så innehåller menyn alternativet "kopiera till urklipp" redan <strong>IP-adressen och Porten</strong>. Det gör att det är lätt att <strong>klistra in det i en chat session</strong>
+        (t.ex. Skype) eller till ett e-postmeddelande.
+      </p>
+
+      <p>
+        <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Hjälpgivare: IP-Adresshandlingar"/>
+      </p>
+
+      <p>
+        <em>
+          Observera att denna IP-adress inte är ett krav, då hjälpgivaren lyssnar på alla tillgängliga nätverksanslutningar; men du behöver meddela det till hjälptagaren ändå (mer om det senare).
+        </em>
+      </p>
+
+      <p>
+        Det var allt vad gäller nätverksinställningar;
+        <br/>
+        <strong>För den otålige:</strong> <a href="#assistant-start">Här</a> lär du dig hur du får <em>hjälpgivaren</em> <a href="#assistant-start">att lyssna efter inkommande anslutningar</a>.
+      </p>
+
+      <p>
+        Men låt oss först se på de avancerade inställningsmöjligheterna.
+        <br/>
+        <br/>
+      </p>
+
+      <p>
+        <img src="assistant.png" alt="Hjälpgivare"/>
+        &nbsp; <a id="assistant-details" class="no"><strong>Mer om hjälpgivarens inställningar</strong></a>
+      </p>
+
+      <p>
+        Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom hur många gråskalor bilden ska ha.
+      </p>
+
+      <p>
+        <img src="assistant_capture_settings.jpg" alt="Dayon! Hjälpgivare: Skärmbildsinställning"/>
+      </p>
+
+      <p>
+        Sedan kan du välja metod för <strong>komprimering</strong>; två metoder finns att välja på: ZIP och XZ. XZ uppnår en (mycket) bättre kompression, men tar mer kraft från CPU och internminne pga. dess komplexitet och att den utförs i JAVA.
+      </p>
+
+      <p>
+        Dessutom, används en <strong>cache</strong> för att inte behöva sända samma bitmap flera gånger, t.ex.  när menyer öppnas och navigeras (dvs. det som finns i undermenyer skickas inte mer än en gång). Skärmbilden är indelad i många sektioner, där varje kan bli cachad. Du kan definiera det maximala antalet sektioner i cachen. Observera att en sektion i nuvarande version är 32x32 pixlar i 256 gråskalor, vilket motsvarar c:a 1K.
+      </p>
+
+      <p>
+        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Komprimeringsinställningar"/>
+      </p>
+
+      <p>
+        <a id="assistant-start" class="no">
+          Det var det mesta. Efter ett klick på "play"- knappen (längst upp till vänster) så är 
+          <em>hjälpgivaren</em> klar att ta emot inkommande förfrågningar om anslutning:
+        </a>
+      </p>
+
+      <p>
+        <img src="assistant_start.jpg" alt="Dayon! Hjälpgivare : Start"/>
+      </p>
+
+      <p>
+        Nu kan du be <em>hjälptagaren</em> att ansluta. Strax därefter kommer du att bli ombedd att acceptera den inkommande anslutningen:
+      </p>
+
+      <p>
+        <img src="assistant_incoming_connection.jpg" alt="Dayon! Hjälpgivare : Inkommande anslutning"/>
+      </p>
+
+      <p>
+        Du är nu ansluten och övervakar den andra datorn på distans.
+      </p>
+
+      <p>
+        <img src="assistant_connected.jpg" alt="Dayon! Hjälpgivare : Aktiv"/>
+      </p>
+
+      <p>
+        Om skärmbilden hos <em>hjälptagaren</em> inte ryms i ditt fönster, så kan det anpassas till ditt fönster:
+      </p>
+
+      <p>
+        <img src="assistant_fit_screen.jpg" alt="Dayon! Hjälpgivare : Växla skärmläge"/>
+      </p>
+
+      <p>
+        Som standard är <strong>distanskontroll</strong> av; du kan växla mellan av och på med följande knapp:
+      </p>
+
+      <p>
+        <img src="assistant_control.jpg" alt="Dayon! Hjälpgivare : Växla distanskontroll"/>
+      </p>
+
+      <p></p>
+      <h2>Avancerade funktioner</h2>
+      <p>
+        Förutsättning: Följande funktioner kräver att det är en aktiv anslutning mellan hjälpgivare och hjälptagare.
+      </p>
+
+      <p></p>
+      <h3>Urklippsöverföring</h3>
+      <p>
+        Genom att klicka på upp- eller ned-pilen, så kan antingen hjälpgivarens urklipp överföras till hjälptagaren (upp) eller hjälptagarens urklipp överföras till hjälpgivaren (ned).
+      </p>
+
+      <p>
+        <img src="assistant_clipboard.jpg" alt="Dayon! Hjälpgivare : Urklippsöverföring"/>
+      </p>
+
+      <p></p>
+      <h4>Nuvarande stöd:</h4>
+      <ul>
+        <li>
+          <strong>Text</strong>: Välj lokal text eller i hjälptagarens fönster, kopiera (<code>Ctrl + c</code>),
+          klicka upp eller ned. Därefter kan den överförsa texten klistras in i en applikation lokalt eller på distans (<code>Ctrl + v</code>).
+        </li>
+
+        <li>
+          <strong>Filer</strong>: Välj en eller flera filer lokalt eller i <em>hjälptagarens</em> bildskärm (<code>Ctrl + c</code>), klicka upp eller ned. Därefter kan de(n) klistras in i sin destination.
+        </li>
+      </ul>
+
+      <p>
+        <strong>Varning</strong>: Beroende på kombination av bildskärm/fönsterhanterare och JDK, så klistras inte urklippsinnehållet in i mottagarens urklippshanterare. Så klistra in (<code>Ctrl + v</code>) fungerar inte.
+        <br/>
+        I de allra flesta fall så överförs ändå innehållet - men du behöver då ta en titt i foldern <code>/tmp</code>
+och leta efter en uuid folder (heter någonting som påminner om <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
+        Där hittar du de överförda urklippsfilerna.
+      </p>
+
+      <p></p>
+      <h3>Att överföra en tryckning på Windows-tangenten</h3>
+      <p>
+        För att överföra ett tryck på Windows-tangenten, så musklicka på Windowssymbolen i <em>hjälpgivarens</em> kontrollpanel:
+      </p>
+
+      <p>
+        <img src="assistant_windows_key.jpg" alt="Dayon! Hjälpgivare : Windows-tangent"/>
+      </p>
+
+      <p>
+        Tangenten fortsätter att vara intryckt till dess att du klickar på Windowssymbolen igen. Det ger dig möjligheten att överföra snabbkommandon som innehåller Windows-tangenten.
+        <br/>
+        Om du exemplvis behöver minimera alla fönster hos <em>hjälptagaren</em>, så klickar du på Windowssymbolen, trycker på <code>M</code>-tangenten på ditt tangentbord och sedan klickar du på Windowssymbolen igen.
+      </p>
+
+      <p></p>
+      <h3>Automatisk anslutning av hjälptagaren</h3>
+      <h4>Via command line parametrar</h4>
+      <p>
+        Värdnamn (Host Name) eller IP-adress och port för hjälpgivaren kan överföras via command line parametrar:
+        <ul>
+          <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
+          <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
+          <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
+          <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
+          <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
+        </ul>
+        Om hjälptagaren startas med dessa parametrar, så ansluter den direkt till den angivna Värden (host).
+      </p>
+
+      <h4>Via konfigurationsfil</h4>
+      <p>
+        Alltsedan version v11.0.5, så kan anslutningsparametrar (connection parameters) lagras i en <code>YAML</code> fil.
+        Strukturen är extremt enkel:
+      </p>
+
+      <pre>
+host: "an.example.com"
+port: 8080</pre>
+      Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), in användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.
+      <code>.exe</code> filerna. Detta återspeglar också den prioritetsordning som gäller om flera filer finns. (den första vinner)
+      <br/>
+      För att undvika att den hjälptagande automatiskt ansluter direkt efter start,
+      <code><a href="assisted.yaml">assisted.yaml</a></code> så kan följande rad läggas till:
+      <pre>autoConnect: false</pre>
+      <p>
+        Det var allt, gott folk! Du hittar mer information på <a href="support.html">supportsidan</a>.
+      </p>
+    </div>
+    <div id="footer"></div>
+  </div>
+  </body>
+</html>
