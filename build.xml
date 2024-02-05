@@ -11,9 +11,9 @@
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
 	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
-	<property name="ant.build.javac.source" value="1.8"/>
-	<property name="ant.build.javac.target" value="1.8"/>
-	<property name="version" value="13.0.0"/>
+	<property name="ant.build.javac.source" value="11"/>
+	<property name="ant.build.javac.target" value="11"/>
+	<property name="version" value="13.0.1"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
