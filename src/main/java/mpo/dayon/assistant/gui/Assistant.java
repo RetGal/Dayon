@@ -257,12 +257,9 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void resolvePublicIp() throws IOException {
-                publicIp = UPnP.getExternalIP();
-                if (publicIp == null || publicIp.startsWith("192.168") || publicIp.startsWith("10.")) {
-                    final URL url = new URL(WHATSMYIP_SERVER_URL);
-                    try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                        publicIp = lines.readLine();
-                    }
+                final URL url = new URL(WHATSMYIP_SERVER_URL);
+                try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                    publicIp = lines.readLine();
                 }
             }
         };
