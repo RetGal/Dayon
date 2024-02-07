@@ -810,9 +810,12 @@ public class Assistant implements ClipboardOwner {
             }
             if (fitToScreenActivated.get()) {
                 if (frame.getCanvas() == null) {
-                    frame.computeScaleFactors(prevWidth, prevHeight);
+                    frame.computeScaleFactors(prevWidth, prevHeight, false);
                 }
-                frame.onCaptureUpdated(scaleImage(image.getKey(), frame.getCanvas().width, frame.getCanvas().height));
+                // required as the canvas might have been reset if keepAspectRatio caused a resizing of the window
+                if (frame.getCanvas() != null) {
+                    frame.onCaptureUpdated(scaleImage(image.getKey(), frame.getCanvas().width, frame.getCanvas().height));
+                }
             } else {
                 frame.onCaptureUpdated(image.getKey());
             }
@@ -910,7 +913,7 @@ public class Assistant implements ClipboardOwner {
          */
         @Override
         public void onResizeScreen(int width, int height) {
-            frame.computeScaleFactors(width, height);
+            frame.computeScaleFactors(width, height, false);
         }
 
         /**

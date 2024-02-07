@@ -6,6 +6,7 @@ import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
+import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
 
 import javax.swing.*;
@@ -84,11 +85,11 @@ class AssistantFrame extends BaseFrame {
         return canvas;
     }
 
-    public double getxFactor() {
+    double getxFactor() {
         return xFactor;
     }
 
-    public double getyFactor() {
+    double getyFactor() {
         return yFactor;
     }
 
@@ -346,12 +347,23 @@ class AssistantFrame extends BaseFrame {
         JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }
 
-    void computeScaleFactors(int sourceWidth, int sourceHeight) {
+    void computeScaleFactors(int sourceWidth, int sourceHeight, boolean keepAspectRatio) {
         canvas = assistantPanelWrapper.getSize();
         canvas.setSize(canvas.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
                 canvas.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
         xFactor = canvas.getWidth() / sourceWidth;
         yFactor = canvas.getHeight() / sourceHeight;
+        if (keepAspectRatio) {
+            Log.debug("%s", () -> format("Resize  W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
+            if (xFactor > yFactor) {
+                yFactor = xFactor;
+                this.setSize(this.getWidth(), (int) (sourceHeight * xFactor));
+            } else {
+                xFactor = yFactor;
+                this.setSize((int) (sourceWidth * yFactor), this.getHeight());
+            }
+            Log.debug("%s", () -> format("Resized W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
+        }
     }
 
     void resetFactors() {
