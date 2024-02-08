@@ -9,7 +9,6 @@
 	<property name="dir.bin" value="${dir.binfile}/bin"/>
 	<property name="dir.build" value="${dir.binfile}/build"/>
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
-	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.release" value="11"/>
 	<property name="version" value="17.0.0"/>
@@ -67,10 +66,6 @@
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
-				<exclude name="deb/"/>
-				<exclude name="snap/"/>
-				<exclude name="jre/"/>
-				<exclude name="jrex/"/>
 			</fileset>
 		</copy>
 		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
