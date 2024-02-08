@@ -92,10 +92,6 @@
                 <finalName>dayon</finalName>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.2</version>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
                         <version>3.5.0</version>
@@ -250,6 +246,7 @@
                                             <directory>resources</directory>
                                             <include>**/*</include>
                                             <excludes>
+                                                <exclude>deb/</exclude>
                                                 <exclude>jrex/</exclude>
                                                 <exclude>snap/</exclude>
                                             </excludes>
