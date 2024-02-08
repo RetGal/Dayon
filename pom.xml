@@ -303,6 +303,7 @@
                                             <directory>resources</directory>
                                             <include>**/*</include>
                                             <excludes>
+                                                <exclude>deb/</exclude>
                                                 <exclude>jrex/</exclude>
                                                 <exclude>snap/</exclude>
                                             </excludes>
