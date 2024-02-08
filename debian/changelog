@@ -1,3 +1,13 @@
+dayon (13.0.1) stable; urgency=medium
+
+  * Full HiDPI support
+  * Swedish localisation
+  * Support for self hosted rendez-vous servers
+  * Some minor UI fixes
+  * Potentially breaking: Requires Java 11
+
+ -- Reto Galante <reto@galante.ch>  Thu, 8 Feb 2024 12:00:00 +0000
+
 dayon (13.0.0) stable; urgency=low
 
   * Improved MITM attack mitigation by using individually generated certificates
