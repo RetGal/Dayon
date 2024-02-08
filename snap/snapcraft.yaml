@@ -7,7 +7,7 @@ description: |
   It can be used as free alternative to various commercial remote desktop and remote assistance products.
   Its key features are
   - no router or network configuration required on the assisted side
-  - friendly, multilingual (de/en/es/fr/it/ru/tr/zh) user interface
+  - friendly, multilingual (de/en/es/fr/it/ru/sv/tr/zh) user interface
   - assistant and assisted functionality in one package
   - secure, end-to-end encrypted communication (TLS 1.3)
 license: GPL-3.0
