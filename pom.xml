@@ -125,8 +125,7 @@
                             <configuration>
                                 <minimizeJar>true</minimizeJar>
                                 <transformers>
-                                    <transformer
-                                            implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <mainClass>mpo.dayon.common.Runner</mainClass>
                                     </transformer>
                                     <!--
@@ -234,6 +233,40 @@
                                         </excludes>
                                     </filter>
                                     <filter>
+                                        <artifact>net.java.dev.jna:jna</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/**</exclude>
+                                            <exclude>com/sun/jna/aix*/**</exclude>
+                                            <exclude>com/sun/jna/darwin*/**</exclude>
+                                            <exclude>com/sun/jna/freebsd*/**</exclude>
+                                            <exclude>com/sun/jna/linux*/**</exclude>
+                                            <exclude>com/sun/jna/openbsd*/**</exclude>
+                                            <exclude>com/sun/jna/sunos*/**</exclude>
+                                        </excludes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>net.java.dev.jna:jna-platform</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/**</exclude>
+                                            <exclude>com/sun/jna/platform/mac/**</exclude>
+                                            <exclude>com/sun/jna/platform/linux/**</exclude>
+                                            <exclude>com/sun/jna/platform/unix/**</exclude>
+                                            <exclude>com/sun/jna/platform/*$X11*</exclude>
+                                            <exclude>com/sun/jna/platform/*$Mac*</exclude>
+                                            <exclude>com/sun/jna/platform/Window*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/COM/**</exclude>
+                                            <exclude>com/sun/jna/platform/win32/Crypt*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/D*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/G*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/Net*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/HighLevel*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/IPHlp*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/LM*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/LowLevel*</exclude>
+                                            <exclude>com/sun/jna/platform/win32/O*</exclude>
+                                        </excludes>
+                                    </filter>
+                                    <filter>
                                         <artifact>org.jetbrains.kotlin:kotlin-reflect*</artifact>
                                         <excludeDefaults>false</excludeDefaults>
                                         <includes>
@@ -296,18 +329,6 @@
                         <tsa>http://timestamp.sectigo.com</tsa>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.cyclonedx</groupId>
-                    <artifactId>cyclonedx-maven-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <phase>package</phase>
-                            <goals>
-                                <goal>makeAggregateBom</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
     </build>
@@ -322,13 +343,46 @@
                 <finalName>dayon</finalName>
                 <plugins>
                     <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>clean-package</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${basedir}/dist</directory>
+                                            <includes>
+                                                <include>**/*</include>
+                                            </includes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <finalName>dayon</finalName>
+                <plugins>
+                    <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.6.1</version>
                         <configuration>
                             <useModulePath>false</useModulePath>
-                            <argLine>
-                                -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.core.version}/mockito-core-${mockito.core.version}.jar
-                            </argLine>
+                            <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.core.version}/mockito-core-${mockito.core.version}.jar</argLine>
                         </configuration>
                     </plugin>
                     <plugin>
