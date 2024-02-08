@@ -32,6 +32,7 @@
         <sonar.organization>retgal-github</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.10</xz.version>
+        <jna-platform.version>5.10.0</jna-platform.version>
         <waifpunp.version>1.3.1</waifpunp.version>
         <makeself.version>1.8.4</makeself.version>
         <junit.jupiter.version>5.11.4</junit.jupiter.version>
@@ -58,6 +59,11 @@
             <version>${xz.version}</version>
         </dependency>
         <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna-platform</artifactId>
+            <version>${jna-platform.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.jupiter.version}</version>
@@ -79,11 +85,12 @@
 
     <profiles>
         <profile>
-            <id>deb</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-            </properties>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
+                <finalName>dayon</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -211,7 +218,7 @@
                                     <goal>shade</goal>
                                 </goals>
                                 <configuration>
-                                    <minimizeJar>true</minimizeJar>
+                                    <minimizeJar>false</minimizeJar>
                                     <filters>
                                         <filter>
                                             <artifact>org.tukaani:xz</artifact>
@@ -383,15 +390,37 @@
                                     <minimizeJar>true</minimizeJar>
                                     <filters>
                                         <filter>
-                                            <artifact>org.tukaani:xz</artifact>
+                                            <artifact>net.java.dev.jna:jna</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
+                                                <exclude>com/sun/jna/aix*/**</exclude>
+                                                <exclude>com/sun/jna/darwin*/**</exclude>
+                                                <exclude>com/sun/jna/freebsd*/**</exclude>
+                                                <exclude>com/sun/jna/linux*/**</exclude>
+                                                <exclude>com/sun/jna/openbsd*/**</exclude>
+                                                <exclude>com/sun/jna/sunos*/**</exclude>
                                             </excludes>
                                         </filter>
                                         <filter>
-                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
+                                            <artifact>net.java.dev.jna:jna-platform</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
+                                                <exclude>com/sun/jna/platform/mac/**</exclude>
+                                                <exclude>com/sun/jna/platform/linux/**</exclude>
+                                                <exclude>com/sun/jna/platform/unix/**</exclude>
+                                                <exclude>com/sun/jna/platform/*$X11*</exclude>
+                                                <exclude>com/sun/jna/platform/*$Mac*</exclude>
+                                                <exclude>com/sun/jna/platform/Window*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/COM/**</exclude>
+                                                <exclude>com/sun/jna/platform/win32/Crypt*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/D*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/G*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/Net*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/HighLevel*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/IPHlp*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/LM*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/LowLevel*</exclude>
+                                                <exclude>com/sun/jna/platform/win32/O*</exclude>
                                             </excludes>
                                         </filter>
                                     </filters>
@@ -454,165 +483,6 @@
                                         </resource>
                                     </resources>
                                 </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <executions>
-                            <execution>
-                                <id>chmod</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>chmod</executable>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>${basedir}/dist/dayon.sh</argument>
-                                        <argument>${basedir}/dist/dayon_assistant.sh</argument>
-                                        <argument>${basedir}/dist/dayon_assisted.sh</argument>
-                                        <argument>${basedir}/dist/setup.sh</argument>
-                                    </arguments>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>assisted</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.1</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*</include>
-                                            <excludes>
-                                                <exclude>jre/</exclude>
-                                                <exclude>jrex/legal/</exclude>
-                                                <exclude>snap/</exclude>
-                                            </excludes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/docs</directory>
-                                            <include>favicon.ico</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../dist/</archiveDir>
-                            <fileName>assisted.sh</fileName>
-                            <label>Dayon! Assisted ${project.version}</label>
-                            <startupScript>./dayon_assisted.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>makeself</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>assistant</id>
-            <properties>
-                <dayon.mainClass>mpo.dayon.assistant.AssistantRunner</dayon.mainClass>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.3.1</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*</include>
-                                            <excludes>
-                                                <exclude>jre/</exclude>
-                                                <exclude>jrex/legal/</exclude>
-                                                <exclude>snap/</exclude>
-                                            </excludes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/docs</directory>
-                                            <include>favicon.ico</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../dist/</archiveDir>
-                            <fileName>assistant.sh</fileName>
-                            <label>Dayon! Assistant ${project.version}</label>
-                            <startupScript>./dayon_assistant.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>makeself</goal>
-                                </goals>
                             </execution>
                         </executions>
                     </plugin>
