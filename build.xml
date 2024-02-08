@@ -9,7 +9,6 @@
 	<property name="dir.bin" value="${dir.binfile}/bin"/>
 	<property name="dir.build" value="${dir.binfile}/build"/>
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
-	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.source" value="11"/>
 	<property name="ant.build.javac.target" value="11"/>
@@ -48,6 +47,8 @@
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipfileset src="${dir.binfile}/lib/xz-1.9.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.0/WaifUPnP-1.3.0.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/jna-5.10.0.jar" excludes="META-INF/**,com/sun/jna/aix*/**,com/sun/jna/darwin*/**,com/sun/jna/freebsd*/**,com/sun/jna/linux*/**,com/sun/jna/openbsd*/**,com/sun/jna/sunos*/**"/>
+			<zipfileset src="${dir.binfile}/lib/jna-platform-5.10.0.jar" excludes="META-INF/**,com/sun/jna/platform/mac/**,com/sun/jna/platform/linux/**,com/sun/jna/platform/unix/**,com/sun/jna/platform/*$X11*,com/sun/jna/platform/*$Mac*,com/sun/jna/platform/Window*,com/sun/jna/platform/win32/COM/**,com/sun/jna/platform/win32/Crypt*,com/sun/jna/platform/win32/D*,com/sun/jna/platform/win32/G*,com/sun/jna/platform/win32/Net*,com/sun/jna/platform/win32/HighLevel*,com/sun/jna/platform/win32/IPHlp*,com/sun/jna/platform/win32/LM*,com/sun/jna/platform/win32/LowLevel*,com/sun/jna/platform/win32/O*"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
@@ -63,62 +64,12 @@
 		<copy file="${dir.build}/dayon.jar" todir="${dir.dist}"/>
 		<copy todir="${dir.dist}">
 			<fileset dir="${dir.res}">
-				<exclude name="deb/"/>
-				<exclude name="snap/"/>
-				<exclude name="jre/"/>
-				<exclude name="jrex/"/>
 			</fileset>
-		</copy>
-		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
-		<chmod dir="${dir.dist}" perm="ugo+rx" includes="**/*.sh"/>
-	</target>
-
-	<target name="ppa" depends="build" description="Creates directory structure with files for ppa">
-		<copy file="${dir.build}/dayon.jar" todir="${dir.ppa}"/>
-		<copy todir="${dir.ppa}">
-			<fileset dir="${dir.res}">
-				<exclude name="deb/"/>
-				<exclude name="snap/"/>
-				<exclude name="jre/"/>
-				<exclude name="jrex/"/>
-				<exclude name="readme.txt"/>
-				<exclude name="setup.sh"/>
-			</fileset>
-		</copy>
-		<chmod dir="${dir.ppa}" perm="ugo+rx" includes="**/*.sh"/>
-	</target>
-
-	<target name="dist_with_jre" depends="dist" description="Creates directory structure with files for distribution, including openJDK for Windows">
-		<copy todir="${dir.dist}">
-			<fileset dir="${dir.res}"/>
 		</copy>
 		<copy file="${dir.docs}/favicon.ico" todir="${dir.dist}"/>
 	</target>
 
 	<target name="sign" description="Signs the distribution project jar">
 		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/dayon.jar" tsaurl="http://timestamp.sectigo.com"/>
-	</target>
-
-	<target name="tar" description="Creates a gzipped tar archive of the distribution for Linux">
-		<copy todir="${dir.dist}/tar/dayon">
-			<fileset dir="${dir.dist}">
-				<exclude name="jre/"/>
-				<exclude name="jrex/"/>
-			</fileset>
-		</copy>
-		<tar destfile="${dir.dist}/dayon.${version}.tgz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${dir.dist}/tar">
-				<include name="**/*"/>
-				<exclude name="**/*.sh"/>
-				<exclude name="**/favicon.ico"/>
-			</tarfileset>
-			<tarfileset dir="${dir.dist}/tar" filemode="755">
-				<include name="**/dayon.sh"/>
-				<include name="**/dayon_assistant.sh"/>
-				<include name="**/dayon_assisted.sh"/>
-				<include name="**/setup.sh"/>
-			</tarfileset>
-		</tar>
-		<delete dir="${dir.dist}/tar"/>
 	</target>
 </project>

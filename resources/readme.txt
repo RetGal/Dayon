@@ -2,16 +2,16 @@ Thank you for downloading Dayon!
 
 Contents:
 
-  .            Startup scripts, configuration files and the dayon.jar
+  .            Program launchers, icon and this readme
   license/     Dayon! & bundled software licenses.
   jre/         Bundled JRE (optional).
-  
-  
+
+
 Preferences (e.g., window location) & log file are saved in the directory:
 
   USER_HOME/.dayon
-  
-  
+
+
 Running Dayon!
 
   On the assistant machine (acting as a server) click the Dayon.Assistant link or run the dayon_assistant script.
@@ -23,19 +23,6 @@ Running Dayon!
 
   On the assisted machine (acting as a client) click the Dayon! link or run the dayon_assisted script.
   Enter access token or the (external) IP address and port number of the assistant machine.
-
-
-Linux:
-
-  A JRE (Java 8 or newer) is required.
-  If you want to install from the tar archive, then you may need to chmod +x setup.sh before executing it.
-
-
-OSX/macOS:
-
-  A JRE (Java 8 or newer) is required.
-  You will also have to grant the "Screen Recording" permission to dayon_assisted.sh:
-  System Preferences => Security and Privacy => Privacy => Screen Recording
 
 
 Project:
