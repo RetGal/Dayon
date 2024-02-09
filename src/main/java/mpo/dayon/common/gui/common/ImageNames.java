@@ -20,11 +20,12 @@ public final class ImageNames {
 	public static final String LNF = "looknfeel.png";
 	public static final String MOUSE_WHITE = "cursor_white.png";
 	public static final String MOUSE_YELLOW = "cursor_yellow.png";
+	public static final String NETWORK_ADDRESS = "network_address.png";
 	public static final String NETWORK_SETTINGS = "network_settings.png";
 	public static final String RESET_CAPTURE = "reset_capture.png";
 	public static final String SHIELD = "shield.png";
-	public static final String SETTINGS = "settings.png";
 	public static final String START = "start.png";
+	public static final String START_LARGE = "start_l.png";
 	public static final String STOP = "stop.png";
 	public static final String UP = "up.png";
 	public static final String USERS = "users.png";

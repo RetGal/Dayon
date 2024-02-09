@@ -47,7 +47,6 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.sleep;
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -55,7 +54,6 @@ public class Assistant implements ClipboardOwner {
 
     private static final String PORT_PARAM = "?port=%s";
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
-    private static final String QUICKSTART_PAGE = translate("quickstart.html");
     private final String tokenServerUrl;
 
     private final NetworkAssistantEngine network;
@@ -171,7 +169,6 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
         assistantActions.setCompressionEngineConfigurationAction(createCompressionConfigurationAction());
         assistantActions.setResetAction(createResetAction());
-        assistantActions.setSettingsAction(createSettingsAction());
         assistantActions.setTokenAction(createTokenAction());
         assistantActions.setToggleFitScreenAction(createToggleFixScreenAction());
         assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
@@ -234,9 +231,6 @@ public class Assistant implements ClipboardOwner {
 
                 choices.addSeparator();
                 choices.add(getJMenuItemCopyIpAndPort(button));
-                choices.addSeparator();
-                final JMenuItem help = getJMenuItemHelp();
-                choices.add(help);
 
                 // -- display the menu
                 // ---------------------------------------------------------------------------------
@@ -245,15 +239,9 @@ public class Assistant implements ClipboardOwner {
 
                 SwingUtilities.convertPointFromScreen(where, frame);
                 choices.show(frame, where.x, where.y);
-
-                final Point choicesLocation = choices.getLocationOnScreen();
                 final Point frameLocation = frame.getLocationOnScreen();
-                final int xOffset = (choicesLocation.x + choices.getWidth()) - (frameLocation.x + frame.getWidth() - frame.getInsets().right);
-
                 final Point toolbarLocation = frame.getToolBar().getLocationOnScreen();
-                final int yOffset = toolbarLocation.y + frame.getToolBar().getHeight() - choicesLocation.y;
-
-                choices.setLocation(choicesLocation.x - xOffset, choicesLocation.y + yOffset);
+                choices.setLocation(frameLocation.x + 10, toolbarLocation.y + frame.getToolBar().getHeight());
             }
 
             private void resolvePublicIp() throws IOException {
@@ -266,29 +254,10 @@ public class Assistant implements ClipboardOwner {
         ip.putValue("DISPLAY_NAME", "127.0.0.1"); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
+        ip.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_ADDRESS));
         return ip;
     }
 
-    private JMenuItem getJMenuItemHelp() {
-        final JMenuItem help = new JMenuItem(translate("help"));
-        help.addActionListener(ev1 -> {
-            try {
-                if (isSnapped()) {
-                    new ProcessBuilder(getSnapBrowserCommand(), getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
-                } else if (Desktop.isDesktopSupported()) {
-                    final Desktop desktop = Desktop.getDesktop();
-                    if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                        desktop.browse(getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()));
-                    } else if (isFlat()) {
-                        new ProcessBuilder(FLATPAK_BROWSER, getQuickStartURI(QUICKSTART_PAGE, ASSISTANT.getPrefix()).toString()).start();
-                    }
-                }
-            } catch (IOException ex) {
-                Log.warn(ex.getMessage());
-            }
-        });
-        return help;
-    }
 
     private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
         final JMenuItem menuItem = new JMenuItem(translate("copy.msg"));
@@ -622,26 +591,6 @@ public class Assistant implements ClipboardOwner {
         return fitScreen;
     }
 
-    private Action createSettingsAction() {
-        final Action settings = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                final JPopupMenu choices = new JPopupMenu();
-                choices.add(actions.getCaptureEngineConfigurationAction());
-                choices.add(actions.getCompressionEngineConfigurationAction());
-                choices.add(actions.getNetworkConfigurationAction());
-                choices.add(createLookAndFeelSubmenu());
-                final Point where = MouseInfo.getPointerInfo().getLocation();
-                final JComponent caller = (JComponent) ev.getSource();
-                SwingUtilities.convertPointFromScreen(where, caller);
-                choices.show(caller, 0, caller.getHeight());
-            }
-        };
-        settings.putValue(Action.SHORT_DESCRIPTION, translate("settings"));
-        settings.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.SETTINGS));
-        return settings;
-    }
-
     private Action createTokenAction() {
 
         final Action tokenAction = new AbstractAction() {
@@ -666,7 +615,6 @@ public class Assistant implements ClipboardOwner {
                     }
                     if (token != null) {
                         button.setText(format(" %s ", token));
-                        button.setFont(new Font("Sans Serif", Font.PLAIN, 18));
                         button.setToolTipText(translate("token.copy.msg"));
                     }
                 }
@@ -703,40 +651,6 @@ public class Assistant implements ClipboardOwner {
         stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
         stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP));
         return stopAction;
-    }
-
-    private JMenu createLookAndFeelSubmenu() {
-        JMenu submenu = new JMenu(margin(translate("lnf")));
-        submenu.setIcon(getOrCreateIcon(ImageNames.LNF));
-        submenu.setToolTipText(translate("lnf.switch"));
-
-        final LookAndFeel current = UIManager.getLookAndFeel();
-        submenu.add(new JMenuItem(current.getName()));
-        submenu.addSeparator();
-
-        for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (info.getName().equals(current.getName())) {
-                continue;
-            }
-            final JMenuItem mi = new JMenuItem(info.getName());
-            mi.addActionListener(ev1 -> switchLookAndFeel(info));
-            mi.setText(info.getName());
-            submenu.add(mi);
-        }
-        return submenu;
-    }
-
-    private void switchLookAndFeel(UIManager.LookAndFeelInfo lnf) {
-        try {
-            if (frame != null) {
-                UIManager.setLookAndFeel(lnf.getClassName());
-                SwingUtilities.updateComponentTreeUI(frame);
-                configuration = new AssistantConfiguration(lnf.getClassName());
-                configuration.persist();
-            }
-        } catch (Exception ex) {
-            Log.warn(format("Could not set the L&F [%s]", lnf), ex);
-        }
     }
 
     private Action createToggleCompatibilityModeAction() {
