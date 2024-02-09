@@ -86,10 +86,10 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupToolBar(ToolBar toolBar) {
-        toolBar.addAction(createShowInfoAction());
-        toolBar.addAction(createShowHelpAction());
-        toolBar.addSeparator();
-        toolBar.addAction(createExitAction());
+        float alignmentY = frameType.equals(FrameType.ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
+        toolBar.addAction(createShowInfoAction(), alignmentY);
+        toolBar.addAction(createShowHelpAction(), alignmentY);
+        toolBar.addAction(createExitAction(), alignmentY);
         add(toolBar, BorderLayout.NORTH);
         this.toolBar = toolBar;
     }

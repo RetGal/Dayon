@@ -12,7 +12,7 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 public class ToolBar extends JToolBar {
 	public static final Insets ZERO_INSETS = new Insets(1, 1, 1, 1);
 
-	private static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
+	public static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
 
 	private final JLabel fingerprint = new JLabel();
 
@@ -23,10 +23,13 @@ public class ToolBar extends JToolBar {
 	}
 
 	public void addAction(Action action) {
+		addAction(action, Component.CENTER_ALIGNMENT);
+	}
+
+	public void addAction(Action action, float alignmentY) {
 		final JButton button = new JButton();
 		addButtonProperties(action, button);
-		button.setDisabledIcon(null);
-		button.setFont(DEFAULT_FONT);
+		button.setAlignmentY(alignmentY);
 		add(button);
 	}
 
@@ -40,10 +43,10 @@ public class ToolBar extends JToolBar {
 		button.setMargin(ZERO_INSETS);
 		button.setHideActionText(true);
 		button.setAction(action);
-		if (action.getValue(Action.SMALL_ICON) == null) {
-			button.setText((String) action.getValue("DISPLAY_NAME"));
-		}
+		button.setFont(DEFAULT_FONT);
+		button.setText((String) action.getValue("DISPLAY_NAME"));
 		button.setFocusable(false);
+		button.setDisabledIcon(null);
 	}
 
 	public void addGlue() {

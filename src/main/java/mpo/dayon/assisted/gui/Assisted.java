@@ -236,7 +236,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             }
         };
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
-        startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START));
+        startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START_LARGE));
         return startAction;
     }
 

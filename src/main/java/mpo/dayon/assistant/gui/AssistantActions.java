@@ -14,111 +14,102 @@ class AssistantActions {
     private Action remoteClipboardSetAction;
     private Action startAction;
     private Action stopAction;
-    private Action settingsAction;
     private Action tokenAction;
     private Action toggleCompatibilityModeAction;
 
-    public Action getIpAddressAction() {
+    Action getIpAddressAction() {
         return ipAddressAction;
     }
 
-    public void setIpAddressAction(Action ipAddressAction) {
+    void setIpAddressAction(Action ipAddressAction) {
         this.ipAddressAction = ipAddressAction;
     }
 
-    public Action getNetworkConfigurationAction() {
+    Action getNetworkConfigurationAction() {
         return networkConfigurationAction;
     }
 
-    public void setNetworkConfigurationAction(Action networkConfigurationAction) {
+    void setNetworkConfigurationAction(Action networkConfigurationAction) {
         this.networkConfigurationAction = networkConfigurationAction;
     }
 
-    public Action getCaptureEngineConfigurationAction() {
+    Action getCaptureEngineConfigurationAction() {
         return captureEngineConfigurationAction;
     }
 
-    public void setCaptureEngineConfigurationAction(Action captureEngineConfigurationAction) {
+    void setCaptureEngineConfigurationAction(Action captureEngineConfigurationAction) {
         this.captureEngineConfigurationAction = captureEngineConfigurationAction;
     }
 
-    public Action getCompressionEngineConfigurationAction() {
+    Action getCompressionEngineConfigurationAction() {
         return compressionEngineConfigurationAction;
     }
 
-    public void setCompressionEngineConfigurationAction(Action compressionEngineConfigurationAction) {
+    void setCompressionEngineConfigurationAction(Action compressionEngineConfigurationAction) {
         this.compressionEngineConfigurationAction = compressionEngineConfigurationAction;
     }
 
-    public Action getResetAction() {
+    Action getResetAction() {
         return resetAction;
     }
 
-    public void setResetAction(Action resetAction) {
+    void setResetAction(Action resetAction) {
         this.resetAction = resetAction;
     }
 
-    public Action getToggleFitScreenAction() {
+    Action getToggleFitScreenAction() {
         return toggleFitScreenAction;
     }
 
-    public void setToggleFitScreenAction(Action toggleFitScreenAction) {
+    void setToggleFitScreenAction(Action toggleFitScreenAction) {
         this.toggleFitScreenAction = toggleFitScreenAction;
     }
 
-    public Action getRemoteClipboardRequestAction() {
+    Action getRemoteClipboardRequestAction() {
         return remoteClipboardRequestAction;
     }
 
-    public void setRemoteClipboardRequestAction(Action remoteClipboardRequestAction) {
+    void setRemoteClipboardRequestAction(Action remoteClipboardRequestAction) {
         this.remoteClipboardRequestAction = remoteClipboardRequestAction;
     }
 
-    public Action getRemoteClipboardSetAction() {
+    Action getRemoteClipboardSetAction() {
         return remoteClipboardSetAction;
     }
 
-    public void setRemoteClipboardSetAction(Action remoteClipboardSetAction) {
+    void setRemoteClipboardSetAction(Action remoteClipboardSetAction) {
         this.remoteClipboardSetAction = remoteClipboardSetAction;
     }
 
-    public Action getStartAction() {
+    Action getStartAction() {
         return startAction;
     }
 
-    public void setStartAction(Action startAction) {
+    void setStartAction(Action startAction) {
         this.startAction = startAction;
     }
 
-    public Action getStopAction() {
+    Action getStopAction() {
         return stopAction;
     }
 
-    public void setStopAction(Action stopAction) {
+    void setStopAction(Action stopAction) {
         this.stopAction = stopAction;
     }
 
-    public Action getSettingsAction() {
-        return settingsAction;
-    }
-
-    public void setSettingsAction(Action settingsAction) {
-        this.settingsAction = settingsAction;
-    }
-
-    public Action getTokenAction() {
+    Action getTokenAction() {
         return tokenAction;
     }
 
-    public void setTokenAction(Action tokenAction) {
+    void setTokenAction(Action tokenAction) {
         this.tokenAction = tokenAction;
     }
 
-    public Action getToggleCompatibilityModeAction() {
+    Action getToggleCompatibilityModeAction() {
         return toggleCompatibilityModeAction;
     }
 
-    public void setToggleCompatibilityModeAction(Action toggleCompatibilityModeAction) {
+    void setToggleCompatibilityModeAction(Action toggleCompatibilityModeAction) {
         this.toggleCompatibilityModeAction = toggleCompatibilityModeAction;
     }
 }

@@ -23,6 +23,7 @@ import static java.awt.event.KeyEvent.VK_WINDOWS;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
+import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_FONT;
 import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistantFrame extends BaseFrame {
@@ -93,15 +94,6 @@ class AssistantFrame extends BaseFrame {
         return yFactor;
     }
 
-    private JToggleButton createToggleButton(Action action) {
-        final JToggleButton button = new JToggleButton();
-        button.setMargin(ZERO_INSETS);
-        button.setHideActionText(true);
-        button.setAction(action);
-        button.setFocusable(false);
-        button.setSelected(false);
-        return button;
-    }
 
     private void addMouseListeners() {
         assistantPanel.addMouseListener(new MouseAdapter() {
@@ -187,26 +179,64 @@ class AssistantFrame extends BaseFrame {
 
     private ToolBar createToolBar() {
         toolbar = new ToolBar();
-        toolbar.addAction(actions.getStartAction());
-        toolbar.addAction(actions.getStopAction());
-        toolbar.addSeparator();
-        toolbar.add(controlToggleButton);
-        toolbar.addAction(actions.getRemoteClipboardRequestAction());
-        toolbar.addAction(actions.getRemoteClipboardSetAction());
-        toolbar.add(windowsKeyToggleButton);
-        toolbar.addToggleAction(actions.getToggleFitScreenAction());
-        toolbar.addAction(actions.getResetAction());
-        toolbar.addSeparator();
-        toolbar.addToggleAction(actions.getToggleCompatibilityModeAction());
-        toolbar.addAction(actions.getSettingsAction());
-        toolbar.addSeparator();
-        toolbar.addAction(actions.getTokenAction());
-        toolbar.addSeparator();
-        toolbar.add(toolbar.getFingerprints());
-        toolbar.addGlue();
-        toolbar.addAction(actions.getIpAddressAction());
-        toolbar.addSeparator();
+        toolbar.add(createTabbedPane());
         return toolbar;
+    }
+
+    private JTabbedPane createTabbedPane() {
+        JPanel connectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        connectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
+        connectionPanel.add(createButton(actions.getStartAction()));
+        connectionPanel.add(createButton(actions.getStopAction()));
+        connectionPanel.add(createButton(actions.getTokenAction()));
+        connectionPanel.add(createButton(actions.getIpAddressAction()));
+        connectionPanel.add(createToggleButton(actions.getToggleCompatibilityModeAction()));
+        connectionPanel.add(toolbar.getFingerprints());
+
+        JPanel sessionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        sessionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
+        sessionPanel.add(createToggleButton(actions.getToggleFitScreenAction()));
+        sessionPanel.add(controlToggleButton);
+        sessionPanel.add(createButton(actions.getRemoteClipboardRequestAction()));
+        sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
+        sessionPanel.add(windowsKeyToggleButton);
+        sessionPanel.add(createButton(actions.getResetAction()));
+
+        JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        settingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
+        //settingsPanel.add(createButton(actions.getSettingsAction()));
+        settingsPanel.add(createButton(actions.getCaptureEngineConfigurationAction()));
+        settingsPanel.add(createButton(actions.getCompressionEngineConfigurationAction()));
+        settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
+
+        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane.addTab("Connection", connectionPanel);
+        tabbedPane.addTab("Session", sessionPanel);
+        tabbedPane.addTab("Settings", settingsPanel);
+        return tabbedPane;
+    }
+
+    private JButton createButton(Action action) {
+        final JButton button = new JButton();
+        addButtonProperties(action, button);
+        return button;
+    }
+
+    private JToggleButton createToggleButton(Action action) {
+        final JToggleButton button = new JToggleButton();
+        addButtonProperties(action, button);
+        return button;
+    }
+
+    private void addButtonProperties(Action action, AbstractButton button) {
+        button.setMargin(ZERO_INSETS);
+        button.setHideActionText(true);
+        button.setAction(action);
+        button.setFont(DEFAULT_FONT);
+        button.setText((String) action.getValue("DISPLAY_NAME"));
+        button.setFocusable(false);
+        button.setDisabledIcon(null);
+        button.setSelected(false);
     }
 
     private StatusBar createStatusBar(Set<Counter<?>> counters) {
