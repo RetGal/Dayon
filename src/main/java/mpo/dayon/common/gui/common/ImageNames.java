@@ -10,6 +10,7 @@ public final class ImageNames {
 	public static final String COMPATIBILITY = "compatibility.png";
 	public static final String COMPRESSION_SETTINGS = "compression_settings.png";
 	public static final String CONTROL = "control.png";
+	public static final String CTRL = "ctrl.png";
 	public static final String DOWN = "down.png";
 	public static final String EXIT = "exit.png";
 	public static final String FINGERPRINT = "fingerprint.png";
