@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.awt.event.KeyEvent.VK_CONTROL;
 import static java.awt.event.KeyEvent.VK_WINDOWS;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -48,9 +49,13 @@ class AssistantFrame extends BaseFrame {
 
     private final JToggleButton windowsKeyToggleButton;
 
+    private final JToggleButton ctrlKeyToggleButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
+
+    private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
 
     private double xFactor = DEFAULT_FACTOR;
 
@@ -66,6 +71,7 @@ class AssistantFrame extends BaseFrame {
         this.actions = actions;
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
+        this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
         assistantPanel = new AssistantPanel();
@@ -200,6 +206,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(createButton(actions.getRemoteClipboardRequestAction()));
         sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(windowsKeyToggleButton);
+        sessionPanel.add(ctrlKeyToggleButton);
         sessionPanel.add(createButton(actions.getResetAction()));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -210,9 +217,9 @@ class AssistantFrame extends BaseFrame {
         settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
 
         JTabbedPane tabbedPane = new JTabbedPane();
-        tabbedPane.addTab("Connection", connectionPanel);
-        tabbedPane.addTab("Session", sessionPanel);
-        tabbedPane.addTab("Settings", settingsPanel);
+        tabbedPane.addTab(translate("connection"), connectionPanel);
+        tabbedPane.addTab(translate("session"), sessionPanel);
+        tabbedPane.addTab(translate("settings"), settingsPanel);
         return tabbedPane;
     }
 
@@ -260,6 +267,7 @@ class AssistantFrame extends BaseFrame {
             public void actionPerformed(ActionEvent ev) {
                 controlActivated.set(!controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
+                ctrlKeyToggleButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
@@ -282,6 +290,23 @@ class AssistantFrame extends BaseFrame {
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
         return sendWindowsKey;
+    }
+
+    private Action createSendCtrlKeyAction() {
+        final Action sendCtrlKey = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                if (ctrlKeyActivated.get()) {
+                    fireOnKeyReleased(VK_CONTROL, ' ');
+                } else {
+                    fireOnKeyPressed(VK_CONTROL, ' ');
+                }
+                ctrlKeyActivated.set(!ctrlKeyActivated.get());
+            }
+        };
+        sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
+        sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
+        return sendCtrlKey;
     }
 
     void onReady() {
@@ -410,6 +435,7 @@ class AssistantFrame extends BaseFrame {
         windowsKeyActivated.set(false);
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
+        ctrlKeyToggleButton.setEnabled(false);
         disableTransferControls();
     }
 
@@ -422,6 +448,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setSelected(false);
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
+        ctrlKeyToggleButton.setSelected(false);
         enableTransferControls();
     }
 
