@@ -221,7 +221,6 @@ class AssistantFrame extends BaseFrame {
         connectionPanel.add(createButton(actions.getTokenAction()));
         connectionPanel.add(createButton(actions.getIpAddressAction()));
         connectionPanel.add(createToggleButton(actions.getToggleCompatibilityModeAction()));
-        connectionPanel.add(toolbar.getFingerprints());
 
         JPanel sessionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         sessionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
@@ -233,6 +232,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
         sessionPanel.add(createButton(actions.getResetAction()));
+        sessionPanel.add(toolbar.getFingerprints());
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
