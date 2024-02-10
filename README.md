@@ -15,7 +15,7 @@ As quick launch versions for Windows, they are also available as individual bina
 ## Key features
 
 - easy setup (no router or network configuration needed on the assisted side)
-- intuitive, multilingual user interface (de, en, es, fr, it, ru, tr, zh)
+- intuitive, multilingual user interface (de, en, es, fr, it, ru, sv, tr, zh)
 - assistant and assisted functionality in one package
 - secure, end-to-end encrypted communication (TLS 1.3)
 - very low bandwidth usage
@@ -59,6 +59,7 @@ or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 [Deutsch](https://retgal.github.io/Dayon/de_index.html)<br>
 [English](https://retgal.github.io/Dayon/index.html)<br>
 [Français](https://retgal.github.io/Dayon/fr_index.html)<br>
+[Swedish](https://retgal.github.io/Dayon/sv_index.html)<br>
 [简体中文](https://retgal.github.io/Dayon/zh_index.html)<br>
 
 Currently, there is no online documentation available for Italian, Spanish, Russian and Turkish.
