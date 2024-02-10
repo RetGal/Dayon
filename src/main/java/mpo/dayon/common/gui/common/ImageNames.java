@@ -18,6 +18,7 @@ public final class ImageNames {
 	public static final String HELP = "help.png";
 	public static final String INFO = "info.png";
 	public static final String KEY = "key.png";
+	public static final String LOCK = "lock.png";
 	public static final String LNF = "looknfeel.png";
 	public static final String MOUSE_WHITE = "cursor_white.png";
 	public static final String MOUSE_YELLOW = "cursor_yellow.png";
