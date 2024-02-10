@@ -1,8 +1,8 @@
 package mpo.dayon.common.gui.common;
 
 public enum FrameType {
-    ASSISTANT("assistant", 1024, 512),
-    ASSISTED("assisted", 512, 256);
+    ASSISTANT("assistant", 640, 320),
+    ASSISTED("assisted", 480, 240);
 
     private final String prefix;
     private final Integer minWidth;
@@ -18,11 +18,11 @@ public enum FrameType {
         return prefix;
     }
 
-    public Integer getMinWidth() {
+    Integer getMinWidth() {
         return minWidth;
     }
 
-    public Integer getMinHeight() {
+    Integer getMinHeight() {
         return minHeight;
     }
 }
