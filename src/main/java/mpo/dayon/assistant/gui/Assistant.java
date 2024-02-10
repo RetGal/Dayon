@@ -88,8 +88,6 @@ public class Assistant implements ClipboardOwner {
 
     private int prevHeight = -1;
 
-    private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
-
     private String token;
 
     private Boolean upnpEnabled;
@@ -170,7 +168,6 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setCompressionEngineConfigurationAction(createCompressionConfigurationAction());
         assistantActions.setResetAction(createResetAction());
         assistantActions.setTokenAction(createTokenAction());
-        assistantActions.setToggleFitScreenAction(createToggleFixScreenAction());
         assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
         assistantActions.setStartAction(createStartAction());
@@ -573,24 +570,6 @@ public class Assistant implements ClipboardOwner {
         return configure;
     }
 
-    private Action createToggleFixScreenAction() {
-        final Action fitScreen = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                fitToScreenActivated.set(!fitToScreenActivated.get());
-                if (!fitToScreenActivated.get()) {
-                    frame.resetFactors();
-                } else {
-                    frame.resetCanvas();
-                }
-                frame.repaint();
-            }
-        };
-        fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
-        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
-        return fitScreen;
-    }
-
     private Action createTokenAction() {
 
         final Action tokenAction = new AbstractAction() {
@@ -722,9 +701,10 @@ public class Assistant implements ClipboardOwner {
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
             }
-            if (fitToScreenActivated.get()) {
+            if (frame.getFitToScreenActivated()) {
                 if (frame.getCanvas() == null) {
-                    frame.computeScaleFactors(prevWidth, prevHeight, false);
+                    Log.debug(format("ComputeScaleFactors for w: %s h: %s", prevWidth, prevHeight));
+                    frame.computeScaleFactors(prevWidth, prevHeight, frame.getKeepAspectRatioActivated());
                 }
                 // required as the canvas might have been reset if keepAspectRatio caused a resizing of the window
                 if (frame.getCanvas() != null) {

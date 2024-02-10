@@ -29,7 +29,7 @@ import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistantFrame extends BaseFrame {
 
-    private static final int OFFSET = 9;
+    private static final int OFFSET = 6;
 
     private static final int DEFAULT_FACTOR = 1;
 
@@ -51,11 +51,20 @@ class AssistantFrame extends BaseFrame {
 
     private final JToggleButton ctrlKeyToggleButton;
 
+    private final JToggleButton fitToScreenToggleButton;
+
+    private final JToggleButton keepAspectRatioToggleButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
+
+    private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
+    private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
+
+    private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
 
     private double xFactor = DEFAULT_FACTOR;
 
@@ -70,6 +79,8 @@ class AssistantFrame extends BaseFrame {
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
         this.controlToggleButton = createToggleButton(createToggleControlMode());
+        this.fitToScreenToggleButton = createToggleButton(createToggleFixScreenAction());
+        this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
         setupToolBar(createToolBar());
@@ -84,6 +95,7 @@ class AssistantFrame extends BaseFrame {
         addKeyListeners();
         addMouseListeners();
         addResizeListener();
+        addMinMaximizedListener();
         // the network has been before we've been registered as a listener ...
         onReady();
     }
@@ -100,6 +112,12 @@ class AssistantFrame extends BaseFrame {
         return yFactor;
     }
 
+    boolean getFitToScreenActivated() {
+        return fitToScreenActivated.get();
+    }
+    boolean getKeepAspectRatioActivated() {
+        return keepAspectRatioActivated.get();
+    }
 
     private void addMouseListeners() {
         assistantPanel.addMouseListener(new MouseAdapter() {
@@ -168,6 +186,10 @@ class AssistantFrame extends BaseFrame {
         });
     }
 
+    private void addMinMaximizedListener() {
+        addWindowStateListener(event -> isImmutableWindowsSize.set((event.getNewState() & Frame.ICONIFIED) == Frame.ICONIFIED || (event.getNewState() & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH));
+    }
+
     private void addFocusListener() {
         addFocusListener(new FocusAdapter() {
             @Override
@@ -201,7 +223,8 @@ class AssistantFrame extends BaseFrame {
 
         JPanel sessionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         sessionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
-        sessionPanel.add(createToggleButton(actions.getToggleFitScreenAction()));
+        sessionPanel.add(fitToScreenToggleButton);
+        sessionPanel.add(keepAspectRatioToggleButton);
         sessionPanel.add(controlToggleButton);
         sessionPanel.add(createButton(actions.getRemoteClipboardRequestAction()));
         sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
@@ -211,7 +234,6 @@ class AssistantFrame extends BaseFrame {
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
-        //settingsPanel.add(createButton(actions.getSettingsAction()));
         settingsPanel.add(createButton(actions.getCaptureEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getCompressionEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
@@ -220,6 +242,8 @@ class AssistantFrame extends BaseFrame {
         tabbedPane.addTab(translate("connection"), connectionPanel);
         tabbedPane.addTab(translate("session"), sessionPanel);
         tabbedPane.addTab(translate("settings"), settingsPanel);
+        // must not be focusable or the key listener won't work
+        tabbedPane.setFocusable(false);
         return tabbedPane;
     }
 
@@ -230,8 +254,13 @@ class AssistantFrame extends BaseFrame {
     }
 
     private JToggleButton createToggleButton(Action action) {
+        return createToggleButton(action, true);
+    }
+
+    private JToggleButton createToggleButton(Action action, boolean visible) {
         final JToggleButton button = new JToggleButton();
         addButtonProperties(action, button);
+        button.setVisible(visible);
         return button;
     }
 
@@ -307,6 +336,40 @@ class AssistantFrame extends BaseFrame {
         sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
         sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
         return sendCtrlKey;
+    }
+
+    private Action createToggleFixScreenAction() {
+        final Action fitScreen = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                fitToScreenActivated.set(!fitToScreenActivated.get());
+                if (!fitToScreenActivated.get()) {
+                    keepAspectRatioToggleButton.setVisible(false);
+                    resetFactors();
+                } else {
+                    keepAspectRatioToggleButton.setVisible(true);
+                    resetCanvas();
+                }
+                repaint();
+            }
+        };
+        fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
+        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
+        return fitScreen;
+    }
+
+    private Action createToggleKeepAspectRatioAction() {
+        final Action keepAspectRatio = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                keepAspectRatioActivated.set(!keepAspectRatioActivated.get());
+                resetCanvas();
+                repaint();
+            }
+        };
+        keepAspectRatio.putValue(Action.SHORT_DESCRIPTION, translate("toggle.keep.aspect"));
+        keepAspectRatio.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.LOCK));
+        return keepAspectRatio;
     }
 
     void onReady() {
@@ -404,21 +467,40 @@ class AssistantFrame extends BaseFrame {
 
     void computeScaleFactors(int sourceWidth, int sourceHeight, boolean keepAspectRatio) {
         canvas = assistantPanelWrapper.getSize();
-        canvas.setSize(canvas.getWidth() - assistantPanelWrapper.getVerticalScrollBar().getWidth() + OFFSET,
-                canvas.getHeight() - assistantPanelWrapper.getHorizontalScrollBar().getHeight() + OFFSET);
+        canvas.setSize(canvas.getWidth() - OFFSET, canvas.getHeight() - OFFSET);
         xFactor = canvas.getWidth() / sourceWidth;
         yFactor = canvas.getHeight() / sourceHeight;
-        if (keepAspectRatio) {
-            Log.debug("%s", () -> format("Resize  W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
-            if (xFactor > yFactor) {
+        if (keepAspectRatio && !isImmutableWindowsSize.get()) {
+            resizeWindow(sourceWidth, sourceHeight);
+        }
+    }
+
+    private void resizeWindow(int sourceWidth, int sourceHeight) {
+        Log.debug("%s", () -> format("Resize  W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
+        int menuHeight = this.getHeight() - canvas.height;
+        final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        if (xFactor < yFactor) {
+            if ((sourceWidth * yFactor) + OFFSET < maximumWindowBounds.width) {
+                xFactor = yFactor;
+                Log.info("get wider");
+                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
+            } else {
                 yFactor = xFactor;
-                this.setSize(this.getWidth(), (int) (sourceHeight * xFactor));
+                Log.info("get lower ");
+                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
+            }
+        } else {
+            if ((sourceHeight * xFactor) + menuHeight + OFFSET < maximumWindowBounds.height) {
+                yFactor = xFactor;
+                Log.info("get higher");
+                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
             } else {
                 xFactor = yFactor;
-                this.setSize((int) (sourceWidth * yFactor), this.getHeight());
+                Log.info("get narrower");
+                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
             }
-            Log.debug("%s", () -> format("Resized W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
         }
+        Log.debug("%s", () -> format("Resized W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
     }
 
     void resetFactors() {

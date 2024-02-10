@@ -9,7 +9,6 @@ class AssistantActions {
     private Action captureEngineConfigurationAction;
     private Action compressionEngineConfigurationAction;
     private Action resetAction;
-    private Action toggleFitScreenAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
     private Action startAction;
@@ -57,13 +56,6 @@ class AssistantActions {
         this.resetAction = resetAction;
     }
 
-    Action getToggleFitScreenAction() {
-        return toggleFitScreenAction;
-    }
-
-    void setToggleFitScreenAction(Action toggleFitScreenAction) {
-        this.toggleFitScreenAction = toggleFitScreenAction;
-    }
 
     Action getRemoteClipboardRequestAction() {
         return remoteClipboardRequestAction;
