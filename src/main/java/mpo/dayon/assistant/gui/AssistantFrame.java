@@ -74,6 +74,8 @@ class AssistantFrame extends BaseFrame {
 
     private ToolBar toolbar;
 
+    private JTabbedPane tabbedPane;
+
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
@@ -238,7 +240,7 @@ class AssistantFrame extends BaseFrame {
         settingsPanel.add(createButton(actions.getCompressionEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
 
-        JTabbedPane tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane();
         tabbedPane.addTab(translate("connection"), connectionPanel);
         tabbedPane.addTab(translate("session"), sessionPanel);
         tabbedPane.addTab(translate("settings"), settingsPanel);
@@ -446,6 +448,7 @@ class AssistantFrame extends BaseFrame {
             getStatusBar().setSessionDuration(format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60));
         });
         sessionTimer.start();
+        tabbedPane.setSelectedIndex(1);
     }
 
     void onDisconnecting() {
@@ -482,21 +485,21 @@ class AssistantFrame extends BaseFrame {
         if (xFactor < yFactor) {
             if ((sourceWidth * yFactor) + OFFSET < maximumWindowBounds.width) {
                 xFactor = yFactor;
-                Log.info("get wider");
+                Log.debug("Get wider");
                 this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
             } else {
                 yFactor = xFactor;
-                Log.info("get lower ");
+                Log.debug("Get lower");
                 this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
             }
         } else {
             if ((sourceHeight * xFactor) + menuHeight + OFFSET < maximumWindowBounds.height) {
                 yFactor = xFactor;
-                Log.info("get higher");
+                Log.debug("Get higher");
                 this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
             } else {
                 xFactor = yFactor;
-                Log.info("get narrower");
+                Log.debug("Get narrower");
                 this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
             }
         }

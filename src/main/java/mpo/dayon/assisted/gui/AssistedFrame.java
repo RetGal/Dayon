@@ -10,12 +10,13 @@ import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.log.Log;
 
 import javax.swing.*;
-import java.awt.Cursor;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_SPACER;
 
 class AssistedFrame extends BaseFrame {
     private final transient Action startAction;
@@ -37,6 +38,7 @@ class AssistedFrame extends BaseFrame {
 
     private ToolBar createToolBar() {
         toolbar = new ToolBar();
+        toolbar.addSeparator(DEFAULT_SPACER);
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
