@@ -18,6 +18,7 @@ import mpo.dayon.common.version.Version;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_SPACER;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -87,9 +88,11 @@ public abstract class BaseFrame extends JFrame {
 
     protected void setupToolBar(ToolBar toolBar) {
         float alignmentY = frameType.equals(FrameType.ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
+        toolBar.addSeparator(DEFAULT_SPACER);
         toolBar.addAction(createShowInfoAction(), alignmentY);
         toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
+        toolBar.addSeparator(DEFAULT_SPACER);
         add(toolBar, BorderLayout.NORTH);
         this.toolBar = toolBar;
     }
