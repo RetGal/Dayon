@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_SPACER;
 
 class AssistedFrame extends BaseFrame {
     private final transient Action startAction;
@@ -38,7 +37,8 @@ class AssistedFrame extends BaseFrame {
 
     private ToolBar createToolBar() {
         toolbar = new ToolBar();
-        toolbar.addSeparator(DEFAULT_SPACER);
+        // i'd prefer to use the DEFAULT_SPACER but...
+        toolbar.add(Box.createHorizontalStrut(10));
         toolbar.addAction(startAction);
         toolbar.addAction(stopAction);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
@@ -49,8 +49,8 @@ class AssistedFrame extends BaseFrame {
             if (File.separatorChar == '\\') {
                 toolbar.addAction(createShowUacSettingsAction());
             }
+            toolbar.addSeparator();
         }
-        toolbar.addSeparator();
         toolbar.add(toolbar.getFingerprints());
         toolbar.addGlue();
         return toolbar;

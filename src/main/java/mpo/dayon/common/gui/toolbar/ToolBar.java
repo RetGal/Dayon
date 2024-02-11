@@ -14,7 +14,7 @@ public class ToolBar extends JToolBar {
 
 	public static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
 
-	public static final Dimension DEFAULT_SPACER = new Dimension(10, 10);
+	public static final Component DEFAULT_SPACER = Box.createHorizontalStrut(10);
 
 	private final JLabel fingerprint = new JLabel();
 

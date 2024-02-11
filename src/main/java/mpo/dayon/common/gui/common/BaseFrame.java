@@ -88,11 +88,16 @@ public abstract class BaseFrame extends JFrame {
 
     protected void setupToolBar(ToolBar toolBar) {
         float alignmentY = frameType.equals(FrameType.ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
-        toolBar.addSeparator(DEFAULT_SPACER);
+        toolBar.add(DEFAULT_SPACER);
+        if (FrameType.ASSISTANT.equals(frameType)) {
+            // poor man's vertical align top
+            toolBar.getFingerprints().setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
+        }
+        toolBar.add(toolBar.getFingerprints());
         toolBar.addAction(createShowInfoAction(), alignmentY);
         toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
-        toolBar.addSeparator(DEFAULT_SPACER);
+        toolBar.add(DEFAULT_SPACER);
         add(toolBar, BorderLayout.NORTH);
         this.toolBar = toolBar;
     }
