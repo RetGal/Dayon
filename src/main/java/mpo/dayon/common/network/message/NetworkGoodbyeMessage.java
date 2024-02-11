@@ -20,7 +20,7 @@ public class NetworkGoodbyeMessage extends NetworkMessage {
 		marshallEnum(out, getType());
 	}
 
-	public static NetworkGoodbyeMessage unmarshall() throws IOException {
+	public static NetworkGoodbyeMessage unmarshall() {
 		return new NetworkGoodbyeMessage();
 	}
 
