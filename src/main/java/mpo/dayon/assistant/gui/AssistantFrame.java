@@ -19,9 +19,9 @@ import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.awt.event.KeyEvent.VK_CONTROL;
-import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static java.awt.event.KeyEvent.*;
 import static java.lang.String.format;
+import static java.lang.Thread.sleep;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_FONT;
@@ -51,6 +51,8 @@ class AssistantFrame extends BaseFrame {
 
     private final JToggleButton ctrlKeyToggleButton;
 
+    private final JButton tabKeyButton;
+
     private final JToggleButton fitToScreenToggleButton;
 
     private final JToggleButton keepAspectRatioToggleButton;
@@ -62,6 +64,7 @@ class AssistantFrame extends BaseFrame {
     private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
+
     private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
@@ -85,6 +88,7 @@ class AssistantFrame extends BaseFrame {
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
+        this.tabKeyButton = createButton(createSendTabKeyAction());
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
         assistantPanel = new AssistantPanel();
@@ -231,6 +235,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
+        sessionPanel.add(tabKeyButton);
         sessionPanel.add(createButton(actions.getResetAction()));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -298,6 +303,7 @@ class AssistantFrame extends BaseFrame {
                 controlActivated.set(!controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
+                tabKeyButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
@@ -337,6 +343,25 @@ class AssistantFrame extends BaseFrame {
         sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
         sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
         return sendCtrlKey;
+    }
+
+    private Action createSendTabKeyAction() {
+        final Action sendTabKey = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                fireOnKeyPressed(VK_TAB, ' ');
+                try {
+                    sleep(11L);
+                } catch (InterruptedException e) {
+                    Log.error("Thread interrupted", e);
+                } finally {
+                    fireOnKeyReleased(VK_TAB, ' ');
+                }
+            }
+        };
+        sendTabKey.putValue(Action.SHORT_DESCRIPTION, translate("send.tabKey"));
+        sendTabKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.TAB));
+        return sendTabKey;
     }
 
     private Action createToggleFixScreenAction() {
@@ -531,6 +556,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
         ctrlKeyToggleButton.setEnabled(false);
+        tabKeyButton.setEnabled(false);
         disableTransferControls();
     }
 
@@ -544,6 +570,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
         ctrlKeyToggleButton.setSelected(false);
+        tabKeyButton.setSelected(false);
         enableTransferControls();
     }
 
