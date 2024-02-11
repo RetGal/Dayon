@@ -354,6 +354,7 @@ class AssistantFrame extends BaseFrame {
                     sleep(11L);
                 } catch (InterruptedException e) {
                     Log.error("Thread interrupted", e);
+                    Thread.currentThread().interrupt();
                 } finally {
                     fireOnKeyReleased(VK_TAB, ' ');
                 }
