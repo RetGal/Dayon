@@ -229,6 +229,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    public void farewell() {
+        if (sender != null) {
+            sender.sendGoodbye();
+        }
+    }
+
     private void fireOnConnected(String fingerprints) {
         listeners.getListeners().forEach(listener -> listener.onConnected(fingerprints));
     }

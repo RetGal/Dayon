@@ -48,6 +48,8 @@ public interface NetworkAssistantEngineListener extends Listener {
 	 */
 	void onDisconnecting();
 
+	void onTerminating();
+
 	void onIOError(IOException error);
 
 	void onFingerprinted(String fingerprints);

@@ -453,6 +453,16 @@ class AssistantFrame extends BaseFrame {
 
     void onDisconnecting() {
         stopSessionTimer();
+        tabbedPane.setSelectedIndex(0);
+    }
+
+    void onTerminating() {
+        actions.getStartAction().setEnabled(false);
+        actions.getStopAction().setEnabled(false);
+        actions.getResetAction().setEnabled(false);
+        disableControls();
+        stopSessionTimer();
+        tabbedPane.setSelectedIndex(0);
     }
 
     void onIOError(IOException error) {
@@ -464,6 +474,7 @@ class AssistantFrame extends BaseFrame {
         hideSpinner();
         validate();
         repaint();
+        tabbedPane.setSelectedIndex(0);
         String errorMessage = error.getMessage() != null ? translate("comm.error.msg1", translate(error.getMessage())) : translate("comm.error.msg1", "!");
         JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }

@@ -59,5 +59,10 @@ public enum NetworkMessageType {
 	/**
 	 * A screen resize event.
 	 */
-	RESIZE
+	RESIZE,
+
+	/*
+	 * Termination message.
+	 */
+	GOODBYE
 }

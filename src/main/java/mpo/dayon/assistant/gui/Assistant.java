@@ -819,6 +819,12 @@ public class Assistant implements ClipboardOwner {
         }
 
         @Override
+        public void onTerminating() {
+            Log.info("Session got terminated by peer");
+            frame.onTerminating();
+        }
+
+        @Override
         public void onIOError(IOException error) {
             frame.onIOError(error);
         }

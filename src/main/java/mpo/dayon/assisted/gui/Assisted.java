@@ -277,6 +277,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private void stop(String serverName) {
         Log.info(format("Assisted stop [%s]", serverName));
         if (networkEngine != null && networkEngine.getConfiguration().getServerName().equals(serverName)) {
+            networkEngine.farewell();
             networkEngine.cancel();
             networkEngine = null;
 

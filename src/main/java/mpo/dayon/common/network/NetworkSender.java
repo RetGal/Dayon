@@ -154,15 +154,26 @@ public class NetworkSender {
      * Assistant 2 assisted or vice versa.
      */
     public void sendClipboardContentFiles(List<File> files, long size, String basePath) {
-        final NetworkMessage message = new NetworkClipboardFilesMessage(files, size, basePath);
-        send(true, message);
+        send(true, new NetworkClipboardFilesMessage(files, size, basePath));
     }
 
+    /**
+     * Assisted 2 assistant.
+     */
     public void sendResizeScreen(int width, int height) {
-        final NetworkMessage message = new NetworkResizeScreenMessage(width, height);
-        send(true, message);
+        send(true, new NetworkResizeScreenMessage(width, height));
     }
 
+    /**
+     * Assisted 2 assistant.
+     */
+    public void sendGoodbye() {
+        send(false, new NetworkGoodbyeMessage());
+    }
+
+    /**
+     * Assisted 2 assistant.
+     */
     public void ping() {
         send(false, new NetworkPingMessage());
     }

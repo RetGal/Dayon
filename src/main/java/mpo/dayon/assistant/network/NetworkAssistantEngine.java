@@ -106,6 +106,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void receivingLoop(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
         boolean introduced = false;
+        boolean proceed = true;
 
         try {
             awaitConnections(compatibilityMode);
@@ -113,14 +114,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             initSender(8);
             initInputStream();
 
-            //noinspection InfiniteLoopStatement
-            while (true) {
+            while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
                 Log.debug("Received %s", type::name);
 
                 if (introduced) {
-                    processIntroduced(type, in);
+                    proceed = processIntroduced(type, in);
                 } else {
                     introduced = processUnIntroduced(type, in);
                 }
@@ -194,36 +194,40 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private void processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+    private boolean processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
         switch (type) {
             case CAPTURE:
                 final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
                 fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
                 captureMessageHandler.handleCapture(capture);
-                break;
+                return true;
 
             case MOUSE_LOCATION:
                 final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
                 fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
                 mouseMessageHandler.handleLocation(mouse);
-                break;
+                return true;
 
             case CLIPBOARD_TEXT:
                 final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                 fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
                 setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
                 fireOnClipboardReceived();
-                break;
+                return true;
 
             case PING:
                 fireOnClipboardSent();
-                break;
+                return true;
 
             case RESIZE:
                 final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
                 fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
                 fireOnResizeScreen(resize.getWidth(), resize.getHeight());
-                break;
+                return true;
+
+            case GOODBYE:
+                fireOnTerminating();
+                return false;
 
             case HELLO:
                 throw new IllegalArgumentException("Unexpected message [HELLO]!");
@@ -247,6 +251,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case MOUSE_LOCATION:
             case CLIPBOARD_TEXT:
             case CLIPBOARD_FILES:
+            case GOODBYE:
                 throw new IllegalArgumentException(format("Unexpected message [%s]!", type.name()));
 
             default:
@@ -343,6 +348,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private void fireOnDisconnecting() {
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onDisconnecting);
+    }
+
+    private void fireOnTerminating() {
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onTerminating);
     }
 
     @Override
