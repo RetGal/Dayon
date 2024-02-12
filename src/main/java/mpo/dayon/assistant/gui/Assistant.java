@@ -102,6 +102,13 @@ public class Assistant implements ClipboardOwner {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
         }
 
+        this.configuration = new AssistantConfiguration();
+        if (language == null) {
+            if (!Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
+                Locale.setDefault(new Locale(configuration.getLanguage()));
+            }
+        }
+
         initUpnp();
 
         this.configuration = new AssistantConfiguration();
@@ -141,7 +148,6 @@ public class Assistant implements ClipboardOwner {
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
 
-        this.configuration = new AssistantConfiguration();
         final String lnf = configuration.getLookAndFeelClassName();
         try {
             UIManager.setLookAndFeel(lnf);
