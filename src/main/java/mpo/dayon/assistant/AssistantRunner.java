@@ -20,7 +20,7 @@ public class AssistantRunner {
 		return combined;
 	}
 
-	public static void launchAssistant() {
-		new Assistant(readPresetFile("assistant.yaml").get("tokenServerUrl"));
+	public static void launchAssistant(String language) {
+		new Assistant(readPresetFile("assistant.yaml").get("tokenServerUrl"), language);
 	}
 }

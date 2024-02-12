@@ -94,7 +94,7 @@ public class Assistant implements ClipboardOwner {
 
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
-    public Assistant(String tokenServerUrl) {
+    public Assistant(String tokenServerUrl, String language) {
         if (tokenServerUrl != null) {
             this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
             System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
@@ -103,6 +103,13 @@ public class Assistant implements ClipboardOwner {
         }
 
         initUpnp();
+
+        this.configuration = new AssistantConfiguration();
+        if (language == null) {
+            if (!Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
+                Locale.setDefault(new Locale(configuration.getLanguage()));
+            }
+        }
 
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
@@ -143,7 +150,7 @@ public class Assistant implements ClipboardOwner {
         }
 
         actions = createAssistantActions();
-        frame = new AssistantFrame(actions, counters);
+        frame = new AssistantFrame(actions, counters, createLanguageSelection());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
@@ -645,6 +652,22 @@ public class Assistant implements ClipboardOwner {
         compatibilityMode.putValue(Action.SHORT_DESCRIPTION, translate("compatibility.mode"));
         compatibilityMode.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPATIBILITY));
         return compatibilityMode;
+    }
+
+    public JComboBox<String> createLanguageSelection() {
+        final JComboBox<String> languageSelection = new JComboBox<>(getSupportedLanguages());
+        languageSelection.setBorder(BorderFactory.createEmptyBorder(7, 3, 6, 2));
+        languageSelection.setFocusable(false);
+        languageSelection.setSelectedItem(Locale.getDefault().getLanguage());
+        languageSelection.setToolTipText("TODO");
+        languageSelection.addActionListener(ev -> {
+                Locale.setDefault(new Locale(languageSelection.getSelectedItem().toString()));
+                Log.info(format("New Locale %s", Locale.getDefault().getLanguage()));
+                configuration = new AssistantConfiguration(getDefaultLookAndFeel(), languageSelection.getSelectedItem().toString());
+                configuration.persist();
+            }
+        );
+        return languageSelection;
     }
 
     private class NetWorker extends SwingWorker<String, String> {
