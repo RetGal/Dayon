@@ -16,10 +16,14 @@ import java.io.File;
 import java.io.IOException;
 
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_FONT;
+import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistedFrame extends BaseFrame {
     private final transient Action startAction;
     private final transient Action stopAction;
+    private final JButton startButton;
+    private final JButton stopButton;
     private final transient Action toggleMultiScreenCaptureAction;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
@@ -29,6 +33,8 @@ class AssistedFrame extends BaseFrame {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
         this.startAction = startAction;
+        this.startButton = createButton(this.startAction);
+        this.stopButton = createButton(this.stopAction, false);
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());
@@ -39,8 +45,8 @@ class AssistedFrame extends BaseFrame {
         toolbar = new ToolBar();
         // i'd prefer to use the DEFAULT_SPACER but...
         toolbar.add(Box.createHorizontalStrut(10));
-        toolbar.addAction(startAction);
-        toolbar.addAction(stopAction);
+        toolbar.add(startButton);
+        toolbar.add(stopButton);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
             toolbar.addSeparator();
             if (ScreenUtilities.getNumberOfScreens() > 1) {
@@ -54,6 +60,28 @@ class AssistedFrame extends BaseFrame {
         toolbar.add(toolbar.getFingerprints());
         toolbar.addGlue();
         return toolbar;
+    }
+
+    private JButton createButton(Action action) {
+        return createButton(action, true);
+    }
+
+    private JButton createButton(Action action, boolean visible) {
+        final JButton button = new JButton();
+        addButtonProperties(action, button);
+        button.setVisible(visible);
+        return button;
+    }
+
+    private void addButtonProperties(Action action, AbstractButton button) {
+        button.setMargin(ZERO_INSETS);
+        button.setHideActionText(true);
+        button.setAction(action);
+        button.setFont(DEFAULT_FONT);
+        button.setText((String) action.getValue("DISPLAY_NAME"));
+        button.setFocusable(false);
+        button.setDisabledIcon(null);
+        button.setSelected(false);
     }
 
     private Action createShowUacSettingsAction() {
@@ -73,24 +101,28 @@ class AssistedFrame extends BaseFrame {
 
     void onReady() {
         this.setCursor(mouseCursor);
-        startAction.setEnabled(true);
-        stopAction.setEnabled(false);
+        toggleStartButton(true);
         getStatusBar().setMessage(translate("ready"));
         connected = false;
     }
 
+    private void toggleStartButton(boolean enable) {
+        startAction.setEnabled(enable);
+        startButton.setVisible(enable);
+        stopAction.setEnabled(!enable);
+        stopButton.setVisible(!enable);
+    }
+
     void onConnecting(String serverName, int serverPort) {
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        startAction.setEnabled(false);
-        stopAction.setEnabled(true);
+        toggleStartButton(false);
         getStatusBar().setMessage(translate("connecting", serverName, serverPort));
         connected = false;
     }
 
     void onConnected(String fingerprints) {
         this.setCursor(mouseCursor);
-        startAction.setEnabled(false);
-        stopAction.setEnabled(true);
+        toggleStartButton(false);
         setFingerprints(fingerprints);
         getStatusBar().setMessage(translate("connected"));
         connected = true;
@@ -99,8 +131,7 @@ class AssistedFrame extends BaseFrame {
     void onHostNotFound(String serverName) {
         this.setCursor(mouseCursor);
         if (!connected) {
-            startAction.setEnabled(true);
-            stopAction.setEnabled(false);
+            toggleStartButton(true);
             getStatusBar().setMessage(translate("serverNotFound", serverName));
         }
     }
@@ -108,8 +139,7 @@ class AssistedFrame extends BaseFrame {
     void onConnectionTimeout(String serverName, int serverPort) {
         this.setCursor(mouseCursor);
         if (!connected) {
-            stopAction.setEnabled(false);
-            startAction.setEnabled(true);
+            toggleStartButton(true);
             getStatusBar().setMessage(translate("connectionTimeout", serverName, serverPort));
         }
     }
@@ -117,8 +147,7 @@ class AssistedFrame extends BaseFrame {
     void onRefused(String serverName, int serverPort) {
         this.setCursor(mouseCursor);
         if (!connected) {
-            startAction.setEnabled(true);
-            stopAction.setEnabled(false);
+            toggleStartButton(true);
             getStatusBar().setMessage(translate("refused", serverName, serverPort));
         }
     }

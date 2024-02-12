@@ -29,6 +29,7 @@ public final class ImageNames {
 	public static final String START = "start.png";
 	public static final String START_LARGE = "start_l.png";
 	public static final String STOP = "stop.png";
+	public static final String STOP_LARGE = "stop_l.png";
 	public static final String UP = "up.png";
 	public static final String USERS = "users.png";
 	public static final String WAITING = "waiting.gif";

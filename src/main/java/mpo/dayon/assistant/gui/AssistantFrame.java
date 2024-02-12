@@ -55,6 +55,10 @@ class AssistantFrame extends BaseFrame {
 
     private final JToggleButton keepAspectRatioToggleButton;
 
+    private final JButton startButton;
+
+    private final JButton stopButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
@@ -81,6 +85,8 @@ class AssistantFrame extends BaseFrame {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
+        this.startButton = createButton(actions.getStartAction());
+        this.stopButton = createButton(actions.getStopAction(), false);
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.fitToScreenToggleButton = createToggleButton(createToggleFixScreenAction());
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
@@ -217,8 +223,8 @@ class AssistantFrame extends BaseFrame {
     private JTabbedPane createTabbedPane() {
         JPanel connectionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         connectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
-        connectionPanel.add(createButton(actions.getStartAction()));
-        connectionPanel.add(createButton(actions.getStopAction()));
+        connectionPanel.add(startButton);
+        connectionPanel.add(stopButton);
         connectionPanel.add(createButton(actions.getTokenAction()));
         connectionPanel.add(createButton(actions.getIpAddressAction()));
         connectionPanel.add(createToggleButton(actions.getToggleCompatibilityModeAction()));
@@ -250,8 +256,13 @@ class AssistantFrame extends BaseFrame {
     }
 
     private JButton createButton(Action action) {
+        return createButton(action, true);
+    }
+
+    private JButton createButton(Action action, boolean visible) {
         final JButton button = new JButton();
         addButtonProperties(action, button);
+        button.setVisible(visible);
         return button;
     }
 
@@ -380,6 +391,8 @@ class AssistantFrame extends BaseFrame {
         repaint();
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
+        startButton.setVisible(true);
+        stopButton.setVisible(false);
         actions.getNetworkConfigurationAction().setEnabled(true);
         actions.getToggleCompatibilityModeAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
@@ -390,7 +403,9 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onHttpStarting(int port) {
+        startButton.setVisible(false);
         actions.getStopAction().setEnabled(true);
+        stopButton.setVisible(true);
         actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getToggleCompatibilityModeAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
@@ -517,7 +532,7 @@ class AssistantFrame extends BaseFrame {
         Log.debug("%s", () -> format("Resized W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
     }
 
-    void resetFactors() {
+    private void resetFactors() {
         xFactor = DEFAULT_FACTOR;
         yFactor = DEFAULT_FACTOR;
     }

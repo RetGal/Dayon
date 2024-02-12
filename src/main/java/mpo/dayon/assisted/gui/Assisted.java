@@ -223,7 +223,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         };
         stopAction.setEnabled(false);
         stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
-        stopAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP));
+        stopAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP_LARGE));
         return stopAction;
     }
 
