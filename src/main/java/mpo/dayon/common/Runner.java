@@ -24,11 +24,11 @@ public interface Runner {
         Runner.setDebug(args);
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
-        Runner.overrideLocale(programArgs.get("lang"));
+        String language = Runner.overrideLocale(programArgs.get("lang"));
         if (hasAssistant(args)) {
             Runner.logAppInfo("dayon_assistant");
             try {
-                SwingUtilities.invokeLater(AssistantRunner::launchAssistant);
+                SwingUtilities.invokeLater(() -> AssistantRunner.launchAssistant(language));
             } catch (Exception ex) {
                 FatalErrorHandler.bye("The assistant is dead!", ex);
             }
@@ -60,11 +60,12 @@ public interface Runner {
                 .collect(Collectors.toMap(pair -> pair[0], pair -> pair[1], (a, b) -> b));
     }
 
-    static void overrideLocale(String arg) {
-        final String[] supported = {"de", "en", "es", "fr", "it", "ru", "sv", "tr", "zh"};
-        if (arg != null && Arrays.stream(supported).anyMatch(e -> e.equalsIgnoreCase(arg))) {
+    static String overrideLocale(String arg) {
+        if (arg != null && Arrays.stream(getSupportedLanguages()).anyMatch(e -> e.equalsIgnoreCase(arg))) {
             Locale.setDefault(new Locale(arg));
+            return arg;
         }
+        return null;
     }
 
     static void setDebug(String[] args) {

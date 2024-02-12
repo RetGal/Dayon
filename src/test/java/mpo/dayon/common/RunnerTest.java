@@ -39,10 +39,10 @@ class RunnerTest {
         if (defaultLocale.toLanguageTag().equals(lang)) {
             lang = "ru";
         }
-
         // when
-        overrideLocale(lang);
+        String newLanguage = overrideLocale(lang);
         // then
+        assertEquals(lang, newLanguage, "Locale should have been altered");
         assertEquals(lang, Locale.getDefault().toLanguageTag(), "Locale should have been altered");
     }
 
@@ -54,8 +54,9 @@ class RunnerTest {
             lang = "ru";
         }
         // when
-        overrideLocale(lang);
+        String newLanguage = overrideLocale(lang);
         // then
+        assertNull(newLanguage, "Locale shouldn't have been altered");
         assertEquals(defaultLocale.toLanguageTag(), Locale.getDefault().toLanguageTag(), "Locale shouldn't have been altered");
     }
 
@@ -63,8 +64,9 @@ class RunnerTest {
     void shouldIgnoreNull() {
         // given
         // when
-        overrideLocale(null);
+        String newLanguage = overrideLocale(null);
         // then
+        assertNull(newLanguage, "Locale shouldn't have been altered");
         assertEquals(defaultLocale.toLanguageTag(), Locale.getDefault().toLanguageTag(), "Locale shouldn't have been altered");
     }
 

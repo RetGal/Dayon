@@ -16,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
+import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -79,7 +80,9 @@ class AssistantFrame extends BaseFrame {
 
     private JTabbedPane tabbedPane;
 
-    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters) {
+    private final JComboBox<String> languageSelection;
+
+    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<String> languageSelection) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
@@ -90,6 +93,7 @@ class AssistantFrame extends BaseFrame {
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
+        this.languageSelection = languageSelection;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
         assistantPanel = new AssistantPanel();
@@ -243,6 +247,7 @@ class AssistantFrame extends BaseFrame {
         settingsPanel.add(createButton(actions.getCaptureEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getCompressionEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
+        settingsPanel.add(languageSelection);
 
         tabbedPane = new JTabbedPane();
         tabbedPane.addTab(translate("connection"), connectionPanel);
