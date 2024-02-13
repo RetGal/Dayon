@@ -379,8 +379,8 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onGettingReady() {
-        showSpinner();
         actions.getStartAction().setEnabled(false);
+        showSpinner();
     }
 
     private void showSpinner() {

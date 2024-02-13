@@ -144,14 +144,18 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (compatibilityMode) {
             Log.warn("Compatibility mode enabled, using legacy certificate");
         }
+        if (server != null && server.isBound()) {
+            safeClose(server);
+        }
         server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
         server.setNeedClientAuth(true);
         Log.info("Accepting...");
 
         do {
-            safeClose(connection); // we might have refused the accepted connection (!)
+            if (connection != null && connection.isBound()) {
+                safeClose(connection); // we might have refused the accepted connection (!)
+            }
             connection = (SSLSocket) server.accept();
-            connection.setNeedClientAuth(true);
             Toolkit.getDefaultToolkit().beep();
             if (!connection.getSession().isValid()) {
                 fireOnFingerprinted(null);
@@ -161,7 +165,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
 
-        server.close();
+        if (server.isBound()) {
+            safeClose(server);
+        }
         server = null;
     }
 

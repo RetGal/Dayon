@@ -102,6 +102,8 @@ public class Assistant implements ClipboardOwner {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
         }
 
+        initUpnp();
+
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
 
@@ -145,7 +147,6 @@ public class Assistant implements ClipboardOwner {
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
-        initUpnp();
     }
 
     private boolean isUpnpEnabled() {
@@ -614,6 +615,7 @@ public class Assistant implements ClipboardOwner {
                 new Assistant.NetWorker().execute();
             }
         };
+        startAction.setEnabled(false);
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("start.session"));
         startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START));
         return startAction;
