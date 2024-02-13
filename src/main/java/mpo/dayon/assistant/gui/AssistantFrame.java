@@ -24,8 +24,6 @@ import static java.awt.event.KeyEvent.VK_WINDOWS;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
-import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_FONT;
-import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistantFrame extends BaseFrame {
 
@@ -253,17 +251,6 @@ class AssistantFrame extends BaseFrame {
         // must not be focusable or the key listener won't work
         tabbedPane.setFocusable(false);
         return tabbedPane;
-    }
-
-    private void addButtonProperties(Action action, AbstractButton button) {
-        button.setMargin(ZERO_INSETS);
-        button.setHideActionText(true);
-        button.setAction(action);
-        button.setFont(DEFAULT_FONT);
-        button.setText((String) action.getValue("DISPLAY_NAME"));
-        button.setFocusable(false);
-        button.setDisabledIcon(null);
-        button.setSelected(false);
     }
 
     private StatusBar createStatusBar(Set<Counter<?>> counters) {
