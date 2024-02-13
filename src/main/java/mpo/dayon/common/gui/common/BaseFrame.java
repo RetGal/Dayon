@@ -18,7 +18,7 @@ import mpo.dayon.common.version.Version;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_SPACER;
+import static mpo.dayon.common.gui.toolbar.ToolBar.*;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -105,6 +105,39 @@ public abstract class BaseFrame extends JFrame {
     protected void setupStatusBar(StatusBar statusBar) {
         add(statusBar, BorderLayout.SOUTH);
         this.statusBar = statusBar;
+    }
+
+    protected JButton createButton(Action action) {
+        return createButton(action, true);
+    }
+
+    protected JButton createButton(Action action, boolean visible) {
+        final JButton button = new JButton();
+        addButtonProperties(action, button);
+        button.setVisible(visible);
+        return button;
+    }
+
+    protected JToggleButton createToggleButton(Action action) {
+        return createToggleButton(action, true);
+    }
+
+    protected JToggleButton createToggleButton(Action action, boolean visible) {
+        final JToggleButton button = new JToggleButton();
+        addButtonProperties(action, button);
+        button.setVisible(visible);
+        return button;
+    }
+
+    private void addButtonProperties(Action action, AbstractButton button) {
+        button.setMargin(ZERO_INSETS);
+        button.setHideActionText(true);
+        button.setAction(action);
+        button.setFont(DEFAULT_FONT);
+        button.setText((String) action.getValue("DISPLAY_NAME"));
+        button.setFocusable(false);
+        button.setDisabledIcon(null);
+        button.setSelected(false);
     }
 
     private Action createExitAction() {

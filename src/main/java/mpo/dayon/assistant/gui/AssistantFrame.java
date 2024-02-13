@@ -255,28 +255,6 @@ class AssistantFrame extends BaseFrame {
         return tabbedPane;
     }
 
-    private JButton createButton(Action action) {
-        return createButton(action, true);
-    }
-
-    private JButton createButton(Action action, boolean visible) {
-        final JButton button = new JButton();
-        addButtonProperties(action, button);
-        button.setVisible(visible);
-        return button;
-    }
-
-    private JToggleButton createToggleButton(Action action) {
-        return createToggleButton(action, true);
-    }
-
-    private JToggleButton createToggleButton(Action action, boolean visible) {
-        final JToggleButton button = new JToggleButton();
-        addButtonProperties(action, button);
-        button.setVisible(visible);
-        return button;
-    }
-
     private void addButtonProperties(Action action, AbstractButton button) {
         button.setMargin(ZERO_INSETS);
         button.setHideActionText(true);

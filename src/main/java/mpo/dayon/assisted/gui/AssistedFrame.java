@@ -16,8 +16,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.gui.toolbar.ToolBar.DEFAULT_FONT;
-import static mpo.dayon.common.gui.toolbar.ToolBar.ZERO_INSETS;
 
 class AssistedFrame extends BaseFrame {
     private final transient Action startAction;
@@ -60,28 +58,6 @@ class AssistedFrame extends BaseFrame {
         toolbar.add(toolbar.getFingerprints());
         toolbar.addGlue();
         return toolbar;
-    }
-
-    private JButton createButton(Action action) {
-        return createButton(action, true);
-    }
-
-    private JButton createButton(Action action, boolean visible) {
-        final JButton button = new JButton();
-        addButtonProperties(action, button);
-        button.setVisible(visible);
-        return button;
-    }
-
-    private void addButtonProperties(Action action, AbstractButton button) {
-        button.setMargin(ZERO_INSETS);
-        button.setHideActionText(true);
-        button.setAction(action);
-        button.setFont(DEFAULT_FONT);
-        button.setText((String) action.getValue("DISPLAY_NAME"));
-        button.setFocusable(false);
-        button.setDisabledIcon(null);
-        button.setSelected(false);
     }
 
     private Action createShowUacSettingsAction() {
