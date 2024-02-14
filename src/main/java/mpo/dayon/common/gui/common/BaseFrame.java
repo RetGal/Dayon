@@ -6,7 +6,6 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Locale;
 
 import javax.swing.*;
 
@@ -43,8 +42,6 @@ public abstract class BaseFrame extends JFrame {
 
     private StatusBar statusBar;
 
-    private Locale currentLocale;
-
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
@@ -74,16 +71,7 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
                 Math.max(configuration.getHeight(), frameType.getMinHeight()));
         this.setSize(dimension.width, dimension.height);
-        setTitle();
-        new Timer(5000, e -> setTitle()).start();
-    }
-
-    private void setTitle() {
-        Locale newLocale = InputContext.getInstance().getLocale();
-        if (newLocale != currentLocale) {
-            currentLocale = newLocale;
-            setTitle(format("Dayon! (%s) %s %s", translate(frameType.getPrefix()), Version.get(), currentLocale != null ? currentLocale.toString() : ""));
-        }
+        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
     }
 
     protected void setupToolBar(ToolBar toolBar) {
@@ -107,6 +95,15 @@ public abstract class BaseFrame extends JFrame {
         statusBar.add(Box.createHorizontalStrut(10));
         add(statusBar, BorderLayout.SOUTH);
         this.statusBar = statusBar;
+        updateInputLocale();
+        new Timer(5000, e -> updateInputLocale()).start();
+    }
+
+    private void updateInputLocale() {
+        String currentKeyboardLayout = InputContext.getInstance().getLocale().toString();
+        if (!currentKeyboardLayout.equals(statusBar.getKeyboardLayout())) {
+            statusBar.setKeyboardLayout(currentKeyboardLayout);
+        }
     }
 
     protected JButton createButton(Action action) {

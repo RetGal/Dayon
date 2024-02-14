@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.TimerTask;
 
+import static java.lang.String.format;
 import static javax.swing.BoxLayout.LINE_AXIS;
 import static javax.swing.SwingConstants.*;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -18,12 +19,15 @@ public class StatusBar extends JPanel {
     private static final int HEIGHT = 5;
     private final JLabel message = new JLabel();
     private final JLabel sessionDuration = new JLabel("00:00:00");
+    private final JLabel keyboardLayout = new JLabel();
 
     public StatusBar() {
         setLayout(new BoxLayout(this, LINE_AXIS));
         add(Box.createHorizontalStrut(10));
         add(message);
         add(Box.createHorizontalGlue());
+        addSeparator();
+        addKeyboardLayout();
     }
 
     public void clearMessage() {
@@ -36,6 +40,23 @@ public class StatusBar extends JPanel {
 
     public void setSessionDuration(String sessionDuration) {
         this.sessionDuration.setText(sessionDuration);
+    }
+
+    public void setKeyboardLayout(String keyboardLayout) {
+        this.keyboardLayout.setText(keyboardLayout);
+        this.keyboardLayout.setToolTipText(format("\u2328 %s", keyboardLayout));
+    }
+
+    public String getKeyboardLayout() {
+        return keyboardLayout.getText();
+    }
+
+    private void addKeyboardLayout() {
+        final Dimension dimension = new Dimension(60, HEIGHT);
+        keyboardLayout.setHorizontalAlignment(CENTER);
+        keyboardLayout.setSize(dimension);
+        keyboardLayout.setPreferredSize(dimension);
+        add(keyboardLayout);
     }
 
     public void addCounter(Counter<?> counter, int width) {

@@ -126,7 +126,7 @@ public abstract class UnitUtilities {
             return format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, round(secs) % 60);
         }
         // noinspection NumericCastThatLosesPrecision
-        return format("%dd%02dh%02dm%02ds", floor(toHours(secs) / 24.0), toHours(secs) % 24,
+        return format("%dd%02dh%02dm%02ds", (int) floor(toHours(secs) / 24.0), toHours(secs) % 24,
                 toMinutes(secs) % 60, round(secs) % 60);
     }
 
