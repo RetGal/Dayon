@@ -1,7 +1,7 @@
 <?php
 define('DB_NAME', "dayon.db");
 define('TOKEN_MIN_LENGTH', 4);
-define('TOKEN_LIFETIME', 604800000);
+define('TOKEN_LIFETIME', 604800);
 header('Content-type: text/plain');
 if (isset($_GET['port'])) {
     $port = clean($_GET['port'], 6);
