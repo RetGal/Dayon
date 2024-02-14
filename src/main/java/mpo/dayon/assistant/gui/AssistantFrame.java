@@ -250,11 +250,14 @@ class AssistantFrame extends BaseFrame {
         tabbedPane.addTab(translate("settings"), settingsPanel);
         // must not be focusable or the key listener won't work
         tabbedPane.setFocusable(false);
+        tabbedPane.setBorder(null);
         return tabbedPane;
     }
 
     private StatusBar createStatusBar(Set<Counter<?>> counters) {
         final StatusBar statusBar = new StatusBar();
+        final Component horizontalStrut = Box.createHorizontalStrut(10);
+        statusBar.add(horizontalStrut);
         for (Counter<?> counter : counters) {
             statusBar.addSeparator();
             statusBar.addCounter(counter, counter.getWidth());
@@ -263,7 +266,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.addRamInfo();
         statusBar.addSeparator();
         statusBar.addConnectionDuration();
-        statusBar.add(Box.createHorizontalStrut(10));
+        statusBar.add(horizontalStrut);
         return statusBar;
     }
 

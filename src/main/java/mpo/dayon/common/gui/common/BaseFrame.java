@@ -99,10 +99,12 @@ public abstract class BaseFrame extends JFrame {
         toolBar.addAction(createExitAction(), alignmentY);
         toolBar.add(DEFAULT_SPACER);
         add(toolBar, BorderLayout.NORTH);
+        toolBar.setBorder(null);
         this.toolBar = toolBar;
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
+        statusBar.add(Box.createHorizontalStrut(10));
         add(statusBar, BorderLayout.SOUTH);
         this.statusBar = statusBar;
     }

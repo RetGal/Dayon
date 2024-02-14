@@ -71,7 +71,6 @@ class AssistedFrame extends BaseFrame {
         final StatusBar statusBar = new StatusBar();
         statusBar.addSeparator();
         statusBar.addRamInfo();
-        statusBar.add(Box.createHorizontalStrut(10));
         return statusBar;
     }
 
@@ -84,8 +83,8 @@ class AssistedFrame extends BaseFrame {
 
     private void toggleStartButton(boolean enable) {
         startAction.setEnabled(enable);
-        startButton.setVisible(enable);
         stopAction.setEnabled(!enable);
+        startButton.setVisible(enable);
         stopButton.setVisible(!enable);
     }
 

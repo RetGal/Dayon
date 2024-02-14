@@ -1,6 +1,6 @@
 package mpo.dayon.common.utils;
 
-import static java.lang.Math.pow;
+import static java.lang.Math.*;
 import static java.lang.String.format;
 
 public abstract class UnitUtilities {
@@ -84,7 +84,7 @@ public abstract class UnitUtilities {
     }
 
     public static String toByteSize(double bytes) {
-        return toByteSize(bytes, true);
+        return toByteSize(bytes, false);
     }
 
     static String toByteSize(double bytes, boolean withDecimal) {
@@ -120,24 +120,24 @@ public abstract class UnitUtilities {
             return format("%.2fs", secs);
         }
         if (secs < 3600) {
-            return format("%dm%02ds", toMinutes(secs), Math.round(secs) % 60);
+            return format("%dm%02ds", toMinutes(secs), round(secs) % 60);
         }
         if (secs < 86400) {
-            return format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, Math.round(secs) % 60);
+            return format("%dh%02dm%02ds", toHours(secs), toMinutes(secs) % 60, round(secs) % 60);
         }
         // noinspection NumericCastThatLosesPrecision
-        return format("%dd%02dh%02dm%02ds", (int) Math.floor(toHours(secs) / 24.0), toHours(secs) % 24,
-                toMinutes(secs) % 60, Math.round(secs) % 60);
+        return format("%dd%02dh%02dm%02ds", floor(toHours(secs) / 24.0), toHours(secs) % 24,
+                toMinutes(secs) % 60, round(secs) % 60);
     }
 
     private static int toMinutes(double seconds) {
         // noinspection NumericCastThatLosesPrecision
-        return (int) Math.floor(seconds / 60);
+        return (int) floor(seconds / 60);
     }
 
     private static int toHours(double seconds) {
         // noinspection NumericCastThatLosesPrecision
-        return (int) Math.floor(seconds / 3600);
+        return (int) floor(seconds / 3600);
     }
 
     /**

@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static mpo.dayon.common.utils.UnitUtilities.toByteSize;
 
 public final class SystemUtilities {
 
@@ -93,7 +94,7 @@ public final class SystemUtilities {
     public static String getRamInfo() {
         final double freeMG = Runtime.getRuntime().freeMemory();
         final double totalMG = Runtime.getRuntime().totalMemory();
-        return format("%s of %s", UnitUtilities.toByteSize(totalMG - freeMG, false), UnitUtilities.toByteSize(totalMG, false));
+        return format("%s of %s", toByteSize(totalMG - freeMG), toByteSize(totalMG));
     }
 
     public static void safeClose(Closeable... closeables) {
