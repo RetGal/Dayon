@@ -4,6 +4,7 @@ import mpo.dayon.assistant.AssistantRunner;
 import mpo.dayon.assisted.AssistedRunner;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.utils.Language;
 
 import javax.swing.*;
 import java.io.File;
@@ -61,7 +62,7 @@ public interface Runner {
     }
 
     static String overrideLocale(String arg) {
-        if (arg != null && Arrays.stream(getSupportedLanguages()).anyMatch(e -> e.equalsIgnoreCase(arg))) {
+        if (arg != null && Arrays.stream(Language.values()).map(Language::getShortName).anyMatch(e -> e.equalsIgnoreCase(arg))) {
             Locale.setDefault(new Locale(arg));
             return arg;
         }

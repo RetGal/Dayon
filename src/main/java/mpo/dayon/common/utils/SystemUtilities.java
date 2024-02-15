@@ -26,13 +26,8 @@ public final class SystemUtilities {
     public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     public static final String DEFAULT_TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/";
-    private static final String[] SUPPORTED_LANGUAGES = {"de", "en", "es", "fr", "it", "ru", "sv", "tr", "zh"};
 
     private SystemUtilities() {
-    }
-
-    public static String[] getSupportedLanguages() {
-        return SUPPORTED_LANGUAGES.clone();
     }
 
     public static URI getQuickStartURI(String quickstartPage, String section) {

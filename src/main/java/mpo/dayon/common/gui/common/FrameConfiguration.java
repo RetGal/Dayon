@@ -4,6 +4,9 @@ import mpo.dayon.common.preference.Preferences;
 
 import java.awt.*;
 
+import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
+import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
+
 class FrameConfiguration {
 
     private int version = 1;
@@ -36,10 +39,10 @@ class FrameConfiguration {
         final Preferences prefs = Preferences.getPreferences();
         version = prefs.getIntPreference(type.getPrefix() + PREF_VERSION_SUFFIX, 0);
         position = new Position(prefs.getIntPreference(type.getPrefix() + PREF_X_SUFFIX, 100), prefs.getIntPreference(type.getPrefix() + PREF_Y_SUFFIX, 100));
-        if (type.equals(FrameType.ASSISTANT)) {
-            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 800), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 600));
+        if (type.equals(ASSISTANT)) {
+            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, ASSISTANT.getMinWidth()), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, ASSISTANT.getMinHeight()));
         } else {
-            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, 550), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, 200));
+            dimension = new Dimension(prefs.getIntPreference(type.getPrefix() + PREF_WIDTH_SUFFIX, ASSISTED.getMinWidth()), prefs.getIntPreference(type.getPrefix() + PREF_HEIGHT_SUFFIX, ASSISTED.getMinHeight()));
         }
     }
 

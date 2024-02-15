@@ -44,7 +44,7 @@ public class StatusBar extends JPanel {
 
     public void setKeyboardLayout(String keyboardLayout) {
         this.keyboardLayout.setText(keyboardLayout);
-        this.keyboardLayout.setToolTipText(format("\u2328 %s", keyboardLayout));
+        this.keyboardLayout.setToolTipText(format("⌨ %s", keyboardLayout));
     }
 
     public String getKeyboardLayout() {

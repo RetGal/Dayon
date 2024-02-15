@@ -20,6 +20,7 @@ import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.network.FileUtilities;
+import mpo.dayon.common.utils.Language;
 
 import javax.swing.*;
 import java.awt.*;
@@ -58,19 +59,21 @@ public class Assistant implements ClipboardOwner {
 
     private final NetworkAssistantEngine network;
 
-    private final BitCounter receivedBitCounter;
+    private BitCounter receivedBitCounter;
 
-    private final TileCounter receivedTileCounter;
+    private TileCounter receivedTileCounter;
 
-    private final SkippedTileCounter skippedTileCounter;
+    private SkippedTileCounter skippedTileCounter;
 
-    private final MergedTileCounter mergedTileCounter;
+    private MergedTileCounter mergedTileCounter;
 
-    private final CaptureCompressionCounter captureCompressionCounter;
+    private CaptureCompressionCounter captureCompressionCounter;
+
+    private Set<Counter<?>> counters;
 
     private AssistantFrame frame;
 
-    private final AssistantActions actions;
+    private AssistantActions actions;
 
     private AssistantConfiguration configuration;
 
@@ -103,6 +106,7 @@ public class Assistant implements ClipboardOwner {
         }
 
         this.configuration = new AssistantConfiguration();
+        // has not been overridden by command line
         if (language == null) {
             if (!Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
                 Locale.setDefault(new Locale(configuration.getLanguage()));
@@ -111,36 +115,11 @@ public class Assistant implements ClipboardOwner {
 
         initUpnp();
 
-        this.configuration = new AssistantConfiguration();
-        if (language == null) {
-            if (!Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
-                Locale.setDefault(new Locale(configuration.getLanguage()));
-            }
-        }
-
-        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
-        receivedBitCounter.start(1000);
-
-        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
-        receivedTileCounter.start(1000);
-
-        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"));
-        skippedTileCounter.start(1000);
-
-        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"));
-        mergedTileCounter.start(1000);
-
-        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
-        captureCompressionCounter.start(1000);
-
-        Set<Counter<?>> counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
-
         DeCompressorEngine decompressor = new DeCompressorEngine(new MyDeCompressorEngineListener());
         decompressor.start(8);
 
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
         network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
-
         networkConfiguration = new NetworkAssistantEngineConfiguration();
         network.configure(networkConfiguration);
         network.addListener(new MyNetworkAssistantEngineListener());
@@ -154,12 +133,34 @@ public class Assistant implements ClipboardOwner {
         } catch (Exception ex) {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
+        initGui();
 
+    }
+
+    private void initGui() {
+        createCounters();
         actions = createAssistantActions();
+        if (frame != null) {
+            frame.setVisible(false);
+        }
         frame = new AssistantFrame(actions, counters, createLanguageSelection());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
+    }
+
+    private void createCounters() {
+        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
+        receivedBitCounter.start(1000);
+        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
+        receivedTileCounter.start(1000);
+        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"));
+        skippedTileCounter.start(1000);
+        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"));
+        mergedTileCounter.start(1000);
+        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
+        captureCompressionCounter.start(1000);
+        counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
 
     private boolean isUpnpEnabled() {
@@ -660,20 +661,30 @@ public class Assistant implements ClipboardOwner {
         return compatibilityMode;
     }
 
-    public JComboBox<String> createLanguageSelection() {
-        final JComboBox<String> languageSelection = new JComboBox<>(getSupportedLanguages());
+    private JComboBox<Language> createLanguageSelection() {
+        final JComboBox<Language> languageSelection = new JComboBox<>(Language.values());
+        languageSelection.setMaximumRowCount(languageSelection.getItemCount());
         languageSelection.setBorder(BorderFactory.createEmptyBorder(7, 3, 6, 2));
         languageSelection.setFocusable(false);
-        languageSelection.setSelectedItem(Locale.getDefault().getLanguage());
-        languageSelection.setToolTipText("TODO");
+        languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.en));
+        languageSelection.setRenderer(new LanguageRenderer());
         languageSelection.addActionListener(ev -> {
                 Locale.setDefault(new Locale(languageSelection.getSelectedItem().toString()));
-                Log.info(format("New Locale %s", Locale.getDefault().getLanguage()));
-                configuration = new AssistantConfiguration(getDefaultLookAndFeel(), languageSelection.getSelectedItem().toString());
+                Log.info(format("New language %s", Locale.getDefault().getLanguage()));
+                configuration = new AssistantConfiguration(getDefaultLookAndFeel(), Locale.getDefault().getLanguage());
                 configuration.persist();
+                initGui();
             }
         );
         return languageSelection;
+    }
+
+    private static class LanguageRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, ((Language) value).getName(), index, isSelected, cellHasFocus);
+            return this;
+        }
     }
 
     private class NetWorker extends SwingWorker<String, String> {
