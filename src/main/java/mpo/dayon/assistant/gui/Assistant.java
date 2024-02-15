@@ -105,10 +105,8 @@ public class Assistant implements ClipboardOwner {
 
         this.configuration = new AssistantConfiguration();
         // has not been overridden by command line
-        if (language == null) {
-            if (!Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
-                Locale.setDefault(new Locale(configuration.getLanguage()));
-            }
+        if (language == null && !Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
+            Locale.setDefault(new Locale(configuration.getLanguage()));
         }
 
         initUpnp();
