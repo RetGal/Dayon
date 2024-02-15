@@ -661,6 +661,7 @@ public class Assistant implements ClipboardOwner {
         languageSelection.setMaximumRowCount(languageSelection.getItemCount());
         languageSelection.setBorder(BorderFactory.createEmptyBorder(7, 3, 6, 2));
         languageSelection.setFocusable(false);
+        languageSelection.setToolTipText(translate("changeLanguage"));
         languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.EN));
         languageSelection.setRenderer(new LanguageRenderer());
         languageSelection.addActionListener(ev -> {
