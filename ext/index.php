@@ -2,6 +2,7 @@
 define('DB_NAME', "dayon.db");
 define('TOKEN_MIN_LENGTH', 4);
 define('TOKEN_LIFETIME', 604800);
+define('TOKEN_LIMIT', 700);
 header('Content-type: text/plain');
 if (isset($_GET['port'])) {
     $port = clean($_GET['port'], 6);
@@ -33,6 +34,9 @@ function isValidPort($port) {
 }
 
 function createToken($pdo, $port) {
+    if (checkAvailable($pdo, $_SERVER['REMOTE_ADDR']) <= 0) {
+       return substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, rand(4, 12))."\n";
+    }
     $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
     while (!insertToken($token, $_SERVER['REMOTE_ADDR'], $port, $pdo) && $attempt < 10) {
@@ -41,6 +45,16 @@ function createToken($pdo, $port) {
         $attempt++;
     }
     return $token;
+}
+
+function checkAvailable($pdo, $address) {
+    $sql = "SELECT COUNT(*) FROM tokens WHERE assistant = :address";
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+    $stmt->execute();
+    $stmt->bindColumn(1, $count);
+    $stmt->fetch(PDO::FETCH_BOUND);
+    return TOKEN_LIMIT - $count;
 }
 
 function computeToken($length) {
@@ -91,7 +105,7 @@ function updateToken($token, $address, $pdo) {
 	$sql = "UPDATE tokens SET assisted = :address,ts = :ts WHERE token = :token";
 	$date = new DateTime();
 	$ts = $date->getTimestamp();
-    $stmt = $pdo->prepare($sql);
+	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':address', $address, PDO::PARAM_STR);
 	$stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
 	$stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
