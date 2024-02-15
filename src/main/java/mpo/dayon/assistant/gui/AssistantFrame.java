@@ -8,6 +8,7 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
+import mpo.dayon.common.utils.Language;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +17,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -80,9 +80,9 @@ class AssistantFrame extends BaseFrame {
 
     private JTabbedPane tabbedPane;
 
-    private final JComboBox<String> languageSelection;
+    private final JComboBox<Language> languageSelection;
 
-    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<String> languageSelection) {
+    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
@@ -362,26 +362,33 @@ class AssistantFrame extends BaseFrame {
         hideSpinner();
         validate();
         repaint();
+        // connection
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
         startButton.setVisible(true);
         stopButton.setVisible(false);
-        actions.getNetworkConfigurationAction().setEnabled(true);
         actions.getToggleCompatibilityModeAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
-        actions.getCaptureEngineConfigurationAction().setEnabled(true);
+        // session
         actions.getResetAction().setEnabled(false);
+        // settings
+        actions.getNetworkConfigurationAction().setEnabled(true);
+        actions.getCaptureEngineConfigurationAction().setEnabled(true);
+        languageSelection.setEnabled(true);
         disableControls();
         getStatusBar().setMessage(translate("ready"));
     }
 
     void onHttpStarting(int port) {
+        // connection
         startButton.setVisible(false);
         actions.getStopAction().setEnabled(true);
         stopButton.setVisible(true);
-        actions.getNetworkConfigurationAction().setEnabled(false);
         actions.getToggleCompatibilityModeAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
+        // settings
+        actions.getNetworkConfigurationAction().setEnabled(false);
+        languageSelection.setEnabled(false);
         toolbar.clearFingerprints();
         getStatusBar().setMessage(translate("listening", port));
     }

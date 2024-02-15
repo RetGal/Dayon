@@ -22,13 +22,13 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
+    protected final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
+
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
 
     private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
 
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
-
-    protected static final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
 
     private transient FrameConfiguration configuration;
 
