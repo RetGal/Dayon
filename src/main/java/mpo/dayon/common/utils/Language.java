@@ -1,15 +1,15 @@
 package mpo.dayon.common.utils;
 
 public enum Language {
-    de("de", "Deutsch"),
-    en("en", "English"),
-    es("es", "Español"),
-    fr("fr", "Français"),
-    it("it", "Italiano"),
-    ru("ru", "Русский"),
-    sv("sv", "Svenska"),
-    tr("tr", "Türkçe"),
-    zh("zh", "简体中文");
+    DE("de", "Deutsch"),
+    EN("en", "English"),
+    ES("es", "Español"),
+    FR("fr", "Français"),
+    IT("it", "Italiano"),
+    RU("ru", "Русский"),
+    SV("sv", "Svenska"),
+    TR("tr", "Türkçe"),
+    ZH("zh", "简体中文");
 
     private final String shortName;
     private final String name;
