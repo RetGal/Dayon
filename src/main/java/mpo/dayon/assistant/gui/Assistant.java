@@ -73,8 +73,6 @@ public class Assistant implements ClipboardOwner {
 
     private AssistantFrame frame;
 
-    private AssistantActions actions;
-
     private AssistantConfiguration configuration;
 
     private NetworkAssistantEngineConfiguration networkConfiguration;
@@ -139,11 +137,10 @@ public class Assistant implements ClipboardOwner {
 
     private void initGui() {
         createCounters();
-        actions = createAssistantActions();
         if (frame != null) {
             frame.setVisible(false);
         }
-        frame = new AssistantFrame(actions, counters, createLanguageSelection());
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
@@ -666,7 +663,7 @@ public class Assistant implements ClipboardOwner {
         languageSelection.setMaximumRowCount(languageSelection.getItemCount());
         languageSelection.setBorder(BorderFactory.createEmptyBorder(7, 3, 6, 2));
         languageSelection.setFocusable(false);
-        languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.en));
+        languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.EN));
         languageSelection.setRenderer(new LanguageRenderer());
         languageSelection.addActionListener(ev -> {
                 Locale.setDefault(new Locale(languageSelection.getSelectedItem().toString()));

@@ -22,7 +22,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
-    protected final Object[] OK_CANCEL_OPTIONS = {translate("cancel"), translate("ok")};
+    protected transient Object[] okCancelOptions = {translate("cancel"), translate("ok")};
 
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
 
@@ -56,8 +56,8 @@ public abstract class BaseFrame extends JFrame {
 
     private void doExit() {
         if (JOptionPane.showOptionDialog(this, translate("exit.confirm"), translate("exit"),
-                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, OK_CANCEL_OPTIONS,
-                OK_CANCEL_OPTIONS[1]) == 1) {
+                JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, okCancelOptions,
+                okCancelOptions[1]) == 1) {
             Log.info("Bye!");
             System.exit(0);
         }

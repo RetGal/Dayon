@@ -406,7 +406,7 @@ class AssistantFrame extends BaseFrame {
     boolean onAccepted(Socket connection) {
         if (JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
             translate("connection.incoming", connection.getInetAddress().getHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-            getOrCreateIcon(ImageNames.USERS), OK_CANCEL_OPTIONS, OK_CANCEL_OPTIONS[1]) == 0) {
+            getOrCreateIcon(ImageNames.USERS), okCancelOptions, okCancelOptions[1]) == 0) {
             return false;
         }
         hideSpinner();
