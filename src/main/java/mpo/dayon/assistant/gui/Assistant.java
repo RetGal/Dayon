@@ -93,6 +93,8 @@ public class Assistant implements ClipboardOwner {
 
     private Boolean upnpEnabled;
 
+    private String publicIp;
+
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
     public Assistant(String tokenServerUrl, String language) {
@@ -198,42 +200,36 @@ public class Assistant implements ClipboardOwner {
 
     private Action createWhatIsMyIpAction() {
         final Action ip = new AbstractAction() {
-            private String publicIp;
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 final JButton button = (JButton) ev.getSource();
                 final JPopupMenu choices = new JPopupMenu();
 
                 if (publicIp == null) {
-                    final JMenuItem menuItem = new JMenuItem(translate("retrieveMe"));
-                    menuItem.addActionListener(ev16 -> {
-                        final Cursor cursor = frame.getCursor();
-                        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                        try {
-                            resolvePublicIp();
-                            if (publicIp != null) {
-                                button.setText(publicIp);
-                            }
-                        } catch (IOException ex) {
-                            Log.error("Could not determine public IP", ex);
-                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
-                                    JOptionPane.ERROR_MESSAGE);
-                        } finally {
-                            frame.setCursor(cursor);
+                    final Cursor cursor = frame.getCursor();
+                    frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                    try {
+                        resolvePublicIp();
+                        if (publicIp != null) {
+                            button.setText(publicIp);
                         }
-                    });
-                    choices.add(menuItem);
-                } else {
-                    final JMenuItem menuItem = new JMenuItem(translate("ipAddressPublic", publicIp));
-                    menuItem.addActionListener(ev15 -> button.setText(publicIp));
-                    choices.add(menuItem);
+                    } catch (IOException ex) {
+                        Log.error("Could not determine public IP", ex);
+                        JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
+                                JOptionPane.ERROR_MESSAGE);
+                    } finally {
+                        frame.setCursor(cursor);
+                    }
                 }
 
+                final JMenuItem menuItem = new JMenuItem(translate("ipAddressPublic", publicIp));
+                menuItem.addActionListener(ev15 -> button.setText(publicIp));
+                choices.add(menuItem);
+
                 final List<String> addrs = NetworkUtilities.getInetAddresses();
-                addrs.stream().map(JMenuItem::new).forEach(menuItem -> {
-                    menuItem.addActionListener(ev14 -> button.setText(menuItem.getText()));
-                    choices.add(menuItem);
+                addrs.stream().map(JMenuItem::new).forEach(item -> {
+                    item.addActionListener(ev14 -> button.setText(item.getText()));
+                    choices.add(item);
                 });
 
                 choices.addSeparator();
@@ -258,7 +254,7 @@ public class Assistant implements ClipboardOwner {
                 }
             }
         };
-        ip.putValue("DISPLAY_NAME", "127.0.0.1"); // always a selection
+        ip.putValue("DISPLAY_NAME", publicIp); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         ip.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_ADDRESS));
