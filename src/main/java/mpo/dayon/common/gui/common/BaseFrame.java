@@ -17,6 +17,8 @@ import mpo.dayon.common.version.Version;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
+import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -30,6 +32,8 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
+    private static final String CHAT_URL = "https://meet.jit.si/%s-%s";
+
     private transient FrameConfiguration configuration;
 
     private transient Position position;
@@ -41,6 +45,10 @@ public abstract class BaseFrame extends JFrame {
     private ToolBar toolBar;
 
     private StatusBar statusBar;
+
+    private static final JLabel fingerprints = new JLabel();
+
+    private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -79,9 +87,9 @@ public abstract class BaseFrame extends JFrame {
         toolBar.add(DEFAULT_SPACER);
         if (FrameType.ASSISTANT.equals(frameType)) {
             // poor man's vertical align top
-            toolBar.getFingerprints().setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
+            fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
-        toolBar.add(toolBar.getFingerprints());
+        toolBar.add(fingerprints);
         toolBar.addAction(createShowInfoAction(), alignmentY);
         toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
@@ -171,22 +179,27 @@ public abstract class BaseFrame extends JFrame {
                 final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
                 info.addMouseListener(new HomeMouseAdapter());
+                info.setCursor(handCursor);
 
                 final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.addMouseListener(new ReleaseMouseAdapter());
+                version.setCursor(handCursor);
 
                 final JLabel latest = new JLabel(composeLabelHtml(translate("version.latest"), Version.get().getLatestRelease()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 latest.addMouseListener(new LatestReleaseMouseAdapter());
+                latest.setCursor(handCursor);
 
                 final JLabel support = new JLabel(composeLabelHtml(translate("support"), HTTP_SUPPORT));
                 support.setAlignmentX(Component.LEFT_ALIGNMENT);
                 support.addMouseListener(new SupportMouseAdapter());
+                support.setCursor(handCursor);
 
                 final JLabel feedback = new JLabel(composeLabelHtml(translate("feedback"), HTTP_FEEDBACK));
                 feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
                 feedback.addMouseListener(new FeedbackMouseAdapter());
+                feedback.setCursor(handCursor);
 
                 final JScrollPane spane = new JScrollPane(props);
                 spane.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -303,8 +316,23 @@ public abstract class BaseFrame extends JFrame {
         return statusBar;
     }
 
-    public void setFingerprints(String fingerprints) {
-        toolBar.setFingerprints(fingerprints);
+    protected static JLabel getFingerprints() {
+        return fingerprints;
+    }
+
+    protected void clearFingerprints() {
+        fingerprints.setText("");
+        fingerprints.setIcon(null);
+        fingerprints.setCursor(null);
+    }
+
+    public void setFingerprints(String hash) {
+        fingerprints.setIcon(getOrCreateIcon(FINGERPRINT));
+        fingerprints.setToolTipText(translate("connection.peer.fingerprints"));
+        fingerprints.setText(format("%s ", hash));
+        fingerprints.setFont(DEFAULT_FONT);
+        fingerprints.addMouseListener(new ChatMouseAdapter());
+        fingerprints.setCursor(handCursor);
     }
 
     private static class FeedbackMouseAdapter extends MouseAdapter {
@@ -339,6 +367,13 @@ public abstract class BaseFrame extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             browse(HTTP_SUPPORT);
+        }
+    }
+
+    private static class ChatMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(format(CHAT_URL, fingerprints.getText().trim().split(":")));
         }
     }
 }

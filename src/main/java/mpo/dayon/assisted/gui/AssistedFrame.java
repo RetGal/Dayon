@@ -55,7 +55,7 @@ class AssistedFrame extends BaseFrame {
             }
             toolbar.addSeparator();
         }
-        toolbar.add(toolbar.getFingerprints());
+        toolbar.add(getFingerprints());
         toolbar.addGlue();
         return toolbar;
     }
@@ -128,7 +128,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onDisconnecting() {
-        toolbar.clearFingerprints();
+        clearFingerprints();
         onReady();
     }
 

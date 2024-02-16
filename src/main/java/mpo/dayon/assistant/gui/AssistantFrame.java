@@ -389,7 +389,7 @@ class AssistantFrame extends BaseFrame {
         // settings
         actions.getNetworkConfigurationAction().setEnabled(false);
         languageSelection.setEnabled(false);
-        toolbar.clearFingerprints();
+        clearFingerprints();
         getStatusBar().setMessage(translate("listening", port));
     }
 
