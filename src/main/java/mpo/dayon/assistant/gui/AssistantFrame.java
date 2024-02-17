@@ -76,8 +76,6 @@ class AssistantFrame extends BaseFrame {
 
     private Dimension canvas;
 
-    private ToolBar toolbar;
-
     private JTabbedPane tabbedPane;
 
     private final JComboBox<Language> languageSelection;
@@ -217,7 +215,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     private ToolBar createToolBar() {
-        toolbar = new ToolBar();
+        ToolBar toolbar = new ToolBar();
         toolbar.add(createTabbedPane());
         return toolbar;
     }
@@ -362,6 +360,7 @@ class AssistantFrame extends BaseFrame {
         hideSpinner();
         validate();
         repaint();
+        this.setCursor(Cursor.getDefaultCursor());
         // connection
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
@@ -376,10 +375,12 @@ class AssistantFrame extends BaseFrame {
         actions.getCaptureEngineConfigurationAction().setEnabled(true);
         languageSelection.setEnabled(true);
         disableControls();
+        clearFingerprints();
         getStatusBar().setMessage(translate("ready"));
     }
 
     void onHttpStarting(int port) {
+        this.setCursor(Cursor.getDefaultCursor());
         // connection
         startButton.setVisible(false);
         actions.getStopAction().setEnabled(true);
@@ -394,6 +395,7 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onGettingReady() {
+        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         actions.getStartAction().setEnabled(false);
         showSpinner();
     }

@@ -25,7 +25,6 @@ class AssistedFrame extends BaseFrame {
     private final transient Action toggleMultiScreenCaptureAction;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
-    private ToolBar toolbar;
 
     AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction) {
         super.setFrameType(FrameType.ASSISTED);
@@ -40,7 +39,7 @@ class AssistedFrame extends BaseFrame {
     }
 
     private ToolBar createToolBar() {
-        toolbar = new ToolBar();
+        ToolBar toolbar = new ToolBar();
         // i'd prefer to use the DEFAULT_SPACER but...
         toolbar.add(Box.createHorizontalStrut(10));
         toolbar.add(startButton);

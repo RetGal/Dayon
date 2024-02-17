@@ -47,5 +47,4 @@ public class ToolBar extends JToolBar {
 	public void addGlue() {
 		add(Box.createHorizontalGlue());
 	}
-
 }

@@ -48,7 +48,7 @@ public abstract class BaseFrame extends JFrame {
 
     private static final JLabel fingerprints = new JLabel();
 
-    private final Cursor handCursor = new Cursor(Cursor.HAND_CURSOR);
+    private final Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -321,14 +321,14 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void clearFingerprints() {
-        fingerprints.setText("");
+        fingerprints.setText(null);
         fingerprints.setIcon(null);
         fingerprints.setCursor(null);
     }
 
     public void setFingerprints(String hash) {
         fingerprints.setIcon(getOrCreateIcon(FINGERPRINT));
-        fingerprints.setToolTipText(translate("connection.peer.fingerprints"));
+        fingerprints.setToolTipText(translate("startChat"));
         fingerprints.setText(format("%s ", hash));
         fingerprints.setFont(DEFAULT_FONT);
         fingerprints.addMouseListener(new ChatMouseAdapter());
