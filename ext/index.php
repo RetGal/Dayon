@@ -1,8 +1,13 @@
 <?php
+// name of the database file (may also be a path)
 define('DB_NAME', "dayon.db");
+// minimal length of the tokens to be generated (33^N-1 variants)
 define('TOKEN_MIN_LENGTH', 4);
+// number of seconds after which the token will be purged
 define('TOKEN_LIFETIME', 604800);
+// maximum number of tokens that can be generated for a single IP
 define('TOKEN_LIMIT', 700);
+// 8<---8<---8<---
 header('Content-type: text/plain');
 if (isset($_GET['port'])) {
     $port = clean($_GET['port'], 6);
@@ -15,7 +20,7 @@ if (isset($_GET['port'])) {
         }
     }
 } else if (isset($_GET['token'])) {
-    $token = clean($_GET['token'], 7);
+    $token = clean($_GET['token'], TOKEN_MIN_LENGTH * 2);
     $pdo = new PDO('sqlite:'.DB_NAME);
     echo readToken($token, $pdo),"\n";
     updateToken($token, $_SERVER['REMOTE_ADDR'], $pdo);
