@@ -31,7 +31,7 @@ public final class SystemUtilities {
     }
 
     public static URI getQuickStartURI(String quickstartPage, String section) {
-        return URI.create(format("http://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
+        return URI.create(format("https://retgal.github.io/Dayon/%s#%s-setup", quickstartPage, section));
     }
 
     private static File getOrCreateTransferDir() throws IOException {
