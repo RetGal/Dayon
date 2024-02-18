@@ -136,6 +136,12 @@ public abstract class BaseFrame extends JFrame {
         return button;
     }
 
+    protected JToggleButton createToggleButton(Action action, boolean visible, boolean selected) {
+        final JToggleButton button = createToggleButton(action, visible);
+        button.setSelected(selected);
+        return button;
+    }
+
     private void addButtonProperties(Action action, AbstractButton button) {
         button.setMargin(ZERO_INSETS);
         button.setHideActionText(true);

@@ -46,6 +46,8 @@ class AssistantFrame extends BaseFrame {
 
     private final JToggleButton controlToggleButton;
 
+    private final JToggleButton compatibilityToggleButton;
+
     private final JToggleButton windowsKeyToggleButton;
 
     private final JToggleButton ctrlKeyToggleButton;
@@ -80,12 +82,13 @@ class AssistantFrame extends BaseFrame {
 
     private final JComboBox<Language> languageSelection;
 
-    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection) {
+    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
+        this.compatibilityToggleButton = createToggleButton(actions.getToggleCompatibilityModeAction(), true, compatibilityModeActive);
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.fitToScreenToggleButton = createToggleButton(createToggleFixScreenAction());
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
@@ -227,7 +230,7 @@ class AssistantFrame extends BaseFrame {
         connectionPanel.add(stopButton);
         connectionPanel.add(createButton(actions.getTokenAction()));
         connectionPanel.add(createButton(actions.getIpAddressAction()));
-        connectionPanel.add(createToggleButton(actions.getToggleCompatibilityModeAction()));
+        connectionPanel.add(compatibilityToggleButton);
 
         JPanel sessionPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         sessionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));

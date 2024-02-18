@@ -140,7 +140,7 @@ public class Assistant implements ClipboardOwner {
         if (frame != null) {
             frame.setVisible(false);
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection());
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(network));
         frame.setVisible(true);
@@ -644,6 +644,10 @@ public class Assistant implements ClipboardOwner {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 compatibilityModeActive.set(!compatibilityModeActive.get());
+                if (compatibilityModeActive.get()) {
+                    JOptionPane.showMessageDialog(frame, translate("compatibility.mode.info"),
+                            translate("compatibility.mode.active"), JOptionPane.WARNING_MESSAGE);
+                }
                 frame.repaint();
             }
         };
