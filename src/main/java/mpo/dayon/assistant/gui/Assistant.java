@@ -132,7 +132,6 @@ public class Assistant implements ClipboardOwner {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
         initGui();
-
     }
 
     private void initGui() {
@@ -599,7 +598,7 @@ public class Assistant implements ClipboardOwner {
                         frame.setCursor(cursor);
                     }
                     if (token != null) {
-                        button.setText(format(" %s ", token));
+                        button.setText(format(" %s", token));
                         button.setToolTipText(translate("token.copy.msg"));
                     }
                 }
@@ -608,6 +607,7 @@ public class Assistant implements ClipboardOwner {
                 clipboard.setContents(value, value);
             }
         };
+        tokenAction.putValue("token", token);
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;

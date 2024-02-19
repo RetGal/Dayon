@@ -228,7 +228,7 @@ class AssistantFrame extends BaseFrame {
         connectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
         connectionPanel.add(startButton);
         connectionPanel.add(stopButton);
-        connectionPanel.add(createButton(actions.getTokenAction()));
+        connectionPanel.add(createTokenButton(actions.getTokenAction()));
         connectionPanel.add(createButton(actions.getIpAddressAction()));
         connectionPanel.add(compatibilityToggleButton);
 
@@ -258,6 +258,16 @@ class AssistantFrame extends BaseFrame {
         tabbedPane.setFocusable(false);
         tabbedPane.setBorder(null);
         return tabbedPane;
+    }
+
+    private Component createTokenButton(Action tokenAction) {
+        String token = (String) tokenAction.getValue("token");
+        JButton button = createButton(tokenAction);
+        if (token != null) {
+            button.setText(format(" %s", token));
+            button.setToolTipText(translate("token.copy.msg"));
+        }
+        return button;
     }
 
     private StatusBar createStatusBar(Set<Counter<?>> counters) {
