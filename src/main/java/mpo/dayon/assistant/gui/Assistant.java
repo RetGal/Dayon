@@ -125,7 +125,7 @@ public class Assistant implements ClipboardOwner {
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
 
-        final String lnf = configuration.getLookAndFeelClassName();
+        final String lnf = getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
         } catch (Exception ex) {
@@ -667,7 +667,7 @@ public class Assistant implements ClipboardOwner {
         languageSelection.addActionListener(ev -> {
                 Locale.setDefault(new Locale(languageSelection.getSelectedItem().toString()));
                 Log.info(format("New language %s", Locale.getDefault().getLanguage()));
-                configuration = new AssistantConfiguration(getDefaultLookAndFeel(), Locale.getDefault().getLanguage());
+                configuration = new AssistantConfiguration(Locale.getDefault().getLanguage());
                 configuration.persist();
                 initGui();
             }

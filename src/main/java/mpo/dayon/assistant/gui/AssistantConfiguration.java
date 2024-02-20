@@ -1,7 +1,6 @@
 package mpo.dayon.assistant.gui;
 
 import mpo.dayon.common.configuration.Configuration;
-import mpo.dayon.common.utils.SystemUtilities;
 
 import java.util.Locale;
 
@@ -14,8 +13,6 @@ public class AssistantConfiguration extends Configuration {
 
 	private static final String PREF_LANGUAGE = "assistant.language";
 
-	private final String lookAndFeelClassName;
-
 	private final String language;
 
 	/**
@@ -24,17 +21,11 @@ public class AssistantConfiguration extends Configuration {
 	 * @see mpo.dayon.common.preference.Preferences
 	 */
 	public AssistantConfiguration() {
-		lookAndFeelClassName = getPreferences().getStringPreference(PREF_LOOK_AND_FEEL, SystemUtilities.getDefaultLookAndFeel());
 		language = getPreferences().getStringPreference(PREF_LANGUAGE, Locale.getDefault().getLanguage());
 	}
 
-	AssistantConfiguration(String lookAndFeelClassName, String language) {
-		this.lookAndFeelClassName = lookAndFeelClassName;
+	AssistantConfiguration(String language) {
 		this.language = language;
-	}
-
-	String getLookAndFeelClassName() {
-		return lookAndFeelClassName;
 	}
 
 	String getLanguage() {
@@ -50,12 +41,12 @@ public class AssistantConfiguration extends Configuration {
 			return false;
 		}
 		final AssistantConfiguration that = (AssistantConfiguration) o;
-		return lookAndFeelClassName.equals(that.getLookAndFeelClassName());
+		return language.equals(that.getLanguage());
 	}
 
 	@Override
 	public int hashCode() {
-		return lookAndFeelClassName.hashCode();
+		return language.hashCode();
 	}
 
 	/**
@@ -66,8 +57,8 @@ public class AssistantConfiguration extends Configuration {
     protected void persist(boolean clear) {
 		final Props props = new Props();
 		props.set(PREF_VERSION, String.valueOf(1));
-		props.set(PREF_LOOK_AND_FEEL, lookAndFeelClassName);
 		props.set(PREF_LANGUAGE, language);
+		props.clear(PREF_LOOK_AND_FEEL);
 		getPreferences().update(props); // atomic (!)
 	}
 
