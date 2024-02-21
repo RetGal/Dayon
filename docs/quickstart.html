@@ -62,7 +62,7 @@
 
       <p>
         In this documentation, the screenshot show the English localisation of the app.
-        The application itself is also completely localised in French, German, Spanish and Russian.
+        The application itself is also completely localised in French, German, Italian, Spanish, Swedish, Russian, Turkish and Chinese (simplified).
         It will fall back to English, if the configured user language is none of the above.
       </p>
 
@@ -79,7 +79,7 @@
 
       <p>
         Dayon! Assisted is acting as a client application calling the outside
-        world and as such there's no network configuration to setup.
+        world and as such there's no network configuration to set up.
       </p>
 
       <p>
@@ -335,16 +335,12 @@
         <strong>Caution</strong>: Depending on the display/windows manager and JDK combination, the
         clipboard content does not get copied into the recipients' clipboard. So pasting (<code>Ctrl + v</code>)
         does have no effect.
-        <br/>
-        In most cases the content is nonetheless transferred - take a look at the <code>/tmp</code>
-        directory and look for a uuid folder (something like <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
-        There you will find the transferred clipboard files.
       </p>
 
       <p></p>
-      <h3>Transmit a Windows key press</h3>
+      <h3>Send a Windows key press</h3>
       <p>
-        To transmit the press of the Windows key, click the Windows symbol in the <em>assistants</em> control panel:
+        To send the press of the Windows key, click the Windows button in the <em>assistants</em> control panel:
       </p>
 
       <p>
@@ -352,10 +348,23 @@
       </p>
 
       <p>
-        The key remains pressed until you click the symbol again. This allows you to send Windows key shortcuts.
+        The key remains pressed until you click the button again. This allows you to send Windows key shortcuts.
         <br/>
         If you need for example to minimize all windows on the <em>assisted</em> side, you would click the Windows
-        symbol, press the <code>M</code> key and then click the Windows symbol again.
+        button, press the <code>M</code> key and then click the Windows button again.
+      </p>
+
+      <p></p>
+      <h3>Send a Ctrl key press</h3>
+      <p>
+        While most of the time, the <code>Ctrl</code> key gets transmitted to the <em>assisted</em> like any other keystroke,
+        there are situations where it's not. For example the combination <code>Ctrl + Alt + Delete</code> is generally
+        "captured" by the <em>assistant</em>s operating system and thus not transmitted.
+        On such occasions the <code>[Ctrl]</code> button next to the Windows button in the <em>assistants</em> control panel becomes handy.
+        The behaviour is the same as with the Windows button: the key remains pressed until you click the button again.
+        <br/>
+        So for sending the <code>Ctrl + Alt + Delete</code> combination to the <em>assisted</em>, you have to click the <code>[Ctrl]</code> button first,
+        then press the <code>Alt</code> and <code>Delete</code> keys together, release them and finally click the <code>[Ctrl]</code> button again.
       </p>
 
       <p></p>

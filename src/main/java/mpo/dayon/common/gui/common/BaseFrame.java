@@ -32,7 +32,9 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
-    private static final String CHAT_URL = "https://meet.jit.si/%s-%s";
+    private static final String HTTP_LICENSE = "https://raw.githubusercontent.com/RetGal/Dayon/master/debian/copyright";
+
+    private static final String CHAT_URL = "https://meet.jit.si/%s";
 
     private transient FrameConfiguration configuration;
 
@@ -207,6 +209,11 @@ public abstract class BaseFrame extends JFrame {
                 feedback.addMouseListener(new FeedbackMouseAdapter());
                 feedback.setCursor(handCursor);
 
+                final JLabel license = new JLabel(composeLabelHtml(translate("license"), "https://github.com/retgal/dayon/blob/master/debian/copyright"));
+                license.setAlignmentX(Component.LEFT_ALIGNMENT);
+                license.addMouseListener(new LicenseMouseAdapter());
+                license.setCursor(handCursor);
+
                 final JScrollPane spane = new JScrollPane(props);
                 spane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
@@ -224,6 +231,8 @@ public abstract class BaseFrame extends JFrame {
                 panel.add(support);
                 panel.add(Box.createVerticalStrut(5));
                 panel.add(feedback);
+                panel.add(Box.createVerticalStrut(5));
+                panel.add(license);
 
                 final Object[] options = {translate("ok")};
 
@@ -348,6 +357,13 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
+    private static class LicenseMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(HTTP_LICENSE);
+        }
+    }
+
     private static class HomeMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -379,7 +395,7 @@ public abstract class BaseFrame extends JFrame {
     private static class ChatMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse(format(CHAT_URL, fingerprints.getText().trim().split(":")));
+            browse(format(CHAT_URL, fingerprints.getText().trim().replace(":", "-")));
         }
     }
 }
