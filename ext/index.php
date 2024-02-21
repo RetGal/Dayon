@@ -70,8 +70,7 @@ function computeToken($length) {
 
 function insertToken($token, $address, $port, $pdo) {
     $sql = "INSERT INTO tokens (token,assistant,port,ts) VALUES (:token,:address,:port,:ts)";
-    $date = new DateTime();
-    $ts = $date->getTimestamp();
+    $ts = time();
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->bindParam(':address', $address, PDO::PARAM_STR);
@@ -87,8 +86,7 @@ function insertToken($token, $address, $port, $pdo) {
 }
 
 function removeOldTokens($pdo) {
-    $date = new DateTime();
-    $ts = $date->getTimestamp();
+    $ts = time();
     $delete = "DELETE FROM tokens WHERE ts < ?";
     $stmt = $pdo->prepare($delete);
     $stmt->execute(array($ts-TOKEN_LIFETIME));
@@ -108,8 +106,7 @@ function readToken($token, $pdo) {
 
 function updateToken($token, $address, $pdo) {
 	$sql = "UPDATE tokens SET assisted = :address,ts = :ts WHERE token = :token";
-	$date = new DateTime();
-	$ts = $date->getTimestamp();
+    $ts = time();
 	$stmt = $pdo->prepare($sql);
 	$stmt->bindParam(':address', $address, PDO::PARAM_STR);
 	$stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
