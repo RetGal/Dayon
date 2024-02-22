@@ -27,6 +27,8 @@ public abstract class NetworkEngine {
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
+    private final static String CLIPBOARD_DEBUG = "setClipboardContents %s";
+
     protected NetworkSender sender; // out
 
     protected NetworkSender fileSender; // file out
@@ -77,18 +79,18 @@ public abstract class NetworkEngine {
     }
 
     protected void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
-        Log.debug("setClipboardContents %s", () -> string);
+        Log.debug(CLIPBOARD_DEBUG, () -> string);
         StringSelection stringSelection = new StringSelection(string);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
     }
 
     protected void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
-        Log.debug("setClipboardContents %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
+        Log.debug(CLIPBOARD_DEBUG, () -> format("%dx%d", image.getWidth(), image.getHeight()));
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableImage(image), clipboardOwner);
     }
 
     private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
-        Log.debug("setClipboardContents %s", () -> String.valueOf(files));
+        Log.debug(CLIPBOARD_DEBUG, () -> String.valueOf(files));
         TransferableFiles transferableFiles = new TransferableFiles(files);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
     }

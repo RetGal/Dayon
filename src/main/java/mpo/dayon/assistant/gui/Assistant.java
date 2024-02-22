@@ -219,7 +219,11 @@ public class Assistant implements ClipboardOwner {
                         Log.error("Could not determine public IP", ex);
                         JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
                                 JOptionPane.ERROR_MESSAGE);
-                    } finally {
+                        if (ex instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    finally {
                         frame.setCursor(cursor);
                     }
                 }
@@ -609,6 +613,9 @@ public class Assistant implements ClipboardOwner {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("token"),
                                 JOptionPane.ERROR_MESSAGE);
+                        if (ex instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
+                        }
                     } finally {
                         frame.setCursor(cursor);
                     }

@@ -181,8 +181,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
             String connectionParams = null;
             try {
                 connectionParams = resolveToken(tokenServerUrl, token);
-            } catch (IOException | InterruptedException ie){
+            } catch (IOException | InterruptedException ex){
                 Log.warn("Could not resolve token " + token);
+                if (ex instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
             }
             Log.debug("Connection params " + connectionParams);
             newConfiguration = extractConfiguration(connectionParams);

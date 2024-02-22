@@ -195,7 +195,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (IOException ex) {
             handleIOException(ex);
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         } finally {
             closeConnections();
             fireOnDisconnecting();

@@ -131,7 +131,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         } catch (CertificateEncodingException ex) {
             Log.error(ex.getMessage());
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException(e);
         } finally {
             closeConnections();
             UPnP.closePortTCP(configuration.getPort());

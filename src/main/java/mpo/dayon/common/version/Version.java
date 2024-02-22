@@ -75,6 +75,9 @@ public class Version {
                 }
             } catch (IOException | InterruptedException e) {
                 Log.error("Exception", e);
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
         return latestVersion;
