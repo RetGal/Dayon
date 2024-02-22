@@ -17,6 +17,7 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
+import mpo.dayon.common.network.TransferableImage;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.network.FileUtilities;
@@ -359,12 +360,18 @@ public class Assistant implements ClipboardOwner {
                 List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: " + totalFilesSize);
+                    Log.debug("Clipboard contains files with size: %s", () -> String.valueOf(totalFilesSize));
                     // Ok as very few of that (!)
                     new Thread(() -> network.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
                     frame.onClipboardSending();
                 }
-            } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
+                final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
+                Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
+                // Ok as very few of that (!)
+                new Thread(() -> network.sendClipboardGraphic(new TransferableImage(image)), "sendClipboardGraphic").start();
+                frame.onClipboardSending();
+            }  else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 // Ok as very few of that (!)

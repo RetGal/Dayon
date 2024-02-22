@@ -17,6 +17,7 @@ import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
 import java.io.*;
 import java.net.Socket;
 import java.security.KeyManagementException;
@@ -129,6 +130,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             handleIOException(ex);
         } catch (CertificateEncodingException ex) {
             Log.error(ex.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             closeConnections();
             UPnP.closePortTCP(configuration.getPort());
@@ -200,7 +203,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private boolean processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+    private boolean processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
         switch (type) {
             case CAPTURE:
                 final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
@@ -218,6 +221,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                 fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
                 setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                fireOnClipboardReceived();
+                return true;
+
+            case CLIPBOARD_GRAPHIC:
+                final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
+                fireOnByteReceived(1 + clipboardGraphicMessage.getWireSize()); // +1 : magic number (byte)
+                setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
                 fireOnClipboardReceived();
                 return true;
 
@@ -256,6 +266,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case CAPTURE:
             case MOUSE_LOCATION:
             case CLIPBOARD_TEXT:
+            case CLIPBOARD_GRAPHIC:
             case CLIPBOARD_FILES:
             case GOODBYE:
                 throw new IllegalArgumentException(format("Unexpected message [%s]!", type.name()));

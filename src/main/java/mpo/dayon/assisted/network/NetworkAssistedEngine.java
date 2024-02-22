@@ -19,6 +19,7 @@ import mpo.dayon.common.squeeze.CompressionMethod;
 import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.DataFlavor;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.SocketTimeoutException;
@@ -178,6 +179,12 @@ public class NetworkAssistedEngine extends NetworkEngine
                         sender.ping();
                         break;
 
+                    case CLIPBOARD_GRAPHIC:
+                        final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
+                        setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
+                        sender.ping();
+                        break;
+
                     case PING:
                         break;
 
@@ -187,6 +194,8 @@ public class NetworkAssistedEngine extends NetworkEngine
             }
         } catch (IOException ex) {
             handleIOException(ex);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         } finally {
             closeConnections();
             fireOnDisconnecting();

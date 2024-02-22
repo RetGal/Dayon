@@ -1,16 +1,14 @@
 package mpo.dayon.common.network;
 
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.network.message.NetworkClipboardFilesHelper;
-import mpo.dayon.common.network.message.NetworkClipboardFilesMessage;
-import mpo.dayon.common.network.message.NetworkMessage;
-import mpo.dayon.common.network.message.NetworkMessageType;
+import mpo.dayon.common.network.message.*;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -63,6 +61,15 @@ public abstract class NetworkEngine {
     /**
      * Might be blocking if the sender queue is full (!)
      */
+    public void sendClipboardGraphic(TransferableImage image) {
+        if (sender != null) {
+            sender.sendClipboardContentGraphic(image);
+        }
+    }
+
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
     public void sendClipboardFiles(List<File> files, long size, String basePath) {
         if (fileSender != null) {
             fileSender.sendClipboardContentFiles(files, size, basePath);
@@ -73,6 +80,11 @@ public abstract class NetworkEngine {
         Log.debug("setClipboardContents %s", () -> string);
         StringSelection stringSelection = new StringSelection(string);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
+    }
+
+    protected void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
+        Log.debug("setClipboardContents %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableImage(image), clipboardOwner);
     }
 
     private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {

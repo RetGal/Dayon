@@ -144,8 +144,16 @@ public class NetworkSender {
      * Assistant 2 assisted or vice versa.
      */
     public void sendClipboardContentText(String text, int size) {
-        final NetworkMessage message = new NetworkClipboardTextMessage(text, size);
-        send(true, message);
+        send(true, new NetworkClipboardTextMessage(text, size));
+    }
+
+    /**
+     * Might block (!)
+     * <p/>
+     * Assistant 2 assisted or vice versa.
+     */
+    public void sendClipboardContentGraphic(TransferableImage image) {
+        send(true, new NetworkClipboardGraphicMessage(image));
     }
 
     /**

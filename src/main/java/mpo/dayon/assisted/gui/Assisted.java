@@ -19,6 +19,7 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.network.TransferableImage;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.network.FileUtilities;
 
@@ -26,6 +27,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -179,7 +181,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             String connectionParams = null;
             try {
                 connectionParams = resolveToken(tokenServerUrl, token);
-            } catch (IOException ie){
+            } catch (IOException | InterruptedException ie){
                 Log.warn("Could not resolve token " + token);
             }
             Log.debug("Connection params " + connectionParams);
@@ -374,24 +376,29 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         Log.info("Clipboard transfer request received");
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        Transferable transferable = clipboard.getContents(this);
+        Transferable content = clipboard.getContents(this);
 
-        if (transferable == null) return;
+        if (content == null) return;
 
         try {
-            if (transferable.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
+            if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 // noinspection unchecked
                 List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: " + totalFilesSize);
+                    Log.debug("Clipboard contains files with size: %s", () -> String.valueOf(totalFilesSize));
                     networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
                     return;
                 }
-            } else if (transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+            } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 networkEngine.sendClipboardText(text);
+                return;
+            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
+                final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
+                Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
+                networkEngine.sendClipboardGraphic(new TransferableImage(image));
                 return;
             } else {
                 Log.debug("Clipboard contains no supported data");
