@@ -6,6 +6,7 @@ public final class ImageNames {
 
 	public static final String APP = "app.png";
 	public static final String APP_LARGE = "app_l.png";
+	public static final String CAM = "cam.png";
 	public static final String CAPTURE_SETTINGS = "capture_settings.png";
 	public static final String COMPATIBILITY = "compatibility.png";
 	public static final String COMPRESSION_SETTINGS = "compression_settings.png";

@@ -20,8 +20,7 @@ import java.time.Instant;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.awt.event.KeyEvent.VK_CONTROL;
-import static java.awt.event.KeyEvent.VK_WINDOWS;
+import static java.awt.event.KeyEvent.*;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
@@ -60,6 +59,8 @@ class AssistantFrame extends BaseFrame {
 
     private final JButton stopButton;
 
+    private final JButton prtScrKeyButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
@@ -94,6 +95,7 @@ class AssistantFrame extends BaseFrame {
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
+        this.prtScrKeyButton = createButton(createSendPrtScrKeyAction());
         this.languageSelection = languageSelection;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
@@ -241,6 +243,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
+        sessionPanel.add(prtScrKeyButton);
         sessionPanel.add(createButton(actions.getResetAction()));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -294,6 +297,7 @@ class AssistantFrame extends BaseFrame {
                 controlActivated.set(!controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
+                prtScrKeyButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
@@ -333,6 +337,24 @@ class AssistantFrame extends BaseFrame {
         sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
         sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
         return sendCtrlKey;
+    }
+
+    private Action createSendPrtScrKeyAction() {
+        final Action sendPrtScrKey = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                fireOnKeyPressed(VK_PRINTSCREEN, ' ');
+                try {
+                    Thread.sleep(10L);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                fireOnKeyReleased(VK_PRINTSCREEN, ' ');
+            }
+        };
+        sendPrtScrKey.putValue(Action.SHORT_DESCRIPTION, translate("send.prtScrKey"));
+        sendPrtScrKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAM));
+        return sendPrtScrKey;
     }
 
     private Action createToggleFixScreenAction() {
@@ -542,6 +564,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
         ctrlKeyToggleButton.setEnabled(false);
+        prtScrKeyButton.setEnabled(false);
         disableTransferControls();
     }
 
@@ -555,6 +578,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
         ctrlKeyToggleButton.setSelected(false);
+        prtScrKeyButton.setEnabled(false);
         enableTransferControls();
     }
 
