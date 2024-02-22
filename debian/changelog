@@ -4,7 +4,7 @@ dayon (13.0.2) stable; urgency=medium
   * Send ctrl key
   * Option to lock the window to the assisted screen aspect ration
   * Option to change the language within the UI
-  * Option to start JITSI meet to chat withe the remote peer
+  * Option to start JITSI meet to chat with the remote peer
 
  -- Reto Galante <reto@galante.ch>  Sun, 18 Feb 2024 12:00:00 +0000
 

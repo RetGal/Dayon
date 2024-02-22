@@ -1,23 +1,25 @@
 package mpo.dayon.common.utils;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static mpo.dayon.common.utils.UnitUtilities.toByteSize;
 
 public final class SystemUtilities {
@@ -204,12 +206,13 @@ public final class SystemUtilities {
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
-    public static String resolveToken(String tokenServerUrl, String token) throws IOException {
-        URL url = new URL(format(tokenServerUrl, token));
-        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
-        conn.setInstanceFollowRedirects(false);
-        conn.setReadTimeout(3000);
-        conn.disconnect();
-        return new BufferedReader(new InputStreamReader(conn.getInputStream(), UTF_8)).readLine().trim();
+    public static String resolveToken(String tokenServerUrl, String token) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(format(tokenServerUrl, token)))
+                .timeout(Duration.ofSeconds(3))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        return response.body().trim();
     }
 }

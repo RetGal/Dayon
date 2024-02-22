@@ -2,10 +2,10 @@ package mpo.dayon.common.version;
 
 import mpo.dayon.common.log.Log;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
-import java.net.URL;
-import java.util.Objects;
+import java.net.URI;
+import java.net.http.*;
+import java.time.Duration;
 
 public class Version {
     private static final Version VERSION_NULL = new Version(null);
@@ -60,23 +60,21 @@ public class Version {
 
     public String getLatestRelease() {
         if (latestVersion == null) {
-            HttpsURLConnection conn = null;
+            HttpClient client = HttpClient.newHttpClient();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(RELEASE_LOCATION + "latest"))
+                    .timeout(Duration.ofSeconds(5))
+                    .build();
             try {
-                URL obj = new URL(RELEASE_LOCATION + "latest");
-                conn = (HttpsURLConnection) obj.openConnection();
-                conn.setInstanceFollowRedirects(false);
-                conn.setReadTimeout(5000);
-            } catch (IOException e) {
-                Log.error("IOException", e);
-            } finally {
-                Objects.requireNonNull(conn).disconnect();
-            }
-
-            String latestLocation = conn.getHeaderField("Location");
-            if (latestLocation != null) {
-                latestVersion = latestLocation.substring(latestLocation.lastIndexOf('v'));
-            } else {
-                Log.warn("Failed to read latest version");
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                String latestLocation = response.headers().firstValue("Location").orElse(null);
+                if (latestLocation != null) {
+                    latestVersion = latestLocation.substring(latestLocation.lastIndexOf('v'));
+                } else {
+                    Log.warn("Failed to read latest version");
+                }
+            } catch (IOException | InterruptedException e) {
+                Log.error("Exception", e);
             }
         }
         return latestVersion;

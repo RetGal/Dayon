@@ -63,7 +63,7 @@ public interface Runner {
 
     static String overrideLocale(String arg) {
         if (arg != null && Arrays.stream(Language.values()).map(Language::getShortName).anyMatch(e -> e.equalsIgnoreCase(arg))) {
-            Locale.setDefault(new Locale(arg));
+            Locale.setDefault(Locale.forLanguageTag(arg));
             return arg;
         }
         return null;

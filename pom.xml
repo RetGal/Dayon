@@ -347,6 +347,7 @@
                         <configuration>
                             <source>${maven.compiler.source}</source>
                             <target>${maven.compiler.target}</target>
+                            <compilerArgument>-Xlint:all</compilerArgument>
                         </configuration>
                     </plugin>
                     <plugin>

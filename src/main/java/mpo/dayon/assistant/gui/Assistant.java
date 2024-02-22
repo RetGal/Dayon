@@ -31,12 +31,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.net.URL;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -109,7 +111,7 @@ public class Assistant implements ClipboardOwner {
         this.configuration = new AssistantConfiguration();
         // has not been overridden by command line
         if (language == null && !Locale.getDefault().getLanguage().equals(configuration.getLanguage())) {
-            Locale.setDefault(new Locale(configuration.getLanguage()));
+            Locale.setDefault(Locale.forLanguageTag(configuration.getLanguage()));
         }
 
         initUpnp();
@@ -213,7 +215,7 @@ public class Assistant implements ClipboardOwner {
                         if (publicIp != null) {
                             button.setText(publicIp);
                         }
-                    } catch (IOException ex) {
+                    } catch (IOException | InterruptedException ex) {
                         Log.error("Could not determine public IP", ex);
                         JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -247,11 +249,14 @@ public class Assistant implements ClipboardOwner {
                 choices.setLocation(frameLocation.x + 10, toolbarLocation.y + frame.getToolBar().getHeight());
             }
 
-            private void resolvePublicIp() throws IOException {
-                final URL url = new URL(WHATSMYIP_SERVER_URL);
-                try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                    publicIp = lines.readLine();
-                }
+            private void resolvePublicIp() throws IOException, InterruptedException {
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(WHATSMYIP_SERVER_URL))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                publicIp = response.body();
             }
         };
         ip.putValue("DISPLAY_NAME", publicIp); // always a selection
@@ -593,11 +598,14 @@ public class Assistant implements ClipboardOwner {
                     final Cursor cursor = frame.getCursor();
                     frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     try {
-                        final URL url = new URL(format(tokenServerUrl, networkConfiguration.getPort()));
-                        try (final BufferedReader lines = new BufferedReader(new InputStreamReader(url.openStream()))) {
-                            token = lines.readLine();
-                        }
-                    } catch (IOException ex) {
+                        HttpClient client = HttpClient.newBuilder().build();
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
+                                .timeout(Duration.ofSeconds(3))
+                                .build();
+                        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                        token = response.body().trim();
+                    } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("token"),
                                 JOptionPane.ERROR_MESSAGE);
@@ -672,7 +680,7 @@ public class Assistant implements ClipboardOwner {
         languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.EN));
         languageSelection.setRenderer(new LanguageRenderer());
         languageSelection.addActionListener(ev -> {
-                Locale.setDefault(new Locale(languageSelection.getSelectedItem().toString()));
+                Locale.setDefault(Locale.forLanguageTag(languageSelection.getSelectedItem().toString()));
                 Log.info(format("New language %s", Locale.getDefault().getLanguage()));
                 configuration = new AssistantConfiguration(Locale.getDefault().getLanguage());
                 configuration.persist();
