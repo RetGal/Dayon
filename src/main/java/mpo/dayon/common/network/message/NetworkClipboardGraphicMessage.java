@@ -1,6 +1,5 @@
 package mpo.dayon.common.network.message;
 
-import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.TransferableImage;
 
 import java.awt.datatransfer.DataFlavor;
@@ -20,9 +19,7 @@ public class NetworkClipboardGraphicMessage extends NetworkMessage {
     }
 
     public static NetworkClipboardGraphicMessage unmarshall(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        Log.info("unmarshall " +in);
-        TransferableImage graphic = (TransferableImage) in.readObject();
-        Log.info("unmarshall " +graphic);
+        TransferableImage graphic = (TransferableImage) in.readUnshared();
         return new NetworkClipboardGraphicMessage(graphic);
     }
 

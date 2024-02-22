@@ -27,7 +27,7 @@ public abstract class NetworkEngine {
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
-    private final static String CLIPBOARD_DEBUG = "setClipboardContents %s";
+    private static final String CLIPBOARD_DEBUG = "setClipboardContents %s";
 
     protected NetworkSender sender; // out
 

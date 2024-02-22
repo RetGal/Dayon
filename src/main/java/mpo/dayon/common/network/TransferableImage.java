@@ -27,7 +27,6 @@ public class TransferableImage implements Transferable, Serializable {
 
     private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        Log.info(String.valueOf(in));
         image = ImageIO.read(in);
     }
 
