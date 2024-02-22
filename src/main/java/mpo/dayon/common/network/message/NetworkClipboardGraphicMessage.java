@@ -18,6 +18,7 @@ public class NetworkClipboardGraphicMessage extends NetworkMessage {
         this.size = payload.getTransferData(DataFlavor.imageFlavor).getData().getDataBuffer().getSize() * 4;
     }
 
+    @java.lang.SuppressWarnings("squid:S5135") // assistant and assisted trust each other
     public static NetworkClipboardGraphicMessage unmarshall(ObjectInputStream in) throws IOException, ClassNotFoundException {
         TransferableImage graphic = (TransferableImage) in.readUnshared();
         return new NetworkClipboardGraphicMessage(graphic);
