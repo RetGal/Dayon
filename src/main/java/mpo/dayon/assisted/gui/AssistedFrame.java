@@ -40,8 +40,6 @@ class AssistedFrame extends BaseFrame {
 
     private ToolBar createToolBar() {
         ToolBar toolbar = new ToolBar();
-        // i'd prefer to use the DEFAULT_SPACER but...
-        toolbar.add(Box.createHorizontalStrut(10));
         toolbar.add(startButton);
         toolbar.add(stopButton);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {

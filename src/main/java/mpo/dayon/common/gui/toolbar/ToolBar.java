@@ -9,12 +9,12 @@ public class ToolBar extends JToolBar {
 
 	public static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
 
-	public static final Component DEFAULT_SPACER = Box.createHorizontalStrut(10);
+	public static final Component DEFAULT_SPACER = Box.createHorizontalStrut(8);
 
 	public ToolBar() {
 		setFloatable(false);
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
-		setBorder(null);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	public void addAction(Action action) {
