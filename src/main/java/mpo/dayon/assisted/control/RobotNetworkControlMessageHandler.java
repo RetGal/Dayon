@@ -110,10 +110,9 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			}
 			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
 				keyCode = VK_META;
-				Log.debug("KeyCode %s", () -> "PRESSED [157] []");
-			} else {
-				Log.debug("KeyCode %s", () -> String.valueOf(message));
+				Log.debug("Mapped Windows key to Cmd");
 			}
+			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {
 				robot.keyPress(keyCode);
 				pressedKeys.add(keyCode);
@@ -155,10 +154,9 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			}
 			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
 				keyCode = VK_META;
-				Log.debug("KeyCode %s", () -> "RELEASED [157] []");
-			} else {
-				Log.debug("KeyCode %s", () -> String.valueOf(message));
+				Log.debug("Mapped Windows key to Cmd");
 			}
+			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {
 				robot.keyRelease(keyCode);
 				pressedKeys.remove(keyCode);
