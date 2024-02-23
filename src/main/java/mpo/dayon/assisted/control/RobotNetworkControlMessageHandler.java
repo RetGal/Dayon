@@ -23,6 +23,8 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private static final char UNIX_SEPARATOR_CHAR = '/';
 
+	private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
+
 	private final Set<Integer> pressedKeys = new HashSet<>();
 
 	public RobotNetworkControlMessageHandler() {
@@ -106,7 +108,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			Log.debug("KeyCode %s", () -> String.valueOf(message));
+			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
+				keyCode = VK_META;
+				Log.debug("KeyCode %s", () -> "PRESSED [157] []");
+			} else {
+				Log.debug("KeyCode %s", () -> String.valueOf(message));
+			}
 			try {
 				robot.keyPress(keyCode);
 				pressedKeys.add(keyCode);
@@ -146,7 +153,12 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			Log.debug("KeyCode %s", () -> String.valueOf(message));
+			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
+				keyCode = VK_META;
+				Log.debug("KeyCode %s", () -> "RELEASED [157] []");
+			} else {
+				Log.debug("KeyCode %s", () -> String.valueOf(message));
+			}
 			try {
 				robot.keyRelease(keyCode);
 				pressedKeys.remove(keyCode);
