@@ -10,12 +10,14 @@ public final class ImageNames {
 	public static final String CAPTURE_SETTINGS = "capture_settings.png";
 	public static final String COMPATIBILITY = "compatibility.png";
 	public static final String COMPRESSION_SETTINGS = "compression_settings.png";
+	public static final String CMD = "cmd.png";
 	public static final String CONTROL = "control.png";
 	public static final String CTRL = "ctrl.png";
 	public static final String DOWN = "down.png";
 	public static final String EXIT = "exit.png";
 	public static final String FINGERPRINT = "fingerprint.png";
 	public static final String FIT = "fit.png";
+	public static final String FULLSCREEN = "fullscreen.png";
 	public static final String HELP = "help.png";
 	public static final String INFO = "info.png";
 	public static final String KEY = "key.png";
@@ -31,9 +33,11 @@ public final class ImageNames {
 	public static final String START_LARGE = "start_l.png";
 	public static final String STOP = "stop.png";
 	public static final String STOP_LARGE = "stop_l.png";
+	public static final String UNLOCKED = "lock_open.png";
 	public static final String UP = "up.png";
 	public static final String USERS = "users.png";
 	public static final String WAITING = "waiting.gif";
+	public static final String WATCH = "watch.png";
 	public static final String WIN = "win.png";
 
 }

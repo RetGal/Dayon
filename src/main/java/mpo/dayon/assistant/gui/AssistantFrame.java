@@ -302,7 +302,9 @@ class AssistantFrame extends BaseFrame {
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
-        remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CONTROL));
+        remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WATCH));
+        remoteControl.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.WATCH));
+        remoteControl.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
     }
 
@@ -320,6 +322,7 @@ class AssistantFrame extends BaseFrame {
         };
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
+        sendWindowsKey.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.CMD));
         return sendWindowsKey;
     }
 
@@ -374,7 +377,9 @@ class AssistantFrame extends BaseFrame {
             }
         };
         fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
-        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FIT));
+        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FULLSCREEN));
+        fitScreen.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.FULLSCREEN));
+        fitScreen.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.FIT));
         return fitScreen;
     }
 
@@ -388,7 +393,9 @@ class AssistantFrame extends BaseFrame {
             }
         };
         keepAspectRatio.putValue(Action.SHORT_DESCRIPTION, translate("toggle.keep.aspect"));
-        keepAspectRatio.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.LOCK));
+        keepAspectRatio.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UNLOCKED));
+        keepAspectRatio.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.UNLOCKED));
+        keepAspectRatio.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.LOCK));
         return keepAspectRatio;
     }
 

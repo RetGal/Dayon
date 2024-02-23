@@ -24,6 +24,12 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
+    protected static final String ROLLOVER_ICON = "ROLOVER_ICON";
+
+    protected static final String SELECTED_ICON = "SELECTED_ICON";
+
+    protected static final String PRESSED_ICON = "PRESSED_ICON";
+
     protected transient Object[] okCancelOptions = {translate("cancel"), translate("ok")};
 
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
@@ -150,7 +156,10 @@ public abstract class BaseFrame extends JFrame {
         button.setHideActionText(true);
         button.setAction(action);
         button.setFont(DEFAULT_FONT);
-        button.setText((String) action.getValue("DISPLAY_NAME"));
+        button.setText((String) action.getValue(DISPLAY_NAME));
+        button.setRolloverIcon((Icon) action.getValue(ROLLOVER_ICON));
+        button.setPressedIcon((Icon) action.getValue(PRESSED_ICON));
+        button.setSelectedIcon((Icon) action.getValue(SELECTED_ICON));
         button.setFocusable(false);
         button.setDisabledIcon(null);
         button.setSelected(false);

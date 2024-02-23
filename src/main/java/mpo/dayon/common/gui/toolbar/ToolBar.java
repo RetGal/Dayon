@@ -11,6 +11,8 @@ public class ToolBar extends JToolBar {
 
 	public static final Component DEFAULT_SPACER = Box.createHorizontalStrut(8);
 
+	public static final String DISPLAY_NAME = "DISPLAY_NAME";
+
 	public ToolBar() {
 		setFloatable(false);
 		setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
@@ -39,7 +41,7 @@ public class ToolBar extends JToolBar {
 		button.setHideActionText(true);
 		button.setAction(action);
 		button.setFont(DEFAULT_FONT);
-		button.setText((String) action.getValue("DISPLAY_NAME"));
+		button.setText((String) action.getValue(DISPLAY_NAME));
 		button.setFocusable(false);
 		button.setDisabledIcon(null);
 	}
