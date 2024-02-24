@@ -250,7 +250,7 @@ public class Assistant implements ClipboardOwner {
                 choices.show(frame, where.x, where.y);
                 final Point frameLocation = frame.getLocationOnScreen();
                 final Point toolbarLocation = frame.getToolBar().getLocationOnScreen();
-                choices.setLocation(frameLocation.x + 10, toolbarLocation.y + frame.getToolBar().getHeight());
+                choices.setLocation(frameLocation.x + 20, toolbarLocation.y + frame.getToolBar().getHeight());
             }
 
             private void resolvePublicIp() throws IOException, InterruptedException {
