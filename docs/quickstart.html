@@ -74,17 +74,15 @@
 
       <p>
         <img src="assisted.png" alt="Assisted"/> &nbsp;
-        <a id="assisted-setup" class="no"><strong>Setup the Assisted Computer</strong></a>
+        <a id="assisted-setup" class="no"><strong>Set up the Assisted Computer</strong></a>
       </p>
 
       <p>
-        Dayon! Assisted is acting as a client application calling the outside
-        world and as such there's no network configuration to set up.
+        Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to set up.
       </p>
 
       <p>
-        Download and install the Dayon! application. Then start the <em>Dayon!</em>
-        application (you should have a shortcut on the desktop) and click the "play" button.
+        Download and install the Dayon! application. Then start the <em>Dayon!</em> application and click the "play" button.
       </p>
 
       <p>
@@ -179,7 +177,7 @@
         <strong>IP address</strong> you want to give to the <em>assisted</em> to connect to the
         <em>assistant</em>; you should typically give your <strong>public</strong> IP address.
         But for testing within your local network you might want to use a different one. You can retrieve your
-        <strong>public IP address</strong> with the following menu:
+        <strong>public IP address</strong> by clicking the network button:
       </p>
 
       <p>
@@ -222,7 +220,7 @@
       </p>
 
       <p>
-        Use that form to setup how the <em>assisted</em> screen is going to be <strong>captured</strong>; you can
+        Use that form to set up how the <em>assisted</em> screen is going to be <strong>captured</strong>; you can
         configure the time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.
       </p>
 
@@ -231,7 +229,7 @@
       </p>
 
       <p>
-        You can then setup the <strong>compression</strong>
+        You can then set up the <strong>compression</strong>
         method; two methods are available: ZIP and XZ. XZ will obtain a (much)
         better compression ratio but requires more CPU and RAM as it's much
         more complicated than ZIP and is implemented in JAVA (ZIP is being
@@ -329,18 +327,17 @@
           <em>assisted</em> person (<code>Ctl + c</code>), click up or down. Subsequently, the file(s) can be
           inserted at the destination.
         </li>
+
+        <li>
+          <strong>Graphic</strong>: If the clipboards content is a graphic, for example after taking a screenshot -
+          just click up or down. The clipboard containing the graphic can then be used at the destination.
+        </li>
       </ul>
 
-      <p>
-        <strong>Caution</strong>: Depending on the display/windows manager and JDK combination, the
-        clipboard content does not get copied into the recipients' clipboard. So pasting (<code>Ctrl + v</code>)
-        does have no effect.
-      </p>
-
       <p></p>
-      <h3>Send a Windows key press</h3>
+      <h3>Send a Windows or Cmd key press</h3>
       <p>
-        To send the press of the Windows key, click the Windows button in the <em>assistants</em> control panel:
+        To send the press of the <strong>*</strong>Windows key, click the Windows button in the <em>assistants</em> control panel:
       </p>
 
       <p>
@@ -354,6 +351,10 @@
         button, press the <code>M</code> key and then click the Windows button again.
       </p>
 
+      <p>
+        <strong> *Note:</strong> If the <em>assisted</em> is running on macOS, the Windows key events (press/release) are automatically translated into Cmd key events.
+      </p>
+
       <p></p>
       <h3>Send a Ctrl key press</h3>
       <p>
@@ -365,6 +366,13 @@
         <br/>
         So for sending the <code>Ctrl + Alt + Delete</code> combination to the <em>assisted</em>, you have to click the <code>[Ctrl]</code> button first,
         then press the <code>Alt</code> and <code>Delete</code> keys together, release them and finally click the <code>[Ctrl]</code> button again.
+      </p>
+
+      <h3>Take a screenshot at the assisted</h3>
+      <p>
+        Click the "camera" button in the <em>assistants</em> control panel. Depending on the operating system running on the <em>assisted</em> side,
+        you will see either a dialog window where you can first choose which parts of the screen that shall be captured, or the screenshot is directly taken.
+        The screenshot will end up in the <em>assisted</em> clipboard, from where it can be transferred to the <em>assistant</em>.
       </p>
 
       <p></p>
