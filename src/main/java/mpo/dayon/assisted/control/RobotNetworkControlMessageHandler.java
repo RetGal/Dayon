@@ -23,8 +23,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 
 	private static final char UNIX_SEPARATOR_CHAR = '/';
 
-	private static final String OS_NAME = System.getProperty("os.name").toLowerCase();
-
 	private final Set<Integer> pressedKeys = new HashSet<>();
 
 	public RobotNetworkControlMessageHandler() {
@@ -108,10 +106,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
-				keyCode = VK_META;
-				Log.debug("Mapped Windows key to Cmd");
-			}
 			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {
 				robot.keyPress(keyCode);
@@ -151,10 +145,6 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				pressedKeys.remove(VK_CONTROL);
 				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
-			}
-			if (keyCode == VK_WINDOWS && OS_NAME.contains("mac")) {
-				keyCode = VK_META;
-				Log.debug("Mapped Windows key to Cmd");
 			}
 			Log.debug("KeyCode %s", () -> String.valueOf(message));
 			try {

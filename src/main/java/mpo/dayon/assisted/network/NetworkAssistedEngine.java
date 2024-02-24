@@ -46,6 +46,8 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
 
+    private final char osId = System.getProperty("os.name").toLowerCase().charAt(0);
+
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
                                  NetworkControlMessageHandler controlHandler,
@@ -120,7 +122,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
         initSender(1);
         // The first message being sent to the assistant (e.g. version identification).
-        sender.sendHello();
+        sender.sendHello(osId);
 
         fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         initFileSender();

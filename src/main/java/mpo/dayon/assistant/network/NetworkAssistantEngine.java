@@ -256,8 +256,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
         switch (type) {
             case HELLO:
-                introduce(in);
-                fireOnConnected(connection);
+                char osId = introduce(in);
+                fireOnConnected(connection, osId);
                 return true;
 
             case PING:
@@ -276,13 +276,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private void introduce(ObjectInputStream in) throws IOException {
+    private char introduce(ObjectInputStream in) throws IOException {
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
         if (!isCompatibleVersion(hello.getMajor(), hello.getMinor(), Version.get())) {
             Log.error(format("Incompatible assisted version: %d.%d", hello.getMajor(), hello.getMinor()));
             throw new IOException("version.wrong");
         }
+        return hello.getOsId();
     }
 
     /**
@@ -342,8 +343,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return listeners.getListeners().stream().allMatch(listener -> listener.onAccepted(connection));
     }
 
-    private void fireOnConnected(Socket connection) {
-        listeners.getListeners().forEach(listener -> listener.onConnected(connection));
+    private void fireOnConnected(Socket connection, char osId) {
+        listeners.getListeners().forEach(listener -> listener.onConnected(connection, osId));
     }
 
     private void fireOnByteReceived(int count) {

@@ -7,9 +7,12 @@ public class NetworkHelloMessage extends NetworkMessage {
 
 	private final int minor;
 
-	public NetworkHelloMessage(int major, int minor) {
+	private final char osId;
+
+	public NetworkHelloMessage(int major, int minor, char osId) {
 		this.major = major;
 		this.minor = minor;
+		this.osId = osId;
 	}
 
 	@Override
@@ -25,13 +28,17 @@ public class NetworkHelloMessage extends NetworkMessage {
 		return minor;
 	}
 
+	public char getOsId() {
+		return osId;
+	}
+
 	/**
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
 	@Override
     public int getWireSize() {
-		return 9; // type (byte) + major (int) + minor (int)
+		return 11; // type (byte) + major (int) + minor (int) + osId (char)
 	}
 
 	@Override
@@ -39,15 +46,23 @@ public class NetworkHelloMessage extends NetworkMessage {
 		marshallEnum(out, getType());
 		out.writeInt(major);
 		out.writeInt(minor);
+		out.writeChar(osId);
 	}
 
 	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
-		return new NetworkHelloMessage(major, minor);
+		char osId;
+		try {
+			osId = in.readChar();
+		} catch (IOException ex) {
+			// not supported
+			osId = 'x';
+		}
+		return new NetworkHelloMessage(major, minor, osId);
 	}
 
 	public String toString() {
-		return String.format("[major:%d] [minor:%s]", major, minor);
+		return String.format("[major:%d] [minor:%s] [osId:%c]", major, minor, osId);
 	}
 }

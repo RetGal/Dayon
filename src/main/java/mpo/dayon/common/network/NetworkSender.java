@@ -31,7 +31,7 @@ public class NetworkSender {
 
     private Semaphore semaphore;
 
-    public NetworkSender(ObjectOutputStream out) {
+    NetworkSender(ObjectOutputStream out) {
         this.out = out;
     }
 
@@ -59,9 +59,9 @@ public class NetworkSender {
      * <p/>
      * Assisted 2 assistant.
      */
-    public void sendHello() {
+    public void sendHello(char osId) {
         final Version version = Version.get();
-        send(true, new NetworkHelloMessage(version.getMajor(), version.getMinor()));
+        send(true, new NetworkHelloMessage(version.getMajor(), version.getMinor(), osId));
     }
 
     /**
@@ -143,7 +143,7 @@ public class NetworkSender {
      * <p/>
      * Assistant 2 assisted or vice versa.
      */
-    public void sendClipboardContentText(String text, int size) {
+    void sendClipboardContentText(String text, int size) {
         send(true, new NetworkClipboardTextMessage(text, size));
     }
 
@@ -152,7 +152,7 @@ public class NetworkSender {
      * <p/>
      * Assistant 2 assisted or vice versa.
      */
-    public void sendClipboardContentGraphic(TransferableImage image) {
+    void sendClipboardContentGraphic(TransferableImage image) {
         send(true, new NetworkClipboardGraphicMessage(image));
     }
 
@@ -161,7 +161,7 @@ public class NetworkSender {
      * <p/>
      * Assistant 2 assisted or vice versa.
      */
-    public void sendClipboardContentFiles(List<File> files, long size, String basePath) {
+    void sendClipboardContentFiles(List<File> files, long size, String basePath) {
         send(true, new NetworkClipboardFilesMessage(files, size, basePath));
     }
 

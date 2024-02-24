@@ -83,6 +83,8 @@ class AssistantFrame extends BaseFrame {
 
     private final JComboBox<Language> languageSelection;
 
+    private boolean isMacAssisted;
+
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
@@ -313,16 +315,23 @@ class AssistantFrame extends BaseFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 if (windowsKeyActivated.get()) {
-                    fireOnKeyReleased(VK_WINDOWS, ' ');
+                    if (!isMacAssisted) {
+                        fireOnKeyReleased(VK_WINDOWS, ' ');
+                    } else {
+                        fireOnKeyReleased(VK_META, ' ');
+                    }
                 } else {
-                    fireOnKeyPressed(VK_WINDOWS, ' ');
+                    if (!isMacAssisted) {
+                        fireOnKeyPressed(VK_WINDOWS, ' ');
+                    } else {
+                        fireOnKeyPressed(VK_META, ' ');
+                    }
                 }
                 windowsKeyActivated.set(!windowsKeyActivated.get());
             }
         };
         sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
         sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
-        sendWindowsKey.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.CMD));
         return sendWindowsKey;
     }
 
@@ -481,7 +490,11 @@ class AssistantFrame extends BaseFrame {
         enableTransferControls();
     }
 
-    void onSessionStarted() {
+    void onSessionStarted(boolean isMacAssisted) {
+        this.isMacAssisted = isMacAssisted;
+        if (isMacAssisted) {
+            windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.CMD));
+        }
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
             final long seconds = Instant.now().getEpochSecond() - sessionStartTime;

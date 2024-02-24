@@ -46,17 +46,21 @@ class NetworkSenderTest {
         // given
         final int major = 0;
         final int minor = 0;
+        final char osId = 'l';
         // when
-        sender.sendHello();
+        sender.sendHello(osId);
         // then
         verify(outMock, timeout(50)).writeByte(MAGIC_NUMBER);
         verify(outMock).write(NetworkMessageType.HELLO.ordinal());
         verify(outMock, times(2)).writeInt(valueCaptor.capture());
+        verify(outMock).writeChar(valueCaptor.capture());
         final List<Integer> capturedValues = valueCaptor.getAllValues();
         int first = capturedValues.get(0);
+        int second = capturedValues.get(1);
         int last = capturedValues.get(capturedValues.size() - 1);
         assertEquals(major, first);
-        assertEquals(minor, last);
+        assertEquals(minor, second);
+        assertEquals(osId, last);
     }
 
     @Test

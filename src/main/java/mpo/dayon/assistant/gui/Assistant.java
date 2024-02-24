@@ -823,11 +823,11 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onConnected(Socket connection) {
+        public void onConnected(Socket connection, char osId) {
             sendCaptureConfiguration(captureEngineConfiguration);
             sendCompressorConfiguration(compressorEngineConfiguration);
             frame.resetCanvas();
-            frame.onSessionStarted();
+            frame.onSessionStarted(osId == 'm');
         }
 
         @Override
