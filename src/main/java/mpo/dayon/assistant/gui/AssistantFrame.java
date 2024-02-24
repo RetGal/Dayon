@@ -494,6 +494,10 @@ class AssistantFrame extends BaseFrame {
         this.isMacAssisted = isMacAssisted;
         if (isMacAssisted) {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.CMD));
+            windowsKeyToggleButton.setToolTipText(translate("send.cmdKey"));
+        } else {
+            windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.WIN));
+            windowsKeyToggleButton.setToolTipText(translate("send.winKey"));
         }
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
