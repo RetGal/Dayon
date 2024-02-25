@@ -244,7 +244,9 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
-        Du är nu ansluten och övervakar den andra datorn på distans.
+        Du är nu ansluten och övervakar den andra datorn på distans. Glöm inte att jämföra <em>hjälpgivare</em> och <em>hjälptagare</em> fingeravtryck.
+        <br>
+        <strong>Varning</strong>: Om de inte matchar är anslutningen inte pålitlig!
       </p>
 
       <p>
@@ -257,6 +259,11 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
 
       <p>
         <img src="assistant_fit_screen.jpg" alt="Dayon! Hjälpgivare : Växla skärmläge"/>
+      </p>
+
+      <p>
+        Genom att klicka på knappen <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="öppna lås"/> höger,
+        du kan behålla bildförhållandet på den <em>hjälptagare</em> skärmen. Observera att denna funktion inte har någon effekt på displayen när fönstret är maximerat.
       </p>
 
       <p>
@@ -292,22 +299,20 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         </li>
 
         <li>
-          <strong>Filer</strong>: Välj en eller flera filer lokalt eller i <em>hjälptagarens</em> bildskärm (<code>Ctrl + c</code>), klicka upp eller ned. Därefter kan de(n) klistras in i sin destination.
+          <strong>Filer</strong>: Välj en eller flera filer lokalt eller i <em>hjälptagarens</em> bildskärm (<code>Ctrl + c</code>),
+          klicka upp eller ned. Därefter kan de(n) klistras in i sin destination.
+        </li>
+
+        <li>
+          <strong>Grafik</strong>: Om urklippets innehåll är en grafik, t.ex. efter att du tagit en skärmdump - klicka bara uppåt eller nedåt.
+          Urklippstavlan som innehåller grafiken kan sedan användas på destinationen.
         </li>
       </ul>
 
-      <p>
-        <strong>Varning</strong>: Beroende på kombination av bildskärm/fönsterhanterare och JDK, så klistras inte urklippsinnehållet in i mottagarens urklippshanterare. Så klistra in (<code>Ctrl + v</code>) fungerar inte.
-        <br/>
-        I de allra flesta fall så överförs ändå innehållet - men du behöver då ta en titt i foldern <code>/tmp</code>
-och leta efter en uuid folder (heter någonting som påminner om <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
-        Där hittar du de överförda urklippsfilerna.
-      </p>
-
       <p></p>
-      <h3>Att överföra en tryckning på Windows-tangenten</h3>
+      <h3>Att överföra en tryckning på Windows- eller Cmd-tangenten</h3>
       <p>
-        För att överföra ett tryck på Windows-tangenten, så musklicka på Windowssymbolen i <em>hjälpgivarens</em> kontrollpanel:
+        För att överföra ett tryck på <strong>*</strong>Windows-tangenten, så musklicka på Windowssymbolen i <em>hjälpgivarens</em> kontrollpanel:
       </p>
 
       <p>
@@ -318,6 +323,43 @@ och leta efter en uuid folder (heter någonting som påminner om <code>68abde33-
         Tangenten fortsätter att vara intryckt till dess att du klickar på Windowssymbolen igen. Det ger dig möjligheten att överföra snabbkommandon som innehåller Windows-tangenten.
         <br/>
         Om du exemplvis behöver minimera alla fönster hos <em>hjälptagaren</em>, så klickar du på Windowssymbolen, trycker på <code>M</code>-tangenten på ditt tangentbord och sedan klickar du på Windowssymbolen igen.
+      </p>
+
+      <p>
+        <strong>*Note</strong>: Om <em>hjälptagaren</em> kör på macOS visas/överförs <code>Cmd</code>-tangenten/knappen istället.
+      </p>
+
+      <p></p>
+      <h3>Att överföra en tryckning på Ctrl-tangenten</h3>
+      <p>
+        För det mesta överförs <code>Ctrl</code>-tangenten till den <em>hjälptagare</em> som alla andra tangenttryckningar,
+        det finns situationer där det inte är det. Till exempel är kombinationen <code>Ctrl + Alt + Delete</code> generellt
+        "fångad" av <em>hjälpgivare</em>s operativsystem och därmed inte överförd.
+        Vid sådana tillfällen blir knappen <code>[Ctrl]</code> bredvid Windows-knappen i kontrollpanelen för <em>hjälpgivare</em> praktisk.
+        Beteendet är detsamma som med Windows-knappen: tangenten förblir nedtryckt tills du klickar på knappen igen.
+        <br/>
+        Så för att skicka <code>Ctrl + Alt + Delete</code>-kombinationen till <em>hjälptagare</em>, måste du först klicka på knappen <code>[Ctrl]</code>,
+        tryck sedan på tangenterna <code>Alt</code> och <code>Delete</code> samtidigt, släpp dem och klicka slutligen på knappen <code>[Ctrl]</code> igen.
+      </p>
+
+      <h3>Ta en skärmdump på den hjälptagare</h3>
+      <p>
+        Klicka på knappen "kamera" i kontrollpanelen för <em>hjälpgivare</em>. Beroende på vilket operativsystem som körs på <em>hjälptagare</em>-sidan,
+        du kommer att se antingen ett dialogfönster där du först kan välja vilka delar av skärmen som ska tas, eller så är skärmdumpen direkt tagen.
+        Skärmdumpen kommer att hamna i <em>hjälptagare</em> urklipp, varifrån den kan överföras till <em>hjälpgivare</em>.
+      </p>
+
+      <p>
+        <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
+      </p>
+
+      <h3>Starta ett onlinemöte för att chatta ansikte mot ansikte</h3>
+      <p>
+        Klicka på certifikatets fingeravtryck för att starta en Jitsi Meeting-session.
+      </p>
+
+      <p>
+        <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
       </p>
 
       <p></p>
