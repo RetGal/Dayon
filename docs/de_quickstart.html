@@ -198,7 +198,7 @@
 
       <p>
         <em>
-          Beachten Sie dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen
+          Beachten Sie, dass die IP-Adresse für den Assistenten irrelevant ist, da die Applikation an allen
           verfügbaren Netzwerkschnittstellen horcht; Sie benötigen diese Angaben jedoch, um Sie dem Assistierten
           zu kommunizieren. (mehr zu diesem Thema später).
         </em>
@@ -268,7 +268,10 @@
       </p>
 
       <p>
-        Nun sind Sie mit dem entfernten Computer verbunden und sehen dessen Desktop:
+        Nun sind Sie mit dem entfernten Computer verbunden und sehen dessen Desktop.
+        Vergleichen Sie unbedingt die Zertifikatsfingerabdrücke des <em>Assistenten</em> und des <em>Assistierten</em>.
+        <br>
+        <strong>Achtung</strong>: Sollten diese nicht übereinstimmen, dann ist die Verbindung nicht vertrauenswürdig!
       </p>
 
       <p>
@@ -282,6 +285,11 @@
 
       <p>
         <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle"/>
+      </p>
+
+      <p>
+        Mittels Klick auf die <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="open lock"/> Schaltfläche rechts davon, können Sie das Seitenverhältnis des Bildschirms des <em>Assistierten</em> beibehalten.
+        Bitte beachten Sie, dass diese Funktion bei maximiertem Fenster keinen Effekt auf die Darstellung hat.
       </p>
 
       <p>
@@ -302,7 +310,7 @@
       <p></p>
       <h3>Übertragen der Zwischenablage</h3>
       <p>
-        Mittels Klick auf den Up- resp. Down-Button, kann die entweder die Zwischenablage des <em>Assistenten</em>
+        Mittels Klick auf die Up- resp. Down-Schaltfläche, kann die entweder die Zwischenablage des <em>Assistenten</em>
         an den Assistierten (Up) oder die Zwischenablage des <em>Assistierten</em> an den <em>Assistenten</em>
         (Down) übertragen werden.
       </p>
@@ -312,11 +320,11 @@
       </p>
 
       <p></p>
-      <h4>Unterstützt werden zur Zeit:</h4>
+      <h4>Unterstützt werden zurzeit:</h4>
       <ul>
         <li>
-          <strong>Text</strong>: Lokal oder im Fenster des <em>Assistierten</em> Text markieren, kopieren (
-          <code>ctl + C</code>) Up oder Down klicken. Anschliessend kann der übertagene Text in einer lokalen
+          <strong>Text</strong>: Lokal oder im Fenster des <em>Assistierten</em> Text markieren, kopieren (<code>ctl + C</code>)
+          Up oder Down klicken. Anschliessend kann der übertragene Text in einer lokalen
           oder entfernten Anwendung eingefügt werden (<code>ctrl + v</code>).
         </li>
 
@@ -325,23 +333,17 @@
           resp. Ordner markieren, kopieren (<code>ctl + C</code>) Up oder Down klicken. Anschliessend kann/können die
           Datei/en am Zielort eingefügt werden.
         </li>
+        <li>
+          <strong>Grafiken</strong>: Wenn es sich bei dem Inhalt der Zwischenablage um eine Grafik handelt, z. B. nachdem Sie einen Screenshot erstellt haben -
+          klicken Sie einfach die Schaltfläche Up oder Down. Die Zwischenablage mit der Grafik kann anschliessend auf dem Zielsystem verwendet werden.
+        </li>
       </ul>
 
-      <p>
-        <strong>Achtung</strong>: Abhängig von der Anzeige-/Fenster-Manager und JDK Kombination, wird der Inhalt der
-        Zwischenablage
-        nicht in die Zwischenablage des Empfängers kopiert. Das Einfügen (<code>Strg + v</code>) funktioniert in
-        diesen Fällen nicht.
-        Meistens wird der Inhalt dennoch übertragen. Werfen Sie einen Blick in das <code>/tmp</code> Verzeichnis und
-        suchen Sie nach einem UUID-Ordner (ähnlich wie <code>68abde33-dd0d-4527-ab5c-fe4bbbec4d42</code>).
-        Darin befinden sich die übertragenen Dateien.
-      </p>
-
       <p></p>
-      <h3>Windowstastendruck übertragen</h3>
+      <h3>Windows- oder Cmd-Tastendruck übertragen</h3>
       <p>
-        Um das Drücken der Windows-Taste zu übertragen, klicken Sie in der Bedienleiste des <em>Assistenten</em> auf
-        das Windows-Symbol:
+        Um das Drücken der <strong>*</strong>Windowstaste zu übertragen, klicken Sie in der Bedienleiste des <em>Assistenten</em> auf
+        die Windows-Schaltfläche:
       </p>
 
       <p>
@@ -349,11 +351,48 @@
       </p>
 
       <p>
-        Die Taste bleibt gedrückt, bis Sie erneut auf das Symbol klicken. Auf diese Weise können Sie auch
+        Die Taste bleibt gedrückt, bis Sie die Schaltfläche erneut klicken. Auf diese Weise können Sie auch
         Windows-Tastenkombinationen senden.<br/>
-        Wenn Sie beispielsweise alle Fenster des <em>Assistierten</em> minimieren möchten, klicken Sie auf das
-        Windows-Symbol, danach drücken Sie die <code>M</code> Taste und klicken schliesslich erneut auf das
-        Windows-Symbol.
+        Wenn Sie beispielsweise alle Fenster des <em>Assistierten</em> minimieren möchten, klicken Sie auf die
+        Windows-Schaltfläche, danach drücken Sie die <code>M</code> Taste und klicken schliesslich erneut auf die
+        Windows-Schaltfläche.
+      </p>
+
+      <p>
+        <strong> *Hinweis:</strong> Falls auf dem verbundenen <em>Assistierten</em> macOS läuft, wird eine <code>Cmd</code>-Schaltfläche angezeigt resp. übertragen.
+      </p>
+
+      <p></p>
+      <h3>Ctrl-Tastendruck übertragen</h3>
+      <p>
+        In den meisten Fällen wird die <code>Ctrl</code>-Taste wie jeder andere Tastendruck an den <em>Assistierten</em> übertragen,
+        es gibt jedoch Situationen, in denen dies nicht der Fall ist. Zum Beispiel wird die Kombination <code>Ctrl + Alt + Delete</code> im Allgemeinen
+        vom Betriebssystem des Assistenten direkt interpretiert und daher nicht übertragen.
+        In solchen Fällen bietet sich die <code>[Ctrl]</code> Schaltfläche neben der Windows-Schaltfläche in der Bedienleiste der <em>Assistenten</em> an,
+        die sich genauso verhält wie die Windowstaste: Die Taste bleibt so lange gedrückt, bis Sie erneut auf die Schaltfläche klicken.
+        <br/>
+        Um also die Kombination <code>Ctrl + Alt + Delete</code> an den <em>unterstützten</em> zu senden, müssen Sie zuerst auf die Schaltfläche <code>[Ctrl]</code> klicken.
+        Drücken Sie dann gleichzeitig die Tasten <code>Alt</code> und <code>Delete</code>, lassen Sie sie los und klicken Sie schliesslich erneut auf die Schaltfläche <code>[Ctrl]</code>.
+      </p>
+
+      <h3>Bildschirmfoto des Assistierten aufnehmen</h3>
+      <p>
+        Klicken Sie die "Kamera" Schaltfläche. Je nach Betriebssystem des <em>Assistierten</em> wird entweder ein Dialog angezeigt,
+        in welchem der aufzunehmende Bereich des Bildschirms ausgewählt werden kann - oder das Bildschirmfoto wird ohne weitere Rückfrage direkt erstellt.
+        In beiden Fällen landet die aufgenommene Grafik in der Zwischenablage des <em>Assistierten</em>, von wo aus sie zum <em>Assistenten</em> übertragen werden kann.
+      </p>
+
+      <p>
+        <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
+      </p>
+
+      <h3>Onlinemeeting starten, um direkt miteinander zu chatten</h3>
+      <p>
+        Klicken Sie auf die Zertifikatsfingerabdrücke, um ein Jitsi-Meeting zu starten.
+      </p>
+
+      <p>
+        <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
       </p>
 
       <p></p>
