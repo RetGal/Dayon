@@ -101,7 +101,7 @@
             译者注：上面说了那么多，说白就是你要让你的计算机暴露在公网，让用户可以访问得到你。如果你有公网IP，这自然是最方便
             的。如果你和我一样，没有公网IP，那可以使用内网穿透、VPN等。比如FRP、Ngrok、OpenVPN、ZeroTier等，有些是需要自己有服
             务器才能搭建，而有些则不需要，而且网上有很多热心网友贡献的免费通道，请自行百度，谢谢。
-            <br><br>
+            <br/><br/>
             在 <a href="https://portforward.com/router.htm">portforward.com</a> 可以查询到常见的路由器(端口转发相关内容)的详细配置指南。
         <p>
             <strong>可选：</strong>调整传入连接的端口：（左边有 UPnP，右边没有）
@@ -140,7 +140,7 @@
              请注意，Assistant 主控端 不需要此 IP 地址，因为它正在侦听所有 可用的网络接口，但您需要将这个IP地址和对应
              的端口号告诉被帮助的用户，这样用户才能发起连接（稍后会详细介绍）。
         <p>
-            关于网络配置要提的就是这些。<br>
+            关于网络配置要提的就是这些。<br/>
             <strong>对于那些不耐烦的人：</strong> <a href="#assistant-start">戳这里</a> 直达 <em>Assistant 主控端 </em>
             如何开始监听会话。
         <p>
@@ -171,7 +171,7 @@
             <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
         <p>
             您现在已连接并监控远程计算机。 不要忘记比较<em>Assistant - 主控端</em>和<em>Assisted - 用户端</em>指纹。
-            <br>
+            <br/>
             <strong>警告</strong>：如果它们不匹配，则连接不可信！
         <p>
             <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
@@ -274,7 +274,7 @@ port: 8080</pre>
         该文件可以在 Dayon 中以 <code><a href="assisted.yaml">assisted.yaml</a></code> 的名称保存！ 主目录，在用户目录中，
         或在与 <code>.jar</code> 相同的目录中，分别。 <code>.exe</code> 文件。
         此顺序还对应于在多个配置的情况下考虑它们的优先级
-        存在。 （第一次获胜）<br>
+        存在。 （第一次获胜）<br/>
         为防止辅助启动后立即自动连接，<code><a href="assisted.yaml">assisted.yaml</a></code>
         可以添加以下行：<pre>
 autoConnect: false</pre>
