@@ -170,13 +170,18 @@
         <p>
             <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection">
         <p>
-            连接成功后，你就可以看到用户实时计算机屏幕了。
+            您现在已连接并监控远程计算机。 不要忘记比较<em>Assistant - 主控端</em>和<em>Assisted - 用户端</em>指纹。
+            <br>
+            <strong>警告</strong>：如果它们不匹配，则连接不可信！
         <p>
             <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running">
         <p>
             如果远程桌面不适配您的窗口，你可以将其缩小(屏幕自适应)：
         <p>
             <img src="assistant_fit_screen.jpg" alt="Dayon! Assistent : Fit Screen Toggle">
+        <p>
+            通过点击 <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="open lock"/> 按钮 正确的，
+            您可以保持辅助屏幕的纵横比。 请注意，当窗口最大化时，此功能对显示没有影响。
         <p>
             默认情况下，远程控制 是关闭的；您可以点击以下图标启用和关闭远程控制：
         <p>
@@ -199,22 +204,55 @@
                 上文)。随后，传输的文本可以插入本地或远程主机的应用程序了（<code>Ctrl + v</code>)。
                 <li><strong>文件</strong>：在本地或远程主机中选择一个或多个文件（<code>Ctl + c</code>)，单击向上或向下按钮。
                 随后，可以在目标路径插入文件。
+                <li><strong>图形</strong>：如果剪贴板内容是图形，例如截屏后 -
+                单击向上或向下按钮，只需单击向上或向下即可。 然后可以在目的地使用包含图形的剪贴板。
             </ul>
+
+        <h3>发送 Windows 或 Cmd 按键</h3>
         <p>
-            <strong>注意</strong>：受到不同的显示/窗口管理器与JDK组合的影响，剪贴板内容可能未能够成功
-            复制到目标计算机的剪贴板(内容传输了，但没有复制到剪贴板上，参见下一段)。这也将导致粘贴(Ctrl + v)无效。
-            多数情况下，剪贴板的内容都能传输到目标计算机 —— 可以打开临时目录(比如/tmp)，然后 寻找一个uuid样命名
-            的文件夹(比如68abde33-dd0d-4527-ab5c-fe4bbbec4d42)。在这里您或许可以找到传输过来但未能成功复制到目标主机剪贴板的内容。
-        <p>
-        <h3>发送Windows徽标按键</h3>
-        <p>
-            要传输 Windows 键(单击一次按下，再次单击是松开)，请单击 Assistant 主控端 上方的 Windows 符号：
+            要传输 <strong>*</strong>Windows 键(单击一次按下，再次单击是松开)，请单击 Assistant 主控端 上方的 Windows 符号：
         <p>
             <img src="assistant_windows_key.jpg" alt="Dayon! Assistent : Windows Key">
         <p>
             单击一次，Windows 键将保持按下状态，直到您再次单击该按钮。这么做是为了发送 Windows 快捷键。
             例如，如果您需要最小化 所有窗口侧的 ，您可以单击 Windows 符号， 按下 M键，然后再次单击 Windows 符号。
         <p>
+
+        <p>
+          <strong>*注意：</strong>如果<em>辅助</em>在 macOS 上运行，则会显示/传输 <code>Cmd</code> 键/按钮。
+        <p>
+
+        <p>
+        <h3>发送 Ctrl 按键</h3>
+        <p>
+          虽然大多数时候，<code>Ctrl</code> 键会像任何其他击键一样传输到<em>辅助</em>，
+          有些情况并非如此。 例如，<code>Ctrl + Alt + Delete</code> 组合通常是
+          由<em>助手</em>的操作系统“捕获”，因此不会传输。
+          在这种情况下，<em>助手</em>控制面板中 Windows 按钮旁边的 <code>[Ctrl]</code> 按钮就变得很方便。
+          其行为与 Windows 按钮相同：该键保持按下状态，直到您再次单击该按钮。
+          <br/>
+          因此，要将<code>Ctrl + Alt + Delete</code>组合发送到<em>辅助</em>，您必须先单击<code>[Ctrl]</code>按钮，
+          然后同时按下 <code>Alt</code> 和 <code>Delete</code> 键，松开它们，最后再次单击<code>[Ctrl]</code> 按钮。
+        <p>
+
+        <h3>截图 于 Assisted - 用户端</h3>
+        <p>
+          单击<em>Assistant - 主控端</em>控制面板中的“相机”按钮。 根据辅助端运行的操作系统，
+          您将看到一个对话框窗口，您可以在其中首先选择要捕获屏幕的哪些部分，或者直接截取屏幕截图。
+          屏幕截图最终将出现在<em>Assisted - 用户端</em>剪贴板中，从那里可以将其传输到<em>Assistant - 主控端</em>。
+
+        <p>
+          <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
+        <p>
+
+        <h3>开始在线会议面对面聊天</h3>
+        <p>
+          单击证书指纹即可启动 Jitsi 会议会话。
+
+        <p>
+          <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
+        <p>
+
         <h3>用户端(Assisted)自动连接</h3>
         <h4>通过命令行参数</h4>
         <p>
