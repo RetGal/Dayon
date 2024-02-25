@@ -231,3 +231,14 @@ nav a:hover:before {
   top: 0;
   transform: scale(1);
 }
+
+@media all and (max-width:800px){
+    #container {
+      width:95%;
+    }
+
+    .hamburger {
+      right: 4%;
+      margin-top: 5px;
+    }
+}
