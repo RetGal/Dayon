@@ -52,13 +52,7 @@ public class NetworkHelloMessage extends NetworkMessage {
 	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
-		char osId;
-		try {
-			osId = in.readChar();
-		} catch (IOException ex) {
-			// not supported
-			osId = 'x';
-		}
+		char osId = (major == 13 && minor > 2) || major == 0 ? in.readChar() : 'x';
 		return new NetworkHelloMessage(major, minor, osId);
 	}
 

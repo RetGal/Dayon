@@ -827,7 +827,7 @@ public class Assistant implements ClipboardOwner {
             sendCaptureConfiguration(captureEngineConfiguration);
             sendCompressorConfiguration(compressorEngineConfiguration);
             frame.resetCanvas();
-            frame.onSessionStarted(osId == 'm');
+            frame.onSessionStarted(osId);
         }
 
         @Override

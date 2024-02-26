@@ -256,8 +256,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
         switch (type) {
             case HELLO:
-                char osId = introduce(in);
-                fireOnConnected(connection, osId);
+                fireOnConnected(connection, introduce(in));
                 return true;
 
             case PING:

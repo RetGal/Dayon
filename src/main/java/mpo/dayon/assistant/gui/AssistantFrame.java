@@ -30,6 +30,8 @@ class AssistantFrame extends BaseFrame {
     private static final int OFFSET = 6;
 
     private static final int DEFAULT_FACTOR = 1;
+    
+    private static final char EMPTY_CHAR = ' ';
 
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
@@ -83,7 +85,7 @@ class AssistantFrame extends BaseFrame {
 
     private final JComboBox<Language> languageSelection;
 
-    private boolean isMacAssisted;
+    private char osId;
 
     AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive) {
         RepeatingReleasedEventsFixer.install();
@@ -315,16 +317,16 @@ class AssistantFrame extends BaseFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 if (windowsKeyActivated.get()) {
-                    if (!isMacAssisted) {
-                        fireOnKeyReleased(VK_WINDOWS, ' ');
+                    if (osId != 'm') {
+                        fireOnKeyReleased(VK_WINDOWS, EMPTY_CHAR);
                     } else {
-                        fireOnKeyReleased(VK_META, ' ');
+                        fireOnKeyReleased(VK_META, EMPTY_CHAR);
                     }
                 } else {
-                    if (!isMacAssisted) {
-                        fireOnKeyPressed(VK_WINDOWS, ' ');
+                    if (osId != 'm') {
+                        fireOnKeyPressed(VK_WINDOWS, EMPTY_CHAR);
                     } else {
-                        fireOnKeyPressed(VK_META, ' ');
+                        fireOnKeyPressed(VK_META, EMPTY_CHAR);
                     }
                 }
                 windowsKeyActivated.set(!windowsKeyActivated.get());
@@ -340,9 +342,9 @@ class AssistantFrame extends BaseFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 if (ctrlKeyActivated.get()) {
-                    fireOnKeyReleased(VK_CONTROL, ' ');
+                    fireOnKeyReleased(VK_CONTROL, EMPTY_CHAR);
                 } else {
-                    fireOnKeyPressed(VK_CONTROL, ' ');
+                    fireOnKeyPressed(VK_CONTROL, EMPTY_CHAR);
                 }
                 ctrlKeyActivated.set(!ctrlKeyActivated.get());
             }
@@ -356,13 +358,25 @@ class AssistantFrame extends BaseFrame {
         final Action sendPrtScrKey = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                fireOnKeyPressed(VK_PRINTSCREEN, ' ');
+                if (osId == 'l') {
+                    fireOnKeyPressed(VK_CONTROL, EMPTY_CHAR);
+                    pause();
+                }
+                fireOnKeyPressed(VK_PRINTSCREEN, EMPTY_CHAR);
+                pause();
+                fireOnKeyReleased(VK_PRINTSCREEN, EMPTY_CHAR);
+                if (osId == 'l') {
+                    pause();
+                    fireOnKeyReleased(VK_CONTROL, EMPTY_CHAR);
+                }
+            }
+
+            private void pause() {
                 try {
                     Thread.sleep(10L);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                fireOnKeyReleased(VK_PRINTSCREEN, ' ');
             }
         };
         sendPrtScrKey.putValue(Action.SHORT_DESCRIPTION, translate("send.prtScrKey"));
@@ -490,9 +504,9 @@ class AssistantFrame extends BaseFrame {
         enableTransferControls();
     }
 
-    void onSessionStarted(boolean isMacAssisted) {
-        this.isMacAssisted = isMacAssisted;
-        if (isMacAssisted) {
+    void onSessionStarted(char osId) {
+        this.osId = osId;
+        if (osId == 'm') {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.CMD));
             windowsKeyToggleButton.setToolTipText(translate("send.cmdKey"));
         } else {
