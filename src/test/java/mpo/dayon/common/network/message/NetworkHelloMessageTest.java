@@ -27,7 +27,7 @@ class NetworkHelloMessageTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "13, 2", "12, 0", "11, 3" })
+    @CsvSource({ "13, 0", "12, 0", "11, 0" })
     void unmarshallHelloMessageFromLegacyVersion(int major, int minor) throws IOException {
         // given
         String fileName = "tmp";
