@@ -50,7 +50,7 @@ class NetworkHelloMessageTest {
 
 
     @ParameterizedTest
-    @CsvSource({ "13, 3, l", "0, 0, w" })
+    @CsvSource({ "13, 1, l", "0, 0, w" })
     void unmarshallHelloMessageFromSupportedVersion(int major, int minor, char osId) throws IOException {
         // given
         String fileName = "tmp";
