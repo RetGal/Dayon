@@ -237,8 +237,11 @@ nav a:hover:before {
       width:95%;
     }
 
+    #top, #menu {
+      display: none;
+    }
+
     .hamburger {
-      right: 4%;
-      margin-top: 5px;
+      margin-top: -50px;
     }
 }
