@@ -61,7 +61,7 @@ class AssistantFrame extends BaseFrame {
 
     private final JButton stopButton;
 
-    private final JButton prtScrKeyButton;
+    private final JButton screenshotButton;
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
@@ -99,7 +99,7 @@ class AssistantFrame extends BaseFrame {
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
-        this.prtScrKeyButton = createButton(createSendPrtScrKeyAction());
+        this.screenshotButton = createButton(actions.getScreenshotRequestAction()    );
         this.languageSelection = languageSelection;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
@@ -247,7 +247,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
-        sessionPanel.add(prtScrKeyButton);
+        sessionPanel.add(screenshotButton);
         sessionPanel.add(createButton(actions.getResetAction()));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
@@ -302,7 +302,7 @@ class AssistantFrame extends BaseFrame {
                 controlActivated.set(!controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
-                prtScrKeyButton.setEnabled(controlActivated.get());
+                screenshotButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
@@ -352,36 +352,6 @@ class AssistantFrame extends BaseFrame {
         sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
         sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
         return sendCtrlKey;
-    }
-
-    private Action createSendPrtScrKeyAction() {
-        final Action sendPrtScrKey = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                if (osId == 'l') {
-                    fireOnKeyPressed(VK_CONTROL, EMPTY_CHAR);
-                    pause();
-                }
-                fireOnKeyPressed(VK_PRINTSCREEN, EMPTY_CHAR);
-                pause();
-                fireOnKeyReleased(VK_PRINTSCREEN, EMPTY_CHAR);
-                if (osId == 'l') {
-                    pause();
-                    fireOnKeyReleased(VK_CONTROL, EMPTY_CHAR);
-                }
-            }
-
-            private void pause() {
-                try {
-                    Thread.sleep(10L);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        };
-        sendPrtScrKey.putValue(Action.SHORT_DESCRIPTION, translate("send.prtScrKey"));
-        sendPrtScrKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAM));
-        return sendPrtScrKey;
     }
 
     private Action createToggleFixScreenAction() {
@@ -603,7 +573,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
         ctrlKeyToggleButton.setEnabled(false);
-        prtScrKeyButton.setEnabled(false);
+        screenshotButton.setEnabled(false);
         disableTransferControls();
     }
 
@@ -617,7 +587,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
         ctrlKeyToggleButton.setSelected(false);
-        prtScrKeyButton.setEnabled(false);
+        screenshotButton.setEnabled(true);
         enableTransferControls();
     }
 

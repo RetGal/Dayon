@@ -13,7 +13,7 @@ class NetworkAssistedEngineTest {
 
     @BeforeEach
     void init() {
-        engine = new NetworkAssistedEngine(null, null, null, null, null);
+        engine = new NetworkAssistedEngine(null, null, null, null, null, null);
         listener = mock(NetworkAssistedEngineListener.class);
         engine.addListener(listener);
     }

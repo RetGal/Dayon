@@ -69,6 +69,11 @@ public enum NetworkMessageType {
 	/**
 	 * A clipboard transfer graphic event.
 	 */
-	CLIPBOARD_GRAPHIC
+	CLIPBOARD_GRAPHIC,
+
+	/**
+	 * A screenshot creation request.
+	 */
+	SCREENSHOT_REQUEST
 
 	}

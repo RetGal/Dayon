@@ -87,12 +87,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
         final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
         final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
+        final NetworkScreenshotRequestMessageHandler screenshotRequestHandler = this::onScreenshotRequested;
 
         final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
         controlHandler.subscribe(this);
 
         networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler,
-                controlHandler, clipboardRequestHandler, this);
+                controlHandler, clipboardRequestHandler, screenshotRequestHandler, this);
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
@@ -412,6 +413,15 @@ public class Assisted implements Subscriber, ClipboardOwner {
         String text = "\uD83E\uDD84";
         Log.debug("Sending a unicorn: " + text);
         networkEngine.sendClipboardText(text);
+    }
+
+    private void onScreenshotRequested(){
+        Log.info("Screenshot request received");
+        try {
+            networkEngine.setClipboardContents(new Robot().createScreenCapture(ScreenUtilities.getSharedScreenSize()), this);
+        } catch (AWTException e) {
+            Log.error("Failed to capture screen", e);
+        }
     }
 
     @Override

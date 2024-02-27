@@ -42,11 +42,15 @@ public class MouseEngine {
 
         //noinspection InfiniteLoopStatement
         while (true) {
-            final Point current = MouseInfo.getPointerInfo().getLocation();
-            ++captureCount;
-            if (!current.equals(previous) && fireOnLocationUpdated(current)) {
-                previous = current;
+            final PointerInfo pointerInfo = MouseInfo.getPointerInfo();
+            // can happen if windows the ctrl + alt + delete screen is active
+            if (pointerInfo != null) {
+                final Point current = pointerInfo.getLocation();
+                if (!current.equals(previous) && fireOnLocationUpdated(current)) {
+                    previous = current;
+                }
             }
+            ++captureCount;
             captureCount += syncOnTick(start, captureCount);
         }
     }

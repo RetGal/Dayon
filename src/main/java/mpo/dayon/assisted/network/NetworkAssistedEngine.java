@@ -42,6 +42,8 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private final NetworkClipboardRequestMessageHandler clipboardRequestHandler;
 
+    private final NetworkScreenshotRequestMessageHandler screenshotRequestHandler;
+
     private final ClipboardOwner clipboardOwner;
 
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
@@ -51,11 +53,13 @@ public class NetworkAssistedEngine extends NetworkEngine
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
                                  NetworkControlMessageHandler controlHandler,
-                                 NetworkClipboardRequestMessageHandler clipboardRequestHandler, ClipboardOwner clipboardOwner) {
+                                 NetworkClipboardRequestMessageHandler clipboardRequestHandler,
+                                 NetworkScreenshotRequestMessageHandler screenshotRequestHandler, ClipboardOwner clipboardOwner) {
         this.captureConfigurationHandler = captureConfigurationHandler;
         this.compressorConfigurationHandler = compressorConfigurationHandler;
         this.controlHandler = controlHandler;
         this.clipboardRequestHandler = clipboardRequestHandler;
+        this.screenshotRequestHandler = screenshotRequestHandler;
         this.clipboardOwner = clipboardOwner;
     }
 
@@ -185,6 +189,10 @@ public class NetworkAssistedEngine extends NetworkEngine
                         final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
                         setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
                         sender.ping();
+                        break;
+
+                    case SCREENSHOT_REQUEST:
+                        screenshotRequestHandler.handleScreenshotRequest();
                         break;
 
                     case PING:

@@ -141,6 +141,15 @@ public class NetworkSender {
     /**
      * Might block (!)
      * <p/>
+     * Assistant 2 assisted .
+     */
+    public void sendScreenshotRequest() {
+        send(true, new NetworkScreenshotRequestMessage());
+    }
+
+    /**
+     * Might block (!)
+     * <p/>
      * Assistant 2 assisted or vice versa.
      */
     void sendClipboardContentText(String text, int size) {

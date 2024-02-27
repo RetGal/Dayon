@@ -184,6 +184,7 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setTokenAction(createTokenAction());
         assistantActions.setRemoteClipboardRequestAction(createRemoteClipboardRequestAction());
         assistantActions.setRemoteClipboardSetAction(createRemoteClipboardUpdateAction());
+        assistantActions.setScreenshotRequestAction(createScreenshotRequestAction());
         assistantActions.setStartAction(createStartAction());
         assistantActions.setStopAction(createStopAction());
         assistantActions.setToggleCompatibilityModeAction(createToggleCompatibilityModeAction());
@@ -703,6 +704,19 @@ public class Assistant implements ClipboardOwner {
             super.getListCellRendererComponent(list, ((Language) value).getName(), index, isSelected, cellHasFocus);
             return this;
         }
+    }
+
+    private Action createScreenshotRequestAction() {
+        final Action screenshotAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                new Thread(network::sendScreenshotRequest, "ScreenshotRequest").start();
+            }
+        };
+        screenshotAction.setEnabled(false);
+        screenshotAction.putValue(Action.SHORT_DESCRIPTION, translate("send.prtScrKey"));
+        screenshotAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAM));
+        return screenshotAction;
     }
 
     private class NetWorker extends SwingWorker<String, String> {

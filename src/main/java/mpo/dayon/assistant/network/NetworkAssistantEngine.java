@@ -330,6 +330,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
+    /**
+     * Might be blocking if the sender queue is full (!)
+     */
+    public void sendScreenshotRequest() {
+        if (sender != null) {
+            sender.sendScreenshotRequest();
+        }
+    }
+
     private void fireOnReady() {
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onReady);
     }

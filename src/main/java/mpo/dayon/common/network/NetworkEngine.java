@@ -84,7 +84,7 @@ public abstract class NetworkEngine {
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
     }
 
-    protected void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
+    public void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
         Log.debug(CLIPBOARD_DEBUG, () -> format("%dx%d", image.getWidth(), image.getHeight()));
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableImage(image), clipboardOwner);
     }

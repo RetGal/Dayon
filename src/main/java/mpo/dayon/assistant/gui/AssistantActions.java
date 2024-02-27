@@ -11,6 +11,7 @@ class AssistantActions {
     private Action resetAction;
     private Action remoteClipboardRequestAction;
     private Action remoteClipboardSetAction;
+    private Action screenshotRequestAction;
     private Action startAction;
     private Action stopAction;
     private Action tokenAction;
@@ -71,6 +72,14 @@ class AssistantActions {
 
     void setRemoteClipboardSetAction(Action remoteClipboardSetAction) {
         this.remoteClipboardSetAction = remoteClipboardSetAction;
+    }
+
+    Action getScreenshotRequestAction() {
+        return screenshotRequestAction;
+    }
+
+    void setScreenshotRequestAction(Action screenshotRequestAction) {
+        this.screenshotRequestAction = screenshotRequestAction;
     }
 
     Action getStartAction() {
