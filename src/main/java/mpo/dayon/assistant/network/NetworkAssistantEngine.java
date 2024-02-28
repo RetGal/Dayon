@@ -253,7 +253,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
         switch (type) {
             case HELLO:
                 fireOnConnected(connection, introduce(in));
@@ -275,14 +275,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private char introduce(ObjectInputStream in) throws IOException {
+    private NetworkHelloMessage introduce(ObjectInputStream in) throws IOException, ClassNotFoundException {
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
         if (!isCompatibleVersion(hello.getMajor(), hello.getMinor(), Version.get())) {
             Log.error(format("Incompatible assisted version: %d.%d", hello.getMajor(), hello.getMinor()));
             throw new IOException("version.wrong");
         }
-        return hello.getOsId();
+        return hello;
     }
 
     /**
@@ -351,8 +351,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return listeners.getListeners().stream().allMatch(listener -> listener.onAccepted(connection));
     }
 
-    private void fireOnConnected(Socket connection, char osId) {
-        listeners.getListeners().forEach(listener -> listener.onConnected(connection, osId));
+    private void fireOnConnected(Socket connection, NetworkHelloMessage hello) {
+        listeners.getListeners().forEach(listener -> listener.onConnected(connection, hello.getOsId(), hello.getInputLocale()));
     }
 
     private void fireOnByteReceived(int count) {

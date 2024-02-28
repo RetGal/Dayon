@@ -15,6 +15,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import java.awt.*;
+import java.awt.im.InputContext;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
@@ -44,23 +45,16 @@ class NetworkSenderTest {
     @Test
     void sendHello() throws IOException {
         // given
-        final int major = 0;
-        final int minor = 0;
         final char osId = 'l';
+        final String inputLocale = InputContext.getInstance().getLocale().toString();
         // when
         sender.sendHello(osId);
         // then
         verify(outMock, timeout(50)).writeByte(MAGIC_NUMBER);
         verify(outMock).write(NetworkMessageType.HELLO.ordinal());
-        verify(outMock, times(2)).writeInt(valueCaptor.capture());
-        verify(outMock).writeChar(valueCaptor.capture());
-        final List<Integer> capturedValues = valueCaptor.getAllValues();
-        int first = capturedValues.get(0);
-        int second = capturedValues.get(1);
-        int last = capturedValues.get(capturedValues.size() - 1);
-        assertEquals(major, first);
-        assertEquals(minor, second);
-        assertEquals(osId, last);
+        verify(outMock, times(2)).writeInt(anyInt());
+        verify(outMock).writeChar(osId);
+        verify(outMock).writeUTF(inputLocale);
     }
 
     @Test

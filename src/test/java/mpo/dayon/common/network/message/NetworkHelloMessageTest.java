@@ -16,19 +16,21 @@ class NetworkHelloMessageTest {
         final int major = 0;
         final int minor = 0;
         final char osId = 'l';
+        final String inputLocale = "de_CH";
 
         // when
-        final NetworkHelloMessage message = new NetworkHelloMessage(major, minor, osId);
+        final NetworkHelloMessage message = new NetworkHelloMessage(major, minor, osId, inputLocale);
 
         // then
         assertEquals(major, message.getMajor());
         assertEquals(minor, message.getMinor());
         assertEquals(osId, message.getOsId());
+        assertEquals(inputLocale, message.getInputLocale());
     }
 
     @ParameterizedTest
     @CsvSource({ "13, 0", "12, 0", "11, 0" })
-    void unmarshallHelloMessageFromLegacyVersion(int major, int minor) throws IOException {
+    void unmarshallHelloMessageFromLegacyVersion(int major, int minor) throws IOException, ClassNotFoundException {
         // given
         String fileName = "tmp";
         ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName));
@@ -45,19 +47,21 @@ class NetworkHelloMessageTest {
         assertEquals(major, message.getMajor());
         assertEquals(minor, message.getMinor());
         assertEquals('x', message.getOsId(), "Should use default value without trying to read osId from the stream");
+        assertEquals("", message.getInputLocale(), "Should use default value without trying to read inputLocale from the stream");
     }
 
 
 
     @ParameterizedTest
     @CsvSource({ "13, 1, l", "0, 0, w" })
-    void unmarshallHelloMessageFromSupportedVersion(int major, int minor, char osId) throws IOException {
+    void unmarshallHelloMessageFromSupportedVersion(int major, int minor, char osId) throws IOException, ClassNotFoundException {
         // given
         String fileName = "tmp";
         ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName));
         output.writeInt(major);
         output.writeInt(minor);
         output.writeChar(osId);
+        output.writeUTF("de_CH");
         output.close();
         ObjectInputStream objStream = new ObjectInputStream(new FileInputStream(fileName));
 
@@ -69,5 +73,6 @@ class NetworkHelloMessageTest {
         assertEquals(major, message.getMajor());
         assertEquals(minor, message.getMinor());
         assertEquals(osId, message.getOsId());
+        assertEquals("de_CH", message.getInputLocale());
     }
 }

@@ -1,6 +1,7 @@
 package mpo.dayon.common.network;
 
 import java.awt.Point;
+import java.awt.im.InputContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -61,7 +62,8 @@ public class NetworkSender {
      */
     public void sendHello(char osId) {
         final Version version = Version.get();
-        send(true, new NetworkHelloMessage(version.getMajor(), version.getMinor(), osId));
+        final String inputLocale = InputContext.getInstance().getLocale().toString();
+        send(true, new NetworkHelloMessage(version.getMajor(), version.getMinor(), osId, inputLocale));
     }
 
     /**

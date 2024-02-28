@@ -9,11 +9,14 @@ public class NetworkHelloMessage extends NetworkMessage {
 
 	private final char osId;
 
-	public NetworkHelloMessage(int major, int minor, char osId) {
+	private final String inputLocale;
+
+	public NetworkHelloMessage(int major, int minor, char osId, String inputLocale) {
 		this.major = major;
 		this.minor = minor;
 		this.osId = osId;
-	}
+        this.inputLocale = inputLocale;
+    }
 
 	@Override
     public NetworkMessageType getType() {
@@ -32,13 +35,17 @@ public class NetworkHelloMessage extends NetworkMessage {
 		return osId;
 	}
 
+	public String getInputLocale() {
+		return inputLocale;
+	}
+
 	/**
 	 * Take into account some extra-info sent over the network with the actual
 	 * payload ...
 	 */
 	@Override
     public int getWireSize() {
-		return 11; // type (byte) + major (int) + minor (int) + osId (char)
+		return 11 + inputLocale.length(); // (type (byte) + major (int) + minor (int) + osId (char)) + localeId (String
 	}
 
 	@Override
@@ -47,16 +54,21 @@ public class NetworkHelloMessage extends NetworkMessage {
 		out.writeInt(major);
 		out.writeInt(minor);
 		out.writeChar(osId);
+		out.writeUTF(inputLocale);
 	}
 
-	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
+	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException, ClassNotFoundException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
-		char osId = major > 13 || (major == 13 && minor > 0) || major == 0 ? in.readChar() : 'x';
-		return new NetworkHelloMessage(major, minor, osId);
+		if (major > 13 || (major == 13 && minor > 0) || major == 0 ) {
+			char osId =  in.readChar();
+			String localeId = in.readUTF();
+			return new NetworkHelloMessage(major, minor, osId, localeId);
+		}
+		return new NetworkHelloMessage(major, minor, 'x', "");
 	}
 
 	public String toString() {
-		return String.format("[major:%d] [minor:%s] [osId:%c]", major, minor, osId);
+		return String.format("[major:%d] [minor:%d] [osId:%c] [inputLocale:%s]", major, minor, osId, inputLocale);
 	}
 }

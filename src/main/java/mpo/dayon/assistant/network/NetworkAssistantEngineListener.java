@@ -21,7 +21,7 @@ public interface NetworkAssistantEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onConnected(Socket connection, char osId);
+	void onConnected(Socket connection, char osId, String inputLocale);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)

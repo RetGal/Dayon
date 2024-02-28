@@ -13,6 +13,7 @@ import mpo.dayon.common.utils.Language;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
@@ -474,7 +475,7 @@ class AssistantFrame extends BaseFrame {
         enableTransferControls();
     }
 
-    void onSessionStarted(char osId) {
+    void onSessionStarted(char osId, String inputLocale) {
         this.osId = osId;
         if (osId == 'm') {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.CMD));
@@ -482,6 +483,10 @@ class AssistantFrame extends BaseFrame {
         } else {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.WIN));
             windowsKeyToggleButton.setToolTipText(translate("send.winKey"));
+        }
+        if (!inputLocale.isEmpty() && !inputLocale.equals(InputContext.getInstance().getLocale().toString())) {
+            String infoMessage = format("%s\n%s\n%s", translate("keyboardlayout.msg1", inputLocale), translate("keyboardlayout.msg2"), translate("keyboardlayout.msg3"));
+            JOptionPane.showMessageDialog(this,  infoMessage, "", JOptionPane.INFORMATION_MESSAGE);
         }
         long sessionStartTime = Instant.now().getEpochSecond();
         sessionTimer = new Timer(1000, e -> {
