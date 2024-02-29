@@ -11,6 +11,7 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
@@ -42,7 +43,12 @@ class NetworkSenderTest {
         sender.start(1);
     }
 
+    static boolean isLocaleNull() {
+        return InputContext.getInstance().getLocale() == null;
+    }
+
     @Test
+    @DisabledIf("isLocaleNull")
     void sendHello() throws IOException {
         // given
         final char osId = 'l';
@@ -56,6 +62,7 @@ class NetworkSenderTest {
         verify(outMock).writeChar(osId);
         verify(outMock).writeUTF(inputLocale);
     }
+
 
     @Test
     void sendCapture() throws IOException {
