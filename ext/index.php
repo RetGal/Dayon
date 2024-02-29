@@ -1,4 +1,5 @@
 <?php
+define('VERSION', "v.1.2");
 // name of the database file (may also be a path)
 define('DB_NAME', "dayon.db");
 // minimal length of the tokens to be generated (33^N-1 variants)
@@ -24,6 +25,8 @@ if (isset($_GET['port'])) {
     $pdo = new PDO('sqlite:'.DB_NAME);
     echo readToken($token, $pdo),"\n";
     updateToken($token, $_SERVER['REMOTE_ADDR'], $pdo);
+} else {
+    echo VERSION,"\n";
 }
 
 function clean($val, $maxLen = "") {
