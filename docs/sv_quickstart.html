@@ -55,7 +55,7 @@
     <div id="content">
       <h2>Komma igång</h2>
       <p>
-Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via Skype, telefon, chat eller vad de nu gillar bäst. Genom att starta Dayon! så kan <em>hjälpgivaren</em> se skärmen och styra <em>hjälpmottagarens</em> dator.
+Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via Jitsi, telefon, chat eller vad de nu gillar bäst. Genom att starta Dayon! så kan <em>hjälpgivaren</em> se skärmen och styra <em>hjälpmottagarens</em> dator.
       </p>
 
       <p>
@@ -127,9 +127,8 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         Alltsedan version 12 skapar Dayon! portmappningsregeln (port forward) åt dig. Förutsättningen är att <strong>UPnP</strong> är aktiverat i ditt nätverk.
         Annars måste portmappning (port forward) ändå ske, (TCP) via <strong>NAT</strong> på <strong>routern</strong> till datorn.
         <br/><br/>
-        Kolla in <a href="https://portforward.com/router.htm">portforward.com</a> för en stegvis guide för de vanligaste routermodellerna.
+        Kolla in <a href="https://portforward.com/router.htm">portforward.com</a> för en steg-för-steg guide för de vanligaste routermodellerna.
       </p>
-
       <p>
         <strong>Valfritt:</strong> Ändra port för inkommande anslutningar: (till vänster med UPnP, till höger utan UPnP)
       </p>
@@ -174,7 +173,7 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
 
       <p>
         Som du kan se i den följande bilden, så innehåller menyn alternativet "kopiera till urklipp" redan <strong>IP-adressen och Porten</strong>. Det gör att det är lätt att <strong>klistra in det i en chat session</strong>
-        (t.ex. Skype) eller till ett e-postmeddelande.
+        (t.ex. Jitsi) eller till ett e-postmeddelande.
       </p>
 
       <p>
@@ -205,7 +204,7 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
-        Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom hur många gråskalor bilden ska ha.
+        Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom antal gråskalor i bilden.
       </p>
 
       <p>
@@ -262,8 +261,8 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
-        Genom att klicka på knappen <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="öppna lås"/> höger,
-        du kan behålla bildförhållandet på den <em>hjälptagare</em> skärmen. Observera att denna funktion inte har någon effekt på displayen när fönstret är maximerat.
+        Genom att klicka på knappen <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="öppna lås"/>,
+        behåller du bildförhållandet från <em>hjälptagarens</em> skärm. Observera att denna funktion inte har någon effekt när fönstret hos <em>hjälpgivaren</em> är maximerat.
       </p>
 
       <p>
@@ -326,39 +325,39 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
-        <strong>*Note</strong>: Om <em>hjälptagaren</em> kör på macOS visas/överförs <code>Cmd</code>-tangenten/knappen istället.
+        <strong>*Notera</strong>: Om <em>hjälptagaren</em> kör macOS visas/överförs <code>Cmd</code>-knappen/tangenten istället.
       </p>
 
       <p></p>
       <h3>Att överföra en tryckning på Ctrl-tangenten</h3>
       <p>
-        För det mesta överförs <code>Ctrl</code>-tangenten till den <em>hjälptagare</em> som alla andra tangenttryckningar,
-        det finns situationer där det inte är det. Till exempel är kombinationen <code>Ctrl + Alt + Delete</code> generellt
-        "fångad" av <em>hjälpgivare</em>s operativsystem och därmed inte överförd.
-        Vid sådana tillfällen blir knappen <code>[Ctrl]</code> bredvid Windows-knappen i kontrollpanelen för <em>hjälpgivare</em> praktisk.
-        Beteendet är detsamma som med Windows-knappen: tangenten förblir nedtryckt tills du klickar på knappen igen.
-        <br/>
-        Så för att skicka <code>Ctrl + Alt + Delete</code>-kombinationen till <em>hjälptagare</em>, måste du först klicka på knappen <code>[Ctrl]</code>,
+        Oftast överförs <code>Ctrl</code>-tangenten till <em>hjälptagaren</em> på samma sätt som alla andra tangenttryckningar,
         tryck sedan på tangenterna <code>Alt</code> och <code>Delete</code> samtidigt, släpp dem och klicka slutligen på knappen <code>[Ctrl]</code> igen.
+        men intealltid. Till exempel blir kombinationen <code>Ctrl + Alt + Delete</code> "fångad" av <em>hjälpgivarens</em> operativsystem och överförs därmed inte.
+        Vid sådana tillfällen är <code>[Ctrl]</code>-knappen (bredvid Windows-knappen) hos <em>hjälpgivaren</em> praktisk att ha.
+        Funktionen är densamma som för Windows-knappen: tangenten förblir nedtryckt tills du klickar på knappen igen.
+        <br/>
+        Så för att skicka tangentkombinationen <code>Ctrl + Alt + Delete</code> till <em>hjälptagaren</em>, måste du först klicka på knappen <code>[Ctrl]</code>,
+        sedan trycka ned tangenterna <code>Alt</code> och <code>Delete</code> samtidigt, därefter släppa dem och slutligen klicka på knappen <code>[Ctrl]</code> igen.
         <br><br>
-        <strong>Varning</strong>: På grund av begränsningar i operativsystemet kan kombinationen <code>Ctrl + Alt + Del</code> <strong>fungerar inte</strong> på
-        <em>hjälptagare</em> som körs under Windows!<br>
-        Använd istället kombinationen <code>Windows + R</code> som ger liknande funktionalitet.
+        <strong>Varning</strong>: På grund av begränsningar i Windows skickas <strong>inte</strong> kombinationen <code>Ctrl + Alt + Del</code> till
+        <em>hjälptagare</em>!<br>
+        Använd istället tangentkombinationen <code>Windows + R</code> som ger motasvarande funktionalitet.
       </p>
 
-      <h3>Ta en skärmdump på den hjälptagare</h3>
+      <h3>Ta en skärmdump hos den hjälptagaren</h3>
       <p>
-        Klicka på knappen "kamera" - skärmdumpen tas direkt utan ytterligare frågor.
-        Den fångade grafiken hamnar i <em>hjälptagare</em>s urklipp, varifrån den kan överföras till <em>hjälpgivare</em>.
+        Klicka på knappen "kamera" - skärmdumpen tas direkt.
+        Bilden hamnar i <em>hjälptagarens</em> urklipp, varifrån den kan överföras till <em>hjälpgivaren</em>.
       </p>
 
       <p>
         <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
       </p>
 
-      <h3>Starta ett onlinemöte för att chatta ansikte mot ansikte</h3>
+      <h3>Starta ett onlinemöte</h3>
       <p>
-        Klicka på certifikatets fingeravtryck för att starta en Jitsi Meeting-session.
+        Klicka på certifikatets fingeravtryck hos både <em>hjälptagaren</em> och <em>hjälpgivare</em> för att starta ett gemensamt onlinemöte i Jitsi Meeting.
       </p>
 
       <p>
