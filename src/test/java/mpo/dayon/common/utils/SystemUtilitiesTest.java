@@ -109,6 +109,13 @@ class SystemUtilitiesTest {
 		assertTrue(isValidPortNumber(port));
 	}
 
+	@ParameterizedTest
+	@CsvSource({"http://127.0.0.1", "http://localhost/token", "https://example.com/rvs/", "https://dayon.example.org"})
+	void isValidUrlStringShouldReturnTrueForValidUrls(String url) {
+		// when, then
+		assertTrue(isValidUrl(url));
+	}
+
 	@Test
 	void shouldObtainWritableTempDir() throws IOException {
 		// when, then

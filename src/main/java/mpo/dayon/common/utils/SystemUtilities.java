@@ -190,6 +190,22 @@ public final class SystemUtilities {
                 serverName.matches("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]\\.)*[a-zA-Z]{2,}$");
     }
 
+    public static boolean isValidUrl(String url) {
+        try {
+            new URI(url);
+            if (url.startsWith("http://") || url.startsWith("https://")) {
+                if (url.lastIndexOf("/") > 7) {
+                    return isValidIpAddressOrHostName(url.substring(url.indexOf("://") + 3, url.indexOf("/", url.indexOf("://") + 3)));
+                } else {
+                    return isValidIpAddressOrHostName(url.substring(url.indexOf("://") + 3));
+                }
+            }
+            return false;
+        } catch (URISyntaxException e) {
+            return false;
+        }
+    }
+
     private static boolean isLookingLikeAnIpV4(String serverName) {
         return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("(\\d{1,3})"));
     }
@@ -210,7 +226,7 @@ public final class SystemUtilities {
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(format(tokenServerUrl, token)))
-                .timeout(Duration.ofSeconds(3))
+                .timeout(Duration.ofSeconds(5))
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response.body().trim();
