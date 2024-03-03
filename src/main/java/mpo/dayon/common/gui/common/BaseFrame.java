@@ -6,6 +6,7 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.regex.Pattern;
 
 import javax.swing.*;
 
@@ -270,7 +271,7 @@ public abstract class BaseFrame extends JFrame {
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
                 final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
-                final String custom ="custom";
+                final String custom = "custom";
 
                 final JPanel panel = new JPanel();
                 panel.setLayout(new GridBagLayout());
@@ -285,7 +286,7 @@ public abstract class BaseFrame extends JFrame {
                 if (frameType.equals(FrameType.ASSISTED)) {
                     final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
                     currentTokenServer = networkConfiguration.getTokenServerUrl();
-                    final JLabel hostLbl = new JLabel(translate("assistant"));
+                    final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
                     hostLbl.setFont(titleFont);
                     panel.add(hostLbl, createGridBagConstraints(gridy++));
 
@@ -306,7 +307,7 @@ public abstract class BaseFrame extends JFrame {
                 } else {
                     final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
                     currentTokenServer = networkConfiguration.getTokenServerUrl();
-                    final JLabel hostLbl = new JLabel(translate("host"));
+                    final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
                     hostLbl.setFont(titleFont);
                     panel.add(hostLbl, createGridBagConstraints(gridy++));
 
@@ -327,7 +328,7 @@ public abstract class BaseFrame extends JFrame {
                     panel.add(portPanel, createGridBagConstraints(gridy++));
                 }
 
-                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
+                final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
                 tokenServerLbl.setFont(titleFont);
                 panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
 
@@ -425,6 +426,10 @@ public abstract class BaseFrame extends JFrame {
                 } else {
                     System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
                 }
+            }
+
+            private String toUpperFirst(String text) {
+                return Pattern.compile("^.").matcher(text).replaceFirst(m -> m.group().toUpperCase());
             }
         };
         conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
