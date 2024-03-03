@@ -253,7 +253,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
         switch (type) {
             case HELLO:
                 fireOnConnected(connection, introduce(in));
