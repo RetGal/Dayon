@@ -3,26 +3,40 @@ package mpo.dayon.assistant.network;
 import mpo.dayon.common.configuration.Configuration;
 import mpo.dayon.common.preference.Preferences;
 
+import java.util.Objects;
+
+import static mpo.dayon.common.utils.SystemUtilities.DEFAULT_TOKEN_SERVER_URL;
+
 public class NetworkAssistantEngineConfiguration extends Configuration {
 	private static final String PREF_VERSION = "assistant.network.version";
 
 	private static final String PREF_PORT_NUMBER = "assistant.network.portNumber";
 
+	private static final String PREF_TOKEN_SERVER_URL = "assistant.network.tokenServerUrl";
+
 	private final int port;
+
+	private final String tokenServerUrl;
 
 	/**
 	 * Default : takes its values from the current preferences.
 	 */
 	public NetworkAssistantEngineConfiguration() {
 		port = Preferences.getPreferences().getIntPreference(PREF_PORT_NUMBER, 8080);
+		tokenServerUrl = Preferences.getPreferences().getStringPreference(PREF_TOKEN_SERVER_URL, DEFAULT_TOKEN_SERVER_URL);
 	}
 
-	public NetworkAssistantEngineConfiguration(int port) {
+	public NetworkAssistantEngineConfiguration(int port, String tokenServerUrl) {
 		this.port = port;
+		this.tokenServerUrl = tokenServerUrl;
 	}
 
 	public int getPort() {
 		return port;
+	}
+
+	public String getTokenServerUrl() {
+		return tokenServerUrl;
 	}
 
 	@Override
@@ -36,12 +50,12 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 		final NetworkAssistantEngineConfiguration that = (NetworkAssistantEngineConfiguration) o;
 
-		return port == that.getPort();
+		return port == that.getPort() && tokenServerUrl.equals(that.getTokenServerUrl());
 	}
 
 	@Override
 	public int hashCode() {
-		return port;
+		return Objects.hash(port, tokenServerUrl);
 	}
 
 	/**
@@ -53,6 +67,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 		final Preferences.Props props = new Preferences.Props();
 		props.set(PREF_VERSION, String.valueOf(1));
 		props.set(PREF_PORT_NUMBER, String.valueOf(port));
+		props.set(PREF_TOKEN_SERVER_URL, tokenServerUrl);
 
 		if (clear) // migration support (!)
 		{

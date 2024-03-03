@@ -21,7 +21,7 @@ class NetworkAssistantEngineTest {
     void testReconfigureStart() {
         // given
         engine.configure(new NetworkAssistantEngineConfiguration());
-        final NetworkAssistantEngineConfiguration configuration = new NetworkAssistantEngineConfiguration(12345);
+        final NetworkAssistantEngineConfiguration configuration = new NetworkAssistantEngineConfiguration(12345, "http://localhost/");
         engine.reconfigure(configuration);
 
         // when

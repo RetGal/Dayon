@@ -46,6 +46,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -60,7 +61,7 @@ public class Assistant implements ClipboardOwner {
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
     private final String tokenServerUrl;
 
-    private final NetworkAssistantEngine network;
+    private final NetworkAssistantEngine networkEngine;
 
     private BitCounter receivedBitCounter;
 
@@ -101,9 +102,14 @@ public class Assistant implements ClipboardOwner {
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
     public Assistant(String tokenServerUrl, String language) {
+        networkConfiguration = new NetworkAssistantEngineConfiguration();
+
         if (tokenServerUrl != null) {
             this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
-            System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
+        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAM;
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         } else {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
         }
@@ -120,10 +126,10 @@ public class Assistant implements ClipboardOwner {
         decompressor.start(8);
 
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
-        network = new NetworkAssistantEngine(decompressor, mouseHandler, this);
-        networkConfiguration = new NetworkAssistantEngineConfiguration();
-        network.configure(networkConfiguration);
-        network.addListener(new MyNetworkAssistantEngineListener());
+        networkEngine = new NetworkAssistantEngine(decompressor, mouseHandler, this);
+
+        networkEngine.configure(networkConfiguration);
+        networkEngine.addListener(new MyNetworkAssistantEngineListener());
 
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
@@ -144,7 +150,7 @@ public class Assistant implements ClipboardOwner {
         }
         frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get());
         FatalErrorHandler.attachFrame(frame);
-        frame.addListener(new ControlEngine(network));
+        frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);
     }
 
@@ -193,7 +199,7 @@ public class Assistant implements ClipboardOwner {
 
     private void stopNetwork() {
         frame.hideSpinner();
-        network.cancel();
+        networkEngine.cancel();
     }
 
     @Override
@@ -288,47 +294,127 @@ public class Assistant implements ClipboardOwner {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-                String upnpActive = valueOf(assistant.isUpnpEnabled());
+                final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
 
-                final JPanel pane = new JPanel();
-                pane.setLayout(new GridLayout(4, 1, 10, -10));
-                final JPanel subPane = new JPanel();
-                subPane.setLayout(new GridLayout(1, 2, 10, 10));
+                final JPanel panel = new JPanel();
+                panel.setLayout(new GridBagLayout());
+
+                final JLabel hostLbl = new JLabel(translate("host"));
+                hostLbl.setFont(titleFont);
+
+                GridBagConstraints gc0 = new GridBagConstraints();
+                gc0.fill = HORIZONTAL;
+                gc0.gridx = 0;
+                gc0.gridy = 0;
+                panel.add(hostLbl, gc0);
+
+                final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+                upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+                String upnpActive = valueOf(assistant.isUpnpEnabled());
+                final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
+                upnpPanel.add(upnpStatus);
+
+                GridBagConstraints gc1 = new GridBagConstraints();
+                gc1.fill = HORIZONTAL;
+                gc1.gridx = 0;
+                gc1.gridy = 1;
+                panel.add(upnpPanel, gc1);
+
+                final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+                portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
                 final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
                 portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-                final JTextField portNumberTextField = new JTextField();
-                portNumberTextField.setText(valueOf(networkConfiguration.getPort()));
-                final JLabel upnpStatus = new JLabel(format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()));
-                final JLabel upnpHint = new JLabel(translate(format("connection.settings.portforward.%s", upnpActive)));
-                subPane.add(portNumberLbl);
-                subPane.add(portNumberTextField);
-                pane.add(upnpStatus);
-                pane.add(upnpHint);
-                pane.add(new JLabel(""));
-                pane.add(subPane);
+                final JTextField portNumberTextField = new JTextField(format("%d", networkConfiguration.getPort()));
+                portPanel.add(portNumberLbl);
+                portPanel.add(portNumberTextField);
 
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), pane, true, () -> {
+                GridBagConstraints gc2 = new GridBagConstraints();
+                gc2.fill = HORIZONTAL;
+                gc2.gridx = 0;
+                gc2.gridy = 2;
+                panel.add(portPanel, gc2);
+
+                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
+                tokenServerLbl.setFont(titleFont);
+
+                GridBagConstraints gc3 = new GridBagConstraints();
+                gc3.fill = HORIZONTAL;
+                gc3.gridx = 0;
+                gc3.gridy = 3;
+                panel.add(tokenServerLbl, gc3);
+
+                final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
+                tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+
+                final ButtonGroup tokenRadioGroup = new ButtonGroup();
+                final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
+                defaultTokenRadio.setActionCommand("default");
+                final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
+                customTokenRadio.setActionCommand("custom");
+                tokenRadioGroup.add(defaultTokenRadio);
+                tokenRadioGroup.add(customTokenRadio);
+
+                String currentTokenServer = networkConfiguration.getTokenServerUrl();
+                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
+                    currentTokenServer = "";
+                    defaultTokenRadio.setSelected(true);
+                } else {
+                    customTokenRadio.setSelected(true);
+                }
+
+                final JTextField defaultTokenTextField = new JTextField();
+                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
+                defaultTokenTextField.setEditable(false);
+                tokenPanel.add(defaultTokenRadio);
+                tokenPanel.add(defaultTokenTextField);
+
+                final JTextField customTokenTextField = new JTextField();
+                customTokenTextField.setText(currentTokenServer);
+                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
+                tokenPanel.add(customTokenRadio);
+                tokenPanel.add(customTokenTextField);
+
+                GridBagConstraints gc4 = new GridBagConstraints();
+                gc4.fill = HORIZONTAL;
+                gc4.gridx = 0;
+                gc4.gridy = 4;
+                panel.add(tokenPanel, gc4);
+
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
                     final String portNumber = portNumberTextField.getText();
                     if (portNumber.isEmpty()) {
                         return translate("connection.settings.emptyPortNumber");
+                    } else if (!isValidPortNumber(portNumber)) {
+                        return translate("connection.settings.invalidPortNumber");
                     }
-                    return isValidPortNumber(portNumber) ? null : translate("connection.settings.invalidPortNumber");
+                    if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                        return translate("connection.settings.invalidTokenServer");
+                    }
+                    return null;
                 });
 
                 if (ok) {
+                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
+                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
+
+                    if (newTokenServerUrl.isEmpty()) {
+                        System.clearProperty("dayon.custom.tokenServer");
+                    } else {
+                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
+                    }
+
                     final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
-                            Integer.parseInt(portNumberTextField.getText()));
+                            Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
                     if (!newNetworkConfiguration.equals(networkConfiguration)) {
-                        network.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+                        networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
                         networkConfiguration = newNetworkConfiguration;
                         networkConfiguration.persist();
-                        network.reconfigure(networkConfiguration);
+                        networkEngine.reconfigure(networkConfiguration);
                     }
                 }
             }
         };
-        conf.putValue(Action.NAME, margin(translate("connection.network")));
         conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
         conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
         return conf;
@@ -372,20 +458,20 @@ public class Assistant implements ClipboardOwner {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: %s", () -> String.valueOf(totalFilesSize));
                     // Ok as very few of that (!)
-                    new Thread(() -> network.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
+                    new Thread(() -> networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
                     frame.onClipboardSending();
                 }
             } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
                 final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
                 Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
                 // Ok as very few of that (!)
-                new Thread(() -> network.sendClipboardGraphic(new TransferableImage(image)), "sendClipboardGraphic").start();
+                new Thread(() -> networkEngine.sendClipboardGraphic(new TransferableImage(image)), "sendClipboardGraphic").start();
                 frame.onClipboardSending();
             }  else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                 String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
                 Log.debug("Clipboard contains text: " + text);
                 // Ok as very few of that (!)
-                new Thread(() -> network.sendClipboardText(text), "sendClipboardText").start();
+                new Thread(() -> networkEngine.sendClipboardText(text), "sendClipboardText").start();
                 frame.onClipboardSending();
             } else {
                 Log.debug("Clipboard contains no supported data");
@@ -403,7 +489,7 @@ public class Assistant implements ClipboardOwner {
         Log.info("Requesting remote clipboard");
         frame.onClipboardRequested();
         // Ok as very few of that (!)
-        new Thread(network::sendRemoteClipboardRequest, "RemoteClipboardRequest").start();
+        new Thread(networkEngine::sendRemoteClipboardRequest, "RemoteClipboardRequest").start();
     }
 
     private Action createCaptureConfigurationAction() {
@@ -455,7 +541,6 @@ public class Assistant implements ClipboardOwner {
                 }
             }
         };
-        configure.putValue(Action.NAME, margin(translate("capture")));
         configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
         return configure;
@@ -466,7 +551,7 @@ public class Assistant implements ClipboardOwner {
      */
     private void sendCaptureConfiguration(final CaptureEngineConfiguration captureEngineConfiguration) {
         // Ok as very few of that (!)
-        new Thread(() -> network.sendCaptureConfiguration(captureEngineConfiguration), "CaptureEngineSettingsSender").start();
+        new Thread(() -> networkEngine.sendCaptureConfiguration(captureEngineConfiguration), "CaptureEngineSettingsSender").start();
     }
 
     private Action createCompressionConfigurationAction() {
@@ -545,7 +630,6 @@ public class Assistant implements ClipboardOwner {
                 }
             }
         };
-        configure.putValue(Action.NAME, margin(translate("compression")));
         configure.putValue(Action.SHORT_DESCRIPTION, translate("compression.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.COMPRESSION_SETTINGS));
         return configure;
@@ -576,7 +660,7 @@ public class Assistant implements ClipboardOwner {
      */
     private void sendCompressorConfiguration(final CompressorEngineConfiguration compressorEngineConfiguration) {
         // Ok as very few of that (!)
-        new Thread(() -> network.sendCompressorConfiguration(compressorEngineConfiguration), "CompressorEngineSettingsSender").start();
+        new Thread(() -> networkEngine.sendCompressorConfiguration(compressorEngineConfiguration), "CompressorEngineSettingsSender").start();
     }
 
     private Action createResetAction() {
@@ -606,13 +690,13 @@ public class Assistant implements ClipboardOwner {
                         HttpClient client = HttpClient.newBuilder().build();
                         HttpRequest request = HttpRequest.newBuilder()
                                 .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
-                                .timeout(Duration.ofSeconds(3))
+                                .timeout(Duration.ofSeconds(5))
                                 .build();
                         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                         token = response.body().trim();
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
-                        JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("token"),
+                        JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"),
                                 JOptionPane.ERROR_MESSAGE);
                         if (ex instanceof InterruptedException) {
                             Thread.currentThread().interrupt();
@@ -710,7 +794,7 @@ public class Assistant implements ClipboardOwner {
         final Action screenshotAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                new Thread(network::sendScreenshotRequest, "ScreenshotRequest").start();
+                new Thread(networkEngine::sendScreenshotRequest, "ScreenshotRequest").start();
             }
         };
         screenshotAction.setEnabled(false);
@@ -730,7 +814,7 @@ public class Assistant implements ClipboardOwner {
 
         private void startNetwork() {
             frame.onGettingReady();
-            network.start(compatibilityModeActive.get());
+            networkEngine.start(compatibilityModeActive.get());
         }
 
         @Override
@@ -753,10 +837,6 @@ public class Assistant implements ClipboardOwner {
             Log.info(format("UPnP is %s", isUpnpEnabled() ? "enabled" : "disabled"));
             return upnpEnabled;
         });
-    }
-
-    private String margin(String in) {
-        return format(" %s", in);
     }
 
     private class MyDeCompressorEngineListener implements DeCompressorEngineListener {

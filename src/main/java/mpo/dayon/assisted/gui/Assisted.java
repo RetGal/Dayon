@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -48,7 +49,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private AssistedFrame frame;
 
-    private NetworkAssistedEngineConfiguration configuration;
+    private NetworkAssistedEngineConfiguration networkConfiguration;
 
     private CaptureEngine captureEngine;
 
@@ -63,12 +64,18 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
     public Assisted(String tokenServerUrl) {
+        networkConfiguration = new NetworkAssistedEngineConfiguration();
+
         if (tokenServerUrl != null) {
             this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
             System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
+        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAM;
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         } else {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
         }
+
         final String lnf = getDefaultLookAndFeel();
         try {
             UIManager.setLookAndFeel(lnf);
@@ -97,7 +104,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createConnectionSettingsAction(), createToggleMultiScreenAction());
             FatalErrorHandler.attachFrame(frame);
             KeyboardErrorHandler.attachFrame(frame);
             frame.setVisible(true);
@@ -105,18 +112,24 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return configureConnection(serverName, portNumber, autoConnect);
     }
 
-    private NetworkAssistedEngineConfiguration getConfiguration() {
-        return configuration;
+    private NetworkAssistedEngineConfiguration getNetworkConfiguration() {
+        return networkConfiguration;
     }
 
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
         if (isValidIpAddressOrHostName(serverName) && isValidPortNumber(portNumber)) {
-            configuration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber));
-            Log.info("Autoconfigured " + configuration);
-            networkEngine.configure(configuration);
-            configuration.persist();
+            networkConfiguration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber), autoConnect);
+            Log.info("Autoconfigured " + networkConfiguration);
+            networkEngine.configure(networkConfiguration);
+            networkConfiguration.persist();
         } else {
-            autoConnect = false;
+            networkConfiguration = new NetworkAssistedEngineConfiguration();
+            if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(String.valueOf(networkConfiguration.getServerPort()))) {
+                autoConnect = networkConfiguration.isAutoConnect();
+                if (autoConnect) {
+                    networkEngine.configure(networkConfiguration);
+                }
+            }
         }
 
         if (autoConnect) {
@@ -134,8 +147,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean requestConnectionSettings() {
-        configuration = new NetworkAssistedEngineConfiguration();
-        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(configuration);
+        networkConfiguration = new NetworkAssistedEngineConfiguration();
+        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration);
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
@@ -144,6 +157,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             } else {
                 String validationErrorMessage = validateIpAddress(connectionSettingsDialog.getIpAddress());
                 if (validationErrorMessage != null) {
+                    connectionSettingsDialog.getTabbedPane().setSelectedIndex(1);
                     return validationErrorMessage;
                 }
                 return validatePortNumber(connectionSettingsDialog.getPortNumber());
@@ -195,11 +209,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
             newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
                     Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
         }
-        if (newConfiguration != null && !newConfiguration.equals(configuration)) {
-            configuration = newConfiguration;
-            configuration.persist();
+        if (newConfiguration != null && !newConfiguration.equals(networkConfiguration)) {
+            networkConfiguration = newConfiguration;
+            networkConfiguration.persist();
+            networkEngine.configure(networkConfiguration);
         }
-        Log.info("Configuration " + configuration);
+        Log.info("NetworkConfiguration " + networkConfiguration);
     }
 
     private Action createToggleMultiScreenAction() {
@@ -246,12 +261,141 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return startAction;
     }
 
+    private Action createConnectionSettingsAction() {
+        final Action conf = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+                final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
+
+                final JPanel panel = new JPanel();
+                panel.setLayout(new GridBagLayout());
+
+                final JLabel hostLbl = new JLabel(translate("assistant"));
+                hostLbl.setFont(titleFont);
+
+                GridBagConstraints gc0 = new GridBagConstraints();
+                gc0.fill = HORIZONTAL;
+                gc0.gridx = 0;
+                gc0.gridy = 0;
+                panel.add(hostLbl, gc0);
+
+                final JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
+                assistantPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+                final JLabel addressLbl = new JLabel(translate("connection.settings.assistantIpAddress"));
+                final JTextField addressTextField = new JTextField(networkConfiguration.getServerName());
+                assistantPanel.add(addressLbl);
+                assistantPanel.add(addressTextField);
+                final JLabel portNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
+                final JTextField portNumberTextField = new JTextField(format("%d", networkConfiguration.getServerPort()));
+                assistantPanel.add(portNumberLbl);
+                assistantPanel.add(portNumberTextField);
+                final JCheckBox autoConnectCheckBox = new JCheckBox(translate("connection.settings.autoConnect"));
+                autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
+                assistantPanel.add(autoConnectCheckBox);
+
+                GridBagConstraints gc1 = new GridBagConstraints();
+                gc1.fill = HORIZONTAL;
+                gc1.gridx = 0;
+                gc1.gridy = 1;
+                panel.add(assistantPanel, gc1);
+
+                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
+                tokenServerLbl.setFont(titleFont);
+
+                GridBagConstraints gc2 = new GridBagConstraints();
+                gc2.fill = HORIZONTAL;
+                gc2.gridx = 0;
+                gc2.gridy = 2;
+                panel.add(tokenServerLbl, gc2);
+
+                final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
+                tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+
+                final ButtonGroup tokenRadioGroup = new ButtonGroup();
+                final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
+                defaultTokenRadio.setActionCommand("default");
+                final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
+                customTokenRadio.setActionCommand("custom");
+                tokenRadioGroup.add(defaultTokenRadio);
+                tokenRadioGroup.add(customTokenRadio);
+
+                String currentTokenServer = networkConfiguration.getTokenServerUrl();
+                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
+                    currentTokenServer = "";
+                    defaultTokenRadio.setSelected(true);
+                } else {
+                    customTokenRadio.setSelected(true);
+                }
+
+                final JTextField defaultTokenTextField = new JTextField();
+                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
+                defaultTokenTextField.setEditable(false);
+                tokenPanel.add(defaultTokenRadio);
+                tokenPanel.add(defaultTokenTextField);
+
+                final JTextField customTokenTextField = new JTextField();
+                customTokenTextField.setText(currentTokenServer);
+                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
+                tokenPanel.add(customTokenRadio);
+                tokenPanel.add(customTokenTextField);
+
+                GridBagConstraints gc3 = new GridBagConstraints();
+                gc3.fill = HORIZONTAL;
+                gc3.gridx = 0;
+                gc3.gridy = 3;
+                panel.add(tokenPanel, gc3);
+
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
+                    final String ipAddress = addressTextField.getText();
+                    if (ipAddress.isEmpty()) {
+                        return translate("connection.settings.emptyIpAddress");
+                    } else if (!isValidIpAddressOrHostName(ipAddress)) {
+                        return translate("connection.settings.invalidIpAddress");
+                    }
+                    final String portNumber = portNumberTextField.getText();
+                    if (portNumber.isEmpty()) {
+                        return translate("connection.settings.emptyPortNumber");
+                    } else if (!isValidPortNumber(portNumber)) {
+                        return translate("connection.settings.invalidPortNumber");
+                    }
+                    if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                        return translate("connection.settings.invalidTokenServer");
+                    }
+                    return null;
+                });
+
+                if (ok) {
+                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
+                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
+
+                    if (newTokenServerUrl.isEmpty()) {
+                        System.clearProperty("dayon.custom.tokenServer");
+                    } else {
+                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
+                    }
+
+                    final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
+                            addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
+
+                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
+                        networkConfiguration = newNetworkConfiguration;
+                        networkConfiguration.persist();
+                    }
+                }
+            }
+        };
+        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
+        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
+        return conf;
+    }
+
     private class NetWorker extends SwingWorker<String, String> {
         @Override
         protected String doInBackground() {
             if (isConfigured() && !isCancelled()) {
-                frame.onConnecting(configuration.getServerName(), configuration.getServerPort());
-                networkEngine.configure(configuration);
+                frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
+                networkEngine.configure(networkConfiguration);
                 networkEngine.connect();
             }
             return null;
@@ -267,7 +411,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             try {
                 if (!isCancelled()) {
                     super.get();
-                    Log.debug(format("NetWorker is done [%s]", getConfiguration().getServerName()));
+                    Log.debug(format("NetWorker is done [%s]", getNetworkConfiguration().getServerName()));
                 }
             } catch (InterruptedException | ExecutionException ie) {
                 Log.info("NetWorker was cancelled");
@@ -277,7 +421,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private void stop() {
-        stop(configuration.getServerName());
+        stop(networkConfiguration.getServerName());
     }
 
     private void stop(String serverName) {
@@ -295,8 +439,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 compressorEngine.stop();
                 compressorEngine = null;
             }
-            frame.onDisconnecting();
         }
+        frame.onDisconnecting();
     }
 
     private NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
@@ -470,7 +614,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onIOError(IOException error) {
-            stop(getConfiguration().getServerName());
+            stop(getNetworkConfiguration().getServerName());
             frame.onDisconnecting();
         }
     }
