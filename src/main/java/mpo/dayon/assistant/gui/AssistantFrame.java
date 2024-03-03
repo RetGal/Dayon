@@ -88,10 +88,11 @@ class AssistantFrame extends BaseFrame {
 
     private char osId;
 
-    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive) {
+    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, Assistant assistant) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
+        this.actions.setNetworkConfigurationAction(createConnectionSettingsAction(assistant));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.compatibilityToggleButton = createToggleButton(actions.getToggleCompatibilityModeAction(), true, compatibilityModeActive);
@@ -100,7 +101,7 @@ class AssistantFrame extends BaseFrame {
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
-        this.screenshotButton = createButton(actions.getScreenshotRequestAction()    );
+        this.screenshotButton = createButton(actions.getScreenshotRequestAction());
         this.languageSelection = languageSelection;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar(counters));
