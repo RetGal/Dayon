@@ -57,7 +57,7 @@ public class NetworkHelloMessage extends NetworkMessage {
 		out.writeUTF(inputLocale);
 	}
 
-	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	public static NetworkHelloMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int major = in.readInt();
 		final int minor = in.readInt();
 		if (major > 13 || (major == 13 && minor > 0) || major == 0 ) {

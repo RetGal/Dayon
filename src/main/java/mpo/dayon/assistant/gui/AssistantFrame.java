@@ -485,7 +485,7 @@ class AssistantFrame extends BaseFrame {
             windowsKeyToggleButton.setToolTipText(translate("send.winKey"));
         }
         if (!inputLocale.isEmpty() && !inputLocale.equals(InputContext.getInstance().getLocale().toString())) {
-            String infoMessage = format("%s\n%s\n%s", translate("keyboardlayout.msg1", inputLocale), translate("keyboardlayout.msg2"), translate("keyboardlayout.msg3"));
+            String infoMessage = format("%s%n%s%n%s", translate("keyboardlayout.msg1", inputLocale), translate("keyboardlayout.msg2"), translate("keyboardlayout.msg3"));
             JOptionPane.showMessageDialog(this,  infoMessage, "", JOptionPane.INFORMATION_MESSAGE);
         }
         long sessionStartTime = Instant.now().getEpochSecond();
