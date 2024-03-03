@@ -147,7 +147,7 @@ public class Assistant implements ClipboardOwner {
         if (frame != null) {
             frame.setVisible(false);
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get());
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), this);
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);
@@ -167,7 +167,7 @@ public class Assistant implements ClipboardOwner {
         counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
 
-    private boolean isUpnpEnabled() {
+    public boolean isUpnpEnabled() {
         while (upnpEnabled == null) {
             try {
                 sleep(10L);
@@ -179,10 +179,13 @@ public class Assistant implements ClipboardOwner {
         return upnpEnabled;
     }
 
+    public NetworkAssistantEngine getNetworkEngine() {
+        return networkEngine;
+    }
+
     private AssistantActions createAssistantActions() {
         AssistantActions assistantActions = new AssistantActions();
         assistantActions.setIpAddressAction(createWhatIsMyIpAction());
-        assistantActions.setNetworkConfigurationAction(createNetworkAssistantConfigurationAction(this));
         assistantActions.setCaptureEngineConfigurationAction(createCaptureConfigurationAction());
         assistantActions.setCompressionEngineConfigurationAction(createCompressionConfigurationAction());
         assistantActions.setResetAction(createResetAction());
@@ -276,7 +279,6 @@ public class Assistant implements ClipboardOwner {
         return ip;
     }
 
-
     private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
         final JMenuItem menuItem = new JMenuItem(translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
@@ -286,112 +288,6 @@ public class Assistant implements ClipboardOwner {
             clipboard.setContents(value, this);
         });
         return menuItem;
-    }
-
-    private Action createNetworkAssistantConfigurationAction(Assistant assistant) {
-        final Action conf = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-                final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
-
-                final JPanel panel = new JPanel();
-                panel.setLayout(new GridBagLayout());
-
-                final JLabel hostLbl = new JLabel(translate("host"));
-                hostLbl.setFont(titleFont);
-                panel.add(hostLbl, frame.createGridBagConstraints(0));
-
-                final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-                upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-                String upnpActive = valueOf(assistant.isUpnpEnabled());
-                final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
-                upnpPanel.add(upnpStatus);
-                panel.add(upnpPanel, frame.createGridBagConstraints(1));
-
-                final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-                portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-                final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-                portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-                final JTextField portNumberTextField = new JTextField(format("%d", networkConfiguration.getPort()));
-                portPanel.add(portNumberLbl);
-                portPanel.add(portNumberTextField);
-                panel.add(portPanel, frame.createGridBagConstraints(2));
-
-                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
-                tokenServerLbl.setFont(titleFont);
-                panel.add(tokenServerLbl, frame.createGridBagConstraints(3));
-
-                final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
-                tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-
-                final ButtonGroup tokenRadioGroup = new ButtonGroup();
-                final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-                defaultTokenRadio.setActionCommand("default");
-                final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-                customTokenRadio.setActionCommand("custom");
-                tokenRadioGroup.add(defaultTokenRadio);
-                tokenRadioGroup.add(customTokenRadio);
-
-                String currentTokenServer = networkConfiguration.getTokenServerUrl();
-                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-                    currentTokenServer = "";
-                    defaultTokenRadio.setSelected(true);
-                } else {
-                    customTokenRadio.setSelected(true);
-                }
-
-                final JTextField defaultTokenTextField = new JTextField();
-                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
-                defaultTokenTextField.setEditable(false);
-                tokenPanel.add(defaultTokenRadio);
-                tokenPanel.add(defaultTokenTextField);
-
-                final JTextField customTokenTextField = new JTextField();
-                customTokenTextField.setText(currentTokenServer);
-                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
-                tokenPanel.add(customTokenRadio);
-                tokenPanel.add(customTokenTextField);
-                panel.add(tokenPanel, frame.createGridBagConstraints(4));
-
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
-                    final String portNumber = portNumberTextField.getText();
-                    if (portNumber.isEmpty()) {
-                        return translate("connection.settings.emptyPortNumber");
-                    } else if (!isValidPortNumber(portNumber)) {
-                        return translate("connection.settings.invalidPortNumber");
-                    }
-                    if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
-                        return translate("connection.settings.invalidTokenServer");
-                    }
-                    return null;
-                });
-
-                if (ok) {
-                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
-                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
-
-                    if (newTokenServerUrl.isEmpty()) {
-                        System.clearProperty("dayon.custom.tokenServer");
-                    } else {
-                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
-                    }
-
-                    final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
-                            Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
-
-                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
-                        networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
-                        networkConfiguration = newNetworkConfiguration;
-                        networkConfiguration.persist();
-                        networkEngine.reconfigure(networkConfiguration);
-                    }
-                }
-            }
-        };
-        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
-        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
-        return conf;
     }
 
     private Action createRemoteClipboardRequestAction() {

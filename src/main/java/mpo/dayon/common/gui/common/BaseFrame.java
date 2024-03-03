@@ -9,6 +9,11 @@ import java.net.URISyntaxException;
 
 import javax.swing.*;
 
+import com.dosse.upnp.UPnP;
+import mpo.dayon.assistant.gui.Assistant;
+import mpo.dayon.assistant.network.NetworkAssistantEngine;
+import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
+import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
@@ -107,14 +112,6 @@ public abstract class BaseFrame extends JFrame {
         add(toolBar, BorderLayout.NORTH);
         toolBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         this.toolBar = toolBar;
-    }
-
-    public GridBagConstraints createGridBagConstraints(int gridy) {
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = HORIZONTAL;
-        gc.gridx = 0;
-        gc.gridy = gridy;
-        return gc;
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
@@ -266,6 +263,175 @@ public abstract class BaseFrame extends JFrame {
 
         return showSystemInfo;
     }
+
+    protected Action createConnectionSettingsAction(Assistant assistant) {
+        final Action conf = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
+                final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
+                final String custom ="custom";
+
+                final JPanel panel = new JPanel();
+                panel.setLayout(new GridBagLayout());
+
+                int gridy = 0;
+
+                final JTextField addressTextField = new JTextField();
+                final JTextField portNumberTextField = new JTextField();
+                final JCheckBox autoConnectCheckBox = new JCheckBox();
+                String currentTokenServer;
+
+                if (frameType.equals(FrameType.ASSISTED)) {
+                    final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
+                    currentTokenServer = networkConfiguration.getTokenServerUrl();
+                    final JLabel hostLbl = new JLabel(translate("assistant"));
+                    hostLbl.setFont(titleFont);
+                    panel.add(hostLbl, createGridBagConstraints(gridy++));
+
+                    final JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
+                    assistantPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+                    final JLabel addressLbl = new JLabel(translate("connection.settings.assistantIpAddress"));
+                    addressTextField.setText(networkConfiguration.getServerName());
+                    assistantPanel.add(addressLbl);
+                    assistantPanel.add(addressTextField);
+                    final JLabel portNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
+                    portNumberTextField.setText(format("%d", networkConfiguration.getServerPort()));
+                    assistantPanel.add(portNumberLbl);
+                    assistantPanel.add(portNumberTextField);
+                    autoConnectCheckBox.setText(translate("connection.settings.autoConnect"));
+                    autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
+                    assistantPanel.add(autoConnectCheckBox);
+                    panel.add(assistantPanel, createGridBagConstraints(gridy++));
+                } else {
+                    final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
+                    currentTokenServer = networkConfiguration.getTokenServerUrl();
+                    final JLabel hostLbl = new JLabel(translate("host"));
+                    hostLbl.setFont(titleFont);
+                    panel.add(hostLbl, createGridBagConstraints(gridy++));
+
+                    final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+                    upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+                    boolean upnpActive = assistant.isUpnpEnabled();
+                    final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
+                    upnpPanel.add(upnpStatus);
+                    panel.add(upnpPanel, createGridBagConstraints(gridy++));
+
+                    final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+                    portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
+                    final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
+                    portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
+                    portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
+                    portPanel.add(portNumberLbl);
+                    portPanel.add(portNumberTextField);
+                    panel.add(portPanel, createGridBagConstraints(gridy++));
+                }
+
+                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
+                tokenServerLbl.setFont(titleFont);
+                panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
+
+                final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
+                tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
+
+                final ButtonGroup tokenRadioGroup = new ButtonGroup();
+                final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
+                defaultTokenRadio.setActionCommand("default");
+                final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
+                customTokenRadio.setActionCommand(custom);
+                tokenRadioGroup.add(defaultTokenRadio);
+                tokenRadioGroup.add(customTokenRadio);
+
+                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
+                    currentTokenServer = "";
+                    defaultTokenRadio.setSelected(true);
+                } else {
+                    customTokenRadio.setSelected(true);
+                }
+
+                final JTextField defaultTokenTextField = new JTextField();
+                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
+                defaultTokenTextField.setEditable(false);
+                tokenPanel.add(defaultTokenRadio);
+                tokenPanel.add(defaultTokenTextField);
+
+                final JTextField customTokenTextField = new JTextField();
+                customTokenTextField.setText(currentTokenServer);
+                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
+                tokenPanel.add(customTokenRadio);
+                tokenPanel.add(customTokenTextField);
+                panel.add(tokenPanel, createGridBagConstraints(gridy));
+
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
+                    if (frameType.equals(FrameType.ASSISTED)) {
+                        final String ipAddress = addressTextField.getText();
+                        if (ipAddress.isEmpty()) {
+                            return translate("connection.settings.emptyIpAddress");
+                        }
+                        if (!isValidIpAddressOrHostName(ipAddress)) {
+                            return translate("connection.settings.invalidIpAddress");
+                        }
+                    }
+                    final String portNumber = portNumberTextField.getText();
+                    if (portNumber.isEmpty()) {
+                        return translate("connection.settings.emptyPortNumber");
+                    }
+                    if (!isValidPortNumber(portNumber)) {
+                        return translate("connection.settings.invalidPortNumber");
+                    }
+                    if (tokenRadioGroup.getSelection().getActionCommand().equals(custom) && !isValidUrl(customTokenTextField.getText())) {
+                        return translate("connection.settings.invalidTokenServer");
+                    }
+                    return null;
+                });
+
+                if (ok) {
+                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(custom) &&
+                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
+
+                    if (newTokenServerUrl.isEmpty()) {
+                        System.clearProperty("dayon.custom.tokenServer");
+                    } else {
+                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
+                    }
+
+                    if (frameType.equals(FrameType.ASSISTED)) {
+                        final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
+                                addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
+
+                        if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
+                            newNetworkConfiguration.persist();
+                        }
+                    } else {
+                        final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
+                                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
+
+                        NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
+                        if (!newNetworkConfiguration.equals(networkConfiguration)) {
+                            final NetworkAssistantEngine networkEngine = assistant.getNetworkEngine();
+                            networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+                            newNetworkConfiguration.persist();
+                            networkEngine.reconfigure(newNetworkConfiguration);
+                        }
+                    }
+
+
+                }
+            }
+        };
+        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
+        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
+        return conf;
+    }
+
+    private GridBagConstraints createGridBagConstraints(int gridy) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = HORIZONTAL;
+        gc.gridx = 0;
+        gc.gridy = gridy;
+        return gc;
+    }
+
 
     private void addSizeAndPositionListener() {
         addComponentListener(new ComponentAdapter() {

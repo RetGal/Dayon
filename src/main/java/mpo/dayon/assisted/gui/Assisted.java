@@ -103,7 +103,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createConnectionSettingsAction(), createToggleMultiScreenAction());
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
             FatalErrorHandler.attachFrame(frame);
             KeyboardErrorHandler.attachFrame(frame);
             frame.setVisible(true);
@@ -258,115 +258,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
         startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START_LARGE));
         return startAction;
-    }
-
-    private Action createConnectionSettingsAction() {
-        final Action conf = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-                final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
-
-                final JPanel panel = new JPanel();
-                panel.setLayout(new GridBagLayout());
-
-                final JLabel hostLbl = new JLabel(translate("assistant"));
-                hostLbl.setFont(titleFont);
-                panel.add(hostLbl, frame.createGridBagConstraints(0));
-
-                final JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
-                assistantPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-                final JLabel addressLbl = new JLabel(translate("connection.settings.assistantIpAddress"));
-                final JTextField addressTextField = new JTextField(networkConfiguration.getServerName());
-                assistantPanel.add(addressLbl);
-                assistantPanel.add(addressTextField);
-                final JLabel portNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
-                final JTextField portNumberTextField = new JTextField(format("%d", networkConfiguration.getServerPort()));
-                assistantPanel.add(portNumberLbl);
-                assistantPanel.add(portNumberTextField);
-                final JCheckBox autoConnectCheckBox = new JCheckBox(translate("connection.settings.autoConnect"));
-                autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
-                assistantPanel.add(autoConnectCheckBox);
-                panel.add(assistantPanel, frame.createGridBagConstraints(1));
-
-                final JLabel tokenServerLbl = new JLabel(translate("token.server"));
-                tokenServerLbl.setFont(titleFont);
-                panel.add(tokenServerLbl, frame.createGridBagConstraints(2));
-
-                final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
-                tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-
-                final ButtonGroup tokenRadioGroup = new ButtonGroup();
-                final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-                defaultTokenRadio.setActionCommand("default");
-                final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-                customTokenRadio.setActionCommand("custom");
-                tokenRadioGroup.add(defaultTokenRadio);
-                tokenRadioGroup.add(customTokenRadio);
-
-                String currentTokenServer = networkConfiguration.getTokenServerUrl();
-                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-                    currentTokenServer = "";
-                    defaultTokenRadio.setSelected(true);
-                } else {
-                    customTokenRadio.setSelected(true);
-                }
-
-                final JTextField defaultTokenTextField = new JTextField();
-                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
-                defaultTokenTextField.setEditable(false);
-                tokenPanel.add(defaultTokenRadio);
-                tokenPanel.add(defaultTokenTextField);
-
-                final JTextField customTokenTextField = new JTextField();
-                customTokenTextField.setText(currentTokenServer);
-                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
-                tokenPanel.add(customTokenRadio);
-                tokenPanel.add(customTokenTextField);
-                panel.add(tokenPanel, frame.createGridBagConstraints(3));
-
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
-                    final String ipAddress = addressTextField.getText();
-                    if (ipAddress.isEmpty()) {
-                        return translate("connection.settings.emptyIpAddress");
-                    } else if (!isValidIpAddressOrHostName(ipAddress)) {
-                        return translate("connection.settings.invalidIpAddress");
-                    }
-                    final String portNumber = portNumberTextField.getText();
-                    if (portNumber.isEmpty()) {
-                        return translate("connection.settings.emptyPortNumber");
-                    } else if (!isValidPortNumber(portNumber)) {
-                        return translate("connection.settings.invalidPortNumber");
-                    }
-                    if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
-                        return translate("connection.settings.invalidTokenServer");
-                    }
-                    return null;
-                });
-
-                if (ok) {
-                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
-                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
-
-                    if (newTokenServerUrl.isEmpty()) {
-                        System.clearProperty("dayon.custom.tokenServer");
-                    } else {
-                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
-                    }
-
-                    final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
-                            addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
-
-                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
-                        networkConfiguration = newNetworkConfiguration;
-                        networkConfiguration.persist();
-                    }
-                }
-            }
-        };
-        conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
-        conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
-        return conf;
     }
 
     private class NetWorker extends SwingWorker<String, String> {
