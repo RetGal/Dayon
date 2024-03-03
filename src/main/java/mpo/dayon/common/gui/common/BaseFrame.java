@@ -362,60 +362,68 @@ public abstract class BaseFrame extends JFrame {
                 tokenPanel.add(customTokenTextField);
                 panel.add(tokenPanel, createGridBagConstraints(gridy));
 
-                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
-                    if (frameType.equals(FrameType.ASSISTED)) {
-                        final String ipAddress = addressTextField.getText();
-                        if (ipAddress.isEmpty()) {
-                            return translate("connection.settings.emptyIpAddress");
-                        }
-                        if (!isValidIpAddressOrHostName(ipAddress)) {
-                            return translate("connection.settings.invalidIpAddress");
-                        }
-                    }
-                    final String portNumber = portNumberTextField.getText();
-                    if (portNumber.isEmpty()) {
-                        return translate("connection.settings.emptyPortNumber");
-                    }
-                    if (!isValidPortNumber(portNumber)) {
-                        return translate("connection.settings.invalidPortNumber");
-                    }
-                    if (tokenRadioGroup.getSelection().getActionCommand().equals(custom) && !isValidUrl(customTokenTextField.getText())) {
-                        return translate("connection.settings.invalidTokenServer");
-                    }
-                    return null;
-                });
+                final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
+                        () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
 
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(custom) &&
                             isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
 
-                    if (newTokenServerUrl.isEmpty()) {
-                        System.clearProperty("dayon.custom.tokenServer");
-                    } else {
-                        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
+                    updateSystemProperty(newTokenServerUrl);
+                    updateNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
+                }
+            }
+
+            private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+                if (frameType.equals(FrameType.ASSISTED)) {
+                    final String ipAddress = addressTextField.getText();
+                    if (ipAddress.isEmpty()) {
+                        return translate("connection.settings.emptyIpAddress");
                     }
-
-                    if (frameType.equals(FrameType.ASSISTED)) {
-                        final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
-                                addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
-
-                        if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
-                            newNetworkConfiguration.persist();
-                        }
-                    } else {
-                        final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
-                                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
-
-                        NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-                        if (!newNetworkConfiguration.equals(networkConfiguration)) {
-                            final NetworkAssistantEngine networkEngine = assistant.getNetworkEngine();
-                            networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
-                            newNetworkConfiguration.persist();
-                            networkEngine.reconfigure(newNetworkConfiguration);
-                        }
+                    if (!isValidIpAddressOrHostName(ipAddress)) {
+                        return translate("connection.settings.invalidIpAddress");
                     }
+                }
+                final String portNumber = portNumberTextField.getText();
+                if (portNumber.isEmpty()) {
+                    return translate("connection.settings.emptyPortNumber");
+                }
+                if (!isValidPortNumber(portNumber)) {
+                    return translate("connection.settings.invalidPortNumber");
+                }
+                if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                    return translate("connection.settings.invalidTokenServer");
+                }
+                return null;
+            }
 
+            private void updateNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
+                if (frameType.equals(FrameType.ASSISTED)) {
+                    final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
+                            addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
+                    if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
+                        newNetworkConfiguration.persist();
+                    }
+                } else {
+                    final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
+                            Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
+
+                    NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
+                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
+                        final NetworkAssistantEngine networkEngine = assistant.getNetworkEngine();
+                        networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+                        newNetworkConfiguration.persist();
+                        networkEngine.reconfigure(newNetworkConfiguration);
+                    }
+                }
+            }
+
+            private void updateSystemProperty(String newTokenServerUrl) {
+                if (newTokenServerUrl.isEmpty()) {
+                    System.clearProperty("dayon.custom.tokenServer");
+                } else {
+                    System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
                 }
             }
         };
