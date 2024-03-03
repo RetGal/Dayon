@@ -275,7 +275,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private NetworkHelloMessage introduce(ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private NetworkHelloMessage introduce(ObjectInputStream in) throws IOException {
         final NetworkHelloMessage hello = NetworkHelloMessage.unmarshall(in);
         fireOnByteReceived(1 + hello.getWireSize()); // +1 : magic number (byte)
         if (!isCompatibleVersion(hello.getMajor(), hello.getMinor(), Version.get())) {
