@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -273,12 +272,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
                 final JLabel hostLbl = new JLabel(translate("assistant"));
                 hostLbl.setFont(titleFont);
-
-                GridBagConstraints gc0 = new GridBagConstraints();
-                gc0.fill = HORIZONTAL;
-                gc0.gridx = 0;
-                gc0.gridy = 0;
-                panel.add(hostLbl, gc0);
+                panel.add(hostLbl, frame.createGridBagConstraints(0));
 
                 final JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
                 assistantPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
@@ -293,21 +287,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 final JCheckBox autoConnectCheckBox = new JCheckBox(translate("connection.settings.autoConnect"));
                 autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
                 assistantPanel.add(autoConnectCheckBox);
-
-                GridBagConstraints gc1 = new GridBagConstraints();
-                gc1.fill = HORIZONTAL;
-                gc1.gridx = 0;
-                gc1.gridy = 1;
-                panel.add(assistantPanel, gc1);
+                panel.add(assistantPanel, frame.createGridBagConstraints(1));
 
                 final JLabel tokenServerLbl = new JLabel(translate("token.server"));
                 tokenServerLbl.setFont(titleFont);
-
-                GridBagConstraints gc2 = new GridBagConstraints();
-                gc2.fill = HORIZONTAL;
-                gc2.gridx = 0;
-                gc2.gridy = 2;
-                panel.add(tokenServerLbl, gc2);
+                panel.add(tokenServerLbl, frame.createGridBagConstraints(2));
 
                 final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
                 tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
@@ -339,12 +323,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
                 tokenPanel.add(customTokenRadio);
                 tokenPanel.add(customTokenTextField);
-
-                GridBagConstraints gc3 = new GridBagConstraints();
-                gc3.fill = HORIZONTAL;
-                gc3.gridx = 0;
-                gc3.gridy = 3;
-                panel.add(tokenPanel, gc3);
+                panel.add(tokenPanel, frame.createGridBagConstraints(3));
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
                     final String ipAddress = addressTextField.getText();

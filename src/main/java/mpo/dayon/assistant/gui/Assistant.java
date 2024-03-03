@@ -46,7 +46,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -301,24 +300,14 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel hostLbl = new JLabel(translate("host"));
                 hostLbl.setFont(titleFont);
-
-                GridBagConstraints gc0 = new GridBagConstraints();
-                gc0.fill = HORIZONTAL;
-                gc0.gridx = 0;
-                gc0.gridy = 0;
-                panel.add(hostLbl, gc0);
+                panel.add(hostLbl, frame.createGridBagConstraints(0));
 
                 final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
                 upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
                 String upnpActive = valueOf(assistant.isUpnpEnabled());
                 final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
                 upnpPanel.add(upnpStatus);
-
-                GridBagConstraints gc1 = new GridBagConstraints();
-                gc1.fill = HORIZONTAL;
-                gc1.gridx = 0;
-                gc1.gridy = 1;
-                panel.add(upnpPanel, gc1);
+                panel.add(upnpPanel, frame.createGridBagConstraints(1));
 
                 final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
                 portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
@@ -327,21 +316,11 @@ public class Assistant implements ClipboardOwner {
                 final JTextField portNumberTextField = new JTextField(format("%d", networkConfiguration.getPort()));
                 portPanel.add(portNumberLbl);
                 portPanel.add(portNumberTextField);
-
-                GridBagConstraints gc2 = new GridBagConstraints();
-                gc2.fill = HORIZONTAL;
-                gc2.gridx = 0;
-                gc2.gridy = 2;
-                panel.add(portPanel, gc2);
+                panel.add(portPanel, frame.createGridBagConstraints(2));
 
                 final JLabel tokenServerLbl = new JLabel(translate("token.server"));
                 tokenServerLbl.setFont(titleFont);
-
-                GridBagConstraints gc3 = new GridBagConstraints();
-                gc3.fill = HORIZONTAL;
-                gc3.gridx = 0;
-                gc3.gridy = 3;
-                panel.add(tokenServerLbl, gc3);
+                panel.add(tokenServerLbl, frame.createGridBagConstraints(3));
 
                 final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
                 tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
@@ -373,12 +352,7 @@ public class Assistant implements ClipboardOwner {
                 customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
                 tokenPanel.add(customTokenRadio);
                 tokenPanel.add(customTokenTextField);
-
-                GridBagConstraints gc4 = new GridBagConstraints();
-                gc4.fill = HORIZONTAL;
-                gc4.gridx = 0;
-                gc4.gridy = 4;
-                panel.add(tokenPanel, gc4);
+                panel.add(tokenPanel, frame.createGridBagConstraints(4));
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true, () -> {
                     final String portNumber = portNumberTextField.getText();

@@ -15,6 +15,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
+import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
@@ -106,6 +107,14 @@ public abstract class BaseFrame extends JFrame {
         add(toolBar, BorderLayout.NORTH);
         toolBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         this.toolBar = toolBar;
+    }
+
+    public GridBagConstraints createGridBagConstraints(int gridy) {
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.fill = HORIZONTAL;
+        gc.gridx = 0;
+        gc.gridy = gridy;
+        return gc;
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
