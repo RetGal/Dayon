@@ -116,6 +116,13 @@ class SystemUtilitiesTest {
 		assertTrue(isValidUrl(url));
 	}
 
+	@ParameterizedTest
+	@CsvSource({"http://127.0.0.", "htt://localhost/token", "https://example.com!/rvs", "file://dayon.example", "sun.fun", "https://\uD83E\uDD84"})
+	void isValidUrlStringShouldReturnFalseForInvalidUrls(String url) {
+		// when, then
+		assertFalse(isValidUrl(url));
+	}
+
 	@Test
 	void shouldObtainWritableTempDir() throws IOException {
 		// when, then
