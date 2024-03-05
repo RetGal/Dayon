@@ -72,7 +72,7 @@ public class Assistant implements ClipboardOwner {
 
     private CaptureCompressionCounter captureCompressionCounter;
 
-    private Set<Counter<?>> counters;
+    private ArrayList<Counter<?>> counters;
 
     private AssistantFrame frame;
 
@@ -164,7 +164,7 @@ public class Assistant implements ClipboardOwner {
         mergedTileCounter.start(1000);
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
-        counters = new HashSet<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
+        counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
 
     public boolean isUpnpEnabled() {

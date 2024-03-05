@@ -18,7 +18,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
-import java.util.Set;
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.*;
@@ -88,7 +88,7 @@ class AssistantFrame extends BaseFrame {
 
     private char osId;
 
-    AssistantFrame(AssistantActions actions, Set<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, Assistant assistant) {
+    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, Assistant assistant) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
@@ -280,7 +280,7 @@ class AssistantFrame extends BaseFrame {
         return button;
     }
 
-    private StatusBar createStatusBar(Set<Counter<?>> counters) {
+    private StatusBar createStatusBar(ArrayList<Counter<?>> counters) {
         final StatusBar statusBar = new StatusBar();
         final Component horizontalStrut = Box.createHorizontalStrut(10);
         statusBar.add(horizontalStrut);
