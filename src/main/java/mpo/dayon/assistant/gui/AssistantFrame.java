@@ -245,18 +245,18 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(fitToScreenToggleButton);
         sessionPanel.add(keepAspectRatioToggleButton);
         sessionPanel.add(controlToggleButton);
-        sessionPanel.add(createButton(actions.getRemoteClipboardRequestAction()));
-        sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
         sessionPanel.add(screenshotButton);
+        sessionPanel.add(createButton(actions.getRemoteClipboardRequestAction()));
+        sessionPanel.add(createButton(actions.getRemoteClipboardSetAction()));
         sessionPanel.add(createButton(actions.getResetAction()));
 
         JPanel settingsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         settingsPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
+        settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
         settingsPanel.add(createButton(actions.getCaptureEngineConfigurationAction()));
         settingsPanel.add(createButton(actions.getCompressionEngineConfigurationAction()));
-        settingsPanel.add(createButton(actions.getNetworkConfigurationAction()));
         settingsPanel.add(languageSelection);
 
         tabbedPane = new JTabbedPane();
