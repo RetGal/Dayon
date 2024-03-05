@@ -28,9 +28,9 @@
         </div>
         <a href="index.html">Home</a><br/>
         <a href="quickstart.html">Quick Start</a><br/>
+        <a href="settings.html">Settings</a><br/>
         <a href="download.html">Download</a><br/>
         <a href="support.html">Support</a><br/>
-        <a href="feedback.html">Feedback</a><br/>
         <a href="privacy.html">Privacy</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </nav>
@@ -46,9 +46,9 @@
     <div id="menu">
       <a href="index.html">Home</a>
       <a href="quickstart.html">Quick Start</a>
+      <a href="settings.html">Settings</a>
       <a href="download.html">Download</a>
       <a href="support.html">Support</a>
-      <a href="feedback.html">Feedback</a>
       <a href="privacy.html">Privacy</a>
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
@@ -67,66 +67,17 @@
       </p>
 
       <p>
-        <strong>Attention</strong>: This documentation refers to the most recent program version.
-        <br/>
-        <br/>
+        <strong>Caution:</strong> This documentation refers to the most recent program version.
+        <br/><br/>
       </p>
 
-      <p>
-        <img src="assisted.png" alt="Assisted"/> &nbsp;
-        <a id="assisted-setup" class="no"><strong>Set up the Assisted Computer</strong></a>
-      </p>
+      <h2>Preparing & Connecting</h2>
 
-      <p>
-        Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to set up.
-      </p>
-
-      <p>
-        Download and install the Dayon! application. Then start the <em>Dayon!</em> application and click the "play" button.
-      </p>
-
-      <p>
-        <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready"/>
-      </p>
-
-      <p>
-        Enter the token communicated by the <em>assistant</em> and acknowledge with OK:
-        <br/>
-      </p>
-
-      <p>
-        <img src="assisted_token.jpg" alt="Dayon! Assisted : Token"/>
-        <br/>
-        (if you have already connected to this <em>assistant</em> recently, then you can leave the field empty)
-      </p>
-
-      <p>
-        <strong>Alternative variant (connect without token):</strong>
-        Enter both the IP address and the port number as communicated by the <em>assistant</em> confirm with OK:
-        <br/>
-      </p>
-
-      <p>
-        <img src="assisted_network.jpg" alt="Dayon! Assisted : Network"/>
-        <br/>
-        (both input fields can be cleared by double-clicking them)
-      </p>
-
-      <p>
-        You'll then be shortly connected to the <em>assistant</em> that is monitoring your screen. Enjoy!
-        <br/>
-        <br/>
-      </p>
-
-      <p>
-        <img src="assistant.png" alt="Assistant"/> &nbsp;
-        <a id="assistant-setup" class="no"><strong>Setup the Assistant Computer</strong></a>
-      </p>
+      <h3><img src="assistant.png" alt="Assistant"/>&nbsp;<a id="assistant" class="no">Set up the Assistant computer</a></h3>
 
       <p>
         Dayon! Assistant is acting as a typical server application (the <em>assisted</em> is going to connect to) and as
-        such you've to configure your network
-        to make it visible from the outside world.<br/><br/>
+        such you've to configure your network to make it visible from the outside world.<br/><br/>
         By default, the server listens to <strong>Port</strong> 8080, but you can change this if necessary.
         Since version 12, Dayon! creates a corresponding port forwarding rule independently. The prerequisite for this
         is that <strong>UPnP</strong> is activated.
@@ -146,6 +97,8 @@
         <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Assistant: Network Settings without UPnP"/>
       </p>
 
+      <h3>Generate and copy token</h3>
+
       <p>
         Generate an access token by clicking on the key:
       </p>
@@ -155,8 +108,7 @@
       </p>
 
       <p>
-        Copy the generated access token to the clipboard with a click of the
-        mouse:
+        Copy the generated access token to the clipboard with a click of the mouse:
       </p>
 
       <p>
@@ -172,10 +124,12 @@
         <em>assistant</em> <a href="#assistant-start">listening for incoming connections</a>.
       </p>
 
+      <h3>Alternative: connect without token</h3>
+
       <p>
-        <strong>Alternative variant (connect without token):</strong> You've to determine which
-        <strong>IP address</strong> you want to give to the <em>assisted</em> to connect to the
-        <em>assistant</em>; you should typically give your <strong>public</strong> IP address.
+        If you don't want to generate an access token, you have to determine which <strong>IP address</strong> you want
+        to share with the <em>assisted</em> to connect to the <em>assistant</em>; you should typically use your
+        <strong>public</strong> IP address.<br/>
         But for testing within your local network you might want to use a different one. You can retrieve your
         <strong>public IP address</strong> by clicking the network button:
       </p>
@@ -201,59 +155,11 @@
         </em>
       </p>
 
-      <p>
-        That's it regarding the network configuration;
-        <br/>
-        <strong>For the impatient:</strong> <a href="#assistant-start">Here</a> you'll learn, how to make the
-        <em>assistant</em> <a href="#assistant-start">listening for incoming connections</a>.
-      </p>
-
-      <p>
-        But let's first find out about the advanced configuration options.
-        <br/>
-        <br/>
-      </p>
-
-      <p>
-        <img src="assistant.png" alt="Assistant"/>
-        &nbsp; <a id="assistant-details" class="no"><strong>More on the Assistant Setup</strong></a>
-      </p>
-
-      <p>
-        Use that form to set up how the <em>assisted</em> screen is going to be <strong>captured</strong>; you can
-        configure the time (in milliseconds) between two captures (aka. tick) as well as the number of gray levels.
-      </p>
-
-      <p>
-        <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings"/>
-      </p>
-
-      <p>
-        You can then set up the <strong>compression</strong>
-        method; two methods are available: ZIP and XZ. XZ will obtain a (much)
-        better compression ratio but requires more CPU and RAM as it's much
-        more complicated than ZIP and is implemented in JAVA (ZIP is being
-        implemented using some native code in the JDK).
-      </p>
-
-      <p>
-        In addition, a <strong>cache</strong>
-        is used that allows for not sending many times the same bitmap as for
-        example when opening and navigating menus (i.e., what's under the
-        menus are not sent more than once). The screen is divided into many
-        tiles, each one being possibly cached. You've to define the maximum
-        number of tiles in the cache. Note that a tile is currently 32x32
-        pixels of 256 levels, that is 1K.
-      </p>
-
-      <p>
-        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings"/>
-      </p>
+      <h3>Press play</h3>
 
       <p>
         <a id="assistant-start" class="no">
-          That's about it. After a click on the play button (the first from left) the
-          <em>assistant</em> is ready to accept incoming connections:
+          After a click on the play button (the first from left) the <em>assistant</em> is ready to accept incoming connections:
         </a>
       </p>
 
@@ -262,8 +168,7 @@
       </p>
 
       <p>
-        Now you can ask the <em>assisted</em> to connect. You'll be shortly prompted to accept the incoming
-        connection:
+        Now you can ask the <em>assisted</em> to connect. You'll be shortly prompted to accept the incoming connection:
       </p>
 
       <p>
@@ -271,14 +176,65 @@
       </p>
 
       <p>
-        You're now connected and monitoring the remote computer. Don't forget to compare the <em>assistant</em> and <em>assisted</em> fingerprints.
+        You are now connected to the remote computer and can see its desktop. Be sure to compare the certificate fingerprints of
+        the <em>assistant</em> and the <em>assisted</em> computer.<br/>
+        <strong>Caution:</strong> If they do not match, the connection is not trustworthy!
+      </p>
+
+      <p>
         <br/>
-        <strong>Caution</strong>: If they don't match, then the connection is not trustworthy!
+      </p>
+
+      <h3><img src="assisted.png" alt="Assisted"/> &nbsp;<a id="assisted-setup" class="no">Set up the Assisted computer</a></h3>
+
+      <p>
+        Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to set up.
+      </p>
+
+      <p>
+        Download and install the Dayon! application. Then start the <em>Dayon! Assisted</em> application and click the "play" button.
+      </p>
+
+      <p>
+        <img src="assisted_ready.jpg" alt="Dayon! Assisted : Ready"/>
+      </p>
+
+      <p>
+        Enter the token communicated by the <em>assistant</em> and acknowledge with OK:<br/>
+      </p>
+
+      <p>
+        <img src="assisted_token.jpg" alt="Dayon! Assisted : Token"/><br/>
+        (if you have already connected to this <em>assistant</em> recently, then you can leave the field empty)
+      </p>
+
+      <p>
+        <h3>Alternative variant (connect without token):</h3>
+        Enter both the IP address and the port number as communicated by the <em>assistant</em> confirm with OK:
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted_network.jpg" alt="Dayon! Assisted : Network"/>
+        <br/>
+        (both input fields can be cleared by double-clicking them)
+      </p>
+
+      <p>
+        You'll then be shortly connected to the <em>assistant</em> that is monitoring your screen. Enjoy!
+        <br/><br/>
       </p>
 
       <p>
         <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running"/>
       </p>
+
+      <p>
+        <strong>Note:</strong> If you are unable to connect by following the instructions above, you should check that you have the right <a href="settings.html">settings</a>.
+      </p>
+
+
+      <h2>Managing the session</h2>
 
       <p>
         If the desktop of the <em>assisted</em> doesn't fit into your window, it can be scaled down:
@@ -303,12 +259,6 @@
       </p>
 
       <p></p>
-      <h2>Advanced functions</h2>
-      <p>
-        Prerequisites: The following functions require an established connection to the assisted.
-      </p>
-
-      <p></p>
       <h3>Clipboard transfer</h3>
       <p>
         By clicking on the up- or down button, the clipboard of the assistant
@@ -324,19 +274,19 @@
       <h4>Currently supported are:</h4>
       <ul>
         <li>
-          <strong>Text</strong>: Select text locally or in the assisted window, copy (<code>Ctl + c</code>),
+          <strong>Text:</strong> Select text locally or in the assisted window, copy (<code>Ctl + c</code>),
           click up or down. Subsequently, the transmitted text can be inserted in a local or remote application
           (<code>Ctrl + v</code>).
         </li>
 
         <li>
-          <strong>Files</strong>: Select one or more files locally or in the window of the
+          <strong>Files:</strong> Select one or more files locally or in the window of the
           <em>assisted</em> person (<code>Ctl + c</code>), click up or down. Subsequently, the file(s) can be
           inserted at the destination.
         </li>
 
         <li>
-          <strong>Graphic</strong>: If the clipboards content is a graphic, for example after taking a screenshot -
+          <strong>Graphic:</strong> If the clipboards content is a graphic, for example after taking a screenshot -
           just click up or down. The clipboard containing the graphic can then be used at the destination.
         </li>
       </ul>
@@ -373,10 +323,10 @@
         <br/>
         So for sending the <code>Ctrl + Alt + Delete</code> combination to the <em>assisted</em>, you have to click the <code>[Ctrl]</code> button first,
         then press the <code>Alt</code> and <code>Delete</code> keys together, release them and finally click the <code>[Ctrl]</code> button again.
-        <br><br>
-        <strong>Attention</strong>: Due to restrictions of the operating system, the combination <code>Ctrl + Alt + Delete</code>
-        does <strong>not work</strong> on <em>assisted</em> that run under Windows!<br>
-        Instead, use the combination <code>Windows + R</code> which provides similar functionality.
+        <br/><br/>
+        <strong>Caution:</strong> Due to restrictions of the operating system, the combination <code>Ctrl + Alt + Delete</code>
+        does <strong>not work</strong> on <em>assisted</em> that run under Windows! Instead, use the combination <code>Windows + R</code>
+        which provides similar functionality.
       </p>
 
       <h3>Take a screenshot at the assisted</h3>
@@ -389,50 +339,58 @@
         <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
       </p>
 
+      <h3>Reset screen capture</h3>
+      <p>
+        The reset screen capture (trash bin icon) clears all cached screen data and reloads a new screen capture from assisted.
+      </p>
+
       <h3>Start an online meeting to chat face to face</h3>
       <p>
-        Click on the certificate fingerprints on both <em>assisted</em> and <em>assistant</em> to start a joint online meeting in Jitsi Meeting.
+        Click on the certificate fingerprints on both <em>assisted</em> and <em>assistant</em> to start a joint online meeting in Jitsi.
       </p>
 
       <p>
         <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
       </p>
 
-      <p></p>
-      <h3>Automatic connection of the assisted</h3>
-      <h4>Via command line parameters</h4>
+      <h3>Statistics Counters</h3>
+
       <p>
-        The host name or IP address and port of the assistant can be passed via command line parameters:
-        <ul>
-          <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
-          <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
-          <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
-          <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
-          <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
-        </ul>
-        If the assisted is started with these parameters, then he connects directly to the given host without
-        further inquiry.
+          <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
       </p>
 
-      <h4>Via configuration file</h4>
       <p>
-        Since version v11.0.5, the connection parameters can be stored in a <code>YAML</code> file.
-        The structure is extremely simple:
+        The status bar of the assistant frame is displaying, in addition to the keyboard layout, the following counters:
       </p>
+      <ol>
+        <li>Network Bandwidth</li>
+        <li>
+          Compression Ratio: how many times the initial capture (diff only) has been compressed
+        </li>
+        <li>
+          Number of Tiles: the number of tile being transmitted over the network as well as the cache hits.
+        </li>
+        <li>
+          Number of Skipped Capture: the number of screen captures that have
+          been skipped because of a too high rate (i.e., low tick value) for
+          the CPU. To minimize that number you have to slow down the capture
+          rate using a bigger tick value.
+        </li>
 
-      <pre>
-host: "an.example.com"
-port: 8080</pre>
-      This file can be saved under the name <code><a href="assisted.yaml">assisted.yaml</a></code> either in the
-      Dayon! home directory, in the user directory, or in the same directory as the <code>.jar</code>, resp.
-      <code>.exe</code> file. This order also corresponds to the priority with which they are taken into account
-      in the case of multiple configurations exist. (first one wins)
-      <br/>
-      To prevent the assisted from automatically connecting right after the start,
-      <code><a href="assisted.yaml">assisted.yaml</a></code> the following line can be added:
-      <pre>autoConnect: false</pre>
+        <li>
+          Number of Merged Capture: the number of screen captures that have
+          been merged before being transmitted. This is due to a capture rate
+          too high for the current compression method. To minimize that number
+          you have to slow down the capture rate and/or change the compression
+          method using a faster one.
+        </li>
+
+        <li>Memory usage</li>
+        <li>Duration of the active or the last support session</li>
+      </ol>
+
       <p>
-        That's all folks! You can find more information on the <a href="support.html">support</a> page.
+        That's all folks! You can find more information on the <a href="settings.html">settings</a> page.
       </p>
     </div>
     <div id="footer"></div>
