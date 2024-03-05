@@ -28,9 +28,9 @@
         </div>
         <a href="fr_index.html">Accueil</a><br/>
         <a href="fr_quickstart.html">Premiers Pas</a><br/>
+        <a href="fr_settings.html">Paramètres</a><br/>
         <a href="fr_download.html">Télécharger</a><br/>
         <a href="fr_support.html">Aide</a><br/>
-        <a href="fr_feedback.html">Réactions</a><br/>
         <a href="fr_privacy.html">Confidentialité</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </nav>
@@ -46,10 +46,10 @@
     <div id="menu">
       <a href="fr_index.html">Accueil</a>
       <a href="fr_quickstart.html">Premiers Pas</a>
+      <a href="fr_settings.html">Paramètres</a>
       <a href="fr_download.html">Télécharger</a>
       <a href="fr_support.html">Aide</a>
-      <a href="fr_feedback.html">Réactions</a>
-      <a href="fr_privacy.html">Confidentialité</a>
+      <a href="fr_privacy.html">Confidentialité</a>>
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
@@ -83,10 +83,9 @@
       </p>
 
       <p>
-        Sinon vous pouvez télécharger les derniers packages d'installation pour votre plate-forme depuis
+        Sinon, vous pouvez télécharger les derniers packages d'installation pour votre plate-forme depuis
         <a href="https://github.com/retgal/dayon/releases">GitHub</a> ou <a href="https://sourceforge.net/projects/dayonactive/files/">SourceForge</a>.
       </p>
-
       <p>
         <a href="https://sourceforge.net/projects/dayonactive/files/latest/download">
           <img alt="Download Dayon! (active)" src="https://a.fsdn.com/con/app/sf-download-button" width="276" height="48" srcset="https://a.fsdn.com/con/app/sf-download-button?button_size=2x 2x"/>
@@ -94,9 +93,9 @@
       </p>
 
       <p>
-        <strong>Windows:</strong>
+        <strong>Windows :</strong>
         Deux programmes d'installation sont disponibles et l'installation devrait être assez directe.
-        Un paquet est livré avec un JRE à base de l'OpenJDK 1.8, l'autre sans. Cet avec JRE peut seulement etre utilisé avec des versions de Windows de 64bit.
+        Un paquet est livré avec un JRE à base de l'OpenJDK 11, l'autre sans. Ce avec JRE peut seulement être utilisé avec des versions de Windows de 64bit.
        <br/>
         Depuis la version 1.9 il existe également deux versions distinctes de «lancement rapide» pour l’assistant et l’assisté. Ces deux versions
         portables ne nécessitent pas d'installation. Afin d'éviter d'éventuels problèmes de contrôle de compte d'utilisateur dans ces versions, nous
@@ -104,19 +103,19 @@
       </p>
 
       <p>
-        <strong>Debian, Ubuntu et derivates:</strong> pour que vous n'ayez pas à tenir Dayon! à jour manuellement, en
+        <strong>Debian, Ubuntu et derivates :</strong> pour que vous n'ayez pas à tenir Dayon! à jour manuellement, en
         l'installant via <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a> ou car un
         <a href="https://snapcraft.io/dayon">snap</a> est recommandé.
        <br/>
-        <strong>PPA</strong>:
+        <strong>PPA :</strong>
         <code>sudo add-apt-repository ppa:regal/dayon</code>, <code>sudo apt-get update</code> et enfin <code>sudo apt-get install dayon</code>.
        <br/>
-        <strong>Snap</strong>: <code>sudo snap install dayon</code>. Sinon, vous pouvez installer le package téléchargé
+        <strong>Snap :</strong> <code>sudo snap install dayon</code>. Sinon, vous pouvez installer le package téléchargé
         en exécutant <code>sudo dpkg -i dayon*.deb</code>.
       </p>
 
       <p>
-        <strong>Linux:</strong> installez l'application <code>snap</code> mise à jour indépendamment via
+        <strong>Linux :</strong> installez l'application <code>snap</code> mise à jour indépendamment via
         <a href="https://snapcraft.io/dayon">Snap Store</a> ou via <code>sudo snap install dayon</code>.
        <br/>
         Alternativement, décompressez le <code>.tgz</code> package téléchargé via <code>tar xzvf</code>. Exécutez le script shell
@@ -126,15 +125,33 @@
       </p>
 
       <p>
-        <strong>macOS/OS X:</strong>
+        <strong>macOS/OS X :</strong>
         extrayez le fichier <code>.tgz</code> à une location de votre choix. Pour plus de commodité, créez un alias pour <code>dayon_assisted.sh</code> et
         <code>dayon_assistant.sh</code> et copiez-les sur le bureau. Une installation de JRE (Java 8 ou plus récent) est nécessaire.
        <br/>
-        <strong>Important:</strong> À partir de macOS Catalina et versions ultérieures, vous devez explicitement accorder à <code>dayon_assisted.sh</code> l'autorisation de capture d'écran:
+        <strong>Important :</strong> À partir de macOS Catalina et versions ultérieures, vous devez explicitement accorder à <code>dayon_assisted.sh</code> l'autorisation de capture d'écran:
         <code>Préférences système > Sécurité et confidentialité > Confidentialité > Capture d'écran</code>
       </p>
 
       <h2>Journal des modifications</h2>
+      <h3>
+        Dayon! v14 Candid Clover (7 mars 2024)
+        <span class="red">*</span>
+      </h3>
+      <ul>
+        <li>Interface graphique entièrement repensée</li>
+        <li>Prise en charge HiDPI</li>
+        <li>Possibilité de prendre des captures d'écran de la personne assistée</li>
+        <li>Le transfert dans le presse-papiers prend désormais également en charge les graphiques</li>
+        <li>Détection des différentes affectations de clavier</li>
+        <li>Serveur de jetons configurable via l'interface graphique</li>
+        <li>Bouton pour transférer les pressions sur la touche Ctrl</li>
+        <li>Pressions de la touche Cmd est transferée si l'assisté est exécuté sur macOS</li>
+        <li>Option permettant de conserver le taux de vue de la personne assistée</li>
+        <li>Personnaliser la langue dans l'interface graphique</li>
+        <li>Possibilité de démarrer une réunion conjointe du JITSI</li>
+      </ul>
+
       <h3>Dayon! v13 Beard Butter (5 novembre 2023)</h3>
       <ul>
         <li>Meilleure protection contre les attaques MITM grâce à l'utilisation de certificats générés individuellement</li>
