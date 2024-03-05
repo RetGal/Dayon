@@ -28,9 +28,9 @@
         </div>
         <a href="index.html">Home</a><br/>
         <a href="quickstart.html">Quick Start</a><br/>
+        <a href="settings.html">Settings</a><br/>
         <a href="download.html">Download</a><br/>
         <a href="support.html">Support</a><br/>
-        <a href="feedback.html">Feedback</a><br/>
         <a href="privacy.html">Privacy</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </nav>
@@ -46,9 +46,9 @@
     <div id="menu">
         <a href="index.html">Home</a>
         <a href="quickstart.html">Quick Start</a>
+        <a href="settings.html">Settings</a>
         <a href="download.html">Download</a>
         <a href="support.html">Support</a>
-        <a href="feedback.html">Feedback</a>
         <a href="privacy.html">Privacy</a>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </div>
@@ -75,7 +75,7 @@
           <a href="https://snapcraft.io/dayon">
             <img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" alt="Get it from the Snap Store" width="150"/>
           </a>
-          <br/>
+          <br/><br/>
           <a href="https://flathub.org/apps/details/io.github.retgal.Dayon">
             <img src="https://flathub.org/assets/badges/flathub-badge-en.svg" alt="Get it from the Flathub" width="150"/>
           </a>
@@ -94,7 +94,7 @@
 
         <p>
           <strong>Windows:</strong>
-          Two installers are available and the installation should be straightforward. One package comes bundled with an OpenJDK 1.8 based
+          Two installers are available and the installation should be straightforward. One package comes bundled with an OpenJDK 11 (LTS) based
           JRE and one without. The one with included JRE is for 64bit versions of Windows only.
          <br/>
           Since release 1.9 there also exist two separate "quick launch" versions. One for the assistant and one for the assisted part. These
@@ -107,10 +107,10 @@
           So that you don't have to manually keep Dayon! up to date, installing it via <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a>
           or as a <a href="https://snapcraft.io/dayon">snap</a> is recommended.
          <br/>
-          <strong>PPA</strong>:
+          <strong>PPA:</strong>
           <code>sudo add-apt-repository ppa:regal/dayon</code>, <code>sudo apt-get update</code> and finally <code>sudo apt-get install dayon</code>.
          <br/>
-          <strong>Snap</strong>: <code>sudo snap install dayon</code>. Alternatively, you can install downloaded <code>.deb</code>
+          <strong>Snap:</strong> <code>sudo snap install dayon</code>. Alternatively, you can install downloaded <code>.deb</code>
           packages by tipping the command <code>sudo dpkg -i dayon*.deb</code> in a terminal.
         </p>
 
@@ -128,13 +128,31 @@
         <p>
           <strong>macOS/OS X:</strong>
           extract the <code>.tgz</code> package to a location of your choice. For more convenience you may
-          want to create an alias for <code>dayon_assisted.sh</code> and <code>dayon_assistant.sh</code> and copy them to your desktop. (JRE 8 or newer required)
+          want to create an alias for <code>dayon_assisted.sh</code> and <code>dayon_assistant.sh</code> and copy them to your desktop. (JRE 11 or newer required)
          <br/>
           <strong>Important:</strong> From macOS Catalina and newer, you must explicitly grant <code>dayon_assisted.sh</code> the screen capture permission:
           <code>System Preferences > Security & Privacy > Privacy > Screen Recording</code>
         </p>
 
         <h2>Change log</h2>
+        <h3>
+          Dayon! v14 Candid Clover (March 7th, 2024)
+          <span class="red">*</span>
+        </h3>
+        <ul>
+          <li>Major UI rework</li>
+          <li>HiDPI support</li>
+          <li>Option to take screenshots at the assisted</li>
+          <li>Transfer of clipboards containing graphics</li>
+          <li>Detection of different keyboard layouts</li>
+          <li>Option to configure token server within the UI</li>
+          <li>Dedicated button to send ctrl key</li>
+          <li>Send cmd key if connected with an assisted running macOS</li>
+          <li>Option to lock the window to the assisted screen aspect ratio</li>
+          <li>Option to change the language within the UI</li>
+          <li>Option to start a joint JITSI meet to chat with the remote peer</li>
+        </ul>
+
         <h3>Dayon! v13 Beard Butter (November 5th, 2023)</h3>
         <ul>
           <li>Improved MITM attack mitigation by using individually generated certificates</li>

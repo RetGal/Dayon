@@ -28,9 +28,9 @@
         </div>
         <a href="fr_index.html">Accueil</a><br/>
         <a href="fr_quickstart.html">Premiers Pas</a><br/>
+        <a href="fr_settings.html">Paramètres</a><br/>
         <a href="fr_download.html">Télécharger</a><br/>
         <a href="fr_support.html">Aide</a><br/>
-        <a href="fr_feedback.html">Réactions</a><br/>
         <a href="fr_privacy.html">Confidentialité</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </nav>
@@ -46,18 +46,18 @@
     <div id="menu">
       <a href="fr_index.html">Accueil</a>
       <a href="fr_quickstart.html">Premiers Pas</a>
+      <a href="fr_settings.html">Paramètres</a>
       <a href="fr_download.html">Télécharger</a>
       <a href="fr_support.html">Aide</a>
-      <a href="fr_feedback.html">Réactions</a>
-      <a href="fr_privacy.html">Confidentialité</a>
+      <a href="fr_privacy.html">Confidentialité</a>>
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
       <h2>Premier Pas</h2>
       <p>
-        Typiquement, l'<em>assistant</em> discute avec l'<em>assistée</em> en utilisant Jitsi, le téléphone,
+        Typiquement, l'<em>assistant</em> discute avec l'<em>assisté</em> en utilisant Jitsi, le téléphone,
         son IM préféré, ou n'importe quel autre outil. Ensuite, en démarrant Dayon! il peut visualiser en direct
-        l'écran de l'ordinateur de l'<em>assistée</em>.
+        l'écran de l'ordinateur de l'<em>assisté</em>.
       </p>
 
       <p>
@@ -70,13 +70,115 @@
         <br/><br/>
       </p>
 
+      <h3><img src="assistant.png" alt="Assistant"/> &nbsp;<a id="assistant-setup" class="no">Mise en route coté assistant</a></h3>
+
       <p>
-        <img src="assisted.png" alt="Assisted"/>&nbsp;<a id="assisted-setup" class="no">
-        <strong>Mise en Route Coté assistée</strong></a>
+        Dayon! assistant agit comme une application serveur typique (l'<em>assisté</em> va se connecter) et en tant que tel, vous devez configurer votre réseau
+        pour le rendre visible du monde extérieur.<br/><br/>
+        Par défaut, le serveur écoute le <strong>port</strong> 8080, mais vous pouvez le modifier si nécessaire.
+        Depuis la version 12, Dayon! crée indépendamment une règle de transfert de port correspondante. La condition préalable est que <strong>UPnP</strong> soit activé.
+        Sinon, il sera toujours nécessaire de rediriger le port (TCP) via <strong>NAT</strong> sur le <strong>routeur</strong> vers l'ordinateur correspondant.
+        <br/><br/>
+        Consultez <a href="https://portforward.com/router.htm">portforward.com</a> pour un guide étape par étape des modèles de routeur les plus courants.
       </p>
 
       <p>
-        Dayon! assistée se comporte comme un client qui appelle le monde extérieur ;
+        <strong>Optional :</strong> Ajuster le port pour les connexions entrantes : (à gauche avec UPnP, à droite sans)
+      </p>
+
+      <p>
+        <img src="assistant_network_settings_upnp.jpg" alt="Dayon! Assistant : Network Settings avec UPnP"/>
+        <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Assistant : Network Settings sans UPnp"/>
+      </p>
+
+      <h3>Générer et copier des jetons</h3>
+
+      <p>
+        Générez un jeton d'accès en cliquant sur la clé :
+      </p>
+
+      <p>
+        <img src="assistant_create_token.jpg" alt="Dayon! Assistant : Create Token"/>
+      </p>
+
+      <p>
+        Copiez le code d'accès généré dans le presse-papiers d'un simple clic de souris :
+      </p>
+
+      <p>
+        <img src="assistant_copy_token.jpg" alt="Dayon! Assistant : Copy Token"/>
+      </p>
+
+      <p>
+        C'est tout - communiquez ce <strong>code d'accès</strong> à l'<em>assisté</em> par courrier, messagerie instantanée ou téléphone.
+      </p>
+
+      <p>
+        <strong>Pour les impatients :</strong><a href="#assistant-start">Ici</a>,
+        vous apprendrez comment faire en sorte que l'assistant <a href="#assistant-start">écoute la connexion entrante</a>.
+      </p>
+
+      <h3>Variante alternative : connexion sans jeton d'accès</h3>
+
+      <p>
+        Si vous ne souhaitez pas utiliser de jeton, vous devez déterminer l'adresse IP publique de votre ordinateur.
+        L'<em>assisté</em> peut alors s'y connecter. Pour cela, cliquez sur <strong>Trouver mon adresse IP (publique)</strong>.
+        Vous pouvez également simplement utiliser l'adresse IP privée pour tester sur le LAN :
+       <br/>
+        <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant : Network IP Addresses"/>
+      </p>
+
+      <p>
+        Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de copier
+        dans le clipboard l'<strong>IP Address & Port Number</strong>.
+        Il vous sera ainsi facile de coller dans une session Jitsi (ou autre) ou dans un message email.
+      </p>
+
+      <p>
+        <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant : Network IP Address Actions"/>
+      </p>
+
+      <p>
+        <em>
+          Noter que cette addresse IP n'est pas requise pour l'<em>assistant</em>. En effet, l'application écoute sur toutes les interfaces réseaux
+          disponibles ; mais la personne assisté va avoir besoin de ces informations.
+        </em>
+      </p>
+
+      <h3>Prise en route</h3>
+
+      <p>
+        <a id="assistant-start" class="no">C'est à peu près tout. Après un clic sur le bouton play (le premièr à gauche)
+          l'<em>assistant</em> est prêt à recevoir des données :</a>
+      </p>
+
+      <p>
+        <img src="assistant_start.jpg" alt="Dayon! Assistant : Start"/>
+      </p>
+
+      <p>
+        Vous pouvez maintenant demander à l'<em>assisté</em> de se connecter. Vous serez alors promptement requis d'accepter une nouvelle connexion :
+      </p>
+
+      <p>
+        <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection"/>
+      </p>
+
+      <p>
+        Vous êtes maintenant connecté et vous surveillez l'ordinateur distant.
+        Veuillez comparer les empreintes digitales de l'<em>assistant</em> et de l'<em>assisté</em>.
+        <br/>
+        <strong>Attention</strong> : s'ils ne correspondent pas, la connexion n'est pas fiable !
+      </p>
+
+      <p>
+        <br/>
+      </p>
+
+      <h3><img src="assisted.png" alt="Assisted"/>&nbsp;&nbsp;<a id="assisted-setup" class="no">Mise en route coté assisté</a></h3>
+
+      <p>
+        Dayon! assisté se comporte comme un client qui appelle le monde extérieur ;
         à ce titre, il n'y a pas de configuration réseau à faire.
       </p>
 
@@ -98,9 +200,10 @@
         (si vous vous êtes déjà connecté à cet <em>assistant</em> récemment, vous pouvez laisser le champ vide)
       </p>
 
+      <h3>Variante alternative : connexion sans jeton d'accès</h3>
+
       <p>
-        <strong>Variante alternative (connexion sans code d'accès) :</strong> Entrez l'addresse IP et le numéro de
-        port communiqué par l'<em>assistant</em> cliquez sur le bouton "OK" :<br/>
+        Entrez l'addresse IP et le numéro de port communiqué par l'<em>assistant</em> cliquez sur le bouton "OK" :<br/>
       </p>
 
       <p>
@@ -114,152 +217,15 @@
       </p>
 
       <p>
-        <img src="assistant.png" alt="Assistant"/>
-        <a id="assistant-setup" class="no"><strong>Mise en Route Coté Assistant</strong></a>
-      </p>
-
-      <p>
-        Dayon! Assistant agit comme une application serveur typique (l'<em>assisté</em> va se connecter) et en tant que tel, vous devez configurer votre réseau
-        pour le rendre visible du monde extérieur.<br/><br/>
-        Par défaut, le serveur écoute le <strong>port</strong> 8080, mais vous pouvez le modifier si nécessaire.
-        Depuis la version 12, Dayon! crée indépendamment une règle de transfert de port correspondante. La condition préalable est que <strong>UPnP</strong> soit activé.
-        Sinon, il sera toujours nécessaire de rediriger le port (TCP) via <strong>NAT</strong> sur le <strong>routeur</strong> vers l'ordinateur correspondant.
-        <br/><br/>
-        Consultez <a href="https://portforward.com/router.htm">portforward.com</a> pour un guide étape par étape des modèles de routeur les plus courants.
-      </p>
-
-      <p>
-        <strong>Optional :</strong> Ajuster le port pour les connexions entrantes : (à gauche avec UPnP, à droite sans)
-      </p>
-
-      <p>
-        <img src="assistant_network_settings_upnp.jpg" alt="Dayon! Assistant : Network Settings avec UPnP"/>
-        <img src="assistant_network_settings_noupnp.jpg" alt="Dayon! Assistant : Network Settings sans UPnp"/>
-      </p>
-
-      <p>
-        Générez un code d'accès en cliquant sur la clé :
-      </p>
-
-      <p>
-        <img src="assistant_create_token.jpg" alt="Dayon! Assistant : Create Token"/>
-      </p>
-
-      <p>
-        Copiez le code d'accès généré dans le presse-papiers d'un simple clic de souris :
-      </p>
-
-      <p>
-        <img src="assistant_copy_token.jpg" alt="Dayon! Assistant : Copy Token"/>
-      </p>
-
-      <p>
-        C'est tout - communiquez ce <strong>code d'accès</strong> à l' <em>assisté</em> par courrier, messagerie instantanée ou téléphone.
-      </p>
-
-      <p>
-        <strong>Pour les impatients :</strong><a href="#assistant-start">Ici</a>,
-        vous apprendrez comment faire en sorte que l'assistant <a href="#assistant-start">écoute la connexion entrantes</a>.
-      </p>
-
-      <p>
-        <strong>Variante alternative (connexion sans code d'accès) :</strong> Ensuite, vous devez décider quelle
-        <strong>addresse IP</strong>vous voulez communiquer à l'<em>assistée</em> pour qu'il se connecte sur votre
-        ordinateur ; vous devez en principe donner votre addresse IP <strong>publique</strong>.
-        Mais pour un test sur votre réseau local (ou sur votre PC en local), vous pouvez utiliser une addresse privée. Vous pouvez obtenir votre
-        <strong>addresse IP publique</strong> avec le menu suivant :
-       <br/>
-        <img src="assistant_network_addresses.jpg" alt="Dayon! Assistant : Network IP Addresses"/>
-      </p>
-
-      <p>
-        Comme vous pouvez le voir sur l'image suivante, le menu contient différentes actions vous permettant de copier
-        dans le clipboard l'<strong>IP Address & Port Number</strong>.
-        Il vous sera ainsi facile de coller dans une session Jitsi (ou autre) ou dans un message email.
-      </p>
-
-      <p>
-        <img src="assistant_network_addresses_ex.jpg" alt="Dayon! Assistant : Network IP Address Actions"/>
-      </p>
-
-      <p>
-        <em>
-          Noter que cette addresse IP n'est pas requise pour l'<em>assistant</em>. En effet, l'application écoute sur toutes les interfaces réseaux
-          disponibles ; mais la personne assistée va avoir besoin de ces informations.
-        </em>
-      </p>
-
-      <p>
-        C'est tout pour la configuration réseau ;<br/>
-        <strong>Pour les impatients :</strong><a href="#assistant-start">Ici</a>, vous apprendrez comment faire en sorte que l'assistant
-        <a href="#assistant-start">écoute pour des connexions entrantes</a>.
-      </p>
-
-      <p>
-        Mais voyons tout d'abord continuer aux informations détaillées sur les options de configuration avancées le côté <em>assistée</em>.
-        <br/><br/>
-      </p>
-
-      <p>
-        <img src="assistant.png" alt="Assistant"/>
-        &nbsp;
-        <a id="assistant-details" class="no"><strong>Mise en Route Coté Assistant (La Suite)</strong></a>
-      </p>
-
-      <p>
-        Cette forme vous permet de configurer la façon dont l'écran est <strong>capturé</strong> ; vous pouvez configurer
-        l'interval de temps (en milliseconde) entre deux captures (aka. tic-tac) ainsi que le nombre de niveaux de gris.
-        Moins de niveaux veut dire moins d'information à transmettre sur le réseau (au détriment de la qualité des images).
-      </p>
-
-      <p>
-        <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant : Capture Settings"/>
-      </p>
-
-      <p>
-        Vous pouvez ensuite configuer la méthode de <strong>compression</strong> ; deux méthodes sont disponibles :
-        ZIP et XZ. XZ va donner les meilleurs résultats, mais demandent plus de CPU et memoire ; elle est
-        bien plus compliquées que ZIP et est de plus implémentées en JAVA (ZIP étant implémenté en code natif dans le JDK).
-      </p>
-
-      <p>
-        En plus de la compression, un <strong>cache</strong> est utilisé pour ne pas envoyer plusieurs fois des images identiques
-        comme, quand on ouvre et ferme un menu (i.e., l'image sous le menu n'a pas besoin d'être renvoyée). Pour cela, l'écran est divisé
-        en carreaux, chacun pouvant être caché. Vous devez définir le nombre maximum de carreaux dans le cache.
-        Noter que des carreaux représente 32x32 points de 256 niveaux de gris, ce qui fait 1 KO.
-      </p>
-
-      <p>
-        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings"/>
-      </p>
-
-      <p>
-        <a id="assistant-start" class="no">C'est à peu près tout. Après un clic sur le bouton play (le premièr à gauche)
-          l'<em>assistant</em> est prêt à recevoir des données :</a>
-      </p>
-
-      <p>
-        <img src="assistant_start.jpg" alt="Dayon! Assistant : Start"/>
-      </p>
-
-      <p>
-        Vous pouvez maintenant demander à l'<em>assistée</em> de se connecter. Vous serez alors promptement requis d'accepter une nouvelle connexion :
-      </p>
-
-      <p>
-        <img src="assistant_incoming_connection.jpg" alt="Dayon! Assistant : Incoming Connection"/>
-      </p>
-
-      <p>
-        Vous êtes maintenant connecté et vous surveillez l'ordinateur distant.
-        Veuillez comparer les empreintes digitales de l'<em>assistant</em> et de l'<em>assisté</em>.
-        <br/>
-        <strong>Attention</strong> : s'ils ne correspondent pas, la connexion n'est pas fiable !
-      </p>
-
-      <p>
         <img src="assistant_connected.jpg" alt="Dayon! Assistant : Running"/>
       </p>
+
+      <p>
+        <strong>Remarque :</strong> Si vous ne parvenez pas à vous connecter en suivant les instructions ci-dessus,
+        vous devez vérifier les <a href="settings.html">paramètres</a>.
+      </p>
+
+      <h2>Gérer la séance</h2>
 
       <p>
         Si le bureau de l'<em>assisté</em> ne rentre pas dans votre fenêtre, il peut être réduit :
@@ -282,17 +248,10 @@
         <img src="assistant_control.jpg" alt="Dayon! Assistant : Control Toggle"/>
       </p>
 
-      <p></p>
-      <h2>Fonctions avancées</h2>
-      <p>
-        Prérequis : Les fonctions suivantes nécessitent une connexion établie avec l'<em>assistée</em>.
-      </p>
-
-      <p></p>
       <h3>Transfert de presse-papiers</h3>
       <p>
         En cliquant sur le bouton haut ou bas, le presse-papiers de l'assistant peut être transféré vers
-        l'<em>assistée</em> (haut) ou le presse-papiers de l'assistée vers l'assistant (bas).
+        l'<em>assisté</em> (haut) ou le presse-papiers de l'assisté vers l'assistant (bas).
       </p>
 
       <p>
@@ -304,13 +263,13 @@
       <ul>
         <li>
           <strong>Texte</strong> : sélectionnez du texte localement ou dans la fenêtre
-          <em>assistée</em>, copiez (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite,
+          <em>assisté</em>, copiez (<code>Ctl + c</code>), cliquez vers le haut ou le bas. Ensuite,
           le texte transmis peut être inséré dans une application locale ou distante (<code>Ctrl + v</code>).
         </li>
 
         <li>
           <strong>Fichiers</strong> : sélectionnez un ou plusieurs fichiers localement ou dans la
-          fenêtre de la personne <em>assistée</em> (<code>Ctl + c</code>), cliquez vers le haut ou le bas.
+          fenêtre de la personne <em>assisté</em> (<code>Ctl + c</code>), cliquez vers le haut ou le bas.
           Ensuite, le ou les fichiers peuvent être insérés à la destination.
         </li>
 
@@ -334,7 +293,7 @@
       <p>
         La touche reste enfoncée jusqu'à ce que vous cliquiez à nouveau sur le symbole. Cela vous permet d'envoyer des
         raccourcis clavier Windows.<br/>
-        Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<em>assistée</em>, vous cliquez sur
+        Si vous avez besoin, par exemple, de réduire toutes les fenêtres sur l'<em>assisté</em>, vous cliquez sur
         le symbole Windows, appuyez sur la touche <code>M</code>, puis cliquez à nouveau sur le symbole Windows.
       </p>
 
@@ -353,9 +312,9 @@
         <br/>
         Donc pour envoyer la combinaison <code>Ctrl + Alt + Suppr</code> à l'<em>assisté</em>, vous devez d'abord cliquer sur le bouton <code>[Ctrl]</code>,
         puis appuyez simultanément sur les touches <code>Alt</code> et <code>Suppr</code>, relâchez-les et enfin, cliquez à nouveau sur le bouton <code>[Ctrl]</code>.
-        <br><br>
+        <br/><br/>
         <strong>Attention</strong> : En raison de restrictions du système d'exploitation, la combinaison <code>Ctrl + Alt + Suppr</code>
-        <strong>ne fonctionne pas</strong> sur les <em>assistés</em> qui fonctionnent sous Windows !<br>
+        <strong>ne fonctionne pas</strong> sur les <em>assistés</em> qui fonctionnent sous Windows !<br/>
         Utilisez plutôt la combinaison <code>Windows + R</code> qui offre des fonctionnalités similaires.
       </p>
 
@@ -369,48 +328,49 @@
         <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
       </p>
 
+      <p>
+        La fonction « Réinitialiser l'enregistrement d'écran » (symbole de la poubelle) supprime les données d'écran transmises et les recharge depuis l'assistant.
+      </p>
+
       <h3>Démarrez une réunion en ligne pour discuter en face à face</h3>
       <p>
-        Cliquez sur l'empreinte digitale du certificat de l'<em>assistée</em> et de l'<em>assistant</em> pour démarrer une réunion en ligne conjointe dans Jitsi Meeting.
+        Cliquez sur l'empreinte digitale du certificat de l'<em>assisté</em> et de l'<em>assistant</em> pour démarrer une réunion en ligne conjointe dans Jitsi Meeting.
       </p>
 
       <p>
         <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
       </p>
 
-      <p></p>
-      <h3>Connexion automatique de l'assistée</h3>
-      <h4>Via les paramètres de la ligne de commande</h4>
+      <h3>Compteurs de statistiques</h3>
+      <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
       <p>
-        Le nom d'hôte ou l'adresse IP et le port de l'assistant peuvent être transmis via des paramètres de ligne de commande :
-        <ul>
-          <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
-          <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
-          <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
-          <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
-          <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
-        </ul>
-        Si l'assisté est démarré avec ces paramètres, il se connecte directement à l'hôte transféré sans demander.
+        La barre d'état de l'assistant affiche, en plus de la disposition du clavier, les compteurs suivants :
       </p>
-
-      <h4>Via le fichier de configuration</h4>
+      <ol>
+        <li>Bande passante réseau</li>
+        <li>Compression Ratio : combien de fois la capture initiale (diff only) a été comprimé</li>
+        <li>
+          Number of Tiles : le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
+        </li>
+        <li>
+          Number of Skipped Capture : le nombre de captures d'écran qui ont été
+          ignorées En raison d'un taux trop élevé (c'est-à-dire, une valeur de
+          cotation faible) pour les CPU. Pour minimiser cette, vous devez
+          ralentir le taux de capture en utilisant une valeur plus grande.
+        </li>
+        <li>
+          Number of Merged Capture : le nombre de captures d'écran fusionnées
+          avant d'être transmis. Ceci est dû à un taux de capture trop élevé
+          pour le courant méthode de compression. Pour minimiser ce nombre,
+          vous devez ralentir la capture taux et/ou changer la méthode de
+          compression en utilisant un plus rapide.
+        </li>
+        <li>Utilisation de la mémoire</li>
+        <li>Durée de la session d'assistance active ou de la dernière</li>
+      </ol>
+      
       <p>
-        À partir de la version v11.0.5, les paramètres de connexion peuvent être stockés dans un fichier
-        <code>YAML</code>. La structure est extrêmement simple :
-      </p>
-
-      <pre>
-host: "an.example.com"
-port: 8080</pre>
-      Ce fichier peut être enregistré sous le nom <code><a href="assisted.yaml">assisted.yaml</a></code>
-      soit dans le Dayon! répertoire personnel, dans le répertoire utilisateur, ou dans le même répertoire que le
-      <code>.jar</code>, resp. Fichier <code>.exe</code>. Cet ordre correspond également à la priorité avec laquelle
-      ils sont pris en compte dans le cas de configurations multiples existent. (la première gagne)<br/>
-      Pour éviter que l'assisté ne se connecte automatiquement juste après le démarrage,
-      <code><a href="assisted.yaml">assisted.yaml</a></code> la ligne suivante peut être ajoutée :
-      <pre>autoConnect : false</pre>
-      <p>
-        C'est tout ! Vous trouverez plus d'information sur la page <a href="fr_support.html">support</a>.
+        C'est tout ! Vous trouverez plus d'information sur la page <a href="fr_settings.html">paramètres</a>.
       </p>
     </div>
     <div id="footer"></div>

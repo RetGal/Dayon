@@ -28,9 +28,9 @@
         </div>
         <a href="fr_index.html">Accueil</a><br/>
         <a href="fr_quickstart.html">Premiers Pas</a><br/>
+        <a href="fr_settings.html">Paramètres</a><br/>
         <a href="fr_download.html">Télécharger</a><br/>
         <a href="fr_support.html">Aide</a><br/>
-        <a href="fr_feedback.html">Réactions</a><br/>
         <a href="fr_privacy.html">Confidentialité</a><br/>
         <a href="https://github.com/retgal/dayon">GitHub</a>
       </nav>
@@ -46,77 +46,40 @@
     <div id="menu">
       <a href="fr_index.html">Accueil</a>
       <a href="fr_quickstart.html">Premiers Pas</a>
+      <a href="fr_settings.html">Paramètres</a>
       <a href="fr_download.html">Télécharger</a>
       <a href="fr_support.html">Aide</a>
-      <a href="fr_feedback.html">Réactions</a>
-      <a href="fr_privacy.html">Confidentialité</a>
+      <a href="fr_privacy.html">Confidentialité</a>>
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
       <h2>Aide</h2>
       <p>
-        Vous pouvez poster une question ou ouvrir une quiestion sur
-        <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+        Vos commentaires et réactions sont très bienvenus - vous pouvez ouvrir une question sur <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
 
       <h3>Dayon! Répertoire de base</h3>
       <p>
-        Le répertoire <code>.dayon</code>
-        est créé dans le répertoire de base par défaut de l'utilisateur
-        connecté ou dans le répertoire référencé par la propriété JAVA
-        <code>user.home</code>
-        et contient les préférences utilisateur enregistrées et fichier(s) de
-        journal par défaut.
+        Le répertoire <code>.dayon</code> est créé dans le répertoire de base par défaut de l'utilisateur
+        connecté ou dans le répertoire référencé par la propriété JAVA <code>user.home</code>
+        et contient les préférences utilisateur enregistrées et fichier(s) de journal par défaut.
       </p>
 
       <h3>Somme de contrôle CRC</h3>
       <p>
         Sur le côté de l'assistée, l'écran est divisé en différentes zones appelées <em>tuiles</em>.
-        Seules les tuiles qui ont été modifiées depuis la capture précédente
-        sont envoyées sur le Côté assistant. Pour déterminer si une tuile est
-        différente, je suis en train de calculer un code CRC (C'est-à-dire,
-        une valeur entière unique représentant les pixels de la tuile) qui
-        n'est pas parfaite Par souci de rapidité. Il se peut donc que
-        certaines tuiles <em>changées</em> ne soient pas envoyées à l'assistant.
+        Seules les tuiles qui ont été modifiées depuis la capture précédente sont envoyées sur le Côté assistant.
+        Pour déterminer si une tuile est différente, je suis en train de calculer un code CRC (C'est-à-dire,
+        une valeur entière unique représentant les pixels de la tuile) qui n'est pas parfaite Par souci de rapidité.
+        Il se peut donc que certaines tuiles <em>changées</em> ne soient pas envoyées à l'assistant.
       </p>
 
       <p>
-        Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour
-        très peu de pixels. Visuellement, je n'ai rien remarqué de sérieux.
-        Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer
-        L'aide ou avant d'essayer l'action
-        <code>reset</code> (<strong>l'icône poubelle</strong>)
-        Qui devrait effacer toutes les données en cache et renvoyer une
-        capture plein écran à partir de zéro.
+        Jusqu'à présent, j'ai détecté ce problème lors de tests forts pour très peu de pixels. Visuellement, je n'ai
+        rien remarqué de sérieux. Mais au cas où les choses vont fou, vous pouvez ensuite redémarrer
+        L'aide ou avant d'essayer l'action <code>reset</code> (<strong>l'icône poubelle</strong>)
+        Qui devrait effacer toutes les données en cache et renvoyer une capture plein écran à partir de zéro.
       </p>
-
-      <h3>Compteurs de statistiques</h3>
-      <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
-      <p>
-        La barre d'état de l'assistant affiche, en plus de la disposition du clavier, les compteurs suivants :
-      </p>
-      <ol>
-        <li>Bande passante réseau</li>
-        <li>Compression Ratio : combien de fois la capture initiale (diff only) a été comprimé</li>
-        <li>
-          Number of Tiles : le nombre de carreaux étant également transmis sur le réseau ou servis depuis le cache.
-        </li>
-        <li>
-          Number of Skipped Capture : le nombre de captures d'écran qui ont été
-          ignorées En raison d'un taux trop élevé (c'est-à-dire, une valeur de
-          cotation faible) pour les CPU. Pour minimiser cette, vous devez
-          ralentir le taux de capture en utilisant une valeur plus grande.
-        </li>
-        <li>
-          Number of Merged Capture : le nombre de captures d'écran fusionnées
-          avant d'être transmis. Ceci est dû à un taux de capture trop élevé
-          pour le courant méthode de compression. Pour minimiser ce nombre,
-          vous devez ralentir la capture taux et/ou changer la méthode de
-          compression en utilisant un plus rapide.
-        </li>
-        <li>Utilisation de la mémoire</li>
-        <li>Durée de la session d'assistance active ou de la dernière</li>
-      </ol>
 
       <h3>Empreintes des certificats</h3>
       <p>
