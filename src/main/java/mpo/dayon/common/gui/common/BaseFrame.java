@@ -31,7 +31,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
 
-    protected static final String ROLLOVER_ICON = "ROLOVER_ICON";
+    protected static final String ROLLOVER_ICON = "ROLLOVER_ICON";
 
     protected static final String SELECTED_ICON = "SELECTED_ICON";
 

@@ -304,7 +304,6 @@ class AssistantFrame extends BaseFrame {
                 controlActivated.set(!controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
-                screenshotButton.setEnabled(controlActivated.get());
             }
         };
         remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
@@ -407,6 +406,7 @@ class AssistantFrame extends BaseFrame {
         actions.getToggleCompatibilityModeAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
         // session
+        screenshotButton.setEnabled(false);
         actions.getResetAction().setEnabled(false);
         // settings
         actions.getNetworkConfigurationAction().setEnabled(true);
@@ -453,6 +453,7 @@ class AssistantFrame extends BaseFrame {
         getStatusBar().setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
+        screenshotButton.setEnabled(true);
         actions.getResetAction().setEnabled(true);
         enableControls();
         validate();
@@ -579,7 +580,6 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
         ctrlKeyToggleButton.setEnabled(false);
-        screenshotButton.setEnabled(false);
         disableTransferControls();
     }
 
@@ -593,7 +593,6 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
         ctrlKeyToggleButton.setSelected(false);
-        screenshotButton.setEnabled(true);
         enableTransferControls();
     }
 
