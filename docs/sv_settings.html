@@ -53,11 +53,148 @@
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
-      <h2>Feedback</h2>
+      <h2>Settings</h2>
+
+      <h3><img src="assistant.png" alt="Hjälpgivare"/> &nbsp;<a id="assistant-details" class="no"><strong>Hjälpgivarens dator</strong></a></h3>
+
       <p>
-        Din feedback är mer än välkommen - du kan öppna nya ärenden på
-        <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
+        Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom antal gråskalor i bilden.
       </p>
+
+      <p>
+        <img src="assistant_capture_settings.jpg" alt="Dayon! Hjälpgivare: Skärmbildsinställning"/>
+      </p>
+
+      <p>
+        Sedan kan du välja metod för <strong>komprimering</strong>; två metoder finns att välja på: ZIP och XZ. XZ uppnår en (mycket) bättre kompression, men tar mer kraft från CPU och internminne pga. dess komplexitet och att den utförs i JAVA.
+      </p>
+
+      <p>
+        Dessutom, används en <strong>cache</strong> för att inte behöva sända samma bitmap flera gånger, t.ex.  när menyer öppnas och navigeras (dvs. det som finns i undermenyer skickas inte mer än en gång). Skärmbilden är indelad i många sektioner, där varje kan bli cachad. Du kan definiera det maximala antalet sektioner i cachen. Observera att en sektion i nuvarande version är 32x32 pixlar i 256 gråskalor, vilket motsvarar c:a 1K.
+      </p>
+
+      <p>
+        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Komprimeringsinställningar"/>
+      </p>
+
+      <h3>Utökade anslutningsinställningar</h3>
+      <p>
+        <img src="assistant_token_server.jpg" alt="Dag! Assistent: Tokenserver"/>
+      </p>
+
+      <p>
+        Förutom portnumret som <em>hjälpgivare</em> lyssnar på, kan tokenservern som ska användas konfigureras i dialogrutan för nätverksinställningar.
+        Antingen standardtokenservern eller en anpassad kan användas. En lista över tillgängliga tokenservrar finns nedan.
+        <strong>Viktigt:</strong> Se till att du använder samma tokenserver på assistenten och den assisterade sidan!
+      </p>
+
+      <p>
+        <br/>
+      </p>
+
+      <h3><img src="assisted.png" alt="hjälptagare"/> &nbsp;&nbsp;<a id="assisted-details" class="no"><strong>Hjälptagarens dator</strong></a></h3>
+
+      <h3>UAC-inställningar</h3>
+      <p>
+        För att <em>hjälpgivare</em> ska se alla systemdialogrutor måste UAC-inställningarna (User Account Control) justeras under Windows.
+        För enkelhetens skull är dialogrutan för UAC-inställningar direkt tillgänglig från det <em>hjälptagare</em> användargränssnittet.
+        Den näst lägsta inställningen för har visat sig vara användbar.
+      </p>
+
+      <p>
+        <img src="assisted_uac.jpg" alt="Dayon! hjälptagare: UAC"/>
+      </p>
+
+      <h3>Utökade anslutningsinställningar</h3>
+      <p>
+        <img src="assisted_token_server.jpg" alt="Dayon! hjälptagare: tokenservrar"/>
+      </p>
+
+      <p>
+        I dialogrutan för nätverksinställningar för den <em>hjälptagare</em> kan du konfigurera portnumret och IP-adressen för <em>hjälpgivare</em> manuellt, om du vill
+        ansluta utan token.<br/>
+        Du kan också aktivera eller inaktivera den automatiska anslutningen för den <em>hjälptagare</em>.
+        Om den är aktiverad kommer den <em>hjälptagare</em> att ansluta direkt till den givna värden utan ytterligare förfrågan, nästa gång du startar den <em>hjälptagare</em>.<br/>
+        Du kan också konfigurera tokenservern som ska användas. Antingen kan standardtokenservern eller en anpassad server ställas in.
+        En lista över tillgängliga tokenservrar finns <a href="#token_servers">längst ner</a> på den här sidan.<br>
+        <strong>Viktigt:</strong> Se till att du använder samma token-server på den hjälptagare som på den hjälpgivare sidan!
+      </p>
+
+      <p></p>
+
+      <h3>Automatisk anslutning av hjälptagaren via command line parametrar</h3>
+      <p>
+        Värdnamn (Host Name) eller IP-adress och port för hjälpgivaren kan överföras via command line parametrar, där ah=värdnamn eller IP-adress och ap=portnummer:
+        <ul>
+          <li><code>dayon_assisted.sh ah=an.example.com ap=4242</code> (Linux/macOS)</li>
+          <li><code>dayon.assisted ah=an.example.com ap=4242</code> (Linux Snap)</li>
+          <li><code>./assisted.sh ah=an.example.com ap=4242</code> (Linux Quick Launch)</li>
+          <li><code>java -jar dayon.jar ah=an.example.com ap=4242</code> (Windows/Linux/macOS)</li>
+          <li><code>assisted.exe ah=an.example.com ap=4242</code> (Windows Quick Launch)</li>
+        </ul>
+        Om hjälptagaren startas med dessa parametrar, så ansluter den direkt till värden "an.example.com" och porten "4242".
+      </p>
+
+      <h3>Konfigurerar Dayon! via konfigurationsfil</h3>
+      <p>
+        Alltsedan version v11.0.5, så kan anslutningsparametrar (connection parameters) lagras i en <code>YAML</code> fil.
+        <br/><br/>
+        Detta gör det möjligt att åsidosätta användarinställningar eftersom konfigurationen från YAML alltid läses och utvärderas vid uppstart. Användare kan göra ändringar i applikationen, men dessa varar bara till nästa start om en YAML-konfiguration finns på plats.
+        <br/><br/>
+        Det primära användningsfallet för YAML-konfigurationer skulle vara för organisationer som vill använda en egenvärdig tokenserver istället för den offentliga tokenservern, eller som vill ange en viss värd som den assisterade automatiskt ska ansluta till vid start.
+        <br/><br/>
+        Strukturen för den <em>hjälptagaren</em> YAML är extremt enkel:
+      </p>
+
+<pre>
+host: "an.example.com"
+port: 8080
+# autoConnect: false
+# tokenServerUrl: "https://example.org/token"
+</pre>
+
+      <p>
+        <ul>
+          <li>För att förhindra den hjälptagaren från att automatiskt ansluta direkt efter starten, i <code>assisted.yaml</code>
+            avkommenterar du bara följande rad: <code># autoConnect: false</code>
+          </li>
+          <li>För att få assisterad användning av annan tokenserver än standardservern för offentliga token, i <code>assisted.yaml</code>,
+            avkommenterar du bara följande rad och<br/>
+            ställer in lämplig URL:<code># tokenServerUrl: "https://example.org/token"</code><br/>
+            <strong>Viktigt:</strong> se till att använda samma som hjälpgivare!
+          </li>
+        </ul>
+      </p>
+
+      <p>
+        <em>Hjälpgivare</em> har också en YAML-konfigurationsfil.
+        <br/>
+        <ul>
+          <li>
+            För att få hjälpgivare att använda en annan tokenserver än standardservern för offentliga token, i <code>assistant.yaml</code>,
+            avkommentera bara följande rad och<br/>
+            ange lämplig URL: <code># tokenServerUrl: "https://example.org/token"</code><br/>
+            <strong>Viktigt:</strong> se till att använda samma som hjälptagare!
+          </li>
+        </ul>
+        Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), in användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.
+        <code>.exe</code> filerna. Detta återspeglar också den prioritetsordning som gäller om flera filer finns. (den första vinner)
+        <br/>
+      </p>
+
+      <h3><a id="token_servers" class="no">Offentliga tokenservrar</a></h3>
+      <p>
+        Nedan hittar du en lista över tillgängliga offentliga token-servrar som är gratis att använda.<br/>
+        Vill du bidra och lägga till din RVS på listan? <a href="https://github.com/RetGal/Dayon/issues">meddela mig</a>!
+        <br/><br/>
+        Kontrollera tillgängligheten för en token-server genom att klicka på dess länk. Om ett versionsnummer visas direkt är det aktivt.
+        <ul>
+          <li><strong><a href="https://fensterkitt.ch/dayon/">https://fensterkitt.ch/dayon/</a></strong></li>
+          <li><strong><a href="https://dayon.helioho.st/rvs/">https://dayon.helioho.st/rvs/</a></strong></li>
+        </ul>
+        Du kan hitta instruktioner om hur du använder din egen token-server <a href="https://github.com/RetGal/Dayon/tree/master/ext">här</a>.
+      </p>
+
     </div>
     <div id="footer"></div>
   </div>
