@@ -55,7 +55,7 @@
     <div id="content">
       <h2>Komma igång</h2>
       <p>
-Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via Jitsi, telefon, chat eller vad de nu gillar bäst. Genom att starta Dayon! så kan <em>hjälpgivaren</em> se skärmen och styra <em>hjälpmottagarens</em> dator.
+        Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via Jitsi, telefon, chat eller vad de nu gillar bäst. Genom att starta Dayon! så kan <em>hjälpgivaren</em> se skärmen och styra <em>hjälpmottagarens</em> dator.
       </p>
 
       <p>
@@ -70,56 +70,7 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         <br/>
       </p>
 
-      <p>
-        <img src="assisted.png" alt="hjälptagare"/> &nbsp;
-        <a id="assisted-setup" class="no"><strong>Använda hjälptagarens dator</strong></a>
-      </p>
-
-      <p>
-        Dayon! Hjälptagare är en klientapplikation som anropar yttervärlden. Därför behövs ingen särskild nätverkskonfigurering göras för att kunna installera och använda programmet.
-      </p>
-
-      <p>
-        Ladda ned och installera Dayon!. Starta sedan <em>Dayon! Hjälptagare</em> (du borde ha en genväg på skrivbordet) och klicka "play"-knappen uppe till vänster.
-      </p>
-
-      <p>
-        <img src="assisted_ready.jpg" alt="Dayon! Hjälptagare : Klar"/>
-      </p>
-
-      <p>
-        Ange anslutningsnyckeln som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
-        <br/>
-      </p>
-
-      <p>
-        <img src="assisted_token.jpg" alt="Dayon! Hjälptagare : Anslutningsnyckel"/>
-        <br/>
-        (om du redan anslutit till denna <em>hjälpgivare</em> nyligen, så kan du lämna fältet tomt)
-      </p>
-
-      <p>
-        <strong>Alternativ variant (anslutning utan anslutningsnyckel):</strong>
-        Ange både den IP-adress och den port som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
-        <br/>
-      </p>
-
-      <p>
-        <img src="assisted_network.jpg" alt="Dayon! Hjälptagare : Nätverk"/>
-        <br/>
-        (båda fälten kan rensas genom att dubbelklicka i dem)
-      </p>
-
-      <p>
-        Du kommer att anslutas till <em>hjälpgivaren</em> inom kort, som sedan kan se din skärm. Grattis!
-        <br/>
-        <br/>
-      </p>
-
-      <p>
-        <img src="assistant.png" alt="Hjälpgivare"/> &nbsp;
-        <a id="assistant-setup" class="no"><strong>Använda hjälpgivarens dator</strong></a>
-      </p>
+      <h3><img src="assistant.png" alt="Hjälpgivare"/> &nbsp;&nbsp;<a id="assistant-setup" class="no"><strong>Använda hjälpgivarens dator</strong></a></h3>
 
       <p>
         Dayon! Hjäpgivare agerar som en typisk serverapplikation (som <em>hjälptagaren</em> ansluer till) och därför behöver du konfigurera ditt nätverk så att hjälpgivaren kan bli synlig för yttervärlden.<br/><br/>
@@ -163,8 +114,12 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         <em>hjälpgivaren</em> <a href="#assistant-start">att lyssna efter inkommande anslutningar</a>.
       </p>
 
+      <h3>Alternativ variant: anslut utan anslutningsnyckel</h3>
       <p>
-        <strong>Alternativ variant (anslut utan anslutningsnyckel):</strong> Du måste bestämma vilken <strong>IP-adress</strong> du vill meddela <em>hjälptagaren</em> för att ansluta sig till <em>hjälpgivaren</em>; du ska normalt sett ange din <strong>publika</strong> IP-adress, men om du vill testa inom ditt lokala nätverk så kanske du vill använda en annan IP-adress. Du kan få reda på din <strong>publika IP-adress</strong> i följande meny:
+        Om du inte vill generera en åtkomsttoken måste du bestämma vilken IP-adress du vill meddela den <em>hjälptagaren</em>
+        för att ansluta till <em>hjälpgivaren</em>; du ska normalt sett ange din <strong>publika</strong> IP-adress.
+        Men för att testa inom ditt lokala nätverk kanske du vill använda ett annat. Du kan hämta din publika IP-adress
+        genom att klicka på nätverksknappen:
       </p>
 
       <p>
@@ -193,39 +148,8 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
-        Men låt oss först se på de avancerade inställningsmöjligheterna.
-        <br/>
-        <br/>
-      </p>
-
-      <p>
-        <img src="assistant.png" alt="Hjälpgivare"/>
-        &nbsp; <a id="assistant-details" class="no"><strong>Mer om hjälpgivarens inställningar</strong></a>
-      </p>
-
-      <p>
-        Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom antal gråskalor i bilden.
-      </p>
-
-      <p>
-        <img src="assistant_capture_settings.jpg" alt="Dayon! Hjälpgivare: Skärmbildsinställning"/>
-      </p>
-
-      <p>
-        Sedan kan du välja metod för <strong>komprimering</strong>; två metoder finns att välja på: ZIP och XZ. XZ uppnår en (mycket) bättre kompression, men tar mer kraft från CPU och internminne pga. dess komplexitet och att den utförs i JAVA.
-      </p>
-
-      <p>
-        Dessutom, används en <strong>cache</strong> för att inte behöva sända samma bitmap flera gånger, t.ex.  när menyer öppnas och navigeras (dvs. det som finns i undermenyer skickas inte mer än en gång). Skärmbilden är indelad i många sektioner, där varje kan bli cachad. Du kan definiera det maximala antalet sektioner i cachen. Observera att en sektion i nuvarande version är 32x32 pixlar i 256 gråskalor, vilket motsvarar c:a 1K.
-      </p>
-
-      <p>
-        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Komprimeringsinställningar"/>
-      </p>
-
-      <p>
         <a id="assistant-start" class="no">
-          Det var det mesta. Efter ett klick på "play"- knappen (längst upp till vänster) så är 
+          Det var det mesta. Efter ett klick på "play"- knappen (längst upp till vänster) så är
           <em>hjälpgivaren</em> klar att ta emot inkommande förfrågningar om anslutning:
         </a>
       </p>
@@ -249,8 +173,60 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
       </p>
 
       <p>
+        <br/>
+      </p>
+
+      <h3><img src="assisted.png" alt="hjälptagare"/> &nbsp;&nbsp;<a id="assisted-setup" class="no"><strong>Använda hjälptagarens dator</strong></a></h3>
+
+      <p>
+        Dayon! Hjälptagare är en klientapplikation som anropar yttervärlden. Därför behövs ingen särskild nätverkskonfigurering göras för att kunna installera och använda programmet.
+      </p>
+
+      <p>
+        Ladda ned och installera Dayon!. Starta sedan <em>Dayon! Hjälptagare</em> (du borde ha en genväg på skrivbordet) och klicka "play"-knappen uppe till vänster.
+      </p>
+
+      <p>
+        <img src="assisted_ready.jpg" alt="Dayon! Hjälptagare : Klar"/>
+      </p>
+
+      <p>
+        Ange anslutningsnyckeln som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted_token.jpg" alt="Dayon! Hjälptagare : Anslutningsnyckel"/>
+        <br/>
+        (om du redan anslutit till denna <em>hjälpgivare</em> nyligen, så kan du lämna fältet tomt)
+      </p>
+
+      <h3><h3>Alternativ variant: anslut utan anslutningsnyckel</h3></h3>
+      <p>
+        Ange både den IP-adress och den port som <em>hjälpgivaren</em> gett dig och bekräfta med OK:
+        <br/>
+      </p>
+
+      <p>
+        <img src="assisted_network.jpg" alt="Dayon! Hjälptagare : Nätverk"/>
+        <br/>
+        (båda fälten kan rensas genom att dubbelklicka i dem)
+      </p>
+
+      <p>
+        Du kommer att anslutas till <em>hjälpgivaren</em> inom kort, som sedan kan se din skärm. Grattis!
+        <br/>
+      </p>
+
+      <p>
         <img src="assistant_connected.jpg" alt="Dayon! Hjälpgivare : Aktiv"/>
       </p>
+
+      <p>
+        <strong>Obs:</strong> Om du inte kan ansluta genom att följa instruktionerna ovan bör du kontrollera att du har rätt inställningar.
+      </p>
+
+      <h2>Hantera sessionen</h2>
 
       <p>
         Om skärmbilden hos <em>hjälptagaren</em> inte ryms i ditt fönster, så kan det anpassas till ditt fönster:
@@ -273,13 +249,6 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         <img src="assistant_control.jpg" alt="Dayon! Hjälpgivare : Växla distanskontroll"/>
       </p>
 
-      <p></p>
-      <h2>Avancerade funktioner</h2>
-      <p>
-        Förutsättning: Följande funktioner kräver att det är en aktiv anslutning mellan hjälpgivare och hjälptagare.
-      </p>
-
-      <p></p>
       <h3>Urklippsöverföring</h3>
       <p>
         Genom att klicka på upp- eller ned-pilen, så kan antingen hjälpgivarens urklipp överföras till hjälptagaren (upp) eller hjälptagarens urklipp överföras till hjälpgivaren (ned).
@@ -364,39 +333,32 @@ Vanligtvis kommunicerar <em>hjälpgivaren</em> med <em>hjälpmottagaren</em> via
         <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
       </p>
 
-      <p></p>
-      <h3>Automatisk anslutning av hjälptagaren</h3>
-      <h4>Via command line parametrar</h4>
+      <h3>Mätare</h3>
+      <img src="stats_counters.jpg" alt="Dayon! Hjälpgivare : Mätare"/>
       <p>
-        Värdnamn (Host Name) eller IP-adress och port för hjälpgivaren kan överföras via command line parametrar:
-        <ul>
-          <li><code>dayon_assisted.sh ah=example.com ap=4242</code> (Linux/macOS)</li>
-          <li><code>dayon.assisted ah=example.com ap=4242</code> (Linux Snap)</li>
-          <li><code>./assisted.sh ah=example.com ap=4242</code> (Linux Quick Launch)</li>
-          <li><code>java -jar dayon.jar ah=example.com ap=4242</code> (Windows/Linux/macOS)</li>
-          <li><code>assisted.exe ah=example.com ap=4242</code> (Windows Quick Launch)</li>
-        </ul>
-        Om hjälptagaren startas med dessa parametrar, så ansluter den direkt till den angivna Värden (host).
+        Statusfältet i nederkanten av hjälpgivarens fönster visar, utöver tangentbordets språklayout, ett antal mätare.
       </p>
+      <ol>
+        <li>Bandbreddsanvändning</li>
+        <li>
+          Kompressionsgrad: hur många gånger urpsprungsbilden (dess förändringar) har komprimerats
+        </li>
+        <li>
+          Antal mottagna sektioner: antalet sektioner som överförts och träffprocent för cache.
+        </li>
+        <li>
+          Antal skippade skärmbilder: antalet avläsningar som har skippats pga. för högt värde för CPUn (dvs för lågt satt tick). För att minska antalet så behöver du öka tick för att inte avläsa skärmen lika ofta.
+        </li>
 
-      <h4>Via konfigurationsfil</h4>
-      <p>
-        Alltsedan version v11.0.5, så kan anslutningsparametrar (connection parameters) lagras i en <code>YAML</code> fil.
-        Strukturen är extremt enkel:
-      </p>
+        <li>
+          Antal sammanfogade skärmbilder: antalet avläsningar som har sammanfogats innan de överförts. Detta beror på att tick satts för lågt för den valda komprimeringsmetoden. För att minska värdet så behöver du öka tick för att inte avläsa skärmen lika ofta eller byta till en snabbare komprimeringsmetod.
+        </li>
 
-      <pre>
-host: "an.example.com"
-port: 8080</pre>
-      Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), in användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.
-      <code>.exe</code> filerna. Detta återspeglar också den prioritetsordning som gäller om flera filer finns. (den första vinner)
-      <br/>
-      För att undvika att den hjälptagande automatiskt ansluter direkt efter start,
-      <code><a href="assisted.yaml">assisted.yaml</a></code> så kan följande rad läggas till:
-      <pre>autoConnect: false</pre>
-      <p>
-        Det var allt, gott folk! Du hittar mer information på <a href="support.html">supportsidan</a>.
-      </p>
+        <li>Använt minne av totalt tillgängligt</li>
+        <li>Sessionslängd för aktiv anslutning eller den senaste anslutningen</li>
+      </ol>
+
+
     </div>
     <div id="footer"></div>
   </div>
