@@ -25,7 +25,7 @@ class TileCounterTest {
         // given
         TileCounter tc= new TileCounter(null, null);
         tc.start(1000);
-        CounterListener cl = mock(CounterListener.class);
+        CounterListener<Long> cl = (CounterListener<Long>) mock(CounterListener.class);
         tc.addListener(cl);
         int tiles = 10;
         int hits = 5;

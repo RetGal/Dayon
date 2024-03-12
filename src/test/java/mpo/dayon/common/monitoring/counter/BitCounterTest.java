@@ -37,7 +37,7 @@ class BitCounterTest {
     void computeAndResetInstantValue() {
         // given
         BitCounter bc = new BitCounter(null, null);
-        CounterListener cl = mock(CounterListener.class);
+        CounterListener<Double> cl = (CounterListener<Double>) mock(CounterListener.class);
         bc.addListener(cl);
         bc.start(1);
 
