@@ -2,7 +2,6 @@ package mpo.dayon.common.gui.statusbar;
 
 import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.monitoring.counter.Counter;
-import mpo.dayon.common.monitoring.counter.CounterListener;
 import mpo.dayon.common.utils.SystemUtilities;
 
 import javax.swing.*;
@@ -59,14 +58,14 @@ public class StatusBar extends JPanel {
         add(keyboardLayout);
     }
 
-    public void addCounter(Counter<?> counter, int width) {
+    public <T> void addCounter(Counter<T> counter, int width) {
         final JLabel lbl = new JLabel(counter.getUid());
         final Dimension dimension = new Dimension(width, HEIGHT);
         lbl.setHorizontalAlignment(CENTER);
         lbl.setSize(dimension);
         lbl.setPreferredSize(dimension);
         lbl.setToolTipText(counter.getShortDescription());
-        counter.addListener((CounterListener) (counter1, value) -> lbl.setText(counter1.formatInstantValue(value)));
+        counter.addListener((counter1, value) -> lbl.setText(counter1.formatInstantValue(value)));
         add(lbl);
     }
 

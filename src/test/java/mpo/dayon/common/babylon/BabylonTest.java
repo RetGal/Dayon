@@ -13,7 +13,7 @@ class BabylonTest {
     void shouldTranslate() {
         // given
         Locale defaultLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("de"));
+        Locale.setDefault(Locale.forLanguageTag("de"));
 
         // when, then
         assertEquals("Assistent", Babylon.translate("assistant"));
@@ -25,7 +25,7 @@ class BabylonTest {
     void shouldTranslateWithArguments() {
         // given
         Locale defaultLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("ru"));
+        Locale.setDefault(Locale.forLanguageTag("ru"));
 
         // when, then
         assertEquals("1.1.1.1 ( общедоступный )", Babylon.translate("ipAddressPublic", "1.1.1.1"));
@@ -45,7 +45,7 @@ class BabylonTest {
     void shouldTranslateEnum() {
         // given
         Locale defaultLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("fr"));
+        Locale.setDefault(Locale.forLanguageTag("fr"));
 
         // when, then
         assertEquals("16 - acceptable", Babylon.translateEnum(Gray8Bits.X_16));
