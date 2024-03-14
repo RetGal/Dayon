@@ -122,19 +122,15 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void setupWindow() {
-        configuration = new FrameConfiguration(frameType);
-        if (frameType.equals(ASSISTED)) {
-            dimension = new Dimension(frameType.getMinWidth(), frameType.getMinHeight());
-            setResizable(false);
-        } else {
-            dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
-                    Math.max(configuration.getHeight(), frameType.getMinHeight()));
-        }
+        this.configuration = new FrameConfiguration(frameType);
+        this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
+                Math.max(configuration.getHeight(), frameType.getMinHeight()));
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
-        setSize(dimension.width, dimension.height);
-        setLocation(position.getX(), position.getY());
+        this.setSize(dimension.width, dimension.height);
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
+        this.setLocation(position.getX(), position.getY());
     }
 
     protected void setupToolBar(ToolBar toolBar) {
@@ -144,8 +140,8 @@ public abstract class BaseFrame extends JFrame {
             FINGERPRINTS.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(FINGERPRINTS);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
+        //toolBar.addAction(createShowInfoAction(), alignmentY);
+        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -221,6 +217,7 @@ public abstract class BaseFrame extends JFrame {
         button.setHideActionText(true);
         button.setAction(action);
         button.setFont(DEFAULT_FONT);
+        button.setText((String) action.getValue(DISPLAY_NAME));
         button.setRolloverIcon((Icon) action.getValue(ROLLOVER_ICON));
         button.setPressedIcon((Icon) action.getValue(PRESSED_ICON));
         button.setSelectedIcon((Icon) action.getValue(SELECTED_ICON));
