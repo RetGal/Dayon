@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.gui;
 
-import com.dosse.upnp.UPnP;
+//import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
