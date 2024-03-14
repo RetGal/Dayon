@@ -10,6 +10,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
@@ -17,10 +18,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.dosse.upnp.UPnP;
-import mpo.dayon.assistant.gui.Assistant;
-import mpo.dayon.assistant.network.NetworkAssistantEngine;
-import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -99,7 +96,6 @@ public abstract class BaseFrame extends JFrame {
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
         setupWindow();
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
     }
 
     private void setupWindow() {
@@ -110,8 +106,18 @@ public abstract class BaseFrame extends JFrame {
         this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         this.setSize(dimension.width, dimension.height);
-        setTitle(format("Fensterkitt Support App %s", Version.get()));
-        this.setLocation(position.getX(), position.getY());
+        String titleString = "Fensterkitt Support App";
+        updateTitle(titleString, Version.get());
+    }
+
+    private void updateTitle(String titleString, Version version) {
+        setTitle(titleString, version);
+        new Timer(5000, e -> setTitle(titleString, version)).start();
+    }
+
+    private void setTitle(String titleString, Version version) {
+        Locale locale = InputContext.getInstance().getLocale();
+        setTitle(format("%s %s %s", titleString, version, locale != null ? locale.toString() : ""));
     }
 
     protected void setupToolBar(ToolBar toolBar) {
@@ -121,12 +127,7 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        //toolBar.addAction(createShowInfoAction(), alignmentY);
-        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
-        if (FrameType.ASSISTANT.equals(frameType)) {
-            toolBar.add(DEFAULT_SPACER);
-        }
         add(toolBar, BorderLayout.NORTH);
         toolBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
         this.toolBar = toolBar;
@@ -275,7 +276,7 @@ public abstract class BaseFrame extends JFrame {
         return showSystemInfo;
     }
 
-    protected Action createConnectionSettingsAction(Assistant assistant) {
+    protected Action createConnectionSettingsAction() {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -287,7 +288,7 @@ public abstract class BaseFrame extends JFrame {
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, (assistant != null && assistant.isUpnpEnabled()));
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, false);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
@@ -296,11 +297,7 @@ public abstract class BaseFrame extends JFrame {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
                     updateSystemProperty(newTokenServerUrl);
-                    if (assistant == null) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
-                    } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, assistant.getNetworkEngine());
-                    }
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                 }
             }
         };
@@ -318,7 +315,6 @@ public abstract class BaseFrame extends JFrame {
 
         if (frameType.equals(FrameType.ASSISTED)) {
             final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
             final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
             hostLbl.setFont(titleFont);
             panel.add(hostLbl, createGridBagConstraints(gridy++));
@@ -337,68 +333,7 @@ public abstract class BaseFrame extends JFrame {
             autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
-        } else {
-            final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            boolean upnpActive = assistant.isUpnpEnabled();
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), null), translate(format("connection.settings.portforward.%s", upnpActive))));
-            upnpPanel.add(upnpStatus);
-            panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-            final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-            portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-            portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-            portPanel.add(portNumberLbl);
-            portPanel.add(portNumberTextField);
-            panel.add(portPanel, createGridBagConstraints(gridy++));
         }
-
-        final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-
-        final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-
-        final ButtonGroup tokenRadioGroup = new ButtonGroup();
-        final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-        defaultTokenRadio.setActionCommand("default");
-        final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(custom);
-        tokenRadioGroup.add(defaultTokenRadio);
-        tokenRadioGroup.add(customTokenRadio);
-        boolean customTextFieldEditable = false;
-        if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-            currentTokenServer = "";
-            defaultTokenRadio.setSelected(true);
-        } else {
-            customTokenRadio.setSelected(true);
-            customTextFieldEditable = true;
-        }
-
-        final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
-        defaultTokenTextField.setEditable(false);
-        defaultTokenTextField.setFocusable(false);
-        customTokenTextField.setText(currentTokenServer);
-        customTokenTextField.setEditable(customTextFieldEditable);
-
-        defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
-        customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
-
-        tokenPanel.add(defaultTokenRadio);
-        tokenPanel.add(defaultTokenTextField);
-
-        tokenPanel.add(customTokenRadio);
-        tokenPanel.add(customTokenTextField);
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
 
         return panel;
     }
@@ -436,18 +371,6 @@ public abstract class BaseFrame extends JFrame {
 
         if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
             newNetworkConfiguration.persist();
-        }
-    }
-
-    private void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
-        final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
-                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
-
-        NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-        if (!newNetworkConfiguration.equals(networkConfiguration)) {
-            networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
-            newNetworkConfiguration.persist();
-            networkEngine.reconfigure(newNetworkConfiguration);
         }
     }
 
