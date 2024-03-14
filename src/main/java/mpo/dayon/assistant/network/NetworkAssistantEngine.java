@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.network;
 
-import com.dosse.upnp.UPnP;
+//import com.dosse.upnp.UPnP;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -114,22 +114,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     public static boolean manageRouterPorts(int oldPort, int newPort) {
-        if (!UPnP.isUPnPAvailable()) {
-            return false;
-        }
-        if (oldPort != 0 && UPnP.isMappedTCP(oldPort)) {
-            UPnP.closePortTCP(oldPort);
-            Log.info(format("Disabled forwarding for port %d", oldPort));
-        }
-        if (!UPnP.isMappedTCP(newPort)) {
-            if (UPnP.openPortTCP(newPort, APP_NAME)) {
-                Log.info(format("Enabled forwarding for port %d", newPort));
-                return true;
-            }
-            Log.warn(format("Failed to enable forwarding for port %d", newPort));
-            return false;
-        }
-        return true;
+        return false;
     }
 
     // right, keep streams open - forever!
@@ -164,7 +149,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             throw new IllegalArgumentException(e);
         } finally {
             closeConnections();
-            UPnP.closePortTCP(configuration.getPort());
+            //UPnP.closePortTCP(configuration.getPort());
             fireOnReady();
         }
 
