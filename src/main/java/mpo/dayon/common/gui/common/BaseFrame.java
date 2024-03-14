@@ -110,7 +110,6 @@ public abstract class BaseFrame extends JFrame {
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
         setupWindow();
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
     }
 
     private void setupWindow() {
