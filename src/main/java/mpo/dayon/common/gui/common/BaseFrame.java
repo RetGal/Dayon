@@ -103,7 +103,6 @@ public abstract class BaseFrame extends JFrame {
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
         setupWindow();
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
     }
 
     private void setupWindow() {
@@ -310,7 +309,7 @@ public abstract class BaseFrame extends JFrame {
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, isUpnpEnabled.join());
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, false);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
@@ -318,11 +317,8 @@ public abstract class BaseFrame extends JFrame {
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    if (ASSISTED.equals(frameType)) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
-                    } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkAssistantEngine);
-                    }
+                    updateSystemProperty(newTokenServerUrl);
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                 }
             }
         };
@@ -340,7 +336,6 @@ public abstract class BaseFrame extends JFrame {
 
         if (ASSISTED.equals(frameType)) {
             final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
             final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
             hostLbl.setFont(titleFont);
             panel.add(hostLbl, createGridBagConstraints(gridy++));
@@ -359,66 +354,7 @@ public abstract class BaseFrame extends JFrame {
             autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
-        } else {
-            final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
-            upnpPanel.add(upnpStatus);
-            panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-            final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
-            portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-            portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-            portPanel.add(portNumberLbl);
-            portPanel.add(portNumberTextField);
-            panel.add(portPanel, createGridBagConstraints(gridy++));
         }
-
-        final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-
-        final JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-
-        final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-        defaultTokenRadio.setActionCommand("default");
-        final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(CUSTOM);
-        tokenRadioGroup.add(defaultTokenRadio);
-        tokenRadioGroup.add(customTokenRadio);
-        boolean customTextFieldEditable = false;
-        if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-            currentTokenServer = "";
-            defaultTokenRadio.setSelected(true);
-        } else {
-            customTokenRadio.setSelected(true);
-            customTextFieldEditable = true;
-        }
-
-        final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
-        defaultTokenTextField.setEditable(false);
-        defaultTokenTextField.setFocusable(false);
-        customTokenTextField.setText(currentTokenServer);
-        customTokenTextField.setEditable(customTextFieldEditable);
-
-        defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
-        customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
-
-        tokenPanel.add(defaultTokenRadio);
-        tokenPanel.add(defaultTokenTextField);
-
-        tokenPanel.add(customTokenRadio);
-        tokenPanel.add(customTokenTextField);
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
 
         return panel;
     }
@@ -455,18 +391,6 @@ public abstract class BaseFrame extends JFrame {
                 addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
         if (!newConfig.equals(new NetworkAssistedEngineConfiguration())) {
-            newConfig.persist();
-            networkEngine.reconfigure(newConfig);
-        }
-    }
-
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
-        final NetworkAssistantEngineConfiguration oldConfig = new NetworkAssistantEngineConfiguration();
-        final NetworkAssistantEngineConfiguration newConfig = new NetworkAssistantEngineConfiguration(
-                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
-
-        if (!newConfig.equals(oldConfig)) {
-            NetworkAssistantEngine.manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
             newConfig.persist();
             networkEngine.reconfigure(newConfig);
         }
