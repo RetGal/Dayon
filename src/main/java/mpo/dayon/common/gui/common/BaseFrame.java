@@ -110,6 +110,7 @@ public abstract class BaseFrame extends JFrame {
         this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         this.setSize(dimension.width, dimension.height);
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
         this.setLocation(position.getX(), position.getY());
     }
 
@@ -120,8 +121,8 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
+        //toolBar.addAction(createShowInfoAction(), alignmentY);
+        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (FrameType.ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -345,7 +346,8 @@ public abstract class BaseFrame extends JFrame {
 
             final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
             upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
+            boolean upnpActive = assistant.isUpnpEnabled();
+            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), null), translate(format("connection.settings.portforward.%s", upnpActive))));
             upnpPanel.add(upnpStatus);
             panel.add(upnpPanel, createGridBagConstraints(gridy++));
 
@@ -366,11 +368,11 @@ public abstract class BaseFrame extends JFrame {
         final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
         tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
 
-
+        final ButtonGroup tokenRadioGroup = new ButtonGroup();
         final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
         defaultTokenRadio.setActionCommand("default");
         final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(CUSTOM);
+        customTokenRadio.setActionCommand(custom);
         tokenRadioGroup.add(defaultTokenRadio);
         tokenRadioGroup.add(customTokenRadio);
         boolean customTextFieldEditable = false;
