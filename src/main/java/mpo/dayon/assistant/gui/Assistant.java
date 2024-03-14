@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.gui;
 
-import com.dosse.upnp.UPnP;
+//import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
@@ -700,7 +700,7 @@ public class Assistant implements ClipboardOwner {
 
     private void initUpnp() {
         CompletableFuture.supplyAsync(() -> {
-            upnpEnabled = UPnP.isUPnPAvailable();
+            upnpEnabled = false;
             Log.info(format("UPnP is %s", isUpnpEnabled() ? "enabled" : "disabled"));
             return upnpEnabled;
         });

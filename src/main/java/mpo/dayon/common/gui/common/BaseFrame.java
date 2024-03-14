@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import javax.swing.*;
 
-import com.dosse.upnp.UPnP;
+//import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.gui.Assistant;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
@@ -95,7 +95,7 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
                 Math.max(configuration.getHeight(), frameType.getMinHeight()));
         this.setSize(dimension.width, dimension.height);
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
     }
 
     protected void setupToolBar(ToolBar toolBar) {
@@ -105,8 +105,8 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
+        //toolBar.addAction(createShowInfoAction(), alignmentY);
+        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (FrameType.ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -306,7 +306,7 @@ public abstract class BaseFrame extends JFrame {
                     final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
                     upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
                     boolean upnpActive = assistant.isUpnpEnabled();
-                    final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
+                    final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), null), translate(format("connection.settings.portforward.%s", upnpActive))));
                     upnpPanel.add(upnpStatus);
                     panel.add(upnpPanel, createGridBagConstraints(gridy++));
 
