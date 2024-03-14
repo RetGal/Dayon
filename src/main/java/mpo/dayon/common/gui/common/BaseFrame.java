@@ -115,6 +115,7 @@ public abstract class BaseFrame extends JFrame {
         this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         this.setSize(dimension.width, dimension.height);
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
         this.setLocation(position.getX(), position.getY());
     }
 
@@ -125,8 +126,8 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
+        //toolBar.addAction(createShowInfoAction(), alignmentY);
+        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);

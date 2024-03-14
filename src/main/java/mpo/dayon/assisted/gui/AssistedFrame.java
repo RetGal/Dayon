@@ -53,8 +53,8 @@ class AssistedFrame extends BaseFrame {
         ToolBar toolbar = new ToolBar();
         toolbar.add(startButton);
         toolbar.add(stopButton);
-        toolbar.addSeparator();
-        toolbar.add(connectionSettingsButton);
+        //toolbar.addSeparator();
+        //toolbar.add(connectionSettingsButton);
         if (ScreenUtilities.getNumberOfScreens() > 1 || File.separatorChar == '\\') {
             toolbar.addSeparator();
             if (ScreenUtilities.getNumberOfScreens() > 1) {
