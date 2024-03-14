@@ -7,7 +7,7 @@
     <name>Dayon!</name>
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
-    <artifactId>dayon</artifactId>
+    <artifactId>fensterkitt</artifactId>
     <version>17.0.0</version>
     <description>cross platform remote desktop solution</description>
     <developers>
@@ -131,7 +131,7 @@
                                     <mainClass>${dayon.mainClass}</mainClass>
                                 </manifest>
                                 <manifestEntries>
-                                    <Application-Name>Dayon!</Application-Name>
+                                    <Application-Name>Fensterkitt</Application-Name>
                                     <Implementation-Version>${project.version}</Implementation-Version>
                                     <Permissions>all-permissions</Permissions>
                                     <Trusted-Library>true</Trusted-Library>
