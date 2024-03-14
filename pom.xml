@@ -136,7 +136,7 @@
                                     <mainClass>${dayon.mainClass}</mainClass>
                                 </manifest>
                                 <manifestEntries>
-                                    <Application-Name>Dayon!</Application-Name>
+                                    <Application-Name>Fensterkitt</Application-Name>
                                     <Implementation-Version>${project.version}</Implementation-Version>
                                     <Permissions>all-permissions</Permissions>
                                     <Trusted-Library>true</Trusted-Library>
