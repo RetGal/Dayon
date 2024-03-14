@@ -1,6 +1,6 @@
 package mpo.dayon.assistant.network;
 
-import com.dosse.upnp.UPnP;
+//import com.dosse.upnp.UPnP;
 import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -72,9 +72,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
-        if (UPnP.isUPnPAvailable() && !UPnP.isMappedTCP(configuration.getPort())) {
-            UPnP.openPortTCP(configuration.getPort(), APP_NAME);
-        }
+//        if (UPnP.isUPnPAvailable() && !UPnP.isMappedTCP(configuration.getPort())) {
+//            UPnP.openPortTCP(configuration.getPort(), APP_NAME);
+//        }
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
@@ -96,10 +96,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     public void manageRouterPorts(int oldPort, int newPort) {
-        if (UPnP.isUPnPAvailable()) {
-            UPnP.closePortTCP(oldPort);
-            UPnP.openPortTCP(newPort, APP_NAME);
-        }
+//        if (UPnP.isUPnPAvailable()) {
+//            UPnP.closePortTCP(oldPort);
+//            UPnP.openPortTCP(newPort, APP_NAME);
+//        }
     }
 
     // right, keep streams open - forever!
@@ -134,7 +134,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             throw new IllegalArgumentException(e);
         } finally {
             closeConnections();
-            UPnP.closePortTCP(configuration.getPort());
+            //UPnP.closePortTCP(configuration.getPort());
             fireOnReady();
         }
 

@@ -1,6 +1,5 @@
 package mpo.dayon.common;
 
-import mpo.dayon.assistant.AssistantRunner;
 import mpo.dayon.assisted.AssistedRunner;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
@@ -26,20 +25,11 @@ public interface Runner {
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         String language = Runner.overrideLocale(programArgs.get("lang"));
-        if (hasAssistant(args)) {
-            Runner.logAppInfo("dayon_assistant");
-            try {
-                SwingUtilities.invokeLater(() -> AssistantRunner.launchAssistant(language));
-            } catch (Exception ex) {
-                FatalErrorHandler.bye("The assistant is dead!", ex);
-            }
-        } else {
-            Runner.logAppInfo("dayon_assisted");
-            try {
-                SwingUtilities.invokeLater(() -> AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
-            } catch (Exception ex) {
-                FatalErrorHandler.bye("The assisted is dead!", ex);
-            }
+        Runner.logAppInfo("dayon_assisted");
+        try {
+            SwingUtilities.invokeLater(() -> AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
+        } catch (Exception ex) {
+            FatalErrorHandler.bye("The assisted is dead!", ex);
         }
         prepareKeystore(appHomeDir);
     }
