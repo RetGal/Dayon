@@ -84,6 +84,87 @@
 
     <profiles>
         <profile>
+            <id>deb</id>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>clean-package</id>
+                                <phase>clean</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${basedir}/dist</directory>
+                                            <includes>
+                                                <include>**/*</include>
+                                            </includes>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.aerse.maven</groupId>
+                        <artifactId>deb-maven-plugin</artifactId>
+                        <version>1.16</version>
+                        <executions>
+                            <execution>
+                                <id>create-deb</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <unixUserId>root</unixUserId>
+                            <unixGroupId>staff</unixGroupId>
+                            <installDir>/usr/bin/</installDir>
+                            <osDependencies>
+                                <default-jre>>=2:1.8-56</default-jre>
+                            </osDependencies>
+                            <javaServiceWrapper>false</javaServiceWrapper>
+                            <generateVersion>false</generateVersion>
+                            <customCopyRightFile>${basedir}/debian/copyright</customCopyRightFile>
+                            <fileSets>
+                                <fileSet>
+                                    <source>${basedir}/dist/dayon.png</source>
+                                    <target>dayon.png</target>
+                                </fileSet>
+                                <fileSet>
+                                    <source>${basedir}/dist/dayon.jar</source>
+                                    <target>dayon.jar</target>
+                                </fileSet>
+                                <fileSet>
+                                    <source>${basedir}/dist/dayon.sh</source>
+                                    <target>dayon.sh</target>
+                                </fileSet>
+                                <fileSet>
+                                    <source>${basedir}/dist/dayon_assisted.sh</source>
+                                    <target>dayon_assisted.sh</target>
+                                </fileSet>
+                                <fileSet>
+                                    <source>${basedir}/resources/deb/</source>
+                                    <target>deb</target>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>default</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -155,12 +236,6 @@
                                     <filters>
                                         <filter>
                                             <artifact>org.tukaani:xz</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
                                             </excludes>
@@ -260,6 +335,29 @@
                                             <include>favicon.ico</include>
                                         </resource>
                                     </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>chmod</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>chmod</executable>
+                                    <arguments>
+                                        <argument>+x</argument>
+                                        <argument>${basedir}/dist/dayon.sh</argument>
+                                        <argument>${basedir}/dist/dayon_assisted.sh</argument>
+                                        <argument>${basedir}/dist/setup.sh</argument>
+                                    </arguments>
                                 </configuration>
                             </execution>
                         </executions>
