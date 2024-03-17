@@ -375,9 +375,14 @@ public abstract class BaseFrame extends JFrame {
             }
 
             private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-                String message = validateIpAddress(addressTextField);
-                if (message != null) {
-                    return message;
+                if (frameType.equals(FrameType.ASSISTED)) {
+                    final String ipAddress = addressTextField.getText();
+                    if (ipAddress.isEmpty()) {
+                        return translate("connection.settings.emptyIpAddress");
+                    }
+                    if (!isValidIpAddressOrHostName(ipAddress)) {
+                        return translate("connection.settings.invalidIpAddress");
+                    }
                 }
                 final String portNumber = portNumberTextField.getText();
                 if (portNumber.isEmpty()) {
@@ -388,20 +393,6 @@ public abstract class BaseFrame extends JFrame {
                 }
                 if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
                     return translate("connection.settings.invalidTokenServer");
-                }
-                return null;
-            }
-
-            private String validateIpAddress(JTextField addressTextField) {
-                if (frameType.equals(FrameType.ASSISTANT)) {
-                    return null;
-                }
-                final String ipAddress = addressTextField.getText();
-                if (ipAddress.isEmpty()) {
-                    return translate("connection.settings.emptyIpAddress");
-                }
-                if (!isValidIpAddressOrHostName(ipAddress)) {
-                    return translate("connection.settings.invalidIpAddress");
                 }
                 return null;
             }
