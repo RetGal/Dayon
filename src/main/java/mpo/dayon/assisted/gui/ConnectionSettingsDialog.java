@@ -31,15 +31,13 @@ class ConnectionSettingsDialog {
         connectionSettingsDialog.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
         final JLabel assistantIpAddress = new JLabel(translate("connection.settings.assistantIpAddress"));
-        assistantIpAddressTextField = new JTextField();
-        assistantIpAddressTextField.setText(configuration.getServerName());
+        assistantIpAddressTextField = new JTextField(configuration.getServerName());
         assistantIpAddressTextField.addMouseListener(clearTextOnDoubleClick(assistantIpAddressTextField));
         connectionSettingsDialog.add(assistantIpAddress);
         connectionSettingsDialog.add(assistantIpAddressTextField);
 
         final JLabel assistantPortNumber = new JLabel(translate("connection.settings.assistantPortNumber"));
-        assistantPortNumberTextField = new JTextField();
-        assistantPortNumberTextField.setText(String.valueOf(configuration.getServerPort()));
+        assistantPortNumberTextField = new JTextField(String.valueOf(configuration.getServerPort()));
         assistantPortNumberTextField.addMouseListener(clearTextOnDoubleClick(assistantPortNumberTextField));
         connectionSettingsDialog.add(assistantPortNumber);
         connectionSettingsDialog.add(assistantPortNumberTextField);
