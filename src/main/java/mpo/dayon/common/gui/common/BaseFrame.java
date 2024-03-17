@@ -406,17 +406,18 @@ public abstract class BaseFrame extends JFrame {
                     if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
                         newNetworkConfiguration.persist();
                     }
-                } else {
-                    final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
-                            Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
+                    return;
+                }
 
-                    NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-                    if (!newNetworkConfiguration.equals(networkConfiguration)) {
-                        final NetworkAssistantEngine networkEngine = assistant.getNetworkEngine();
-                        networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
-                        newNetworkConfiguration.persist();
-                        networkEngine.reconfigure(newNetworkConfiguration);
-                    }
+                final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
+                        Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
+
+                NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
+                if (!newNetworkConfiguration.equals(networkConfiguration)) {
+                    final NetworkAssistantEngine networkEngine = assistant.getNetworkEngine();
+                    networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+                    newNetworkConfiguration.persist();
+                    networkEngine.reconfigure(newNetworkConfiguration);
                 }
             }
 

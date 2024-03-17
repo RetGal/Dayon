@@ -130,16 +130,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 }
             }
         }
-
-        if (autoConnect && coldStart) {
-            coldStart = false;
-            networkEngine.connect();
-            return true;
-        }
-
-        // no network settings dialogue after startup
+        // no network settings dialog after startup
         if (coldStart) {
             coldStart = false;
+            if (autoConnect) {
+                networkEngine.connect();
+            }
             return true;
         }
         return requestConnectionSettings();
