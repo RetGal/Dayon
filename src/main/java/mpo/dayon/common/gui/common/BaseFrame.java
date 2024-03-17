@@ -350,14 +350,12 @@ public abstract class BaseFrame extends JFrame {
                     customTokenRadio.setSelected(true);
                 }
 
-                final JTextField defaultTokenTextField = new JTextField();
-                defaultTokenTextField.setText(DEFAULT_TOKEN_SERVER_URL);
+                final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
                 defaultTokenTextField.setEditable(false);
                 tokenPanel.add(defaultTokenRadio);
                 tokenPanel.add(defaultTokenTextField);
 
-                final JTextField customTokenTextField = new JTextField();
-                customTokenTextField.setText(currentTokenServer);
+                final JTextField customTokenTextField = new JTextField(currentTokenServer);
                 customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
                 tokenPanel.add(customTokenRadio);
                 tokenPanel.add(customTokenTextField);
