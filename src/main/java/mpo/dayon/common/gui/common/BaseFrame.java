@@ -377,37 +377,23 @@ public abstract class BaseFrame extends JFrame {
 
             private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
                 if (frameType.equals(FrameType.ASSISTED)) {
-                    final String message = validateIpAddress(addressTextField.getText());
-                    if (message != null) {
-                        return message;
+                    final String ipAddress = addressTextField.getText();
+                    if (ipAddress.isEmpty()) {
+                        return translate("connection.settings.emptyIpAddress");
+                    }
+                    if (!isValidIpAddressOrHostName(ipAddress)) {
+                        return translate("connection.settings.invalidIpAddress");
                     }
                 }
-                final String message = validatePortNumber(portNumberTextField.getText());
-                if (message != null) {
-                    return message;
-                }
-                if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
-                    return translate("connection.settings.invalidTokenServer");
-                }
-                return null;
-            }
-
-            private String validatePortNumber(String portNumber) {
+                final String portNumber = portNumberTextField.getText();
                 if (portNumber.isEmpty()) {
                     return translate("connection.settings.emptyPortNumber");
                 }
                 if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
                 }
-                return null;
-            }
-
-            private String validateIpAddress(String ipAddress) {
-                if (ipAddress.isEmpty()) {
-                    return translate("connection.settings.emptyIpAddress");
-                }
-                if (!isValidIpAddressOrHostName(ipAddress)) {
-                    return translate("connection.settings.invalidIpAddress");
+                if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                    return translate("connection.settings.invalidTokenServer");
                 }
                 return null;
             }
