@@ -389,7 +389,12 @@ public abstract class BaseFrame extends JFrame {
                     return translate("connection.settings.emptyPortNumber");
                 } else if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
-                } else if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                }
+                return validateCustomTokenServerUrl(tokenRadioGroup, customTokenTextField);
+            }
+
+            private String validateCustomTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+                if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
                     return translate("connection.settings.invalidTokenServer");
                 }
                 return null;
