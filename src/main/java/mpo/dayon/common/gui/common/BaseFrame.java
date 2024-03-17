@@ -364,15 +364,11 @@ public abstract class BaseFrame extends JFrame {
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
 
                 if (ok) {
-                    final String newTokenServerUrl = computeNewTokenServerUrl(tokenRadioGroup, customTokenTextField);
+                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(custom) &&
+                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
                     updateSystemProperty(newTokenServerUrl);
                     updateNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                 }
-            }
-
-            private String computeNewTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-                return tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
-                        isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
             }
 
             private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
@@ -389,12 +385,7 @@ public abstract class BaseFrame extends JFrame {
                     return translate("connection.settings.emptyPortNumber");
                 } else if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
-                }
-                return validateCustomTokenServerUrl(tokenRadioGroup, customTokenTextField);
-            }
-
-            private String validateCustomTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-                if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
+                } else if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
                     return translate("connection.settings.invalidTokenServer");
                 }
                 return null;
