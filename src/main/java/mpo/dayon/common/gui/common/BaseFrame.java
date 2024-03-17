@@ -342,10 +342,8 @@ public abstract class BaseFrame extends JFrame {
                 customTokenRadio.setActionCommand(custom);
                 tokenRadioGroup.add(defaultTokenRadio);
                 tokenRadioGroup.add(customTokenRadio);
-                if (currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
+                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
                     currentTokenServer = "";
-                }
-                if (currentTokenServer.isEmpty()) {
                     defaultTokenRadio.setSelected(true);
                 } else {
                     customTokenRadio.setSelected(true);
@@ -379,16 +377,14 @@ public abstract class BaseFrame extends JFrame {
                     final String ipAddress = addressTextField.getText();
                     if (ipAddress.isEmpty()) {
                         return translate("connection.settings.emptyIpAddress");
-                    }
-                    if (!isValidIpAddressOrHostName(ipAddress)) {
+                    } else if (!isValidIpAddressOrHostName(ipAddress)) {
                         return translate("connection.settings.invalidIpAddress");
                     }
                 }
                 final String portNumber = portNumberTextField.getText();
                 if (portNumber.isEmpty()) {
                     return translate("connection.settings.emptyPortNumber");
-                }
-                if (!isValidPortNumber(portNumber)) {
+                } else if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
                 }
                 if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
