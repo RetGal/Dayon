@@ -342,9 +342,10 @@ public abstract class BaseFrame extends JFrame {
                 customTokenRadio.setActionCommand(custom);
                 tokenRadioGroup.add(defaultTokenRadio);
                 tokenRadioGroup.add(customTokenRadio);
-
-                if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
+                if (currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
                     currentTokenServer = "";
+                }
+                if (currentTokenServer.isEmpty()) {
                     defaultTokenRadio.setSelected(true);
                 } else {
                     customTokenRadio.setSelected(true);
@@ -374,14 +375,9 @@ public abstract class BaseFrame extends JFrame {
             }
 
             private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-                if (frameType.equals(FrameType.ASSISTED)) {
-                    final String ipAddress = addressTextField.getText();
-                    if (ipAddress.isEmpty()) {
-                        return translate("connection.settings.emptyIpAddress");
-                    }
-                    if (!isValidIpAddressOrHostName(ipAddress)) {
-                        return translate("connection.settings.invalidIpAddress");
-                    }
+                String message = validateIpAddress(addressTextField);
+                if (message != null) {
+                    return message;
                 }
                 final String portNumber = portNumberTextField.getText();
                 if (portNumber.isEmpty()) {
@@ -392,6 +388,20 @@ public abstract class BaseFrame extends JFrame {
                 }
                 if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
                     return translate("connection.settings.invalidTokenServer");
+                }
+                return null;
+            }
+
+            private String validateIpAddress(JTextField addressTextField) {
+                if (frameType.equals(FrameType.ASSISTANT)) {
+                    return null;
+                }
+                final String ipAddress = addressTextField.getText();
+                if (ipAddress.isEmpty()) {
+                    return translate("connection.settings.emptyIpAddress");
+                }
+                if (!isValidIpAddressOrHostName(ipAddress)) {
+                    return translate("connection.settings.invalidIpAddress");
                 }
                 return null;
             }
