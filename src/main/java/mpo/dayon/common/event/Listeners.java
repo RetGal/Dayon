@@ -6,21 +6,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Listeners<T extends Listener> {
 
-	private final List<T> listeners = new CopyOnWriteArrayList<>();
+	private final List<T> bucket = new CopyOnWriteArrayList<>();
 
 	public List<T> getListeners() {
-		return Collections.unmodifiableList(listeners);
+		return Collections.unmodifiableList(bucket);
 	}
 	
 	public void add(T listener) {
 		if (listener != null) {
-			listeners.add(listener);
+			bucket.add(listener);
 		}
 	}
 
 	public void remove(T listener) {
 		if (listener != null) {
-			listeners.remove(listener);
+			bucket.remove(listener);
 		}
 	}
 

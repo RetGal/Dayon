@@ -217,8 +217,7 @@ public final class SystemUtilities {
     static String checksum(String input) throws NoSuchAlgorithmException {
         MessageDigest objSHA = MessageDigest.getInstance("SHA-1");
         byte[] bytSHA = objSHA != null ? objSHA.digest(input.getBytes()) : new byte[0];
-        BigInteger intNumber = new BigInteger(1, bytSHA);
-        String hash = intNumber.toString(16);
+        String hash = new BigInteger(1, bytSHA).toString(16);
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
