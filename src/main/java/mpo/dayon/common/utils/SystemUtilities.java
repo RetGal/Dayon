@@ -90,7 +90,7 @@ public final class SystemUtilities {
     }
 
     public static String getSystemPropertiesEx() {
-        return getSystemProperties().stream().map(line -> line + System.lineSeparator()).collect(Collectors.joining());
+        return getSystemProperties().stream().collect(Collectors.joining(System.lineSeparator()));
     }
 
     public static String getRamInfo() {

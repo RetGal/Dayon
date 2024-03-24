@@ -47,6 +47,8 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String HTTP_LICENSE = "https://raw.githubusercontent.com/RetGal/Dayon/master/debian/copyright";
 
+    private static final String HTTP_PRIVACY = "https://retgal.github.io/Dayon/" + translate("privacy.html");
+
     private static final String CHAT_URL = "https://meet.jit.si/%s";
 
     private transient FrameConfiguration configuration;
@@ -190,49 +192,44 @@ public abstract class BaseFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent ev) {
-                final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
-                props.setEditable(false);
-
-                final Font font = new Font(Font.MONOSPACED, Font.PLAIN, 12);
-                props.setFont(font);
-
                 final JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-
                 panel.setPreferredSize(new Dimension(500, 300));
 
                 final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
                 info.addMouseListener(new HomeMouseAdapter());
                 info.setCursor(handCursor);
-
                 final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.addMouseListener(new ReleaseMouseAdapter());
                 version.setCursor(handCursor);
-
                 final JLabel latest = new JLabel(composeLabelHtml(translate("version.latest"), Version.get().getLatestRelease()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 latest.addMouseListener(new LatestReleaseMouseAdapter());
                 latest.setCursor(handCursor);
 
-                final JLabel support = new JLabel(composeLabelHtml(translate("support"), HTTP_SUPPORT));
-                support.setAlignmentX(Component.LEFT_ALIGNMENT);
-                support.addMouseListener(new SupportMouseAdapter());
-                support.setCursor(handCursor);
-
-                final JLabel feedback = new JLabel(composeLabelHtml(translate("feedback"), HTTP_FEEDBACK));
-                feedback.setAlignmentX(Component.LEFT_ALIGNMENT);
-                feedback.addMouseListener(new FeedbackMouseAdapter());
-                feedback.setCursor(handCursor);
-
-                final JLabel license = new JLabel(composeLabelHtml(translate("license"), "https://github.com/retgal/dayon/blob/master/debian/copyright"));
-                license.setAlignmentX(Component.LEFT_ALIGNMENT);
-                license.addMouseListener(new LicenseMouseAdapter());
-                license.setCursor(handCursor);
-
+                final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
+                props.setEditable(false);
+                props.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
                 final JScrollPane spane = new JScrollPane(props);
                 spane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+                final JButton support = new JButton(translate("support"));
+                support.addMouseListener(new SupportMouseAdapter());
+                final JButton feedback = new JButton(translate("feedback"));
+                feedback.addMouseListener(new FeedbackMouseAdapter());
+                final JButton privacy = new JButton(translate("privacy"));
+                privacy.addMouseListener(new PrivacyMouseAdapter());
+                final JButton license = new JButton(translate("license"));
+                license.addMouseListener(new LicenseMouseAdapter());
+                final JPanel buttonsPanel = new JPanel();
+                buttonsPanel.setLayout(new GridLayout(1, 4));
+                buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+                buttonsPanel.add(support);
+                buttonsPanel.add(feedback);
+                buttonsPanel.add(privacy);
+                buttonsPanel.add(license);
 
                 panel.add(Box.createVerticalStrut(10));
                 panel.add(info);
@@ -242,14 +239,10 @@ public abstract class BaseFrame extends JFrame {
                     panel.add(Box.createVerticalStrut(5));
                     panel.add(latest);
                 }
-                panel.add(Box.createVerticalStrut(10));
+                panel.add(Box.createVerticalStrut(5));
                 panel.add(spane);
-                panel.add(Box.createVerticalStrut(10));
-                panel.add(support);
                 panel.add(Box.createVerticalStrut(5));
-                panel.add(feedback);
-                panel.add(Box.createVerticalStrut(5));
-                panel.add(license);
+                panel.add(buttonsPanel);
 
                 final Object[] options = {translate("ok")};
 
@@ -553,6 +546,13 @@ public abstract class BaseFrame extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             browse(HTTP_LICENSE);
+        }
+    }
+
+    private static class PrivacyMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse(HTTP_PRIVACY);
         }
     }
 
