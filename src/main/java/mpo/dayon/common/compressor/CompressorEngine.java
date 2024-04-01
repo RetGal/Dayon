@@ -1,4 +1,4 @@
-package mpo.dayon.assisted.compressor;
+package mpo.dayon.common.compressor;
 
 import java.io.IOException;
 import java.util.ArrayList;

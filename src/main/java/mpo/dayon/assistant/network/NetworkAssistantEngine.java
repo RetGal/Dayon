@@ -1,7 +1,7 @@
 package mpo.dayon.assistant.network;
 
 import com.dosse.upnp.UPnP;
-import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;

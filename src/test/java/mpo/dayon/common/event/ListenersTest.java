@@ -3,7 +3,7 @@ package mpo.dayon.common.event;
 import static org.junit.jupiter.api.Assertions.*;
 
 import mpo.dayon.assisted.capture.CaptureEngineListener;
-import mpo.dayon.assisted.compressor.CompressorEngine;
+import mpo.dayon.common.compressor.CompressorEngine;
 import org.junit.jupiter.api.Test;
 
 class ListenersTest {

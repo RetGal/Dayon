@@ -1,7 +1,7 @@
 package mpo.dayon.assisted.network;
 
-import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
-import mpo.dayon.assisted.compressor.CompressorEngineListener;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngineListener;
 import mpo.dayon.common.buffer.MemByteBuffer;

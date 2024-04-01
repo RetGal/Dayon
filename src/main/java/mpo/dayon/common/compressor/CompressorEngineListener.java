@@ -1,4 +1,4 @@
-package mpo.dayon.assisted.compressor;
+package mpo.dayon.common.compressor;
 
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;

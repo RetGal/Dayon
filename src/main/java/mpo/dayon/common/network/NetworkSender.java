@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 import mpo.dayon.common.network.message.*;
 
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
-import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;

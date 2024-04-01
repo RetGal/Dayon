@@ -9,7 +9,7 @@ import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineListener;
 import mpo.dayon.assistant.utils.NetworkUtilities;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
-import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.error.FatalErrorHandler;
@@ -78,7 +78,7 @@ public class Assistant implements ClipboardOwner {
 
     private AssistantConfiguration configuration;
 
-    private NetworkAssistantEngineConfiguration networkConfiguration;
+    private final NetworkAssistantEngineConfiguration networkConfiguration;
 
     private CaptureEngineConfiguration captureEngineConfiguration;
 
@@ -105,12 +105,14 @@ public class Assistant implements ClipboardOwner {
 
         if (tokenServerUrl != null) {
             this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
             this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAM;
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         } else {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
+        }
+
+        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         }
 
         this.configuration = new AssistantConfiguration();

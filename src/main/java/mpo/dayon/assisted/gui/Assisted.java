@@ -3,8 +3,8 @@ package mpo.dayon.assisted.gui;
 import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
-import mpo.dayon.assisted.compressor.CompressorEngine;
-import mpo.dayon.assisted.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngine;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.control.RobotNetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngine;
@@ -67,12 +67,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         if (tokenServerUrl != null) {
             this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
-            System.setProperty("dayon.custom.tokenServer", tokenServerUrl);
         } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
             this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAM;
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         } else {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
+        }
+
+        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
         }
 
         final String lnf = getDefaultLookAndFeel();
