@@ -128,7 +128,6 @@ public class Assistant implements ClipboardOwner {
 
         NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
         networkEngine = new NetworkAssistantEngine(decompressor, mouseHandler, this);
-
         networkEngine.configure(networkConfiguration);
         networkEngine.addListener(new MyNetworkAssistantEngineListener());
 
@@ -243,8 +242,7 @@ public class Assistant implements ClipboardOwner {
                 menuItem.addActionListener(ev15 -> button.setText(publicIp));
                 choices.add(menuItem);
 
-                final List<String> addrs = NetworkUtilities.getInetAddresses();
-                addrs.stream().map(JMenuItem::new).forEach(item -> {
+                NetworkUtilities.getInetAddresses().stream().map(JMenuItem::new).forEach(item -> {
                     item.addActionListener(ev14 -> button.setText(item.getText()));
                     choices.add(item);
                 });
@@ -285,9 +283,7 @@ public class Assistant implements ClipboardOwner {
         final JMenuItem menuItem = new JMenuItem(translate("copy.msg"));
         menuItem.addActionListener(ev12 -> {
             final String url = button.getText() + " " + networkConfiguration.getPort();
-            final StringSelection value = new StringSelection(url);
-            final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-            clipboard.setContents(value, this);
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(url), this);
         });
         return menuItem;
     }
@@ -376,8 +372,7 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
-                final JTextField tickTextField = new JTextField();
-                tickTextField.setText(valueOf(captureEngineConfiguration.getCaptureTick()));
+                final JTextField tickTextField = new JTextField(captureEngineConfiguration.getCaptureTick());
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
@@ -451,13 +446,13 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel maxSizeLbl = new JLabel(translate("compression.cache.max"));
                 maxSizeLbl.setToolTipText(translate("compression.cache.max.tooltip"));
-                final JTextField maxSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCacheMaxSize()));
+                final JTextField maxSizeTf = new JTextField(compressorEngineConfiguration.getCacheMaxSize());
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
                 final JLabel purgeSizeLbl = new JLabel(translate("compression.cache.purge"));
                 purgeSizeLbl.setToolTipText(translate("compression.cache.purge.tooltip"));
-                final JTextField purgeSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCachePurgeSize()));
+                final JTextField purgeSizeTf = new JTextField(compressorEngineConfiguration.getCachePurgeSize());
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
 
@@ -644,7 +639,7 @@ public class Assistant implements ClipboardOwner {
         languageSelection.setSelectedItem(Arrays.stream(Language.values()).filter(e -> e.getShortName().equals(Locale.getDefault().getLanguage())).findFirst().orElse(Language.EN));
         languageSelection.setRenderer(new LanguageRenderer());
         languageSelection.addActionListener(ev -> {
-                Locale.setDefault(Locale.forLanguageTag(languageSelection.getSelectedItem().toString()));
+                Locale.setDefault(Locale.forLanguageTag(valueOf(languageSelection.getSelectedItem())));
                 Log.info(format("New language %s", Locale.getDefault().getLanguage()));
                 configuration = new AssistantConfiguration(Locale.getDefault().getLanguage());
                 configuration.persist();

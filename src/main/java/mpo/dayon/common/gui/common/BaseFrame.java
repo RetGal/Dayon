@@ -37,7 +37,7 @@ public abstract class BaseFrame extends JFrame {
 
     protected static final String PRESSED_ICON = "PRESSED_ICON";
 
-    protected transient Object[] okCancelOptions = {translate("cancel"), translate("ok")};
+    protected final transient Object[] okCancelOptions = {translate("cancel"), translate("ok")};
 
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
 
