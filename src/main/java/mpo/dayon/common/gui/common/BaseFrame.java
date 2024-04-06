@@ -18,7 +18,6 @@ import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.utils.SystemUtilities;
 import mpo.dayon.common.version.Version;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
@@ -69,7 +68,7 @@ public abstract class BaseFrame extends JFrame {
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-        setIconImage(ImageUtilities.getOrCreateIcon(ImageNames.APP).getImage());
+        setIconImage(getOrCreateIcon(ImageNames.APP).getImage());
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent ev) {
@@ -183,7 +182,7 @@ public abstract class BaseFrame extends JFrame {
             }
         };
         exit.putValue(Action.SHORT_DESCRIPTION, translate("exit.dayon"));
-        exit.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.EXIT));
+        exit.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.EXIT));
         return exit;
     }
 
@@ -209,7 +208,7 @@ public abstract class BaseFrame extends JFrame {
                 latest.addMouseListener(new LatestReleaseMouseAdapter());
                 latest.setCursor(handCursor);
 
-                final JTextArea props = new JTextArea(SystemUtilities.getSystemPropertiesEx());
+                final JTextArea props = new JTextArea(getSystemPropertiesEx());
                 props.setEditable(false);
                 props.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
                 final JScrollPane spane = new JScrollPane(props);
@@ -248,12 +247,12 @@ public abstract class BaseFrame extends JFrame {
 
                 JOptionPane.showOptionDialog(BaseFrame.this, panel, translate("system.info"),
                         JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                        ImageUtilities.getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
+                        getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
 
             }
         };
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
-        showSystemInfo.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.INFO));
+        showSystemInfo.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.INFO));
 
         return showSystemInfo;
     }
@@ -335,20 +334,27 @@ public abstract class BaseFrame extends JFrame {
                 customTokenRadio.setActionCommand(custom);
                 tokenRadioGroup.add(defaultTokenRadio);
                 tokenRadioGroup.add(customTokenRadio);
+                boolean customTextFieldEditable = false;
                 if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
                     currentTokenServer = "";
                     defaultTokenRadio.setSelected(true);
                 } else {
                     customTokenRadio.setSelected(true);
+                    customTextFieldEditable = true;
                 }
 
                 final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
                 defaultTokenTextField.setEditable(false);
+                defaultTokenTextField.setFocusable(false);
+                final JTextField customTokenTextField = new JTextField(currentTokenServer);
+                customTokenTextField.setEditable(customTextFieldEditable);
+
+                defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
+                customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
+
                 tokenPanel.add(defaultTokenRadio);
                 tokenPanel.add(defaultTokenTextField);
 
-                final JTextField customTokenTextField = new JTextField(currentTokenServer);
-                customTokenRadio.addActionListener(evt -> customTokenTextField.requestFocus());
                 tokenPanel.add(customTokenRadio);
                 tokenPanel.add(customTokenTextField);
                 panel.add(tokenPanel, createGridBagConstraints(gridy));
@@ -474,11 +480,11 @@ public abstract class BaseFrame extends JFrame {
         final Action showHelp = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                browse(SystemUtilities.getQuickStartURI(translate("quickstart.html"), frameType.getPrefix()));
+                browse(getQuickStartURI(translate("quickstart.html"), frameType.getPrefix()));
             }
         };
         showHelp.putValue(Action.SHORT_DESCRIPTION, translate("help"));
-        showHelp.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.HELP));
+        showHelp.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.HELP));
 
         return showHelp;
     }

@@ -67,8 +67,7 @@ public class NetworkKeyControlMessage extends NetworkMessage {
 	public static NetworkKeyControlMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int info = in.readInt();
 		final int keyCode = in.readInt();
-		final char keyChar = in.readChar();
-		return new NetworkKeyControlMessage(info, keyCode, keyChar);
+		return new NetworkKeyControlMessage(info, keyCode, in.readChar());
 	}
 
 	public String toString() {

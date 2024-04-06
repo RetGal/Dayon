@@ -91,8 +91,7 @@ public abstract class NetworkEngine {
 
     private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
         Log.debug(CLIPBOARD_DEBUG, () -> String.valueOf(files));
-        TransferableFiles transferableFiles = new TransferableFiles(files);
-        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(transferableFiles, clipboardOwner);
+        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableFiles(files), clipboardOwner);
     }
 
     private NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {

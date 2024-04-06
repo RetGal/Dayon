@@ -39,8 +39,7 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 
 	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
-		final int tick = in.readInt();
-		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization));
+		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(in.readInt(), quantization));
 	}
 
 	public String toString() {

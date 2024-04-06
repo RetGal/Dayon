@@ -53,17 +53,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             String tempFilePath = format("%s%s%s%s", tmpDir, File.separator, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
 
-            long remainingFileSize = helper.getFileBytesLeft() - read;
-            long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
-            if (remainingFileSize <= 0 && remainingTotalFilesSize > 0) {
-                position++;
-                helper.setPosition(position);
-                remainingFileSize = helper.getFileMetadatas().get(position).getFileSize();
-            }
-            helper.setFileBytesLeft(remainingFileSize);
-            helper.setTotalFileBytesLeft(remainingTotalFilesSize);
-
-            if (remainingTotalFilesSize == 0) {
+            if (getRemainingTotalFilesSize(helper, read, position) == 0) {
                 String rootPath = format("%s%s%s", tmpDir, File.separator, helper.getTransferId());
                 helper.setFiles(Arrays.asList(Objects.requireNonNull(new File(rootPath).listFiles())));
             }
@@ -71,6 +61,18 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             Log.error(e.getMessage());
         }
         return helper;
+    }
+
+    private static long getRemainingTotalFilesSize(NetworkClipboardFilesHelper helper, int read, int position) {
+        long remainingFileSize = helper.getFileBytesLeft() - read;
+        long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
+        if (remainingFileSize <= 0 && remainingTotalFilesSize > 0) {
+            helper.setPosition(++position);
+            remainingFileSize = helper.getFileMetadatas().get(position).getFileSize();
+        }
+        helper.setFileBytesLeft(remainingFileSize);
+        helper.setTotalFileBytesLeft(remainingTotalFilesSize);
+        return remainingTotalFilesSize;
     }
 
     private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {

@@ -20,8 +20,7 @@ public class NetworkClipboardGraphicMessage extends NetworkMessage {
 
     @java.lang.SuppressWarnings("squid:S5135") // assistant and assisted trust each other
     public static NetworkClipboardGraphicMessage unmarshall(ObjectInputStream in) throws IOException, ClassNotFoundException {
-        TransferableImage graphic = (TransferableImage) in.readUnshared();
-        return new NetworkClipboardGraphicMessage(graphic);
+        return new NetworkClipboardGraphicMessage((TransferableImage) in.readUnshared());
     }
 
     public TransferableImage getGraphic() {

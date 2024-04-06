@@ -627,27 +627,19 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void fireOnMouseMove(int x, int y) {
-        int xs = scaleXPosition(x);
-        int ys = scaleYPosition(y);
-        listeners.getListeners().forEach(listener -> listener.onMouseMove(xs, ys));
+        listeners.getListeners().forEach(listener -> listener.onMouseMove(scaleXPosition(x), scaleYPosition(y)));
     }
 
     private void fireOnMousePressed(int x, int y, int button) {
-        int xs = scaleXPosition(x);
-        int ys = scaleYPosition(y);
-        listeners.getListeners().forEach(listener -> listener.onMousePressed(xs, ys, button));
+        listeners.getListeners().forEach(listener -> listener.onMousePressed(scaleXPosition(x), scaleYPosition(y), button));
     }
 
     private void fireOnMouseReleased(int x, int y, int button) {
-        int xs = scaleXPosition(x);
-        int ys = scaleYPosition(y);
-        listeners.getListeners().forEach(listener -> listener.onMouseReleased(xs, ys, button));
+        listeners.getListeners().forEach(listener -> listener.onMouseReleased(scaleXPosition(x), scaleYPosition(y), button));
     }
 
     private void fireOnMouseWheeled(int x, int y, int rotations) {
-        int xs = scaleXPosition(x);
-        int ys = scaleYPosition(y);
-        listeners.getListeners().forEach(listener -> listener.onMouseWheeled(xs, ys, rotations));
+        listeners.getListeners().forEach(listener -> listener.onMouseWheeled(scaleXPosition(x), scaleYPosition(y), rotations));
     }
 
     private int scaleYPosition(int y) {

@@ -258,7 +258,6 @@ public class CaptureTile {
 				xywh[tileId++] = new XYWH(tx, ty, tw, th);
 			}
 		}
-		final XYWH_Configuration configuration = new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight);
-		return new XYWH_Cache(configuration, xywh);
+        return new XYWH_Cache(new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight), xywh);
 	}
 }
