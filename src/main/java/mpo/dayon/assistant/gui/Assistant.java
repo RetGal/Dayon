@@ -372,7 +372,7 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
-                final JTextField tickTextField = new JTextField(captureEngineConfiguration.getCaptureTick());
+                final JTextField tickTextField = new JTextField(valueOf(captureEngineConfiguration.getCaptureTick()));
                 pane.add(tickLbl);
                 pane.add(tickTextField);
 
@@ -446,13 +446,13 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel maxSizeLbl = new JLabel(translate("compression.cache.max"));
                 maxSizeLbl.setToolTipText(translate("compression.cache.max.tooltip"));
-                final JTextField maxSizeTf = new JTextField(compressorEngineConfiguration.getCacheMaxSize());
+                final JTextField maxSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCacheMaxSize()));
                 pane.add(maxSizeLbl);
                 pane.add(maxSizeTf);
 
                 final JLabel purgeSizeLbl = new JLabel(translate("compression.cache.purge"));
                 purgeSizeLbl.setToolTipText(translate("compression.cache.purge.tooltip"));
-                final JTextField purgeSizeTf = new JTextField(compressorEngineConfiguration.getCachePurgeSize());
+                final JTextField purgeSizeTf = new JTextField(valueOf(compressorEngineConfiguration.getCachePurgeSize()));
                 pane.add(purgeSizeLbl);
                 pane.add(purgeSizeTf);
 
