@@ -111,13 +111,17 @@ class AssistantFrame extends BaseFrame {
         // -------------------------------------------------------------------------------------------------------------
         // Not really needed for the time being - allows for seeing the TAB with a regular KEY listener ...
         setFocusTraversalKeysEnabled(false);
+        addListeners();
+        // the network has been before we've been registered as a listener ...
+        onReady();
+    }
+
+    private void addListeners() {
         addFocusListener();
         addKeyListeners();
         addMouseListeners();
         addResizeListener();
         addMinMaximizedListener();
-        // the network has been before we've been registered as a listener ...
-        onReady();
     }
 
     Dimension getCanvas() {
@@ -317,18 +321,11 @@ class AssistantFrame extends BaseFrame {
         final Action sendWindowsKey = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
+                final int virtualKey = osId != 'm' ? VK_WINDOWS : VK_META;
                 if (windowsKeyActivated.get()) {
-                    if (osId != 'm') {
-                        fireOnKeyReleased(VK_WINDOWS, EMPTY_CHAR);
-                    } else {
-                        fireOnKeyReleased(VK_META, EMPTY_CHAR);
-                    }
+                    fireOnKeyReleased(virtualKey, EMPTY_CHAR);
                 } else {
-                    if (osId != 'm') {
-                        fireOnKeyPressed(VK_WINDOWS, EMPTY_CHAR);
-                    } else {
-                        fireOnKeyPressed(VK_META, EMPTY_CHAR);
-                    }
+                    fireOnKeyPressed(virtualKey, EMPTY_CHAR);
                 }
                 windowsKeyActivated.set(!windowsKeyActivated.get());
             }
@@ -462,19 +459,19 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onClipboardRequested() {
-        disableTransferControls();
+        toggleTransferControls(false);
     }
 
     void onClipboardSending() {
-        disableTransferControls();
+        toggleTransferControls(false);
     }
 
     void onClipboardSent() {
-        enableTransferControls();
+        toggleTransferControls(true);
     }
 
     void onClipboardReceived() {
-        enableTransferControls();
+        toggleTransferControls(true);
     }
 
     void onSessionStarted(char osId, String inputLocale) {
@@ -514,15 +511,10 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onIOError(IOException error) {
-        actions.getStartAction().setEnabled(false);
-        actions.getStopAction().setEnabled(false);
-        actions.getResetAction().setEnabled(false);
-        disableControls();
-        stopSessionTimer();
+        onTerminating();
         hideSpinner();
         validate();
         repaint();
-        tabbedPane.setSelectedIndex(0);
         String errorMessage = error.getMessage() != null ? translate("comm.error.msg1", translate(error.getMessage())) : translate("comm.error.msg1", "!");
         JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }
@@ -580,12 +572,12 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
         ctrlKeyToggleButton.setEnabled(false);
-        disableTransferControls();
+        toggleTransferControls(false);
     }
 
-    private void disableTransferControls() {
-        actions.getRemoteClipboardSetAction().setEnabled(false);
-        actions.getRemoteClipboardRequestAction().setEnabled(false);
+    private void toggleTransferControls(boolean enabled) {
+        actions.getRemoteClipboardSetAction().setEnabled(enabled);
+        actions.getRemoteClipboardRequestAction().setEnabled(enabled);
     }
 
     private void enableControls() {
@@ -593,12 +585,7 @@ class AssistantFrame extends BaseFrame {
         controlToggleButton.setEnabled(true);
         windowsKeyToggleButton.setSelected(false);
         ctrlKeyToggleButton.setSelected(false);
-        enableTransferControls();
-    }
-
-    private void enableTransferControls() {
-        actions.getRemoteClipboardSetAction().setEnabled(true);
-        actions.getRemoteClipboardRequestAction().setEnabled(true);
+        toggleTransferControls(true);
     }
 
     private void stopSessionTimer() {
