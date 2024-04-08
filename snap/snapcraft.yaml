@@ -15,7 +15,7 @@ grade: stable
 base: core22
 confinement: strict
 architectures:
-  [amd64, arm64, armhf, riscv64]
+  - build-on: [amd64, arm64, armhf, riscv64]
 
 lint:
   ignore:
