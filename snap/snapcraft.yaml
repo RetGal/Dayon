@@ -65,8 +65,7 @@ parts:
       craftctl set version=$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)
 
     build-packages:
-      - openjdk-11-jdk
-      - maven
+      [openjdk-11-jdk, maven]
 
     override-build: |
       craftctl default
@@ -77,3 +76,7 @@ parts:
 
     stage-packages:
       [openjdk-11-jre]
+
+    override-prime: |
+      craftctl default
+      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
