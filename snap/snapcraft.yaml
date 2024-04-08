@@ -12,16 +12,22 @@ description: |
   - secure, end-to-end encrypted communication (TLS 1.3)
 license: GPL-3.0
 grade: stable
-base: core18
+base: core22
 confinement: strict
+
+lint:
+  ignore:
+    - library:
+        - usr/lib/jvm/java-*/lib/*.so
 
 apps:
   assisted:
     extensions:
-      [gnome-3-28]
+      [gnome]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
+      DISABLE_WAYLAND: 1
     command: bin/dayon.launcher $SNAP/jar/dayon.jar $1 $2 $3 $4 $5
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
@@ -29,7 +35,7 @@ apps:
 
   assistant:
     extensions:
-      [gnome-3-28]
+      [gnome]
     environment:
       JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
@@ -40,7 +46,7 @@ apps:
 
   browser:
     extensions:
-      [gnome-3-28]
+      [gnome]
     command: bin/dayon.browser
     plugs:
       [home, network, desktop]
@@ -51,32 +57,23 @@ parts:
     source: https://github.com/retgal/dayon.git
     source-tag: master
     source-type: git
-    maven-options:
+    maven-parameters:
       [-Psnap]
 
+    override-pull: |
+      craftctl default
+      craftctl set version=$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)
+
     build-packages:
-      [default-jre]
+      - openjdk-11-jdk
+      - maven
 
     override-build: |
-      snapcraftctl build
-      cp target/dayon.browser $SNAPCRAFT_PART_INSTALL/bin/
-      cp target/dayon.launcher $SNAPCRAFT_PART_INSTALL/bin/
-      cp target/dayon.png $SNAPCRAFT_PART_INSTALL/bin/
-
-    override-pull: |
-      snapcraftctl pull
-      snapcraftctl set-version "$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)"
-
-    filesets:
-      exclude-original-jar:
-        [-jar/original-dayon.jar]
-
-    stage:
-      [$exclude-original-jar]
+      craftctl default
+      cp target/dayon.browser $CRAFT_PART_INSTALL/bin/
+      cp target/dayon.launcher $CRAFT_PART_INSTALL/bin/
+      cp target/dayon.png $CRAFT_PART_INSTALL/bin/
+      rm $CRAFT_PART_INSTALL/jar/original-dayon.jar
 
     stage-packages:
-      [default-jre]
-
-    override-prime: |
-      snapcraftctl prime
-      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
+      [openjdk-11-jre]
