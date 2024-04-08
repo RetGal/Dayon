@@ -14,6 +14,8 @@ license: GPL-3.0
 grade: stable
 base: core22
 confinement: strict
+architectures:
+  [amd64, arm64, armhf, riscv64]
 
 lint:
   ignore:
