@@ -72,16 +72,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
-        if (UPnP.isUPnPAvailable() && !UPnP.isMappedTCP(configuration.getPort())) {
-            UPnP.openPortTCP(configuration.getPort(), APP_NAME);
-        }
+        manageRouterPorts(0, configuration.getPort());
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
                 NetworkAssistantEngine.this.receivingLoop(compatibilityMode);
             }
         }, "NetworkReceiver");
-
         receiver.start();
     }
 
@@ -96,9 +93,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     public void manageRouterPorts(int oldPort, int newPort) {
-        if (UPnP.isUPnPAvailable()) {
+        if (!UPnP.isUPnPAvailable()) {
+            return;
+        }
+        if (oldPort != 0 && UPnP.isMappedTCP(oldPort)) {
             UPnP.closePortTCP(oldPort);
-            UPnP.openPortTCP(newPort, APP_NAME);
+            Log.info(format("Disabled forwarding for port %d", oldPort));
+        }
+        if (!UPnP.isMappedTCP(newPort)) {
+            if (UPnP.openPortTCP(newPort, APP_NAME)) {
+                Log.info(format("Enabled forwarding for port %d", newPort));
+                return;
+            }
+            Log.warn(format("Failed to enable forwarding for port %d", newPort));
         }
     }
 
