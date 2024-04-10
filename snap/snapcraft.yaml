@@ -6,10 +6,12 @@ description: |
   An easy-to-use, cross-platform remote desktop support solution for everyone.
   It can be used as free alternative to various commercial remote desktop and remote assistance products.
   Its key features are
-  - no router or network configuration required on the assisted side
-  - friendly, multilingual (de/en/es/fr/it/ru/sv/tr/zh) user interface
   - assistant and assisted functionality in one package
   - secure, end-to-end encrypted communication (TLS 1.3)
+  - no network configuration required on the assisted side
+  - friendly, multilingual user interface
+  - respects your privacy 100% - no registration required
+  - available for Linux, Windows and macOS
 license: GPL-3.0
 grade: stable
 base: core22
@@ -82,6 +84,8 @@ parts:
       cp target/dayon.launcher $CRAFT_PART_INSTALL/bin/
       cp target/dayon.png $CRAFT_PART_INSTALL/bin/
       rm $CRAFT_PART_INSTALL/jar/original-dayon.jar
+      rm $CRAFT_PART_INSTALL/jar/WaifUPnP-*.jar
+      rm $CRAFT_PART_INSTALL/jar/xz-*.jar
 
     stage-packages:
       [openjdk-11-jre]
@@ -89,3 +93,5 @@ parts:
     override-prime: |
       craftctl default
       rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
+      rm jar/jrt-fs.jar
+      rm -rf usr/share/doc
