@@ -10,6 +10,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -56,7 +57,8 @@ public abstract class NetworkEngine {
      */
     public void sendClipboardText(String text) {
         if (sender != null) {
-            sender.sendClipboardContentText(text, text.getBytes().length);
+            String utf8Encoded = StandardCharsets.UTF_8.decode(StandardCharsets.UTF_8.encode(text)).toString();
+            sender.sendClipboardContentText(utf8Encoded, utf8Encoded.getBytes().length);
         }
     }
 
