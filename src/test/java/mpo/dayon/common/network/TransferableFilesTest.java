@@ -7,9 +7,9 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.jupiter.api.Assertions.*;
 
 class TransferableFilesTest {
@@ -45,7 +45,7 @@ class TransferableFilesTest {
         int len = stream.available();
         byte[] bytes = new byte[len];
         stream.read(bytes, 0, len);
-        String string = new String(bytes, StandardCharsets.UTF_8);
+        String string = new String(bytes, UTF_8);
         assertEquals("copy", string.substring(0, 4));
         assertTrue(string.contains(file.getName()));
     }

@@ -7,9 +7,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileMetaDataTest {
 
-    private final String basePath = "tmp/";
+    private static final String basePath = "tmp/";
     private final String fileName = format("%sfoo/bar.txt", basePath);
-    private final long fileSize = 10;
+    private static final long fileSize = 10;
 
     @Test
     void getFileName() {
