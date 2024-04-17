@@ -4,8 +4,8 @@ import java.security.SecureRandom;
 import java.util.concurrent.ThreadFactory;
 
 public class DefaultThreadFactoryEx implements ThreadFactory {
-	private final int threadNumber = new SecureRandom().nextInt(99);
-
+	private static final SecureRandom RANDOM = new SecureRandom();
+	private final int threadNumber = RANDOM.nextInt(99);
 	private final String namePrefix;
 
 	public DefaultThreadFactoryEx(String name) {
