@@ -43,10 +43,14 @@ public class CustomTrustManager implements X509TrustManager {
 		try {
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
 			final Path keystorePath = Paths.get(new File(getProperty("dayon.home"), "keystore.jks").getAbsolutePath());
-			if (compatibilityMode || ! keystorePath.toFile().exists()) {
-				keyStore.load(CustomTrustManager.class.getResourceAsStream("/trust/X509"), keyStorePass);
+			if (compatibilityMode || !keystorePath.toFile().exists()) {
+				try (InputStream inputStream = CustomTrustManager.class.getResourceAsStream("/trust/X509")) {
+					keyStore.load(inputStream, keyStorePass);
+				}
 			} else {
-				keyStore.load(Files.newInputStream(keystorePath), keyStorePass);
+				try (InputStream keystoreInputStream = Files.newInputStream(keystorePath)) {
+					keyStore.load(keystoreInputStream, keyStorePass);
+				}
 			}
 			kmf.init(keyStore, keyStorePass);
 		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {
