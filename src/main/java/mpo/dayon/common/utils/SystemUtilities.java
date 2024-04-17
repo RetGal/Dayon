@@ -52,7 +52,8 @@ public final class SystemUtilities {
 
     public static String getJarDir() {
         try {
-            return Paths.get(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString();
+            final Path parent = Paths.get(SystemUtilities.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
+            return parent != null ? parent.toString() : "";
         } catch (URISyntaxException e) {
             return "";
         }
