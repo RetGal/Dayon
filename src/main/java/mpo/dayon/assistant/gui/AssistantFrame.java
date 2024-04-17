@@ -400,6 +400,7 @@ class AssistantFrame extends BaseFrame {
         actions.getStopAction().setEnabled(false);
         startButton.setVisible(true);
         stopButton.setVisible(false);
+        actions.getTokenAction().setEnabled(true);
         actions.getToggleCompatibilityModeAction().setEnabled(true);
         actions.getIpAddressAction().setEnabled(true);
         // session
@@ -452,6 +453,7 @@ class AssistantFrame extends BaseFrame {
         add(center, BorderLayout.CENTER);
         screenshotButton.setEnabled(true);
         actions.getResetAction().setEnabled(true);
+        actions.getTokenAction().setEnabled(false);
         enableControls();
         validate();
         repaint();
