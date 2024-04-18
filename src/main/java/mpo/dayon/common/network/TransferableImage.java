@@ -17,7 +17,7 @@ public class TransferableImage implements Transferable, Serializable {
     private transient BufferedImage image;
 
     public TransferableImage(BufferedImage image) {
-        this.image = image;
+        this.image = image.getSubimage(0, 0, image.getWidth(), image.getHeight());
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {
@@ -42,6 +42,6 @@ public class TransferableImage implements Transferable, Serializable {
         if (!DataFlavor.imageFlavor.equals(flavor)) {
             Log.error(new UnsupportedFlavorException(flavor).getMessage());
         }
-        return image;
+        return image.getSubimage(0, 0, image.getWidth(), image.getHeight());
     }
 }

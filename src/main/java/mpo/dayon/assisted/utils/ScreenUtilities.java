@@ -54,7 +54,7 @@ public final class ScreenUtilities {
     }
 
     public static Rectangle getSharedScreenSize() {
-        return sharedScreenSize;
+        return new Rectangle(sharedScreenSize);
     }
 
     public static int getNumberOfScreens() {

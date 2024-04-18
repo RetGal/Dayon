@@ -15,7 +15,7 @@ public class RobotCaptureFactory implements CaptureFactory {
 
 	@Override
 	public Dimension getDimension() {
-		return captureDimension;
+		return new Dimension(captureDimension);
 	}
 
 	@Override

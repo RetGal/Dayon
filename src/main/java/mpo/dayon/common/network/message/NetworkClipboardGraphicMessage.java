@@ -13,7 +13,7 @@ public class NetworkClipboardGraphicMessage extends NetworkMessage {
     private final int size;
 
     public NetworkClipboardGraphicMessage(TransferableImage payload) {
-        this.payload = payload;
+        this.payload = new TransferableImage(payload.getTransferData(DataFlavor.imageFlavor));
         // this is just a rather rough estimation
         this.size = payload.getTransferData(DataFlavor.imageFlavor).getData().getDataBuffer().getSize() * 4;
     }
@@ -24,7 +24,7 @@ public class NetworkClipboardGraphicMessage extends NetworkMessage {
     }
 
     public TransferableImage getGraphic() {
-        return payload;
+        return new TransferableImage(payload.getTransferData(DataFlavor.imageFlavor));
     }
 
     @Override

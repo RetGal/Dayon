@@ -98,7 +98,7 @@ public class NetworkCaptureMessage extends NetworkMessage {
 	}
 
 	public MemByteBuffer getPayload() {
-		return payload;
+		return payload.clone();
 	}
 
 	public String toString() {
