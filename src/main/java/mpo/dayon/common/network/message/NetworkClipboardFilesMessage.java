@@ -5,6 +5,8 @@ import mpo.dayon.common.network.FileUtilities;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static java.lang.Math.min;
@@ -55,7 +57,10 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
             if (getRemainingTotalFilesSize(helper, read, position) == 0) {
                 String rootPath = format("%s%s%s", tmpDir, File.separator, helper.getTransferId());
-                helper.setFiles(Arrays.asList(Objects.requireNonNull(new File(rootPath).listFiles())));
+                File[] filesArray = new File(rootPath).listFiles();
+                if (filesArray != null) {
+                    helper.setFiles(Arrays.asList(Objects.requireNonNull(filesArray)));
+                }
             }
         } catch (ClassNotFoundException e) {
             Log.error(e.getMessage());
@@ -76,7 +81,13 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {
-        new File(tempFileName.substring(0, tempFileName.lastIndexOf(File.separatorChar))).mkdirs();
+        final Path parent = Paths.get(tempFileName).getParent();
+        if (parent != null) {
+            final boolean created = parent.toFile().mkdirs();
+            if (!created) {
+                Log.error("Could not create parent directories for " + tempFileName);
+            }
+        }
         try (FileOutputStream stream = new FileOutputStream(tempFileName, append)) {
             stream.write(copyOf(buffer, length));
         }
@@ -92,7 +103,10 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         if (node.isFile()) {
             fileMetaDatas.add(new FileMetaData(node.getPath(), node.length(), basePath));
         } else if (node.isDirectory()) {
-            Arrays.stream(Objects.requireNonNull(node.listFiles())).parallel().forEachOrdered(file -> extractFileMetaData(file, fileMetaDatas, basePath));
+            File[] filesArray = node.listFiles();
+            if (filesArray != null) {
+                Arrays.stream(filesArray).parallel().forEachOrdered(file -> extractFileMetaData(file, fileMetaDatas, basePath));
+            }
         }
     }
 
@@ -123,8 +137,11 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         if (file.isFile()) {
             sendFile(file, out);
         } else {
-            for (File node : Objects.requireNonNull(file.listFiles())) {
-                processFile(node, out);
+            File[] filesArray = file.listFiles();
+            if (filesArray != null) {
+                for (File node : filesArray) {
+                    processFile(node, out);
+                }
             }
         }
     }
