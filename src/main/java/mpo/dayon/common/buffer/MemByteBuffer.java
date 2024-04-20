@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * A mixed between a byte buffer and a byte stream ...
  */
-public class MemByteBuffer extends OutputStream implements Cloneable {
+public class MemByteBuffer extends OutputStream {
 	private static final int DEFAULT_INITIAL_CAPACITY = 32;
 
 	private byte[] buffer;
@@ -128,12 +128,7 @@ public class MemByteBuffer extends OutputStream implements Cloneable {
 		}
 	}
 
-	@Override
-	public final MemByteBuffer clone() {
-		try {
-			return (MemByteBuffer) super.clone();
-		} catch (CloneNotSupportedException e) {
-			return new MemByteBuffer(buffer);
-		}
+	public final MemByteBuffer copy() {
+		return new MemByteBuffer(buffer);
 	}
 }
