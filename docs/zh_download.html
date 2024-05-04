@@ -133,14 +133,32 @@
 
       <p>
         <strong>Mac OS/OS X:</strong>
-        解压 <code>.tgz</code> 压缩包到任意位置。为了方便使用，您或许可以分别创建一个 <code>dayon_assisted.sh</code>
-        和 <code>dayon_assistant.sh</code> 的 <code>alias</code>，并将它们复制到您的桌面(要求预装有 JRE 8 及以上版本)。
+        打开<code>.dmg</code>软件包并将“Assisted”或“Assistant”拖到程序图标上。如有必要，必须安装合适的 Java JRE 11（或更高版本）。
+        或者：将.tgz包解压到您选择的位置。为了更方便，您可能需要为<code>dayon_assisted.sh</code>和创建别名<code>dayon_assistant.sh</code>
+        并将它们复制到桌面。 （要求：还安装了 JRE 11 或更高版本）。
        <br/>
         <strong>重要提示：</strong> 从 macOS Catalina 及更高版本，您必须明确授予
         <code>dayon_assisted.sh</code> 屏幕捕获权限： <code>系统偏好设置 > 安全和隐私 > 隐私 > 屏幕捕获</code>
       </p>
 
       <h2 id="change-log">更新日志</h2>
+
+      <h3>Dayon！ v14 Candid Clover（2024 年 3 月 7 日）</h3>
+      <span class="red">*</span>
+      <ul>
+        <li>主要 UI</li>
+        <li>HiDPI 支持</li>
+        <li>可以选择在辅助窗口截取屏幕截图</li>
+        <li>传输包含图形的剪贴板</li>
+        <li>检测不同的键盘布局</li>
+        <li>在 UI 中配置令牌服务器的选项</li>
+        <li>发送 ctrl 键的专用按钮</li>
+        <li>如果与辅助运行的 macOS 连接，则发送 cmd 键</li>
+        <li>将窗口锁定到辅助屏幕宽高比的选项</li>
+        <li>更改 UI 内语言的选项</li>
+        <li>选择启动联合 JITSI 会议以与远程对等方聊天</li>
+      </ul>
+
       <h3>Dayon! v13 Beard Butter (2023年11月5日)</h3>
       <ul>
         <li>通过使用单独生成的证书，改进了 MITM 攻击缓解功能</li>
