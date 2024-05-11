@@ -36,24 +36,24 @@ apps:
     extensions:
       [gnome]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
       DISABLE_WAYLAND: 1
     command: bin/dayon.launcher $SNAP/jar/dayon.jar $1 $2 $3 $4 $5
     desktop: ../parts/dayon/build/target/dayon.assisted.desktop
     plugs:
-      [home, network, network-bind, desktop]
+      [home, network, desktop]
 
   assistant:
     extensions:
       [gnome]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-11-openjdk-$SNAP_ARCH
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
     command: bin/dayon.launcher $SNAP/jar/dayon.jar assistant $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
     plugs:
-      [home, network, network-bind, desktop]
+      [home, network, desktop]
 
   browser:
     extensions:
@@ -76,7 +76,7 @@ parts:
       craftctl set version=$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)
 
     build-packages:
-      [openjdk-11-jdk, maven]
+      [openjdk-21-jdk, maven]
 
     override-build: |
       craftctl default
@@ -88,10 +88,9 @@ parts:
       rm $CRAFT_PART_INSTALL/jar/xz-*.jar
 
     stage-packages:
-      [openjdk-11-jre]
+      [openjdk-21-jre, pipewire]
 
     override-prime: |
       craftctl default
-      rm -vf usr/lib/jvm/java-11-openjdk-*/lib/security/blacklisted.certs
-      rm jar/jrt-fs.jar
-      rm -rf usr/share/doc
+      rm -r usr/share/doc
+      rm -r usr/share/man
