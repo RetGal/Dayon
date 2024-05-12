@@ -16,7 +16,7 @@ class UnitUtilitiesTest {
     @BeforeAll
     static void getLocale() {
         defaultLocale = Locale.getDefault();
-        Locale.setDefault(new Locale("de", "CH"));
+        Locale.setDefault(Locale.forLanguageTag("de-CH"));
     }
 
     @AfterAll
