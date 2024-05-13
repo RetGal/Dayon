@@ -48,7 +48,8 @@ class FrameConfiguration {
 
     FrameConfiguration(Position position, Dimension dimension) {
         this.position = position;
-        this.dimension = dimension;
+        // should actually only be null during tests
+        this.dimension = dimension == null ? new Dimension(ASSISTED.getMinWidth(), ASSISTED.getMinHeight()) : dimension;
     }
 
     public boolean equals(Object o) {
