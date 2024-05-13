@@ -534,7 +534,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.7.0</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assisted.sh</fileName>
@@ -604,7 +604,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.7.0</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assistant.sh</fileName>
@@ -661,7 +661,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.7.0</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assisted.command</fileName>
@@ -721,7 +721,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.6.2</version>
+                        <version>1.7.0</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assistant.command</fileName>
