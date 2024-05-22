@@ -30,7 +30,7 @@ class NetworkHelloMessageTest {
 
     @ParameterizedTest
     @CsvSource({ "13, 0", "12, 0", "11, 0" })
-    void unmarshallHelloMessageFromLegacyVersion(int major, int minor) throws IOException, ClassNotFoundException {
+    void unmarshallHelloMessageFromLegacyVersion(int major, int minor) throws IOException {
         // given
         String fileName = "tmp";
         ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName));
@@ -54,7 +54,7 @@ class NetworkHelloMessageTest {
 
     @ParameterizedTest
     @CsvSource({ "13, 1, l", "0, 0, w" })
-    void unmarshallHelloMessageFromSupportedVersion(int major, int minor, char osId) throws IOException, ClassNotFoundException {
+    void unmarshallHelloMessageFromSupportedVersion(int major, int minor, char osId) throws IOException {
         // given
         String fileName = "tmp";
         ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(fileName));
