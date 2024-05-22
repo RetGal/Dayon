@@ -718,7 +718,6 @@ public class Assistant implements ClipboardOwner {
             synchronized (prevBufferLOCK) {
                 image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
                 prevBuffer = image.getValue();
-                // set to capture.getWidth()/getHeight() to visualize changed tiles only
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
             }
@@ -728,8 +727,9 @@ public class Assistant implements ClipboardOwner {
                     frame.computeScaleFactors(prevWidth, prevHeight, frame.getKeepAspectRatioActivated());
                 }
                 // required as the canvas might have been reset if keepAspectRatio caused a resizing of the window
-                if (frame.getCanvas() != null) {
-                    frame.onCaptureUpdated(scaleImage(image.getKey(), frame.getCanvas().width, frame.getCanvas().height));
+                final Dimension canvasDimension = frame.getCanvas();
+                if (canvasDimension != null) {
+                    frame.onCaptureUpdated(scaleImage(image.getKey(), canvasDimension.width, canvasDimension.height));
                 }
             } else {
                 frame.onCaptureUpdated(image.getKey());

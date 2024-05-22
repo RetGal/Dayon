@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.*;
+import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
@@ -203,9 +204,15 @@ class AssistantFrame extends BaseFrame {
 
     private void addResizeListener() {
         addComponentListener(new ComponentAdapter() {
+            private Timer resizeTimer;
             @Override
             public void componentResized(ComponentEvent ev) {
-                resetCanvas();
+                if (resizeTimer != null) {
+                    resizeTimer.stop();
+                }
+                resizeTimer = new Timer(500, e -> resetCanvas());
+                resizeTimer.setRepeats(false);
+                resizeTimer.start();
             }
         });
     }
@@ -526,7 +533,7 @@ class AssistantFrame extends BaseFrame {
         canvas.setSize(canvas.getWidth() - OFFSET, canvas.getHeight() - OFFSET);
         xFactor = canvas.getWidth() / sourceWidth;
         yFactor = canvas.getHeight() / sourceHeight;
-        if (keepAspectRatio && !isImmutableWindowsSize.get()) {
+        if (keepAspectRatio && !isImmutableWindowsSize.get() && abs(xFactor - yFactor) > 0.01) {
             resizeWindow(sourceWidth, sourceHeight);
         }
     }
