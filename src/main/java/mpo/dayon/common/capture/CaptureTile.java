@@ -68,7 +68,7 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		this.capture = capture.copy();
+		this.capture = capture;
 		if (width * height != capture.size()) {
 			throw new IllegalArgumentException("Ouch!");
 		}
@@ -149,7 +149,7 @@ public class CaptureTile {
 	}
 
 	public MemByteBuffer getCapture() {
-		return capture.copy();
+		return capture;
 	}
 
 	/**

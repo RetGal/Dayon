@@ -127,8 +127,4 @@ public class MemByteBuffer extends OutputStream {
 			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
 		}
 	}
-
-	public final MemByteBuffer copy() {
-		return new MemByteBuffer(buffer);
-	}
 }

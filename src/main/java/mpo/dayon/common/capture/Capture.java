@@ -43,8 +43,8 @@ public class Capture {
 		this.reset = reset;
 		this.skipped = new AtomicInteger(skipped);
 		this.merged = new AtomicInteger(merged);
-		this.captureDimension = new Dimension(captureDimension);
-		this.tileDimension = new Dimension(tileDimension);
+		this.captureDimension = captureDimension;
+		this.tileDimension = tileDimension;
 		this.dirty = dirty.clone();
 	}
 

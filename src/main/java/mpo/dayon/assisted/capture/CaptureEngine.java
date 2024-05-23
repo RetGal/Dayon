@@ -2,7 +2,6 @@ package mpo.dayon.assisted.capture;
 
 import java.awt.*;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import mpo.dayon.common.capture.Capture;
@@ -132,7 +131,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
             final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension());
 
-            if (!Arrays.stream(dirty).allMatch(Objects::isNull)) {
+            if (dirty != null) {
                 final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
                 fireOnCaptured(capture); // might update the capture (i.e., merging with previous not sent yet)
                 updatePreviousCapture(capture);
@@ -184,7 +183,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             previousCapture = new long[length];
             resetPreviousCapture();
         }
-        CaptureTile[] dirty = new CaptureTile[length];
+        CaptureTile[] dirty = null;
         int tileId = 0;
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
             final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
@@ -194,6 +193,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
+                    if (dirty == null) {
+                        dirty = new CaptureTile[length];
+                    }
                     dirty[tileId] = new CaptureTile(captureId, tileId, cs, new Position(tx, ty), tw, th, tileData);
                 }
                 ++tileId;
