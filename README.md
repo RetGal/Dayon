@@ -32,7 +32,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/) is v14.0.1 (Candid Clover I) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v14.0.1 (Candid Clover I) - released more than ten years after the initial release.
 
 This version comes with a completely redesigned user interface, full HiDPI support, enhanced macOS friendliness and numerous new functions! For a complete list of changes see: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
 
