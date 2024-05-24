@@ -18,13 +18,9 @@ base: core24
 confinement: strict
 platforms:
   amd64:
-    build-on: [amd64]
   arm64:
-    build-on: [arm64]
   armhf:
-    build-on: [armhf]
   riscv64:
-    build-on: [riscv64]
 
 lint:
   ignore:
