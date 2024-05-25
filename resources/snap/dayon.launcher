@@ -7,4 +7,4 @@ case "$@" in
     LOG="-Ddayon.log=file"
     ;;
 esac
-java ${LOG} -Xmx256M -Xlog:logging=debug -jar "$@"
+java ${LOG} -Xmx256M -jar "$@"
