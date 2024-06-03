@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="description" content="Remote assistance made easy!"/>
     <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Dayon! - 为您的家人和朋友提供远程协助</title>
+    <title>Dayon! - Remote assistance for your family and friends</title>
     <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
@@ -21,14 +21,14 @@
     <div class="nav-wrapper">
       <nav>
         <div class="ls">
-          <a href="de_settings.html" title="Deutsch">DE</a>
-          <a href="fr_settings.html" title="Français">FR</a>
-          <a href="sv_settings.html" title="Svenska">SV</a>
-          <a href="settings.html" title="English">EN</a>
+          <a href="de_download.html" title="Deutsch">DE</a>
+          <a href="fr_download.html" title="Français">FR</a>
+          <a href="sv_download.html" title="Svenska">SV</a>
+          <a href="download.html" title="English">EN</a>
         </div>
         <a href="zh_index.html">首页</a><br/>
         <a href="zh_quickstart.html">快速入门</a><br/>
-        <a href="zh_settings.html">反馈</a><br/>
+        <a href="zh_settings.html">设置</a><br/>
         <a href="zh_download.html">下载</a><br/>
         <a href="zh_support.html">支持</a><br/>
         <a href="zh_privacy.html">隐私</a><br/>
@@ -41,22 +41,170 @@
       <a href="de_settings.html" title="Deutsch">DE</a>
       <a href="fr_settings.html" title="Français">FR</a>
       <a href="sv_settings.html" title="Svenska">SV</a>
-      <a href="settings.html" title="English">EN</a>
+      <a href="zh_settings.html" title="简体中文">汉语</a>
     </div>
     <div id="menu">
       <a href="zh_index.html">首页</a>
       <a href="zh_quickstart.html">快速入门</a>
-      <a href="zh_settings.html">反馈</a>
+      <a href="zh_settings.html">设置</a>
       <a href="zh_download.html">下载</a>
       <a href="zh_support.html">支持</a>
       <a href="zh_privacy.html">隐私</a>
       <a href="https://github.com/retgal/dayon">GitHub</a>
     </div>
     <div id="content">
-      <h2>反馈</h2>
+      <h2>设置 Dayon! </h2>
+
+      <h3><img src="assistant.png" alt="Assistant"/> &nbsp; <a id="assistant" class="no">帮助者计算机（主控端 - Assistant）</a></h3>
+
       <p>
-        我们非常欢迎您的反馈 - 您可以在
-        <a href="https://github.com/retgal/dayon/issues">GitHub</a> 发起一个新的Issues，或者在已有的相同主题的Issues下面进行讨论。
+        使用这个表单来设置屏幕捕获；您可以配置两次<strong> 屏幕捕获 </strong>（又名时钟滴答，即tick）之间的时间（以毫秒为单位）和灰度级数。
+      </p>
+
+      <p>
+        <img src="assistant_capture_settings.jpg" alt="Dayon! Assistant: Capture Settings"/>
+      </p>
+
+      <p>
+          然后，您可以设置<strong> 压缩 </strong>方式；有两种压缩算法可用：ZIP 和 XZ。
+          XZ 将获得（更）好的压缩率，但需要占用更多的 CPU 和 RAM 资源，因为它比 ZIP 复杂得多，
+          并且是用 JAVA 实现的（相比之下，ZIP 使用 JDK 中的一些本地代码实现的）。
+      </p>
+
+      <p>
+        此外，使用<strong> 缓存 </strong>可以避免重复发送相同的位图，例如在打开和浏览菜单时。屏幕被划分为多个图块，每块都可能被缓存。
+        您需定义缓存中的最大图块数量。注意，每个图块目前是32x32像素，256 级，即1K。
+      </p>
+
+      <p>
+        <img src="assistant_compression_settings.jpg" alt="Dayon! Assistant : Compression Settings"/>
+      </p>
+
+      <h3>额外的连接设置</h3>
+      <p>
+        <img src="assistant_token_server.jpg" alt="Dayon! Assistant: Token server"/>
+      </p>
+
+      <p>
+        除了可以配置 <em>主控端 - Assistant</em> 正在侦听的端口号之外，在网络设置对话框中还可以指定令牌服务器。
+        可以指定使用默认的令牌服务器或自定义的令牌服务器（比如使用您自托管的令牌服务器）。文章末尾是可用的令牌服务器列表，如需请自行参阅。
+        </br>
+        <strong>重要提示</strong>：务必确保 <em>用户端 - Assisted</em> 和 <em>主控端 - Assistant</em> 使用的是同一个令牌服务器！！
+      </p>
+
+      <p>
+        <br/>
+      </p>
+
+      <h3><img src="assisted.png" alt="Assisted"/> &nbsp; <a id="assisted" class="no">被帮助者计算机（用户端 - Assisted）</a></h3>
+
+      <h3>配置 UAC</h3>
+      <p>
+        为了让 <em>帮助者（主控端 - Assistant）</em> 能够看到所有系统对话框，必须在 Windows 下调整 UAC（用户帐户控制）设置。
+        方便起见，UAC 设置对话框可直接从 <em>用户端 - Assisted</em> 的用户界面访问。
+        倒数第二项的设置已被证明是有用的(The second-lowest setting for has proven to be useful)。
+      </p>
+
+      <p>
+        <img src="assisted_uac.jpg" alt="Dayon! Assisted: UAC"/>
+      </p>
+
+      <h3>额外的连接设置</h3>
+      <p>
+        <img src="assisted_token_server.jpg" alt="Dayon! Assisted: Token server"/>
+      </p>
+
+      <p>
+        如果您想不使用访问令牌进行连接，您可以在 <em>用户端 - Assisted</em> 的网络设置对话框中
+        手动配置 <em>主控端 - Assistant</em> 的端口号和 IP 地址。
+        您还可以启用（或禁用） <em>用户端 - Assisted</em>  的自动连接。
+        如果启用，<em>用户端 - Assisted</em> 将在下次启动时直接连接到指定主机，而无需进一步询问。
+        <br/>
+        此外，您可以指定要使用的令牌服务器。可以配置标准（默认）令牌服务器或自定义服务器。
+        可用的令牌服务器列表在本页 <a href="#token_servers">底部</a>，如需请自行参阅。
+        <br>
+        <strong>重要提示</strong>：务必确保 <em>用户端 - Assisted</em> 和 <em>主控端 - Assistant</em> 使用的是同一个令牌服务器！！
+      </p>
+
+      <h3>通过命令提示符（命令行）自动连接 <em>主控端 - Assistant</em> </h3>
+
+      <p>
+         <em>主控端 - Assistant</em> 的 主机名/IP 地址 和 端口 可以通过命令行参数传递，
+        其中 ah 是主机名、域名或IP（ah=【主机名、域名 或 IP 地址】），ap是端口（ap=【端口号】）：
+      </p>
+
+      <ul>
+        <li><code>dayon_assisted.sh ah=an.example.com ap=4242</code> (Linux/macOS)</li>
+        <li><code>dayon.assisted ah=an.example.com ap=4242</code> (Linux Snap)</li>
+        <li><code>./assisted.sh ah=an.example.com ap=4242</code> (Linux Quick Launch)</li>
+        <li><code>java -jar dayon.jar ah=an.example.com ap=4242</code> (Windows/Linux/macOS)</li>
+        <li><code>assisted.exe ah=an.example.com ap=4242</code> (Windows Quick Launch)</li>
+      </ul>
+
+      <p>
+        如果使用上述示例参数启动 <em>用户端 - Assisted</em>，它将直接连接到名为 “an.example.com” 的主机的“4242” 端口。
+      </p>
+
+      <h3>使用配置文件配置 Dayon! </h3>
+      <p>
+        从版本 v11.0.5 开始，连接参数可以存储在 YAML 配置文件中。
+        <br/><br/>
+<!--        TODO-->
+        这允许用户设置被覆盖，因为 YAML 中的配置始终在启动时被读取和运用。
+        用户可以在应用程序内部进行更改，但如果有 YAML 配置，则这些更改仅在下次启动时有效。
+        This makes it possible to override user settings since the configuration from the YAML is always read and evaluated on start up. Users can make changes inside the application, but these only last until the next start if a YAML configuration is in place.
+        <br/><br/>
+        YAML 配置的主要用途是供希望使用自托管令牌服务器而不是公共令牌服务器的组织使用，或者希望在启动时指定被辅助方自动连接到的特定主机。
+        The primary use case for YAML configurations would be for organisations that want to use a self-hosted token server instead of the public token server, or want to specify a particular host that the assisted should automatically connect to on startup.
+        <br/><br/>
+        The structure of the <em>assisted</em> YAML is extremely simple:
+      </p>
+
+<pre>
+host: "an.example.com"
+port: 8080
+# autoConnect: false
+# tokenServerUrl: "https://example.org/token"
+</pre>
+
+      <p>
+        <ul>
+          <li>To prevent the assisted from automatically connecting right after the start, in <code>assisted.yaml</code> just uncomment the following line: <code># autoConnect: false</code></li>
+          <li>To make assisted use other token server than the default public token server, in <code>assisted.yaml</code>, just uncomment the following line and set the appropriate URL:
+              <code># tokenServerUrl: "https://example.org/token"</code><br/><strong>Important:</strong> make sure to use the same as assistant!</li>
+        </ul>
+      </p>
+
+      <p>
+        The <em>assistant</em> also has a YAML configuration file.
+        <br/>
+        <ul>
+          <li>
+          To make assistant use other token server than the default public token server, in <code>assistant.yaml</code>,
+          just uncomment the following line and set the appropriate URL: <code># tokenServerUrl: "https://example.org/token"</code>
+          <br/><strong>Important:</strong> make sure to use the same as assisted!
+          </li>
+        </ul>
+
+      The YAML file(s) can be saved under the name <code>assisted.yaml</code> and <code>assistant.yaml</code> either in the Dayon! home directory,
+      in the user directory, or in the same directory as the <code>.jar</code>, resp. <code>.exe</code> file.
+        This order also corresponds to the priority with which they are taken into account in the case of multiple configurations exist. (first one wins)
+      </p>
+
+      <h3><a id="token_servers" class="no">公共令牌服务器</a></h3>
+
+      <p>
+        Below you find a list of available public token servers that are free to use.<br/>
+        Would you like to contribute and add your RVS to the list? <a href="https://github.com/RetGal/Dayon/issues">let me know</a>!
+        <br/><br/>
+        Check the availability of a token server by clicking on its link. If a version number is displayed directly, it is active.
+        <ul>
+            <li><strong><a href="https://fensterkitt.ch/dayon/">https://fensterkitt.ch/dayon/</a></strong></li>
+            <li><strong><a href="https://dayon.helioho.st/rvs/">https://dayon.helioho.st/rvs/</a></strong></li>
+        </ul>
+        You can find instructions on how to operate your own token server <a href="https://github.com/RetGal/Dayon/tree/master/ext">here</a>.
+      </p>
+
     </div>
     <div id="footer"></div>
   </div>
