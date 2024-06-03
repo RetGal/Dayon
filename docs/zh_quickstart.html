@@ -55,17 +55,37 @@
       <div id="content">
         <h2>快速入门</h2>
         <p>
-            设想的情景：<strong style="color:red">帮助者</strong>(使用 Dayon! 主控端 Assistant) 使用远程桌面应用 Dayon! <strong style="color:blue">帮助</strong> <strong style="color:red">被帮助者</strong>(下文称为用户，使用 Dayon! 用户端 Assisted)
-            解决计算机方面的问题。
+            设想的情景：<strong style="color:red">帮助者</strong>(使用 Dayon! 主控端 Assistant)
+            <strong style="color:blue"> 使用远程桌面应用 Dayon! 帮助 </strong> <strong style="color:red">被帮助者</strong>(下文称为用户，使用 Dayon! 用户端 Assisted)
+            <strong style="color:blue"> 解决计算机方面的问题 </strong>。
         </p>
         <p>
-            一般情况下，帮助者 一边使用 QQ、微信、Jitsi、电话或者其他通讯工具与用户(被帮助者)进行交流，一边使用 Dayon！实时观
-            看用户的计算机屏幕进行操作指导，必要的情况下还可以使用 Dayon! 进行远程操作。
+            通常，帮助者 使用 QQ、微信、Jitsi、电话或者其他即时通讯工具与 用户(被帮助者) 进行交流，
+            然后使用 Dayon！实时观看 用户 的计算机屏幕并进行操作指导，必要时还能进行远程操作。
         <p>
-            应用程序本身还支持法语、德语、意大利语、西班牙语、瑞典语、土耳其语和俄语（截至 2021 年 9 月 21 日，中文翻译正在进行中 ......）。如果终端用户使用的语言不是上述的一种，应用程序将默认使用英语。
+          此文档中，截图展示的是 Dayon！的英文界面。目前 Dayon！还支持法语、德语、意大利语、西班牙语、瑞典语、俄语、土耳其语和中文（简体）。
+          如果用户配置的语言不是上述某种， Dayon！将默认使用英语。
         <p>
-            <strong>注意</strong>：本文档基于最新版本的程序
+            <strong>注意</strong>：此文档基于最新版的程序书写。
+            <br/>
+            <!-- 解释为什么访问令牌功能在中国大陆可能失效，以及解决对策 -->
+            <!-- Explain why the access token function may fail in mainland China and the solution -->
+            <!--    Due to well-known reasons (China's large population and limited IPv4 resources,
+            making it difficult for everyone to obtain a public IP), the access token feature of Dayon! may not work.
+            The solutions are quite simple:
+            1.You can use internal network penetration tools such as FRP, Ngrok, or "Oray Hua Sheng Ke".
+            These tools can be self-deployed on a purchased server or you can use pre-configured ones.
+            There are many internal network penetration services available domestically, both free and paid.
+            Please search for them on Baidu（search engine name） as we do not provide such services here.
+            2.You can set up a VPN network yourself using tools like OpenVPN or ZeroTier.
+            Personally, I (the translator) use FRP and ZeroTier.
+            If you are using Dayon! within a local network, you can disregard these suggestions.   -->
+            <strong style="color:red">中国大陆用户注意</strong>：由于一些众所周知的原因（中国人口基数大，IPv4 资源有限，不是所有人都拿得到公网 IP ），
+          Dayon！的访问令牌（access token）功能可能用不了。解决方法也很简单，一可以使用诸如FRP、Ngrok、
+          花生壳等内网穿透工具（可以自己买服务器部署，也可以使用别人搭好的。内网穿透服务国内很多，免费的付费的都有，需要的请自行百度，这里不提供）；
+          二可以自己组装VPN网络，比如使用OpenVPN、Zerotier等工具。我（译者）个人使用的是FRP和Zerotier这两个工具，如果你是在内网使用 Dayon！，那可以忽略前面这些。
             <br/><br/>
+<!--    TODO      -->
         <p>
             <img src="assisted.png" alt="Assisted"> &nbsp; <a id="assisted-setup" class="no"><strong>配置用户端(Assisted)——如何获得远程协助</strong></a>
         <p>

@@ -66,9 +66,9 @@
       </p>
 
       <p>
-        兼容大多数硬件设备的独立更新包可在
-        <a href="https://snapcraft.io/dayon">Snap Store</a>, 在 <a href="https://flathub.org/apps/details/io.github.retgal.Dayon">Flathub</a>
-        或者Dayon!的PPA源 <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a> 获得。
+        兼容大多数硬件设备的独立更新包可以从
+        <a href="https://snapcraft.io/dayon">Snap Store</a> 、 <a href="https://flathub.org/apps/details/io.github.retgal.Dayon">Flathub</a>
+        还有 Dayon!的PPA源 <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a> 获得。
       </p>
 
       <p>
@@ -82,13 +82,13 @@
       </p>
 
       <p>
-        亦或者，您可以从
+        此外，您还能从
         <a href="https://github.com/retgal/dayon/releases">GitHub</a>
         或者
         <a href="https://sourceforge.net/projects/dayonactive/files/">
           SourceForge
         </a>
-        下载与您的系统相应的最新安装包。
+        获取适用于您设备的最新安装包。
       </p>
 
       <p>
@@ -99,46 +99,47 @@
 
       <p>
         <strong>Windows:</strong>
-        这里提供了两种安装包助您轻松部署Dayon!。一种是捆绑了JRE(基于OpenJDK 1.8)的安装包，另一种则没有。注意：捆绑了JRE的那个安装包仅适用于64位版本的Windows。
+        我们提供了两种安装包助您轻松部署Dayon!。一种是捆绑了JRE(基于OpenJDK 11 LTS)的安装包，另一种则没有。注意：捆绑了JRE的安装包仅适用于64位版本的Windows。
        <br/>
-        从1.9版本开始，我们还提供了“快速启动”版本。一个是主控端(Assistant)，另一个是被控端(Assisted)。这两个便携式版本不需要安装，可直接运行(为了避免UAC可能导致的潜在问题，建议以管理员权限启动Dayon![右击-以管理员身份运行])。
+        从1.9版本开始，我们还提供了“快速启动”版本。一个是主控端(Assistant)，另一个是被控端(Assisted)。这两个便携式版本无需安装，可直接运行(为了避免UAC可能导致的潜在问题，建议以管理员权限启动Dayon![右击-以管理员身份运行])。
       </p>
 
       <p>
         <strong>Debian, Ubuntu及其衍生的Linux发行版:</strong>
-        建议通过PPA源
+        推荐通过 PPA源
         <a href="https://launchpad.net/~regal/+archive/ubuntu/dayon">ppa:regal/dayon</a>
         或者
         <a href="https://snapcraft.io/dayon">Snap Store</a>
-        安装Dayon!，这样您可以很轻松地更新到最新版本的Dayon!。
+        安装Dayon!，这样您可以轻松保持 Dayon! 版本最新。
        <br/>
-        <strong>PPA:</strong> 添加PPA源 <code>sudo add-apt-repository ppa:regal/dayon</code> 然后 <code>sudo apt-get update</code>
-        最后用APT安装Dayon!： <code>sudo apt-get install dayon</code>。
+        <strong>PPA:</strong> 添加PPA源 <code>sudo add-apt-repository ppa:regal/dayon</code> 然后更新软件包列表 <code>sudo apt-get update</code>
+        最后安装Dayon!： <code>sudo apt-get install dayon</code>。
        <br/>
         <strong>Snap:</strong> <code>sudo snap install dayon</code>。
        <br/>
-        <strong>DEB Package:</strong> 或者，你可以自行下载 <code>.deb</code> 后缀的安装包，然后在终端输入 <code>sudo dpkg -i dayon*.deb</code>
-        或者 <code>sudo apt install ./dayon*.deb</code> 进行安装
+        <strong>DEB Package:</strong> 或者，您可以自行下载 <code>.deb</code> 后缀的安装包，然后在终端输入 <code>sudo dpkg -i dayon*.deb</code>
+        或者 <code>sudo apt install ./dayon*.deb</code> 进行安装。
       </p>
 
       <p>
-        <strong>其他Linux版本:</strong>
+        <strong>其他Linux发行版:</strong>
         除了通过 <a href="https://snapcraft.io/dayon">Snap Store</a> 或者 <code>sudo snap install dayon</code>
-        安装Snap版本的Dayon!外，您还可以通过下载压缩包进行安装(并非源代码！)：
+        安装Snap版本的Dayon!外，您还可以自行下载压缩包进行安装(并非源代码！)：
        <br/>
         使用 <code>tar xzvf</code> 解压下载的 <code>.tgz</code> 后缀的压缩包，然后运行 <code>setup.sh</code> 脚本。
-        由于tgz压缩包中没有捆绑JRE，所以脚本将自动检测已安装的JRE/JDK。如果由于某种原因未能成功检测，那么您可以在 <code>dayon.sh</code>
+        由于tgz压缩包中没有捆绑JRE，所以脚本将自动检测已安装的JRE/JDK。如果出于某种原因未能成功检测，您可以在 <code>dayon.sh</code>
         中手动指定 <code>JAVA_HOME</code>。注意： <code>.tgz</code> 压缩包仅在众多的Debian和Ubuntu发行版上进行了测试。
       </p>
 
       <p>
         <strong>Mac OS/OS X:</strong>
         打开<code>.dmg</code>软件包并将“Assisted”或“Assistant”拖到程序图标上。如有必要，必须安装合适的 Java JRE 11（或更高版本）。
-        或者：将.tgz包解压到您选择的位置。为了更方便，您可能需要为<code>dayon_assisted.sh</code>和创建别名<code>dayon_assistant.sh</code>
-        并将它们复制到桌面。 （要求：还安装了 JRE 11 或更高版本）。
+        <br/>
+        或者：将.tgz包解压到您想要的位置。方便起见，您可能想为<code> dayon_assisted.sh </code>和<code> dayon_assistant.sh </code>
+        创建别名并将它们复制到桌面。（要求：设备已安装 11 或更高版本的JRE ）。
        <br/>
-        <strong>重要提示：</strong> 从 macOS Catalina 及更高版本，您必须明确授予
-        <code>dayon_assisted.sh</code> 屏幕捕获权限： <code>系统偏好设置 > 安全和隐私 > 隐私 > 屏幕捕获</code>
+        <strong>重要提示：</strong> 从 macOS Catalina 或更高版本开始，您必须明确授予
+        <code>dayon_assisted.sh</code> 屏幕捕获权限： <code>系统偏好设置 > 安全和隐私 > 隐私 > 屏幕捕获 </code>
       </p>
 
       <h2 id="change-log">更新日志</h2>
@@ -147,17 +148,17 @@
         <span class="red">*</span>
       </h3>
       <ul>
-        <li>主要 UI</li>
+        <li>重大用户界面改进</li>
         <li>HiDPI 支持</li>
-        <li>可以选择在辅助窗口截取屏幕截图</li>
+        <li>截取屏幕选项</li>
         <li>传输包含图形的剪贴板</li>
         <li>检测不同的键盘布局</li>
-        <li>在 UI 中配置令牌服务器的选项</li>
+        <li>在用户界面中配置令牌服务器的选项</li>
         <li>发送 ctrl 键的专用按钮</li>
-        <li>如果与辅助运行的 macOS 连接，则发送 cmd 键</li>
+        <li>如检测到客户端运行在 macOS ，则发送 cmd 键</li>
         <li>将窗口锁定到辅助屏幕宽高比的选项</li>
         <li>更改 UI 内语言的选项</li>
-        <li>选择启动联合 JITSI 会议以与远程对等方聊天</li>
+        <li>可选开启 JITSI 会议室（提供聊天等功能）</li>
       </ul>
 
       <h3>Dayon! v13 Beard Butter (2023年11月5日)</h3>
