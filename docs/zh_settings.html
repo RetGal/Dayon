@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -55,7 +55,7 @@
     <div id="content">
       <h2>设置 Dayon! </h2>
 
-      <h3><img src="assistant.png" alt="Assistant"/> &nbsp; <a id="assistant" class="no">帮助者计算机（主控端 - Assistant）</a></h3>
+      <h3><img src="assistant.png" alt="Assistant"/> &nbsp; <a id="assistant" class="no">帮助者计算机（Assistant - 主控端）</a></h3>
 
       <p>
         使用这个表单来设置屏幕捕获；您可以配置两次<strong> 屏幕捕获 </strong>（又名时钟滴答，即tick）之间的时间（以毫秒为单位）和灰度级数。
@@ -86,23 +86,24 @@
       </p>
 
       <p>
-        除了可以配置 <em>主控端 - Assistant</em> 正在侦听的端口号之外，在网络设置对话框中还可以指定令牌服务器。
+        除了可以配置 <em>Assistant - 主控端</em> 正在侦听的端口号之外，在网络设置对话框中还可以指定令牌服务器。
         可以指定使用默认的令牌服务器或自定义的令牌服务器（比如使用您自托管的令牌服务器）。文章末尾是可用的令牌服务器列表，如需请自行参阅。
-        </br>
-        <strong>重要提示</strong>：务必确保 <em>用户端 - Assisted</em> 和 <em>主控端 - Assistant</em> 使用的是同一个令牌服务器！！
+        <br/>
+        <strong>重要提示</strong>：务必确保 <em>Assisted - 用户端</em> 和 <em>Assistant - 主控端</em> 使用的同一个令牌服务器！！
       </p>
 
       <p>
         <br/>
       </p>
 
-      <h3><img src="assisted.png" alt="Assisted"/> &nbsp; <a id="assisted" class="no">被帮助者计算机（用户端 - Assisted）</a></h3>
+      <h3><img src="assisted.png" alt="Assisted"/> &nbsp; <a id="assisted" class="no">被帮助者计算机（Assisted - 用户端）</a></h3>
 
       <h3>配置 UAC</h3>
       <p>
-        为了让 <em>帮助者（主控端 - Assistant）</em> 能够看到所有系统对话框，必须在 Windows 下调整 UAC（用户帐户控制）设置。
-        方便起见，UAC 设置对话框可直接从 <em>用户端 - Assisted</em> 的用户界面访问。
-        倒数第二项的设置已被证明是有用的(The second-lowest setting for has proven to be useful)。
+        为了让 <em>帮助者（Assistant - 主控端）</em> 能够看到所有系统对话框，必须在 Windows 下调整 UAC（用户帐户控制）设置。
+        方便起见，UAC 设置对话框可直接从 <em>Assisted - 用户端</em> 的用户界面访问。
+        倒数第二项的设置已被证明是有用的(The second-lowest setting for has proven to be useful，
+        这里可能是指的UAC设置中的倒数第二档 —— ‘只有当应用程序尝试更改我的计算机时才通知我（不要使桌面变暗）’)。
       </p>
 
       <p>
@@ -115,21 +116,21 @@
       </p>
 
       <p>
-        如果您想不使用访问令牌进行连接，您可以在 <em>用户端 - Assisted</em> 的网络设置对话框中
-        手动配置 <em>主控端 - Assistant</em> 的端口号和 IP 地址。
-        您还可以启用（或禁用） <em>用户端 - Assisted</em>  的自动连接。
-        如果启用，<em>用户端 - Assisted</em> 将在下次启动时直接连接到指定主机，而无需进一步询问。
+        如果您想不使用访问令牌进行连接，您可以在 <em>Assisted - 用户端</em> 的网络设置对话框中
+        手动配置 <em>Assistant - 主控端</em> 的端口号和 IP 地址。
+        您还可以启用（或禁用） <em>Assisted - 用户端</em>  的自动连接。
+        如果启用，<em>Assisted - 用户端</em> 将在下次启动时直接连接到指定主机，而无需进一步询问。
         <br/>
         此外，您可以指定要使用的令牌服务器。可以配置标准（默认）令牌服务器或自定义服务器。
         可用的令牌服务器列表在本页 <a href="#token_servers">底部</a>，如需请自行参阅。
-        <br>
-        <strong>重要提示</strong>：务必确保 <em>用户端 - Assisted</em> 和 <em>主控端 - Assistant</em> 使用的是同一个令牌服务器！！
+        <br/>
+        <strong>重要提示</strong>：务必确保 <em>Assisted - 用户端</em> 和 <em>Assistant - 主控端</em> 使用的同一个令牌服务器！！
       </p>
 
-      <h3>通过命令提示符（命令行）自动连接 <em>主控端 - Assistant</em> </h3>
+      <h3>通过命令提示符（命令行）自动连接 <em>Assistant - 主控端</em> </h3>
 
       <p>
-         <em>主控端 - Assistant</em> 的 主机名/IP 地址 和 端口 可以通过命令行参数传递，
+         <em>Assistant - 主控端</em> 的 主机名/IP 地址 和 端口 可以通过命令行参数传递，
         其中 ah 是主机名、域名或IP（ah=【主机名、域名 或 IP 地址】），ap是端口（ap=【端口号】）：
       </p>
 
@@ -142,22 +143,20 @@
       </ul>
 
       <p>
-        如果使用上述示例参数启动 <em>用户端 - Assisted</em>，它将直接连接到名为 “an.example.com” 的主机的“4242” 端口。
+        如果使用上述示例参数启动 <em>Assisted - 用户端</em>，它将直接连接到名为 “an.example.com” 的主机的“4242” 端口。
       </p>
 
       <h3>使用配置文件配置 Dayon! </h3>
       <p>
         从版本 v11.0.5 开始，连接参数可以存储在 YAML 配置文件中。
         <br/><br/>
-<!--        TODO-->
-        这允许用户设置被覆盖，因为 YAML 中的配置始终在启动时被读取和运用。
-        用户可以在应用程序内部进行更改，但如果有 YAML 配置，则这些更改仅在下次启动时有效。
-        This makes it possible to override user settings since the configuration from the YAML is always read and evaluated on start up. Users can make changes inside the application, but these only last until the next start if a YAML configuration is in place.
+        YAML 配置文件只会在程序启动时被读取和评估（计算），所以用户仍可以在应用程序内更改设置以覆盖从YAML加载的配置，
+        但这些更改仅在下次启动前有效（因为下次启动依旧会加载YAML的配置，如有不解请查看英文原文）。
         <br/><br/>
-        YAML 配置的主要用途是供希望使用自托管令牌服务器而不是公共令牌服务器的组织使用，或者希望在启动时指定被辅助方自动连接到的特定主机。
-        The primary use case for YAML configurations would be for organisations that want to use a self-hosted token server instead of the public token server, or want to specify a particular host that the assisted should automatically connect to on startup.
+        YAML 配置的主要用途是供那些希望使用自托管令牌服务器而不是公共令牌服务器的组织使用，
+        或希望在启动时指定 <em>Assisted - 用户端</em> 自动连接到特定 <em>Assistant - 主控端</em> 主机的情况。
         <br/><br/>
-        The structure of the <em>assisted</em> YAML is extremely simple:
+        <em>Assisted - 用户端</em> 的 YAML 配置文件结构非常简单：
       </p>
 
 <pre>
@@ -167,42 +166,55 @@ port: 8080
 # tokenServerUrl: "https://example.org/token"
 </pre>
 
-      <p>
-        <ul>
-          <li>To prevent the assisted from automatically connecting right after the start, in <code>assisted.yaml</code> just uncomment the following line: <code># autoConnect: false</code></li>
-          <li>To make assisted use other token server than the default public token server, in <code>assisted.yaml</code>, just uncomment the following line and set the appropriate URL:
-              <code># tokenServerUrl: "https://example.org/token"</code><br/><strong>Important:</strong> make sure to use the same as assistant!</li>
-        </ul>
-      </p>
+      <ul>
+        <li>
+          要防止 <em>Assisted - 用户端</em> 在启动后自动连接，
+          请在 <code>assisted.yaml</code> 文件中取消注释以下行： <code># autoConnect: false</code>
+        </li>
+        <li>
+          要让 <em>Assisted - 用户端</em> 使用非默认的公共令牌服务器，
+          请在 <code>assisted.yaml</code> 文件中取消注释以下行并设置适当的令牌服务器 URL：
+          <code># tokenServerUrl: "https://example.org/token"</code>
+          <br/>
+          <strong>重要提示</strong>：务必确保 <em>Assisted - 用户端</em> 和 <em>Assistant - 主控端</em> 使用的同一个令牌服务器！！
+        </li>
+      </ul>
 
       <p>
-        The <em>assistant</em> also has a YAML configuration file.
+        <em>Assistant - 主控端</em> 也有 YAML 配置文件。
         <br/>
-        <ul>
-          <li>
-          To make assistant use other token server than the default public token server, in <code>assistant.yaml</code>,
-          just uncomment the following line and set the appropriate URL: <code># tokenServerUrl: "https://example.org/token"</code>
-          <br/><strong>Important:</strong> make sure to use the same as assisted!
-          </li>
-        </ul>
-
-      The YAML file(s) can be saved under the name <code>assisted.yaml</code> and <code>assistant.yaml</code> either in the Dayon! home directory,
-      in the user directory, or in the same directory as the <code>.jar</code>, resp. <code>.exe</code> file.
-        This order also corresponds to the priority with which they are taken into account in the case of multiple configurations exist. (first one wins)
+      </p>
+      <ul>
+        <li>
+          要让 <em>Assistant - 主控端</em> 使用非默认的公共令牌服务器，
+          请在 <code>assistant.yaml</code> 文件中取消注释以下行并设置适当的令牌服务器 URL:
+          <code># tokenServerUrl: "https://example.org/token"</code>
+          <br/>
+          <strong>重要提示</strong>：务必确保 <em>Assisted - 用户端</em> 和 <em>Assistant - 主控端</em> 使用的同一个令牌服务器！！
+        </li>
+      </ul>
+      <p>
+      YAML 配置文件可以分别以 <code>assisted.yaml</code> 和 <code>assistant.yaml</code> 的名称保存在 Dayon! 主目录、用户目录
+      或与  <code>.jar</code> 或  <code>.exe</code> 文件相同的目录中。
+      在存在多个 YAML 配置文件的情况下，这些位置的优先级也按此顺序排列（第一个优先）。
       </p>
 
       <h3><a id="token_servers" class="no">公共令牌服务器</a></h3>
 
       <p>
-        Below you find a list of available public token servers that are free to use.<br/>
-        Would you like to contribute and add your RVS to the list? <a href="https://github.com/RetGal/Dayon/issues">let me know</a>!
+        下面是可供免费使用的公共令牌服务器列表。
+        <br/>
+        您想贡献您的 RVS 并添加到列表中吗？
+        <a href="https://github.com/RetGal/Dayon/issues">请告诉我！</a>!
         <br/><br/>
-        Check the availability of a token server by clicking on its link. If a version number is displayed directly, it is active.
-        <ul>
-            <li><strong><a href="https://fensterkitt.ch/dayon/">https://fensterkitt.ch/dayon/</a></strong></li>
-            <li><strong><a href="https://dayon.helioho.st/rvs/">https://dayon.helioho.st/rvs/</a></strong></li>
-        </ul>
-        You can find instructions on how to operate your own token server <a href="https://github.com/RetGal/Dayon/tree/master/ext">here</a>.
+        点击链接以验证令牌服务器是否可用。如果直接显示版本号，则表示该服务器处于活动状态。
+      </p>
+      <ul>
+        <li><strong><a href="https://fensterkitt.ch/dayon/">https://fensterkitt.ch/dayon/</a></strong></li>
+        <li><strong><a href="https://dayon.helioho.st/rvs/">https://dayon.helioho.st/rvs/</a></strong></li>
+      </ul>
+      <p>
+        您可以在 <a href="https://github.com/RetGal/Dayon/tree/master/ext">此处</a> 找到有关如何自托管令牌服务器的说明。
       </p>
 
     </div>
