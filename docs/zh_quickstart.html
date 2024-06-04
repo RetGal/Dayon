@@ -176,7 +176,8 @@
 
         <p>
             <em>
-                请注意，Assistant 主控端 不需要此 IP 地址，因为它正在侦听所有 可用的网络接口，但您需要将这个IP地址和对应 的端口号告诉被帮助的用户，这样用户才能发起连接（稍后会详细介绍）。
+                请注意，Assistant 主控端 不需要此 IP 地址，因为它正在侦听所有 可用的网络接口，
+                但您需要将这个IP地址和对应 的端口号告诉被帮助的用户（使用‘Assisted - 用户端’的用户），这样用户才能发起连接（稍后会详细介绍）。
                 请注意，Assistant - 主控端 应用程序并不需要此 IP 地址，因为它正在监听所有可用的网络接口；
                 但您需要将此 IP 地址发送给 被帮助者（使用‘Assisted - 用户端’的用户，更多内容稍后再说）。
             </em>
@@ -195,7 +196,8 @@
         </p>
 
         <p>
-            Now you can ask the <em>assisted</em> to connect. You'll be shortly prompted to accept the incoming connection:
+            现在您可以请求 <em>被帮助者（使用‘Assisted - 用户端’的用户）</em> 发起连接请求，
+            如果一切顺利，您很快会收到是否接受传入连接的提示：
         </p>
 
         <p>
@@ -203,23 +205,25 @@
         </p>
 
         <p>
-            You are now connected to the remote computer and can see its desktop. Be sure to compare the certificate fingerprints of
-            the <em>assistant</em> and the <em>assisted</em> computer.<br/>
-            <strong>Caution:</strong> If they do not match, the connection is not trustworthy!
+            现在您已连接到远程计算机，且能实时监控其屏幕。
+            别忘了比对 <em>Assistant - 主控端</em> 和 <em>Assisted - 用户端</em> 的指纹。
+            <strong>警告：</strong> 如果两个指纹不匹配，则连接不可信！（意味着可能被窃听）
         </p>
 
         <p>
             <br/>
         </p>
 
-        <h3><img src="assisted.png" alt="Assisted"/> &nbsp;<a id="assisted-setup" class="no">Set up the Assisted computer</a></h3>
+        <h3><img src="assisted.png" alt="Assisted"/> &nbsp;<a id="assisted-setup" class="no">配置 Assisted - 用户端</a></h3>
 
         <p>
-            Dayon! Assisted is acting as a client application calling the outside world and as such there's no network configuration to set up.
+            Dayon! <em>Assisted - 用户端</em> 作为对外发送会话请求的客户端应用程序
+            （ <em>Assisted - 用户端</em> 发送会话连接请求到 <em>Assistant - 主控端</em> ），不需要进行网络配置。
         </p>
 
         <p>
-            Download and install the Dayon! application. Then start the <em>Dayon! Assisted</em> application and click the "play" button.
+            首先，下载并安装 Dayon! 应用。
+            然后运行 <em>Assisted - 用户端</em> （建议以管理员权限运行），并单击“播放”图标的按钮。
         </p>
 
         <p>
@@ -227,28 +231,30 @@
         </p>
 
         <p>
-            Enter the token communicated by the <em>assistant</em> and acknowledge with OK:<br/>
+            输入 <em>帮助者（使用‘Assistant - 主控端’的用户）</em> 提供的访问令牌，然后点击 确认按钮 —— OK：
+            <br/>
         </p>
 
         <p>
             <img src="assisted_token.jpg" alt="Dayon! Assisted : Token"/><br/>
-            (if you have already connected to this <em>assistant</em> recently, then you can leave the field empty)
+            （如果您最近连接过此 <em>Assistant - 主控端</em> ，则可以将该字段留空）
         </p>
 
         <p>
-        <h3>Alternative variant (connect without token):</h3>
-        Enter both the IP address and the port number as communicated by the <em>assistant</em> confirm with OK:
+        <h3>其他可选：不使用访问令牌进行连接</h3>
+        输入 <em>帮助者（使用‘Assistant - 主控端’的用户）</em> 提供的 IP 地址和端口号，然后单击“OK”确认：
         <br/>
         </p>
 
         <p>
             <img src="assisted_network.jpg" alt="Dayon! Assisted : Network"/>
             <br/>
-            (both input fields can be cleared by double-clicking them)
+            （可以通过双击来清除这两个字段）
         </p>
 
         <p>
-            You'll then be shortly connected to the <em>assistant</em> that is monitoring your screen. Enjoy!
+            如果一切顺利，您将在片刻后连接到 <em>帮助者</em>
+            （帮助者使用的是 <em>Assistant - 主控端</em> ，连接成功后对方就可以实时观看您的屏幕）， Enjoy！
             <br/><br/>
         </p>
 
@@ -257,14 +263,15 @@
         </p>
 
         <p>
-            <strong>Note:</strong> If you are unable to connect by following the instructions above, you should check that you have the right <a href="settings.html">settings</a>.
+            <strong>注意：</strong>如果您无法按照上述说明进行连接，您应该检查您的 <a href="zh_settings.html">设置</a> 是否正确。
         </p>
 
 
-        <h2>Managing the session</h2>
+        <h2>会话管理</h2>
 
+<!--        TODO-->
         <p>
-            If the desktop of the <em>assisted</em> doesn't fit into your window, it can be scaled down:
+            如果 <em>Assisted - 用户端</em> 的桌面不适应您的窗口，您可以将其缩小（自适应）：
         </p>
 
         <p>
