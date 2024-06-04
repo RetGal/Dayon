@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>14.0.1</version>
+    <version>14.0.2</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -203,7 +203,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.5.3</version>
+                        <version>3.6.0</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -374,7 +374,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.5.3</version>
+                        <version>3.6.0</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -534,7 +534,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assisted.sh</fileName>
@@ -604,7 +604,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assistant.sh</fileName>
@@ -661,7 +661,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assisted.command</fileName>
@@ -721,7 +721,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.7.0</version>
+                        <version>1.7.1</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assistant.command</fileName>
