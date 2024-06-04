@@ -269,9 +269,8 @@
 
         <h2>会话管理</h2>
 
-<!--        TODO-->
         <p>
-            如果 <em>Assisted - 用户端</em> 的桌面不适应您的窗口，您可以将其缩小（自适应）：
+            如果显示的 <em>Assisted - 用户端</em> 的桌面大小不适应您的窗口大小，您可以将其调整为自适应：
         </p>
 
         <p>
@@ -279,13 +278,14 @@
         </p>
 
         <p>
-            By clicking on the <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="open lock"/> button to the right,
-            you can maintain the aspect ratio of the <em>assisted</em> screen. Please note that this function has no effect on the display when the window is maximized.
+            通过点击右侧
+            <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/lock_open.png" alt="open lock"/>
+            （开锁图标的）按钮，您可以保持  <em>Assisted - 用户端</em>  屏幕的宽高比。
+            请注意，当窗口最大化时此功能无效。
         </p>
 
         <p>
-            By default, the remote <strong>control mode</strong> is off; you can switch it on and off using the
-            following icon:
+            默认情况下， <strong>远程控制模式</strong> 是关闭的；您可以使用下面这个手势图标的按钮来启用或禁用远程控制：
         </p>
 
         <p>
@@ -293,11 +293,10 @@
         </p>
 
         <p></p>
-        <h3>Clipboard transfer</h3>
+        <h3>剪贴板传输</h3>
         <p>
-            By clicking on the up- or down button, the clipboard of the assistant
-            can either be transferred to the assisted (up) or the clipboard of the
-            assisted to the assistant (down).
+            通过单击 向上/向下 图标的按钮，可以将 <em>Assistant - 主控端</em>（您的）的剪贴板内容
+            发送到 <em>Assisted - 用户端</em>（用户的）计算机剪贴板上（向上），或者相反（向下）。
         </p>
 
         <p>
@@ -305,30 +304,30 @@
         </p>
 
         <p></p>
-        <h4>Currently supported are:</h4>
+        <h4>目前支持传输的有：</h4>
         <ul>
             <li>
-                <strong>Text:</strong> Select text locally or in the assisted window, copy (<code>Ctl + c</code>),
-                click up or down. Subsequently, the transmitted text can be inserted in a local or remote application
-                (<code>Ctrl + v</code>).
+                <strong>文字：</strong>在本地（<em>Assistant - 主控端</em>）或远程主机（<em>Assisted - 用户端</em>）中选择文本，
+                复制（<code>Ctl + c</code>)，点击向上或向下按钮（传输方向见上文）。
+                随后，传输的文本可以插入远程主机（<em>Assisted - 用户端</em>）
+                或本地（<em>Assistant - 主控端</em>）的应用程序了（<code>Ctrl + v</code>)。
             </li>
 
             <li>
-                <strong>Files:</strong> Select one or more files locally or in the window of the
-                <em>assisted</em> person (<code>Ctl + c</code>), click up or down. Subsequently, the file(s) can be
-                inserted at the destination.
+                <strong>文件：</strong>在本地（<em>Assistant - 主控端</em>）或远程主机（<em>Assisted - 用户端</em>）
+                中选择一个或多个文件（<code>Ctl + c</code>)，单击向上或向下按钮。
+                随后，文件就可以插入到目标路径。
             </li>
 
             <li>
-                <strong>Graphic:</strong> If the clipboards content is a graphic, for example after taking a screenshot -
-                just click up or down. The clipboard containing the graphic can then be used at the destination.
+                <strong>图像：</strong>如果剪贴板是图像内容（例如截屏），只需单击向上或向下按钮即可在目标电脑使用包含图像的剪贴板。
             </li>
         </ul>
 
         <p></p>
-        <h3>Send a Windows or Cmd key press</h3>
+        <h3>发送 Windows 或 Cmd 按键</h3>
         <p>
-            To send the press of the <strong>*</strong>Windows key, click the Windows button in the <em>assistants</em> control panel:
+            要发送 <strong>*</strong>Windows 键的按下操作，请点击 <em>Assistant - 主控端</em> 控制面板中的 Windows 按钮：
         </p>
 
         <p>
@@ -336,18 +335,19 @@
         </p>
 
         <p>
-            The key remains pressed until you click the button again. This allows you to send Windows key shortcuts.
+            Windows 按键将保持按下状态，直到您再次点击该按钮（单击一次按下，再次单击是松开），如此设计允许您发送 Windows 快捷键。
             <br/>
-            If you need for example to minimize all windows on the <em>assisted</em> side, you would click the Windows
-            button, press the <code>M</code> key and then click the Windows button again.
+            例如，您需要在 <em>Assisted - 用户端</em> 最小化所有窗口，
+            您可以单击按钮（按下 Windows 键），然后按一下 <code>M</code> 键，再次点击按钮（释放 Windows 键）。
         </p>
 
         <p>
-            <strong>*Note:</strong> If the <em>assisted</em> is running on macOS, the <code>Cmd</code> key/button is displayed/transferred instead.
+            <strong>*注意：</strong>如果 <em>Assisted - 用户端</em> 运行的是 macOS，则按钮 显示/传输 的是 Cmd 键/按钮 。
         </p>
 
         <p></p>
-        <h3>Send a Ctrl key press</h3>
+        <h3>发送 Ctrl 按键</h3>
+<!--        TODO-->
         <p>
             While most of the time, the <code>Ctrl</code> key gets transmitted to the <em>assisted</em> like any other keystroke,
             there are situations where it's not. For example the combination <code>Ctrl + Alt + Delete</code> is generally
