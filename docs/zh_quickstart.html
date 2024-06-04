@@ -241,9 +241,8 @@
         </p>
 
         <p>
-        <h3>其他可选：不使用访问令牌进行连接</h3>
-        输入 <em>帮助者（使用‘Assistant - 主控端’的用户）</em> 提供的 IP 地址和端口号，然后单击“OK”确认：
-        <br/>
+            <h3>其他可选：不使用访问令牌进行连接</h3>
+        输入 <em>帮助者（使用‘Assistant - 主控端’的用户）</em> 提供的 IP 地址和端口号，然后单击“OK”确认：<br/>
         </p>
 
         <p>
@@ -347,84 +346,84 @@
 
         <p></p>
         <h3>发送 Ctrl 按键</h3>
-<!--        TODO-->
         <p>
-            While most of the time, the <code>Ctrl</code> key gets transmitted to the <em>assisted</em> like any other keystroke,
-            there are situations where it's not. For example the combination <code>Ctrl + Alt + Delete</code> is generally
-            "captured" by the <em>assistant</em>s operating system and thus not transmitted.
-            On such occasions the <code>[Ctrl]</code> button next to the Windows button in the <em>assistants</em> control panel becomes handy.
-            The behaviour is the same as with the Windows button: the key remains pressed until you click the button again.
+            大多数情况下 <code>Ctrl</code> 键会像其他按键一样传输给 <em>Assisted - 用户端</em> ，但偶尔也会失效。
+            例如， <code>Ctrl + Alt + Delete</code> 按键组合
+            通常会被 <em>Assistant - 主控端</em> 的操作系统“捕获”，而不是传输到 <em>Assisted - 用户端</em> 。
+            在这种情况下， <em>Assistant - 主控端</em> 控制面板 Windows 按钮旁边的 <code>[Ctrl]</code> 按钮就显得很方便。
+            此按钮的行为与 Windows 按钮相同：点一次保持按键按下状态，再次单击则释放按键。
             <br/>
-            So for sending the <code>Ctrl + Alt + Delete</code> combination to the <em>assisted</em>, you have to click the <code>[Ctrl]</code> button first,
-            then press the <code>Alt</code> and <code>Delete</code> keys together, release them and finally click the <code>[Ctrl]</code> button again.
+            因此，要将 <code>Ctrl + Alt + Delete</code> 组合键发送给 <em>Assisted - 用户端</em> ，
+            您必须先单击 <code>[Ctrl]</code> 按钮，
+            然后同时按下 <code>Alt</code> 和 <code>Delete</code> 键、再释放它们
+            ，最后单击 <code>[Ctrl]</code> 。
             <br/><br/>
-            <strong>Caution:</strong> Due to restrictions of the operating system, the combination <code>Ctrl + Alt + Delete</code>
-            does <strong>not work</strong> on <em>assisted</em> that run under Windows! Instead, use the combination <code>Windows + R</code>
-            which provides similar functionality.
+            <strong>注意：</strong>由于操作系统限制，<code>Ctrl + Alt + Delete</code> 组合键在
+            运行于 Windows 系统下的 <em>Assisted - 用户端</em> 中可能 <strong>不起作用</strong>！
+            请使用诸如 <code>Windows + R</code> 等提供类似功能的组合按键作为代替。
         </p>
 
-        <h3>Take a screenshot at the assisted</h3>
+        <h3>截取 Assisted - 用户端 的屏幕画面</h3>
         <p>
-            Click the "Camera" button - the screenshot will be taken directly without further questions.
-            The captured graphic ends up in the clipboard of the <em>assisted</em>, from where it can be transferred to the <em>assistant</em>.
+            单击“相机”图标的按钮将直接截取屏幕画面，而无进一步询问。
+            捕获的截屏存在 <em>Assisted - 用户端</em> 的剪贴板中，通过剪贴板传输可以将其传给 <em>Assistant - 主控端</em>。
         </p>
 
         <p>
             <img src="assistant_take_screenshot.jpg" alt="Dayon! Assistent : Take screenshot"/>
         </p>
 
-        <h3>Reset screen capture</h3>
+        <h3>重置屏幕捕获</h3>
         <p>
-            The reset screen capture (trash bin icon) clears all cached screen data and reloads a new screen capture from assisted.
+            重置屏幕捕获按钮（垃圾桶图标）将清除所有缓存的屏幕捕获数据，并从 <em>Assisted - 用户端</em> 中重新加载新的屏幕捕获画面。
         </p>
 
-        <h3>Start an online meeting to chat face to face</h3>
+        <h3>通过在线会议进行面对面沟通</h3>
         <p>
-            Click on the certificate fingerprints on both <em>assisted</em> and <em>assistant</em> to start a joint online meeting in Jitsi.
+            单击 <em>Assisted - 用户端</em> 或者 <em>Assistant - 主控端</em> 的证书指纹即可开启一个 Jitsi 在线会议。
         </p>
 
         <p>
             <img src="dayon_start_chat.jpg" alt="Dayon! start chat"/>
         </p>
 
-        <h3>Statistics Counters</h3>
+        <h3>状态统计</h3>
 
         <p>
             <img src="stats_counters.jpg" alt="Dayon! Assistant : Statistics"/>
         </p>
 
         <p>
-            The status bar of the assistant frame is displaying, in addition to the keyboard layout, the following counters:
+            除键盘布局外， <em>Assistant - 主控端</em> 下方的状态栏还显示一组计数器。
         </p>
         <ol>
-            <li>Network Bandwidth</li>
+            <li> 网络带宽使用情况</li>
             <li>
-                Compression Ratio: how many times the initial capture (diff only) has been compressed
+                压缩比：初始捕获（仅差异）已被压缩的次数
             </li>
             <li>
-                Number of Tiles: the number of tile being transmitted over the network as well as the cache hits.
+                “图块”数量：通过网络传输的“图块”数量以及缓存命中率。
             </li>
             <li>
-                Number of Skipped Capture: the number of screen captures that have
-                been skipped because of a too high rate (i.e., low tick value) for
-                the CPU. To minimize that number you have to slow down the capture
-                rate using a bigger tick value.
-            </li>
-
-            <li>
-                Number of Merged Capture: the number of screen captures that have
-                been merged before being transmitted. This is due to a capture rate
-                too high for the current compression method. To minimize that number
-                you have to slow down the capture rate and/or change the compression
-                method using a faster one.
+                跳过的捕获：由于屏幕捕获间隔设置过低（即‘ <em>Assistant - 主控端</em> - 首选项 - 屏幕捕获’ 中的‘屏幕捕获间隔’设置太低）
+                导致远程计算机无法捕获的画面数量。
+                为了减少画面丢失，你必须增加屏幕捕获间隔，增大‘ <em>Assistant - 主控端</em> - 首选项 - 屏幕捕获 ’中的捕获间隔值。
             </li>
 
-            <li>Memory usage</li>
-            <li>Duration of the active or the last support session</li>
+            <li>
+                合并的“图块”：传输前已被合并的屏幕捕获数量。这是由于设置的屏幕捕获频率对于当前所选的压缩方法来说太高了(压缩速度 << 捕获速度)。
+                为了减少由此导致的画面丢失(或失真)，
+                你必须提高 ‘<em>Assistant - 主控端</em> - 首选项 - 屏幕捕获’ 中的‘屏幕捕获间隔’ 或
+                更改 ‘<em>Assistant - 主控端</em> - 首选项 - 压缩 - 压缩算法’ 中的算法，请选择性能更高的压缩算法。
+            </li>
+
+            <li>内存使用情况</li>
+
+            <li>当前或上次会话的持续时间</li>
         </ol>
 
         <p>
-            That's all folks! You can find more information on the <a href="settings.html">settings</a> page.
+            以上即是全部内容 ！更多信息请查阅 <a href="zh_settings.html">设置</a> 页面。
         </p>
     </div>
     <div id="footer"></div>
