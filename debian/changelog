@@ -1,8 +1,9 @@
 dayon (14.0.2) stable; urgency=low
 
   * Improved UPnP gateway discovery
+  * Improved chinese translation
 
- -- Reto Galante <reto@galante.ch>  Tue, 4 June 2024 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Fri, 7 June 2024 12:00:00 +0000
 
 dayon (14.0.1) stable; urgency=low
 
