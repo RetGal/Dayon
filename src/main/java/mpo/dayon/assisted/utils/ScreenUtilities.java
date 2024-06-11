@@ -5,10 +5,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import mpo.dayon.common.capture.Gray8Bits;
-import mpo.dayon.common.log.Log;
 
 import static java.lang.Math.min;
-import static java.lang.String.format;
 import static java.util.Arrays.stream;
 
 public final class ScreenUtilities {
@@ -78,13 +76,8 @@ public final class ScreenUtilities {
 
     private static int[] captureRGB(Rectangle bounds) {
         BufferedImage image = ROBOT.createScreenCapture(bounds);
-        int imageHeight = image.getHeight();
-        int imageWidth = image.getWidth();
-        if (imageHeight != bounds.height || imageWidth != bounds.width) {
-            Log.warn(format("Image dimensions %sx%s != bound dimensions %sx%s", imageHeight, imageWidth, bounds.height, bounds.width));
-            imageHeight = min(image.getHeight(), bounds.height);
-            imageWidth = min(image.getWidth(), bounds.width);
-        }
+        final int imageHeight = min(image.getHeight(), bounds.height);
+        final int imageWidth = min(image.getWidth(), bounds.width);
         int i = 0;
         for (int yPos = bounds.y; yPos < imageHeight; yPos++) {
             for (int xPos = bounds.x; xPos < imageWidth && i < rgb.length; xPos++) {

@@ -15,12 +15,15 @@ import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.UnitUtilities;
 
+import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 
 public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration> {
 
     private static final Dimension TILE_DIMENSION = new Dimension(32, 32);
+
+    private final Dimension captureDimension;
 
     private final CaptureFactory captureFactory;
 
@@ -42,8 +45,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public CaptureEngine(CaptureFactory captureFactory) {
         this.captureFactory = captureFactory;
-        final int x = (int) Math.ceil((float) captureFactory.getDimension().width / TILE_DIMENSION.width);
-        final int y = (int) Math.ceil((float) captureFactory.getDimension().height / TILE_DIMENSION.height);
+        this.captureDimension = captureFactory.getDimension();
+        final int x = (int) ceil((float) captureDimension.width / TILE_DIMENSION.width);
+        final int y = (int) ceil((float) captureDimension.height / TILE_DIMENSION.height);
         this.previousCapture = new long[x * y];
         resetPreviousCapture();
 
@@ -129,10 +133,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 break;
             }
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
-            final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels, captureFactory.getDimension());
+            final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels);
 
             if (dirty != null) {
-                final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureFactory.getDimension(), TILE_DIMENSION, dirty);
+                final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
                 fireOnCaptured(capture); // might update the capture (i.e., merging with previous not sent yet)
                 updatePreviousCapture(capture);
             }
@@ -174,9 +178,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         }
     }
 
-    private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture, Dimension captureDimension) {
-        final int x = (int) Math.ceil((float) captureDimension.width / TILE_DIMENSION.width);
-        final int y = (int) Math.ceil((float) captureDimension.height / TILE_DIMENSION.height);
+    private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture) {
+        final int x = (int) ceil((float) captureDimension.width / TILE_DIMENSION.width);
+        final int y = (int) ceil((float) captureDimension.height / TILE_DIMENSION.height);
         final int length = x * y;
         // change in screen resolution?
         if (length != previousCapture.length) {
