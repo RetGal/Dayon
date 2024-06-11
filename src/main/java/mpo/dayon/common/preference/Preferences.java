@@ -1,6 +1,8 @@
 package mpo.dayon.common.preference;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -9,6 +11,7 @@ import mpo.dayon.common.log.Log;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 public final class Preferences {
     private static final Preferences NULL = new Preferences();
@@ -35,8 +38,8 @@ public final class Preferences {
         this.props = new Properties();
 
         if (file.exists()) {
-            try (FileReader in = new FileReader(file)) {
-                getProps().load(in);
+            try (BufferedReader reader = Files.newBufferedReader(Paths.get(file.toURI()), UTF_8)) {
+                getProps().load(reader);
             } catch (FileNotFoundException e) {
                 Log.error("Preferences (read) permission denied");
             }
@@ -199,7 +202,7 @@ public final class Preferences {
                     }
                     if (cloned != null) {
                         Log.debug("Writing the preferences [%s]", () -> preferences.getFile().getAbsolutePath());
-                        try (PrintWriter out = new PrintWriter(preferences.getFile())) {
+                        try (PrintWriter out = new PrintWriter(preferences.getFile(), UTF_8)) {
                             cloned.store(out, null);
                             out.flush();
                         }

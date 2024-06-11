@@ -13,6 +13,8 @@ import mpo.dayon.common.log.LogAppender;
 import mpo.dayon.common.log.LogLevel;
 import mpo.dayon.common.log.console.ConsoleAppender;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class FileAppender extends LogAppender {
 	private static final long MAX_FILE_SIZE = 1024 * 1024L;
 
@@ -70,7 +72,7 @@ public class FileAppender extends LogAppender {
 	}
 
 	private void setupFile(String filename, boolean append) throws FileNotFoundException {
-		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, append))));
+		writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename, append), UTF_8)));
 		final File file = new File(filename);
 		count = file.length();
 	}
