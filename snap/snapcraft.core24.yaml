@@ -84,7 +84,7 @@ parts:
       rm $CRAFT_PART_INSTALL/jar/xz-*.jar
 
     stage-packages:
-      [openjdk-21-jre, pipewire]
+      [openjdk-21-jre]
 
     override-prime: |
       craftctl default
