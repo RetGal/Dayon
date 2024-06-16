@@ -6,6 +6,10 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
@@ -384,8 +388,11 @@ public abstract class BaseFrame extends JFrame {
                     return translate("connection.settings.emptyPortNumber");
                 } else if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
-                } else if (tokenRadioGroup.getSelection().getActionCommand().equals("custom") && !isValidUrl(customTokenTextField.getText())) {
-                    return translate("connection.settings.invalidTokenServer");
+                } else if (tokenRadioGroup.getSelection().getActionCommand().equals("custom")) {
+                    final String tokenServer = customTokenTextField.getText();
+                    if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
+                        return translate("connection.settings.invalidTokenServer");
+                    }
                 }
                 return null;
             }
@@ -438,6 +445,25 @@ public abstract class BaseFrame extends JFrame {
         return gc;
     }
 
+    private boolean isActiveTokenServer(String tokenServer) {
+        try {
+            HttpResponse<String> response;
+            try (HttpClient client = HttpClient.newBuilder().build()) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(tokenServer))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            }
+            return response.statusCode() == 200 && response.body().startsWith("v.");
+        } catch (IOException | InterruptedException ex) {
+            Log.error(format("Error checking token server %s", tokenServer), ex);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            return false;
+        }
+    }
 
     private void addSizeAndPositionListener() {
         addComponentListener(new ComponentAdapter() {
