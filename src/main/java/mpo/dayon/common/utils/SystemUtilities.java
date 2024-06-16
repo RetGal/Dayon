@@ -222,14 +222,12 @@ public final class SystemUtilities {
     }
 
     public static String resolveToken(String tokenServerUrl, String token) throws IOException, InterruptedException {
-        HttpResponse<String> response;
-        try (HttpClient client = HttpClient.newBuilder().build()) {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(format(tokenServerUrl, token)))
-                    .timeout(Duration.ofSeconds(5))
-                    .build();
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        }
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(format(tokenServerUrl, token)))
+                .timeout(Duration.ofSeconds(5))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response.body().trim();
     }
 }

@@ -447,14 +447,12 @@ public abstract class BaseFrame extends JFrame {
 
     private boolean isActiveTokenServer(String tokenServer) {
         try {
-            HttpResponse<String> response;
-            try (HttpClient client = HttpClient.newBuilder().build()) {
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(tokenServer))
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            }
+            HttpClient client = HttpClient.newBuilder().build();
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(tokenServer))
+                    .timeout(Duration.ofSeconds(5))
+                    .build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             return response.statusCode() == 200 && response.body().startsWith("v.");
         } catch (IOException | InterruptedException ex) {
             Log.error(format("Error checking token server %s", tokenServer), ex);

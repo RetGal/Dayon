@@ -263,14 +263,12 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void resolvePublicIp() throws IOException, InterruptedException {
-                HttpResponse<String> response;
-                try (HttpClient client = HttpClient.newHttpClient()) {
-                    HttpRequest request = HttpRequest.newBuilder()
-                            .uri(URI.create(WHATSMYIP_SERVER_URL))
-                            .timeout(Duration.ofSeconds(5))
-                            .build();
-                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                }
+                HttpClient client = HttpClient.newHttpClient();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(WHATSMYIP_SERVER_URL))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 publicIp = response.body();
             }
         };
@@ -556,14 +554,12 @@ public class Assistant implements ClipboardOwner {
                     final Cursor cursor = frame.getCursor();
                     frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                     try {
-                        HttpResponse<String> response;
-                        try (HttpClient client = HttpClient.newBuilder().build()) {
-                            HttpRequest request = HttpRequest.newBuilder()
-                                    .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
-                                    .timeout(Duration.ofSeconds(5))
-                                    .build();
-                            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        }
+                        HttpClient client = HttpClient.newBuilder().build();
+                        HttpRequest request = HttpRequest.newBuilder()
+                                .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
+                                .timeout(Duration.ofSeconds(5))
+                                .build();
+                        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                         token = response.body().trim();
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
