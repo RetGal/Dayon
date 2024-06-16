@@ -159,14 +159,14 @@
 host: "an.example.com"
 port: 8080
 # autoConnect: false
-# tokenServerUrl: "https://example.org/token"
+# tokenServerUrl: "https://example.org/token/"
 </pre>
 
       <p>
       <ul>
         <li>Will man verhindern, dass sich der Assistierte beim Start automatisch mit dem konfigurierten Assistenten verbindet, muss in <code>assisted.yaml</code> diese Zeile einkommentiert werden: <code># autoConnect: false</code></li>
         <li>Soll der Assistierte hingegen fix einen alternativen Token-Server verwenden, so ist in <code>assisted.yaml</code> die folgende Zeile einzukommentieren und mit der URL des Token-Servers zu befüllen:
-          <code># tokenServerUrl: "https://example.org/token"</code><br/>
+          <code># tokenServerUrl: "https://example.org/token/"</code><br/>
           <strong>Wichtig:</strong> Stellen Sie sicher, dass Sie auf der Seite des Assistierten denselben Token-Server eintagen, welcher auch vom beim Assistenten verwendet wird!</li>
       </ul>
       </p>
@@ -178,7 +178,7 @@ port: 8080
           <li>
             Soll der Assistent fix einen alternativen Token-Server verwenden, so ist in <code>assistant.yaml</code>
             die folgende Zeile einzukommentieren und mit der URL des Token-Servers zu befüllen:
-            <code># tokenServerUrl: "https://example.org/token"</code><br/>
+            <code># tokenServerUrl: "https://example.org/token/"</code><br/>
             <strong>Wichtig:</strong> Stellen Sie sicher, dass Sie auf der Seite des Assistenten denselben Token-Server eintagen,
             welcher auch vom beim Assistierten verwendet wird!</li>
           </li>

@@ -17,7 +17,7 @@ you need to put an [assisted.yaml](https://raw.githubusercontent.com/RetGal/Dayo
 
 These two files must both contain the **same** `tokenServerUrl`.
 The URL can be any valid URL - for example:
-`tokenServerUrl: "https://example.org/token"`
+`tokenServerUrl: "https://example.org/token/"`
 
 ## Public token servers
 
