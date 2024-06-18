@@ -7,6 +7,8 @@ import java.util.Map;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
+import static java.lang.String.format;
+
 public class RegularTileCache implements TileCache {
     /**
      * Maximum number of tiles; currently a tile is basically a 32x32 byte array (i.e., 1K).
@@ -38,7 +40,7 @@ public class RegularTileCache implements TileCache {
     public int getCacheId(CaptureTile tile) {
         final long cs = tile.getChecksum();
         if (cs < 0 || cs > 4294967295L) {
-            throw new IllegalStateException("Ouch [" + cs + "]");
+            Log.warn(format("CacheId %d truncated to %d", cs , (int) cs));
         }
         return (int) cs;
     }

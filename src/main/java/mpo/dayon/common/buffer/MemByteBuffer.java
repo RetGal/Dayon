@@ -109,9 +109,7 @@ public class MemByteBuffer extends OutputStream {
 	public void fill(int len, int val) {
 		final int newCount = count + len;
 		increaseBuffer(newCount);
-		for (int idx = count; idx < newCount; idx++) {
-			buffer[idx] = (byte) val;
-		}
+		Arrays.fill(buffer, count, newCount, (byte) val);
 		count = newCount;
 	}
 
