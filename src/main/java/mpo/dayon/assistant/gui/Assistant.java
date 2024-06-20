@@ -561,9 +561,9 @@ public class Assistant implements ClipboardOwner {
                             }
                         }
                         return token;
-                    }).thenAcceptAsync(token -> {
-                        if (token != null) {
-                            button.setText(format(" %s", token));
+                    }).thenAcceptAsync(tokenString -> {
+                        if (tokenString  != null) {
+                            button.setText(format(" %s", tokenString));
                             button.setToolTipText(translate("token.copy.msg"));
                         }
                     });
@@ -702,7 +702,7 @@ public class Assistant implements ClipboardOwner {
 
     private void initUpnp() {
         CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
-            Log.info(format("UPnP is %s", enabled ? "enabled" : "disabled"));
+            Log.info(format("UPnP is %s", enabled.booleanValue() ? "enabled" : "disabled"));
             upnpEnabled = enabled;
             return enabled;
         });
