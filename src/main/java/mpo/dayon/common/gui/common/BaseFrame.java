@@ -10,6 +10,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
@@ -191,6 +193,8 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private Action createShowInfoAction() {
+
+        JLabel latestVersion = new JLabel();
         final Action showSystemInfo = new AbstractAction() {
 
             @Override
@@ -207,10 +211,9 @@ public abstract class BaseFrame extends JFrame {
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.addMouseListener(new ReleaseMouseAdapter());
                 version.setCursor(handCursor);
-                final JLabel latest = new JLabel(composeLabelHtml(translate("version.latest"), Version.get().getLatestRelease()));
-                version.setAlignmentX(Component.LEFT_ALIGNMENT);
-                latest.addMouseListener(new LatestReleaseMouseAdapter());
-                latest.setCursor(handCursor);
+                latestVersion.setAlignmentX(Component.LEFT_ALIGNMENT);
+                latestVersion.addMouseListener(new LatestReleaseMouseAdapter());
+                latestVersion.setCursor(handCursor);
 
                 final JTextArea props = new JTextArea(getSystemPropertiesEx());
                 props.setEditable(false);
@@ -238,10 +241,8 @@ public abstract class BaseFrame extends JFrame {
                 panel.add(info);
                 panel.add(Box.createVerticalStrut(5));
                 panel.add(version);
-                if (Version.get().getLatestRelease() != null) {
-                    panel.add(Box.createVerticalStrut(5));
-                    panel.add(latest);
-                }
+                panel.add(Box.createVerticalStrut(5));
+                panel.add(latestVersion);
                 panel.add(Box.createVerticalStrut(5));
                 panel.add(spane);
                 panel.add(Box.createVerticalStrut(5));
@@ -257,7 +258,7 @@ public abstract class BaseFrame extends JFrame {
         };
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
         showSystemInfo.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.INFO));
-
+        new LatestVersionLabelUpdater(latestVersion).execute();
         return showSystemInfo;
     }
 
@@ -446,21 +447,24 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private boolean isActiveTokenServer(String tokenServer) {
-        try {
-            HttpClient client = HttpClient.newBuilder().build();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(tokenServer))
-                    .timeout(Duration.ofSeconds(5))
-                    .build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            return response.statusCode() == 200 && response.body().startsWith("v.");
-        } catch (IOException | InterruptedException ex) {
-            Log.error(format("Error checking token server %s", tokenServer), ex);
-            if (ex instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
+        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                HttpClient client = HttpClient.newBuilder().build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(tokenServer))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                return response.statusCode() == 200 && response.body().startsWith("v.");
+            } catch (IOException | InterruptedException ex) {
+                Log.error(format("Error checking token server %s", tokenServer), ex);
+                if (ex instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                }
+                return false;
             }
-            return false;
-        }
+        });
+        return future.join();
     }
 
     private void addSizeAndPositionListener() {
@@ -563,6 +567,32 @@ public abstract class BaseFrame extends JFrame {
         fingerprints.setFont(DEFAULT_FONT);
         fingerprints.addMouseListener(new ChatMouseAdapter());
         fingerprints.setCursor(handCursor);
+    }
+
+    private class LatestVersionLabelUpdater extends SwingWorker<String, Void> {
+        private final JLabel latestVersion;
+
+        private LatestVersionLabelUpdater(JLabel latestVersion) {
+            this.latestVersion = latestVersion;
+        }
+
+        @Override
+        protected String doInBackground() {
+            return Version.get().getLatestRelease();
+        }
+
+        @Override
+        protected void done() {
+            try {
+                String latest = get();
+                if (latest != null) {
+                    latestVersion.setText(composeLabelHtml(translate("version.latest"), latest));
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                Log.warn("Swallowed", e);
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private static class FeedbackMouseAdapter extends MouseAdapter {

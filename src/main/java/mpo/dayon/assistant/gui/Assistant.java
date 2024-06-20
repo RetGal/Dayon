@@ -217,30 +217,29 @@ public class Assistant implements ClipboardOwner {
                 final JButton button = (JButton) ev.getSource();
                 final JPopupMenu choices = new JPopupMenu();
 
-                if (publicIp == null) {
-                    final Cursor cursor = frame.getCursor();
-                    frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    try {
-                        resolvePublicIp();
-                        if (publicIp != null) {
-                            button.setText(publicIp);
-                        }
-                    } catch (IOException | InterruptedException ex) {
-                        Log.error("Could not determine public IP", ex);
-                        JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"),
-                                JOptionPane.ERROR_MESSAGE);
-                        if (ex instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
-                        }
-                    }
-                    finally {
-                        frame.setCursor(cursor);
-                    }
-                }
+                final JMenuItem publicIpItem = new JMenuItem(translate("ipAddressPublic", publicIp));
+                publicIpItem.addActionListener(ev15 -> button.setText(publicIp));
+                choices.add(publicIpItem);
 
-                final JMenuItem menuItem = new JMenuItem(translate("ipAddressPublic", publicIp));
-                menuItem.addActionListener(ev15 -> button.setText(publicIp));
-                choices.add(menuItem);
+                if (publicIp == null) {
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            resolvePublicIp();
+                        } catch (IOException | InterruptedException ex) {
+                            Log.error("Could not determine public IP", ex);
+                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
+                            if (ex instanceof InterruptedException) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+                        return publicIp;
+                    }).thenAcceptAsync(ip -> {
+                        if (ip != null) {
+                            button.setText(ip);
+                            publicIpItem.setText(translate("ipAddressPublic", ip));
+                        }
+                    });
+                }
 
                 NetworkUtilities.getInetAddresses().stream().map(JMenuItem::new).forEach(item -> {
                     item.addActionListener(ev14 -> button.setText(item.getText()));
@@ -551,34 +550,37 @@ public class Assistant implements ClipboardOwner {
                 final JButton button = (JButton) ev.getSource();
 
                 if (token == null) {
-                    final Cursor cursor = frame.getCursor();
-                    frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                    try {
-                        HttpClient client = HttpClient.newBuilder().build();
-                        HttpRequest request = HttpRequest.newBuilder()
-                                .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
-                                .timeout(Duration.ofSeconds(5))
-                                .build();
-                        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                        token = response.body().trim();
-                    } catch (IOException | InterruptedException ex) {
-                        Log.error("Could not obtain token", ex);
-                        JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"),
-                                JOptionPane.ERROR_MESSAGE);
-                        if (ex instanceof InterruptedException) {
-                            Thread.currentThread().interrupt();
+                    CompletableFuture.supplyAsync(() -> {
+                        try {
+                            requestToken();
+                        } catch (IOException | InterruptedException ex) {
+                            Log.error("Could not obtain token", ex);
+                            JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+                            if (ex instanceof InterruptedException) {
+                                Thread.currentThread().interrupt();
+                            }
                         }
-                    } finally {
-                        frame.setCursor(cursor);
-                    }
-                    if (token != null) {
-                        button.setText(format(" %s", token));
-                        button.setToolTipText(translate("token.copy.msg"));
-                    }
+                        return token;
+                    }).thenAcceptAsync(token -> {
+                        if (token != null) {
+                            button.setText(format(" %s", token));
+                            button.setToolTipText(translate("token.copy.msg"));
+                        }
+                    });
                 }
                 final StringSelection value = new StringSelection(token);
                 final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
                 clipboard.setContents(value, value);
+            }
+
+            private void requestToken() throws IOException, InterruptedException {
+                HttpClient client = HttpClient.newBuilder().build();
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                token = response.body().trim();
             }
         };
         tokenAction.putValue("token", token);
@@ -699,10 +701,10 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void initUpnp() {
-        CompletableFuture.supplyAsync(() -> {
-            upnpEnabled = UPnP.isUPnPAvailable();
-            Log.info(format("UPnP is %s", isUpnpEnabled() ? "enabled" : "disabled"));
-            return upnpEnabled;
+        CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
+            Log.info(format("UPnP is %s", enabled ? "enabled" : "disabled"));
+            upnpEnabled = enabled;
+            return enabled;
         });
     }
 

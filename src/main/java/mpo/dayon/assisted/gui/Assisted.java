@@ -89,14 +89,19 @@ public class Assisted implements Subscriber, ClipboardOwner {
      * Returns true if we have a valid configuration
      */
     public boolean start(String serverName, String portNumber, boolean autoConnect) {
-        Log.info("Assisted start");
+        if (frame == null) {
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
+            FatalErrorHandler.attachFrame(frame);
+            KeyboardErrorHandler.attachFrame(frame);
+            frame.setVisible(true);
+            Log.info("Assisted start");
+        }
 
         // these should not block as they are called from the network incoming message thread (!)
         final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
         final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
         final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
         final NetworkScreenshotRequestMessageHandler screenshotRequestHandler = this::onScreenshotRequested;
-
         final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
         controlHandler.subscribe(this);
 
@@ -104,12 +109,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 controlHandler, clipboardRequestHandler, screenshotRequestHandler, this);
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
-        if (frame == null) {
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
-            FatalErrorHandler.attachFrame(frame);
-            KeyboardErrorHandler.attachFrame(frame);
-            frame.setVisible(true);
-        }
         return configureConnection(serverName, portNumber, autoConnect);
     }
 
@@ -411,7 +410,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 Log.debug("Clipboard contains text: " + text);
                 networkEngine.sendClipboardText(text);
                 return;
-            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
+            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor)) {
                 final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
                 Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
                 networkEngine.sendClipboardGraphic(new TransferableImage(image));
