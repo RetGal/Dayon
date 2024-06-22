@@ -15,7 +15,6 @@ import mpo.dayon.common.gui.common.Position;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.utils.UnitUtilities;
 
-import static java.lang.Math.ceil;
 import static java.lang.Math.min;
 import static java.lang.String.format;
 
@@ -46,8 +45,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     public CaptureEngine(CaptureFactory captureFactory) {
         this.captureFactory = captureFactory;
         this.captureDimension = captureFactory.getDimension();
-        final int x = (int) ceil((float) captureDimension.width / TILE_DIMENSION.width);
-        final int y = (int) ceil((float) captureDimension.height / TILE_DIMENSION.height);
+        final int x = (captureDimension.width + TILE_DIMENSION.width -1) / TILE_DIMENSION.width;
+        final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
         this.previousCapture = new long[x * y];
         resetPreviousCapture();
 
@@ -179,8 +178,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     }
 
     private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture) {
-        final int x = (int) ceil((float) captureDimension.width / TILE_DIMENSION.width);
-        final int y = (int) ceil((float) captureDimension.height / TILE_DIMENSION.height);
+        final int x = (captureDimension.width + TILE_DIMENSION.width -1) / TILE_DIMENSION.width;
+        final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
         final int length = x * y;
         // change in screen resolution?
         if (length != previousCapture.length) {

@@ -247,8 +247,8 @@ public class CaptureTile {
 	}
 
 	private static XYWH_Cache computeXYWH(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
-		final int x = (int) Math.ceil(captureWidth / (double) tileWidth);
-		final int y = (int) Math.ceil(captureHeight / (double) tileHeight);
+		final int x = (captureWidth + tileWidth - 1) / tileWidth;
+		final int y = (captureHeight + tileHeight - 1) / tileHeight;
 		final XYWH[] xywh = new XYWH[x * y];
 		int tileId = 0;
 		for (int ty = 0; ty < captureHeight; ty += tileHeight) {
