@@ -186,7 +186,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             previousCapture = new long[length];
             resetPreviousCapture();
         }
-        CaptureTile[] dirty = null;
+        CaptureTile[] dirty = new CaptureTile[length];
+        boolean hasDirty = false;
         int tileId = 0;
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
             final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
@@ -196,15 +197,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
-                    if (dirty == null) {
-                        dirty = new CaptureTile[length];
-                    }
                     dirty[tileId] = new CaptureTile(captureId, tileId, cs, new Position(tx, ty), tw, th, tileData);
+                    hasDirty = true;
                 }
                 ++tileId;
             }
         }
-        return dirty;
+        return hasDirty ? dirty : null;
     }
 
     /**
@@ -214,9 +213,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         final int capacity = tw * th;
         final byte[] tile = new byte[capacity];
         final int maxSrcPos = capture.length;
+        final int maxDestPos = capacity - tw + 1;
         int destPos = 0;
 
-        while (destPos < capacity && srcPos < maxSrcPos) {
+        while (destPos < maxDestPos && srcPos < maxSrcPos) {
             System.arraycopy(capture, srcPos, tile, destPos, tw);
             srcPos += width;
             destPos += tw;
