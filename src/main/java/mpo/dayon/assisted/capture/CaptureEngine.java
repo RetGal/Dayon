@@ -104,7 +104,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         AtomicBoolean reset = new AtomicBoolean(false);
 
         while (true) {
-            reset.set(false);
             synchronized (reconfigurationLOCK) {
                 if (reconfigured) {
                     // assuming everything has changed (!)
@@ -138,12 +137,12 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
                 fireOnCaptured(capture); // might update the capture (i.e., merging with previous not sent yet)
                 updatePreviousCapture(capture);
+                reset.set(false);
             }
 
-            final int delayedCaptureCount = syncOnTick(start, captureCount, captureId, tick);
-            captureCount += delayedCaptureCount;
-            captureId += delayedCaptureCount;
-            skipped = delayedCaptureCount;
+            skipped = syncOnTick(start, captureCount, captureId, tick);
+            captureCount += skipped;
+            captureId += skipped;
         }
         Log.info("The capture engine has been stopped!");
     }
