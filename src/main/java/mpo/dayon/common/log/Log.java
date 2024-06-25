@@ -18,7 +18,7 @@ import static java.lang.System.getProperty;
 public final class Log {
     private static final boolean DEBUG = System.getProperty("dayon.debug") != null;
 
-    private static final LogAppender out;
+    private static LogAppender out;
 
     private Log() {
     }
