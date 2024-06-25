@@ -44,7 +44,8 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
 
 	public static NetworkResizeScreenMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int width = in.readInt();
-		return new NetworkResizeScreenMessage(width, in.readInt());
+		final int height = in.readShort();
+		return new NetworkResizeScreenMessage(width, height);
 	}
 
 	public String toString() {
