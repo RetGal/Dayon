@@ -18,26 +18,24 @@ import static java.lang.System.getProperty;
 public final class Log {
     private static final boolean DEBUG = System.getProperty("dayon.debug") != null;
 
-    private static LogAppender out;
+    private static final LogAppender out;
 
     private Log() {
     }
 
     static {
-        final String mode = System.getProperty("dayon.log", "console");
-        out = new ConsoleAppender();
+        String mode = System.getProperty("dayon.log", "console");
+        out = mode.equals("file") ? createFileAppender() : new ConsoleAppender();
+    }
 
-        if ("file".equals(mode)) {
-            try {
-                final File logFile = getOrCreateLogFile();
-                // console ...
-                info("Log logFile : " + logFile.getAbsolutePath());
-                // logFile ...§
-                out = new FileAppender(logFile.getAbsolutePath());
-            } catch (IOException ex) {
-                // console ...
-                warn("Log file setup error (fallback to console)!", ex);
-            }
+    private static LogAppender createFileAppender() {
+        try {
+            File logFile = getOrCreateLogFile();
+            info("Log logFile : " + logFile.getAbsolutePath());
+            return new FileAppender(logFile.getAbsolutePath());
+        } catch (IOException ex) {
+            warn("Log file setup error (fallback to console)!", ex);
+            return new ConsoleAppender();
         }
     }
 

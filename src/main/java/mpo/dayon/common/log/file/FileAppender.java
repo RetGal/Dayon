@@ -38,24 +38,21 @@ public class FileAppender extends LogAppender {
 	@Override
     public synchronized void append(LogLevel level, String message, Throwable error) {
 		try {
-			final String info = format(level, message);
-
-			writer.println(info);
-			writer.flush();
-
-			count += info.length();
+			StringBuilder builder = new StringBuilder();
+			builder.append(format(level, message)).append(System.lineSeparator());
+			count += message.length();
 
 			if (error != null) {
-				final String stack = getStackTrace(error);
-				writer.println(stack);
-				writer.flush();
-
-				count += stack.length();
+				builder.append(getStackTrace(error)).append(System.lineSeparator());
+				count += getStackTrace(error).length();
 			}
 
 			if (count >= MAX_FILE_SIZE && count >= nextRolloverCount) {
 				rollOver();
 			}
+
+			writer.write(builder.toString());
+			writer.flush();
 		} catch (RuntimeException ex) {
 			fallback.append(level, message, error);
 			fallback.append(LogLevel.WARN, "[FileAppender] error", ex);
