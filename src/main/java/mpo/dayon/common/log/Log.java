@@ -30,9 +30,9 @@ public final class Log {
 
     private static LogAppender createFileAppender() {
         try {
-            File logFile = getOrCreateLogFile();
-            info("Log logFile : " + logFile.getAbsolutePath());
-            return new FileAppender(logFile.getAbsolutePath());
+            String logFile = getOrCreateLogFile().getAbsolutePath();
+            info("Log logFile : " + logFile);
+            return new FileAppender(logFile);
         } catch (IOException ex) {
             warn("Log file setup error (fallback to console)!", ex);
             return new ConsoleAppender();

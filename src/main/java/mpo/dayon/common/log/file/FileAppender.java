@@ -40,17 +40,13 @@ public class FileAppender extends LogAppender {
 		try {
 			StringBuilder builder = new StringBuilder();
 			builder.append(format(level, message)).append(System.lineSeparator());
-			count += message.length();
-
 			if (error != null) {
 				builder.append(getStackTrace(error)).append(System.lineSeparator());
-				count += getStackTrace(error).length();
 			}
-
+			count += builder.length();
 			if (count >= MAX_FILE_SIZE && count >= nextRolloverCount) {
 				rollOver();
 			}
-
 			writer.write(builder.toString());
 			writer.flush();
 		} catch (RuntimeException ex) {
@@ -62,9 +58,7 @@ public class FileAppender extends LogAppender {
 	private String getStackTrace(Throwable error) {
 		final StringWriter out = new StringWriter();
 		final PrintWriter printer = new PrintWriter(out);
-
 		error.printStackTrace(printer);
-
 		return out.getBuffer().toString();
 	}
 
@@ -77,7 +71,6 @@ public class FileAppender extends LogAppender {
 	@java.lang.SuppressWarnings("squid:S106")
 	private void rollOver() {
 		nextRolloverCount = count + MAX_FILE_SIZE;
-
 		boolean renameSucceeded = deleteSurplus();
 
 		// Rename  .1, .2, ..., .MAX_BACKUP_INDEX-1  to  .2., .3, ..., .MAX_BACKUP_INDEX
@@ -93,7 +86,6 @@ public class FileAppender extends LogAppender {
 		if (renameSucceeded) {
 			writer.close();
 			renameSucceeded = new File(filename).renameTo(new File(filename + "." + 1));
-
 			if (!renameSucceeded) {
 				try {
 					setupFile(filename, true);
