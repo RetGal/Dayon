@@ -25,7 +25,10 @@ public final class Log {
 
     static {
         String mode = System.getProperty("dayon.log", "console");
-        out = mode.equals("file") ? createFileAppender() : new ConsoleAppender();
+        out = new ConsoleAppender();
+        if (mode.equals("file")) {
+            out = createFileAppender();
+        }
     }
 
     private static LogAppender createFileAppender() {
