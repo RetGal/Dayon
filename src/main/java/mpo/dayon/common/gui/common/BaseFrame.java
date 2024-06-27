@@ -15,6 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
 import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.gui.Assistant;
@@ -199,19 +200,22 @@ public abstract class BaseFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent ev) {
+                final EmptyBorder marginLeft = new EmptyBorder(0, 2, 0, 0);
                 final JPanel panel = new JPanel();
                 panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
                 panel.setPreferredSize(new Dimension(500, 300));
-
                 final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
+                info.setBorder(marginLeft);
                 info.addMouseListener(new HomeMouseAdapter());
                 info.setCursor(handCursor);
                 final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
+                version.setBorder(marginLeft);
                 version.addMouseListener(new ReleaseMouseAdapter());
                 version.setCursor(handCursor);
                 latestVersion.setAlignmentX(Component.LEFT_ALIGNMENT);
+                latestVersion.setBorder(marginLeft);
                 latestVersion.addMouseListener(new LatestReleaseMouseAdapter());
                 latestVersion.setCursor(handCursor);
 
