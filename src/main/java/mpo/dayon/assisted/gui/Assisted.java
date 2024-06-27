@@ -31,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -184,33 +185,37 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
-        final NetworkAssistedEngineConfiguration newConfiguration;
-        String token = connectionSettingsDialog.getToken().trim();
-        if (!token.isEmpty()) {
-            final Cursor cursor = frame.getCursor();
-            frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-            String connectionParams = null;
-            try {
-                connectionParams = resolveToken(tokenServerUrl, token);
-            } catch (IOException | InterruptedException ex){
-                Log.warn("Could not resolve token " + token);
-                if (ex instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
+        CompletableFuture.supplyAsync(() -> {
+            final NetworkAssistedEngineConfiguration newConfiguration;
+            String token = connectionSettingsDialog.getToken().trim();
+            if (!token.isEmpty()) {
+                final Cursor cursor = frame.getCursor();
+                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+                String connectionParams = null;
+                try {
+                    connectionParams = resolveToken(tokenServerUrl, token);
+                } catch (IOException | InterruptedException ex) {
+                    Log.warn("Could not resolve token " + token);
+                    if (ex instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
+                Log.debug("Connection params " + connectionParams);
+                newConfiguration = extractConfiguration(connectionParams);
+                frame.setCursor(cursor);
+            } else {
+                newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
+                        Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
             }
-            Log.debug("Connection params " + connectionParams);
-            newConfiguration = extractConfiguration(connectionParams);
-            frame.setCursor(cursor);
-        } else {
-            newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
-                    Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
-        }
-        if (newConfiguration != null && !newConfiguration.equals(networkConfiguration)) {
-            networkConfiguration = newConfiguration;
-            networkConfiguration.persist();
-            networkEngine.configure(networkConfiguration);
-        }
-        Log.info("NetworkConfiguration " + networkConfiguration);
+            return newConfiguration;
+        }).thenAcceptAsync(newConfiguration -> {
+            if (newConfiguration != null && !newConfiguration.equals(networkConfiguration)) {
+                networkConfiguration = newConfiguration;
+                networkConfiguration.persist();
+                networkEngine.configure(networkConfiguration);
+            }
+            Log.info("NetworkConfiguration " + networkConfiguration);
+        });
     }
 
     private Action createToggleMultiScreenAction() {
