@@ -131,7 +131,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 break;
             }
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
-            final CaptureTile[] dirty = computeDirtyTiles(captureId, pixels);
+            final CaptureTile[] dirty = computeDirtyTiles(pixels);
 
             if (dirty != null) {
                 final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
@@ -176,7 +176,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         }
     }
 
-    private CaptureTile[] computeDirtyTiles(int captureId, byte[] capture) {
+    private CaptureTile[] computeDirtyTiles(byte[] capture) {
         final int x = (captureDimension.width + TILE_DIMENSION.width -1) / TILE_DIMENSION.width;
         final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
         final int length = x * y;
@@ -196,7 +196,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
-                    dirty[tileId] = new CaptureTile(captureId, cs, new Position(tx, ty), tw, th, tileData);
+                    dirty[tileId] = new CaptureTile(cs, new Position(tx, ty), tw, th, tileData);
                     hasDirty = true;
                 }
                 ++tileId;
