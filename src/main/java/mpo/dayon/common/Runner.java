@@ -26,22 +26,19 @@ public interface Runner {
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         String language = Runner.overrideLocale(programArgs.get("lang"));
-        if (hasAssistant(args)) {
-            Runner.logAppInfo("dayon_assistant");
+        SwingUtilities.invokeLater(() -> {
+            Runner.logAppInfo(hasAssistant(args) ? "dayon_assistant" : "dayon_assisted");
             try {
-                SwingUtilities.invokeLater(() -> AssistantRunner.launchAssistant(language));
+                if (hasAssistant(args)) {
+                    AssistantRunner.launchAssistant(language);
+                } else {
+                    AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap"));
+                }
             } catch (Exception ex) {
-                FatalErrorHandler.bye("The assistant is dead!", ex);
+                FatalErrorHandler.bye(hasAssistant(args) ? "The assistant is dead!" : "The assisted is dead!", ex);
             }
-        } else {
-            Runner.logAppInfo("dayon_assisted");
-            try {
-                SwingUtilities.invokeLater(() -> AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
-            } catch (Exception ex) {
-                FatalErrorHandler.bye("The assisted is dead!", ex);
-            }
-        }
-        prepareKeystore(appHomeDir);
+        });
+        new Thread(() -> prepareKeystore(appHomeDir)).start();
     }
 
     static void logAppInfo(String appName) {

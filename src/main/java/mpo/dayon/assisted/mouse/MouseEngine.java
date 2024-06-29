@@ -57,7 +57,6 @@ public class MouseEngine {
 
     private static int syncOnTick(final long start, final int captureCount) throws InterruptedException {
         int delayedCaptureCount = 0;
-
         while (true) {
             final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * 50L;
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
@@ -65,10 +64,9 @@ public class MouseEngine {
                 ++delayedCaptureCount;
             } else if (capturePause > 0) {
                 Thread.sleep(capturePause);
-                break;
+                return delayedCaptureCount;
             }
         }
-        return delayedCaptureCount;
     }
 
     private boolean fireOnLocationUpdated(Point location) {

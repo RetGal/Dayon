@@ -12,8 +12,6 @@ public class CaptureTile {
 
 	private final int captureId;
 
-	private final int id;
-
 	private final long checksum;
 
 	private final Position position;
@@ -36,7 +34,6 @@ public class CaptureTile {
 
 	private CaptureTile() {
 		this.captureId = -1;
-		this.id = -1;
 		this.checksum = -1;
 		this.position = new Position(-1, -1);
 		this.width = -1;
@@ -46,9 +43,8 @@ public class CaptureTile {
 		this.fromCache = false;
 	}
 
-	public CaptureTile(int captureId, int id, long checksum, Position position, int width, int height, byte[] capture) {
+	public CaptureTile(int captureId, long checksum, Position position, int width, int height, byte[] capture) {
 		this.captureId = captureId;
-		this.id = id;
 		this.checksum = checksum;
 		this.position = position;
 		this.width = width;
@@ -61,9 +57,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression.
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, MemByteBuffer capture) {
+	public CaptureTile(int captureId, XYWH xywh, MemByteBuffer capture) {
 		this.captureId = captureId;
-		this.id = id;
 		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -79,9 +74,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (single level tile).
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, byte singleLevel) {
+	public CaptureTile(int captureId, XYWH xywh, byte singleLevel) {
 		this.captureId = captureId;
-		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -96,9 +90,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (from the cache).
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, CaptureTile cached) {
+	public CaptureTile(int captureId, XYWH xywh, CaptureTile cached) {
 		this.captureId = captureId;
-		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -120,14 +113,6 @@ public class CaptureTile {
 		return checksum.getValue();
 	}
 
-	public int getCaptureId() {
-		return captureId;
-	}
-
-	public int getId() {
-		return id;
-	}
-
 	public long getChecksum() {
 		return checksum;
 	}
@@ -142,10 +127,6 @@ public class CaptureTile {
 
 	public int getWidth() {
 		return width;
-	}
-
-	public int getHeight() {
-		return height;
 	}
 
 	public MemByteBuffer getCapture() {

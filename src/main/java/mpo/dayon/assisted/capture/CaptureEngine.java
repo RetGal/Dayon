@@ -196,7 +196,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                 final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
-                    dirty[tileId] = new CaptureTile(captureId, tileId, cs, new Position(tx, ty), tw, th, tileData);
+                    dirty[tileId] = new CaptureTile(captureId, cs, new Position(tx, ty), tw, th, tileData);
                     hasDirty = true;
                 }
                 ++tileId;
