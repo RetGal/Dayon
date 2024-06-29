@@ -5,11 +5,11 @@ import java.time.Instant;
 import java.util.Date;
 
 public abstract class LogAppender {
-	private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("HH:mm:ss.SSS");
+	private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss.SSS");
 
-	protected static String format(LogLevel level, String message) {
+	protected String format(LogLevel level, String message) {
 		return String.format("[%20.20s] [%5.5s] (%s) %s", Thread.currentThread().getName(), level,
-				DATE_FORMAT.format(Date.from(Instant.now())), (message == null) ? "" : message);
+				dateFormat.format(Date.from(Instant.now())), (message == null) ? "" : message);
 	}
 
 	public void append(LogLevel level, String message) {
