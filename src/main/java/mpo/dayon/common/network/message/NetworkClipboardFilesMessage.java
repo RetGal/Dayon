@@ -41,7 +41,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             FileMetaData meta = helper.getFileMetadatas().get(position);
 
             long fileSize = meta.getFileSize();
-            Log.debug(format("FileSize/left: %s/%s", fileSize, helper.getFileBytesLeft()));
+            Log.debug("%s", () -> format("FileSize/left: %s/%s", fileSize, helper.getFileBytesLeft()));
 
             byte[] buffer = new byte[min(toIntExact(helper.getFileBytesLeft()), MAX_READ_BUFFER_CAPACITY)];
             BufferedInputStream bis = new BufferedInputStream(in);
@@ -82,7 +82,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     private static void writeToTempFile(byte[] buffer, int length, String tempFileName, boolean append) throws IOException {
         final Path parent = Paths.get(tempFileName).getParent();
-        if (parent != null) {
+        if (parent != null && !Files.exists(parent)) {
             final boolean created = parent.toFile().mkdirs();
             if (!created) {
                 Log.error("Could not create parent directories for " + tempFileName);
