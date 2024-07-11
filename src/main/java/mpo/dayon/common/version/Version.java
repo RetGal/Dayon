@@ -60,12 +60,11 @@ public class Version {
 
     public String getLatestRelease() {
         if (latestVersion == null) {
-            HttpClient client = HttpClient.newHttpClient();
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(RELEASE_LOCATION + "latest"))
-                    .timeout(Duration.ofSeconds(5))
-                    .build();
-            try {
+            try (HttpClient client = HttpClient.newHttpClient()) {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(RELEASE_LOCATION + "latest"))
+                        .timeout(Duration.ofSeconds(5))
+                        .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 String latestLocation = response.headers().firstValue("Location").orElse(null);
                 if (latestLocation != null) {

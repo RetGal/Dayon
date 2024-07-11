@@ -262,12 +262,14 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void resolvePublicIp() throws IOException, InterruptedException {
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(WHATSMYIP_SERVER_URL))
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response;
+                try (HttpClient client = HttpClient.newHttpClient()) {
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(WHATSMYIP_SERVER_URL))
+                            .timeout(Duration.ofSeconds(5))
+                            .build();
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                }
                 publicIp = response.body();
             }
         };
@@ -574,12 +576,14 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void requestToken() throws IOException, InterruptedException {
-                HttpClient client = HttpClient.newBuilder().build();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                HttpResponse<String> response;
+                try (HttpClient client = HttpClient.newBuilder().build()) {
+                    HttpRequest request = HttpRequest.newBuilder()
+                            .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
+                            .timeout(Duration.ofSeconds(5))
+                            .build();
+                    response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                }
                 token = response.body().trim();
             }
         };
