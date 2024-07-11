@@ -3,6 +3,7 @@ package mpo.dayon.assisted.utils;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
@@ -74,12 +75,19 @@ public final class ScreenUtilities {
         return rgbToGray8(quantization, captureRGB(sharedScreenSize));
     }
 
+    public static byte[] captureColors() {
+        final int[] ints = captureRGB(sharedScreenSize);
+        ByteBuffer bb = ByteBuffer.allocate(4 * ints.length);
+        bb.asIntBuffer().put(ints);
+        return bb.array();
+    }
+
     private static int[] captureRGB(Rectangle bounds) {
         BufferedImage image = ROBOT.createScreenCapture(bounds);
         final int imageHeight = min(image.getHeight(), bounds.height);
         final int imageWidth = min(image.getWidth(), bounds.width);
         int[] pixels = new int[imageHeight * imageWidth];
-        return image.getRGB(0,0, imageWidth, imageHeight, pixels, 0, imageWidth);
+        return image.getRGB(0, 0, imageWidth, imageHeight, pixels, 0, imageWidth);
     }
 
     public static byte[] captureGray(Rectangle bounds, Gray8Bits quantization) {

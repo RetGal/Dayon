@@ -27,7 +27,7 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	 */
 	@Override
     public int getWireSize() {
-		return 6; // type (byte) + quantization (byte) + tick (int)
+		return 8; // type (byte) + quantization (byte) + tick (int) + colors (short)
 	}
 
 	@Override
@@ -35,15 +35,17 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 		marshallEnum(out, getType());
 		marshallEnum(out, configuration.getCaptureQuantization());
 		out.writeInt(configuration.getCaptureTick());
+		out.writeShort(configuration.isCaptureColors() ? 1 : 0);
 	}
 
 	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
-		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(in.readInt(), quantization));
+		final int tick = in.readInt();
+		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization,in.readShort() == 1));
 	}
 
 	public String toString() {
-		return String.format("[quantization:%s] [tick:%d]", configuration.getCaptureQuantization(), configuration.getCaptureTick());
+		return String.format("[quantization:%s] [tick:%d] [colors:%b]", configuration.getCaptureQuantization(), configuration.getCaptureTick(), configuration.isCaptureColors());
 	}
 
 }
