@@ -8,6 +8,6 @@ public interface CaptureFactory {
 
 	Dimension getDimension();
 
-	byte[] captureGray(Gray8Bits quantization);
+	byte[] captureScreen(Gray8Bits quantization);
 
 }

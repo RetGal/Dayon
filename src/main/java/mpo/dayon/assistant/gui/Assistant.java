@@ -46,6 +46,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
+import static java.awt.image.BufferedImage.TYPE_BYTE_GRAY;
+import static java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
@@ -369,7 +371,7 @@ public class Assistant implements ClipboardOwner {
                 JFrame captureFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
 
                 final JPanel pane = new JPanel();
-                pane.setLayout(new GridLayout(2, 2, 10, 10));
+                pane.setLayout(new GridLayout(3, 2, 10, 10));
 
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
@@ -398,6 +400,25 @@ public class Assistant implements ClipboardOwner {
                 grayLevelsSlider.setPaintTicks(true);
                 grayLevelsSlider.setPaintLabels(true);
                 grayLevelsSlider.setSnapToTicks(true);
+                pane.add(grayLevelsLbl).setEnabled(!captureEngineConfiguration.isCaptureColors());
+                pane.add(grayLevelsSlider).setEnabled(!captureEngineConfiguration.isCaptureColors());
+
+                final JLabel colorsLbl = new JLabel(translate("capture.colors"));
+                final JCheckBox colorsCb = new JCheckBox();
+                colorsCb.setSelected(captureEngineConfiguration.isCaptureColors());
+                pane.add(colorsLbl);
+                pane.add(colorsCb);
+                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                final Properties grayLabelTable = new Properties(3);
+                JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
+                grayLabelTable.put(0, new JLabel(translate("min")));
+                grayLabelTable.put(3, actualLevels);
+                grayLabelTable.put(6, new JLabel(translate("max")));
+                grayLevelsSlider.setLabelTable(grayLabelTable);
+                grayLevelsSlider.setMajorTickSpacing(1);
+                grayLevelsSlider.setPaintTicks(true);
+                grayLevelsSlider.setPaintLabels(true);
+                grayLevelsSlider.setSnapToTicks(true);
                 pane.add(grayLevelsLbl);
                 pane.add(grayLevelsSlider);
 
@@ -405,22 +426,26 @@ public class Assistant implements ClipboardOwner {
                     actualTick.setText(tickMillisSlider.getValue() < 1000 ? format("%dms", tickMillisSlider.getValue()) : "1s");
                     if (!tickMillisSlider.getValueIsAdjusting()) {
                         sendCaptureConfiguration(new CaptureEngineConfiguration(tickMillisSlider.getValue(),
-                                toGrayLevel(grayLevelsSlider.getValue())));
+                                toGrayLevel(grayLevelsSlider.getValue()), captureEngineConfiguration.isCaptureColors()));
                     }
                 });
                 grayLevelsSlider.addChangeListener(e -> {
                     actualLevels.setText(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
                     if (!grayLevelsSlider.getValueIsAdjusting()) {
                         sendCaptureConfiguration(new CaptureEngineConfiguration(tickMillisSlider.getValue(),
-                                toGrayLevel(grayLevelsSlider.getValue())));
+                                toGrayLevel(grayLevelsSlider.getValue()), false));
                     }
+                });
+                colorsCb.addActionListener(e -> {
+                    grayLevelsLbl.setEnabled(!colorsCb.isSelected());
+                    grayLevelsSlider.setEnabled(!colorsCb.isSelected());
                 });
 
                 final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, true, null);
 
                 if (ok) {
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(tickMillisSlider.getValue(),
-                            toGrayLevel(grayLevelsSlider.getValue()));
+                            toGrayLevel(grayLevelsSlider.getValue()), colorsCb.isSelected());
                     if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
                         captureEngineConfiguration = newCaptureEngineConfiguration;
                         captureEngineConfiguration.persist();
@@ -760,7 +785,7 @@ public class Assistant implements ClipboardOwner {
             final AbstractMap.SimpleEntry<BufferedImage, byte[]> image;
             // synchronized because of the reset onStarting()
             synchronized (prevBufferLOCK) {
-                image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
+                image = captureEngineConfiguration.isCaptureColors() ? capture.createBufferedColoredImage(prevBuffer, prevWidth, prevHeight) : capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
                 prevBuffer = image.getValue();
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
@@ -788,7 +813,7 @@ public class Assistant implements ClipboardOwner {
             AffineTransform scaleTransform = AffineTransform.getScaleInstance(frame.getxFactor(), frame.getyFactor());
             try {
                 AffineTransformOp bilinearScaleOp = new AffineTransformOp(scaleTransform, AffineTransformOp.TYPE_BILINEAR);
-                return bilinearScaleOp.filter(image, new BufferedImage(abs(width), abs(height), image.getType()));
+                return bilinearScaleOp.filter(image, new BufferedImage(abs(width), abs(height), image.getType() == 0 ? TYPE_INT_ARGB_PRE : TYPE_BYTE_GRAY));
             } catch (ImagingOpException e) {
                 Log.error(e.getMessage());
                 return image;
