@@ -163,22 +163,20 @@ public class Capture {
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final int capWidth = captureDimension.width;
 		final int capHeight = captureDimension.height;
-		final byte[] buffer = new byte[capWidth * capHeight];
-		if (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight) {
-			System.arraycopy(prevBuffer, 0, buffer, 0, buffer.length);
-		}
-		for (final CaptureTile tile : dirty) {
-			if (tile != null) {
-				final MemByteBuffer src = tile.getCapture();
-				final int srcSize = src.size();
-				final int tileWidth = tile.getWidth();
-				int destPos = tile.getY() * capWidth + tile.getX();
-				for (int srcPos = 0; srcPos < srcSize; srcPos += tileWidth) {
-					System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tileWidth);
-					destPos += capWidth;
-				}
-			}
-		}
+		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight) ? prevBuffer : new byte[capWidth * capHeight];
+		Arrays.stream(dirty)
+				.parallel()
+				.filter(Objects::nonNull)
+				.forEach(tile -> {
+					final MemByteBuffer src = tile.getCapture();
+					final int srcSize = src.size();
+					final int tw = tile.getWidth();
+					int destPos = tile.getY() * captureDimension.width + tile.getX();
+					for (int srcPos = 0; srcPos < srcSize; srcPos += tw) {
+						System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tw);
+						destPos += captureDimension.width;
+					}
+				});
 
 		final DataBufferByte dbuffer = new DataBufferByte(buffer, buffer.length);
 		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, capWidth, capHeight, capWidth, 1, new int[] { 0 }, null);
