@@ -3,6 +3,7 @@ package mpo.dayon.assisted.utils;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
@@ -36,7 +37,7 @@ public final class ScreenUtilities {
         COMBINED_SCREEN_SIZE = new Rectangle(getCombinedScreenSize());
         sharedScreenSize = shareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
         rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-        gray = new byte[rgb.length];
+        gray = new byte[rgb.length * 4];
         try {
             ROBOT = new Robot();
         } catch (AWTException ex) {
@@ -48,7 +49,7 @@ public final class ScreenUtilities {
         shareAllScreens = doShareAllScreens;
         sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
         rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-        gray = new byte[rgb.length];
+        gray = new byte[rgb.length * 4];
     }
 
     public static Rectangle getSharedScreenSize() {
@@ -71,7 +72,17 @@ public final class ScreenUtilities {
     }
 
     public static byte[] captureGray(Gray8Bits quantization) {
-        return rgbToGray8(quantization, captureRGB(sharedScreenSize));
+        //return rgbToGray8(quantization, captureRGB(sharedScreenSize));
+        return captureColors(quantization);
+    }
+
+    public static byte[] captureColors(Gray8Bits quantization) {
+        final int[] ints = captureRGB(sharedScreenSize);
+        ByteBuffer bb = ByteBuffer.allocate(4 * ints.length);
+        for (int i : ints) {
+            bb.putInt(i);
+        }
+        return bb.array();
     }
 
     private static int[] captureRGB(Rectangle bounds) {

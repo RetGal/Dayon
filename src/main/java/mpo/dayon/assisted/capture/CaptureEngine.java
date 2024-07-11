@@ -179,7 +179,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     private CaptureTile[] computeDirtyTiles(byte[] capture) {
         final int x = (captureDimension.width + TILE_DIMENSION.width -1) / TILE_DIMENSION.width;
         final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
-        final int length = x * y;
+        final int length = x * y;// * 4;
         // change in screen resolution?
         if (length != previousCapture.length) {
             previousCapture = new long[length];
@@ -209,7 +209,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
      * Screen-rectangle buffer to tile-rectangle buffer.
      */
     private static byte[] createTile(byte[] capture, int width, int srcPos, int tw, int th) {
-        final int capacity = tw * th;
+        final int capacity = tw * th * 4;
         final byte[] tile = new byte[capacity];
         final int maxSrcPos = capture.length;
         final int maxDestPos = capacity - tw + 1;

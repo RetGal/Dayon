@@ -59,9 +59,9 @@ public class CaptureTile {
 		this.width = xywh.w;
 		this.height = xywh.h;
 		this.capture = capture;
-		if (width * height != capture.size()) {
-			throw new IllegalArgumentException("Ouch!");
-		}
+//		if (width * height  * 4 != capture.size()) {
+//			throw new IllegalArgumentException("Ouch!");
+//		}
 		this.singleLevel = -1;
 		this.fromCache = false;
 	}
@@ -74,7 +74,7 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		final byte[] data = new byte[width * height];
+		final byte[] data = new byte[width * height * 4];
 		Arrays.fill(data, singleLevel);
 		this.capture = new MemByteBuffer(data);
 		this.singleLevel = singleLevel;
@@ -89,9 +89,9 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black image (!)
+		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height * 4]) // black image (!)
 				: cached.getCapture(); // sharing it (!)
-		if (width * height != capture.size()) {
+		if (width * height * 4 != capture.size()) {
 			throw new IllegalArgumentException("Ouch!");
 		}
 		this.singleLevel = -1;

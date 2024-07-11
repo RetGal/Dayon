@@ -163,7 +163,7 @@ public class Capture {
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final int capWidth = captureDimension.width;
 		final int capHeight = captureDimension.height;
-		final byte[] buffer = new byte[capWidth * capHeight];
+		final byte[] buffer = new byte[capWidth * capHeight * 4];
 		if (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight) {
 			System.arraycopy(prevBuffer, 0, buffer, 0, buffer.length);
 		}
