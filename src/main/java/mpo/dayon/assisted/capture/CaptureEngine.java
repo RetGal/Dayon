@@ -186,6 +186,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             resetPreviousCapture();
         }
         CaptureTile[] dirty = new CaptureTile[length];
+        byte[] tileData;
         boolean hasDirty = false;
         int tileId = 0;
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
@@ -193,7 +194,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             for (int tx = 0; tx < captureDimension.width; tx += TILE_DIMENSION.width) {
                 final int tw = min(captureDimension.width - tx, TILE_DIMENSION.width);
                 final int offset = ty * captureDimension.width + tx;
-                final byte[] tileData = createTile(capture, captureDimension.width, offset, tw, th);
+                tileData = createTile(capture, captureDimension.width, offset, tw, th);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
                     dirty[tileId] = new CaptureTile(cs, new Position(tx, ty), tw, th, tileData);
