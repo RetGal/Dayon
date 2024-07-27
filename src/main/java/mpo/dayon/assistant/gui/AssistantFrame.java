@@ -274,10 +274,8 @@ class AssistantFrame extends BaseFrame {
         tabbedPane.addTab(translate("connection"), connectionPanel);
         tabbedPane.addTab(translate("session"), sessionPanel);
         tabbedPane.addTab(translate("settings"), settingsPanel);
-        tabbedPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         // must not be focusable or the key listener won't work
         tabbedPane.setFocusable(false);
-        tabbedPane.setBorder(null);
         return tabbedPane;
     }
 

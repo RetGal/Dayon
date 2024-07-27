@@ -34,7 +34,7 @@ class FileMetaData implements Serializable {
     @Override
     public int hashCode() {
         int result = fileName != null ? fileName.hashCode() : 0;
-        result = 31 * result + (int) (fileSize ^ (fileSize >>> 32));
+        result = 31 * result + Long.hashCode(fileSize);
         return result;
     }
 }
