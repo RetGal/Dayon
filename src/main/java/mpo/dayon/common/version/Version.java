@@ -64,9 +64,10 @@ public class Version {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(RELEASE_LOCATION + "latest"))
                         .timeout(Duration.ofSeconds(5))
+                        .method("HEAD", HttpRequest.BodyPublishers.noBody())
                         .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                String latestLocation = response.headers().firstValue("Location").orElse(null);
+                HttpHeaders responseHeaders = client.send(request, HttpResponse.BodyHandlers.discarding()).headers();
+                String latestLocation = responseHeaders.firstValue("Location").orElse(null);
                 if (latestLocation != null) {
                     latestVersion = latestLocation.substring(latestLocation.lastIndexOf('v'));
                 } else {
