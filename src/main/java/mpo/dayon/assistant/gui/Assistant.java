@@ -262,7 +262,8 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void resolvePublicIp() throws IOException, InterruptedException {
-                // HttpClient doesn't implement AutoCloseable before Java 21!
+                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+                @java.lang.SuppressWarnings("squid:S2095")
                 HttpClient client = HttpClient.newHttpClient();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(WHATSMYIP_SERVER_URL))
@@ -574,7 +575,8 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void requestToken() throws IOException, InterruptedException {
-                // HttpClient doesn't implement AutoCloseable before Java 21!
+                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+                @java.lang.SuppressWarnings("squid:S2095")
                 HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
