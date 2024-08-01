@@ -60,7 +60,9 @@ public class Version {
 
     public String getLatestRelease() {
         if (latestVersion == null) {
-            try (HttpClient client = HttpClient.newHttpClient()) {
+            // HttpClient doesn't implement AutoCloseable before Java 21!
+            HttpClient client = HttpClient.newHttpClient();
+            try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(RELEASE_LOCATION + "latest"))
                         .timeout(Duration.ofSeconds(5))
