@@ -96,13 +96,19 @@ public abstract class BaseFrame extends JFrame {
 
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
+        setupWindow();
+        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
+    }
+
+    private void setupWindow() {
         this.configuration = new FrameConfiguration(frameType);
-        this.position = new Position(configuration.getX(), configuration.getY());
-        this.setLocation(position.getX(), position.getY());
         this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
                 Math.max(configuration.getHeight(), frameType.getMinHeight()));
+        final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+        this.position = new Position(Math.min(configuration.getX() + dimension.width, maximumWindowBounds.width),
+                Math.min(configuration.getY() + dimension.height, maximumWindowBounds.height));
         this.setSize(dimension.width, dimension.height);
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
+        this.setLocation(position.getX(), position.getY());
     }
 
     protected void setupToolBar(ToolBar toolBar) {
