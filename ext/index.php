@@ -108,13 +108,13 @@ function readToken($token, $pdo) {
 }
 
 function updateToken($token, $address, $pdo) {
-	$sql = "UPDATE tokens SET assisted = :address,ts = :ts WHERE token = :token";
+    $sql = "UPDATE tokens SET assisted = :address,ts = :ts WHERE token = :token";
     $ts = time();
-	$stmt = $pdo->prepare($sql);
-	$stmt->bindParam(':address', $address, PDO::PARAM_STR);
-	$stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
-	$stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
-	$stmt->execute();
+    $stmt = $pdo->prepare($sql);
+    $stmt->bindParam(':address', $address, PDO::PARAM_STR);
+    $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
+    $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
+    $stmt->execute();
 }
 
 function createDatabase($pdo) {
