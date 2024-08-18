@@ -105,8 +105,8 @@ public abstract class BaseFrame extends JFrame {
         this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
                 Math.max(configuration.getHeight(), frameType.getMinHeight()));
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
-        this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : maximumWindowBounds.width - dimension.width,
-                 configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : maximumWindowBounds.height - dimension.height);
+        this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
+                 configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         this.setSize(dimension.width, dimension.height);
         this.setLocation(position.getX(), position.getY());
     }
