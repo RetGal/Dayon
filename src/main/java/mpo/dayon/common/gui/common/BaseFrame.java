@@ -302,29 +302,6 @@ public abstract class BaseFrame extends JFrame {
                     }
                 }
             }
-
-            private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-                if (frameType.equals(FrameType.ASSISTED)) {
-                    final String ipAddress = addressTextField.getText();
-                    if (ipAddress.isEmpty()) {
-                        return translate("connection.settings.emptyIpAddress");
-                    } else if (!isValidIpAddressOrHostName(ipAddress)) {
-                        return translate("connection.settings.invalidIpAddress");
-                    }
-                }
-                final String portNumber = portNumberTextField.getText();
-                if (portNumber.isEmpty()) {
-                    return translate("connection.settings.emptyPortNumber");
-                } else if (!isValidPortNumber(portNumber)) {
-                    return translate("connection.settings.invalidPortNumber");
-                } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
-                    final String tokenServer = customTokenTextField.getText();
-                    if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
-                        return translate("connection.settings.invalidTokenServer");
-                    }
-                }
-                return null;
-            }
         };
         conf.putValue(Action.SHORT_DESCRIPTION, translate("connection.settings"));
         conf.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_SETTINGS));
@@ -426,6 +403,29 @@ public abstract class BaseFrame extends JFrame {
 
     private String toUpperFirst(String text) {
         return Pattern.compile("^.").matcher(text).replaceFirst(m -> m.group().toUpperCase());
+    }
+
+    private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+        if (frameType.equals(FrameType.ASSISTED)) {
+            final String ipAddress = addressTextField.getText();
+            if (ipAddress.isEmpty()) {
+                return translate("connection.settings.emptyIpAddress");
+            } else if (!isValidIpAddressOrHostName(ipAddress)) {
+                return translate("connection.settings.invalidIpAddress");
+            }
+        }
+        final String portNumber = portNumberTextField.getText();
+        if (portNumber.isEmpty()) {
+            return translate("connection.settings.emptyPortNumber");
+        } else if (!isValidPortNumber(portNumber)) {
+            return translate("connection.settings.invalidPortNumber");
+        } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
+            final String tokenServer = customTokenTextField.getText();
+            if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
+                return translate("connection.settings.invalidTokenServer");
+            }
+        }
+        return null;
     }
 
     private void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
