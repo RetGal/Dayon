@@ -57,6 +57,8 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String CHAT_URL = "https://meet.jit.si/%s";
 
+    private static final String CUSTOM = "custom";
+
     private transient FrameConfiguration configuration;
 
     private transient Position position;
@@ -290,10 +292,10 @@ public abstract class BaseFrame extends JFrame {
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
 
                 if (ok) {
-                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals("custom") &&
+                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
                     updateSystemProperty(newTokenServerUrl);
-                    if (frameType.equals(FrameType.ASSISTED)) {
+                    if (assistant == null) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                     } else {
                         updateAssistantNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, assistant.getNetworkEngine());
@@ -315,7 +317,7 @@ public abstract class BaseFrame extends JFrame {
                     return translate("connection.settings.emptyPortNumber");
                 } else if (!isValidPortNumber(portNumber)) {
                     return translate("connection.settings.invalidPortNumber");
-                } else if (tokenRadioGroup.getSelection().getActionCommand().equals("custom")) {
+                } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
                     final String tokenServer = customTokenTextField.getText();
                     if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
                         return translate("connection.settings.invalidTokenServer");
@@ -366,7 +368,6 @@ public abstract class BaseFrame extends JFrame {
 
             final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
             upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            //boolean upnpActive = assistant.isUpnpEnabled();
             final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
             upnpPanel.add(upnpStatus);
             panel.add(upnpPanel, createGridBagConstraints(gridy++));
@@ -392,7 +393,7 @@ public abstract class BaseFrame extends JFrame {
         final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
         defaultTokenRadio.setActionCommand("default");
         final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand( "custom");
+        customTokenRadio.setActionCommand(CUSTOM);
         tokenRadioGroup.add(defaultTokenRadio);
         tokenRadioGroup.add(customTokenRadio);
         boolean customTextFieldEditable = false;
@@ -407,7 +408,6 @@ public abstract class BaseFrame extends JFrame {
         final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
         defaultTokenTextField.setEditable(false);
         defaultTokenTextField.setFocusable(false);
-        //final JTextField customTokenTextField = new JTextField(currentTokenServer);
         customTokenTextField.setText(currentTokenServer);
         customTokenTextField.setEditable(customTextFieldEditable);
 
