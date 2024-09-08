@@ -1,4 +1,5 @@
-cp ${config.installDir}/deb/*.desktop /usr/share/applications/
+mv ${config.installDir}/*.desktop /usr/share/applications/
+mv ${config.installDir}/dayon.png usr/share/icons
 chmod +x ${config.installDir}/*.sh
 ln -s ${config.installDir}/dayon_assisted.sh /usr/bin/dayon_assisted
 ln -s ${config.installDir}/dayon_assistant.sh /usr/bin/dayon_assistant

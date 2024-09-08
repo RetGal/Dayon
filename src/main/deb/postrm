@@ -1,4 +1,5 @@
 rm -f /usr/share/applications/dayon_assistant.desktop
 rm -f /usr/share/applications/dayon_assisted.desktop
+rm -f /usr/share/icons/dayon.png
 rm -f /usr/bin/dayon_assisted
 rm -f /usr/bin/dayon_assistant
