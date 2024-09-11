@@ -50,6 +50,7 @@ import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.sleep;
+import static javax.swing.SwingConstants.HORIZONTAL;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -372,7 +373,8 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
-                final JSlider tickMillisSlider = new JSlider(JSlider.HORIZONTAL, 50, 1000, captureEngineConfiguration.getCaptureTick());
+                final JSlider tickMillisSlider = new JSlider(HORIZONTAL, 50, 1000, captureEngineConfiguration.getCaptureTick());
+                @java.lang.SuppressWarnings("squid:S1149") // setLabelTable expects a Dictionary...
                 final Hashtable<Integer, Component> tickLabelTable = new Hashtable<>();
                 JLabel actualTick = new JLabel(format("%dms", tickMillisSlider.getValue()));
                 tickLabelTable.put(50, new JLabel(translate("min")));
@@ -386,7 +388,8 @@ public class Assistant implements ClipboardOwner {
                 pane.add(tickMillisSlider);
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
-                final JSlider grayLevelsSlider = new JSlider(JSlider.HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                @java.lang.SuppressWarnings("squid:S1149") // setLabelTable expects a Dictionary...
                 final Hashtable<Integer, Component>  grayLabelTable = new Hashtable<>();
                 JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
                 grayLabelTable.put(0, new JLabel(translate("min")));
