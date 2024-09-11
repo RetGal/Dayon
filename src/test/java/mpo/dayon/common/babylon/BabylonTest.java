@@ -42,13 +42,13 @@ class BabylonTest {
     }
 
     @Test
-    void shouldTranslateEnum() {
+    void shouldHandleMissingTranslationsOfEnum() {
         // given
         Locale defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.forLanguageTag("fr"));
 
         // when, then
-        assertEquals("16 - acceptable", Babylon.translateEnum(Gray8Bits.X_16));
+        assertEquals("X_16", Babylon.translateEnum(Gray8Bits.X_16));
 
         Locale.setDefault(defaultLocale);
     }
