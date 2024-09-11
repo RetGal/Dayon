@@ -372,34 +372,54 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
-                final JTextField tickTextField = new JTextField(valueOf(captureEngineConfiguration.getCaptureTick()));
+                final JSlider tickMillisSlider = new JSlider(JSlider.HORIZONTAL, 50, 1000, captureEngineConfiguration.getCaptureTick());
+                final Hashtable<Integer, Component> tickLabelTable = new Hashtable<>();
+                JLabel actualTick = new JLabel(format("%dms", tickMillisSlider.getValue()));
+                tickLabelTable.put(50, new JLabel(translate("min")));
+                tickLabelTable.put(550, actualTick);
+                tickLabelTable.put(1000, new JLabel(translate("max")));
+                tickMillisSlider.setLabelTable(tickLabelTable);
+                tickMillisSlider.setMajorTickSpacing(50);
+                tickMillisSlider.setPaintTicks(true);
+                tickMillisSlider.setPaintLabels(true);
                 pane.add(tickLbl);
-                pane.add(tickTextField);
+                pane.add(tickMillisSlider);
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
-                final JComboBox<Gray8Bits> grayLevelsCb = new JComboBox<>(Gray8Bits.values());
-                grayLevelsCb.setSelectedItem(captureEngineConfiguration.getCaptureQuantization());
+                final JSlider grayLevelsSlider = new JSlider(JSlider.HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                final Hashtable<Integer, Component>  grayLabelTable = new Hashtable<>();
+                JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
+                grayLabelTable.put(0, new JLabel(translate("min")));
+                grayLabelTable.put(3, actualLevels);
+                grayLabelTable.put(6, new JLabel(translate("max")));
+                grayLevelsSlider.setLabelTable(grayLabelTable);
+                grayLevelsSlider.setMajorTickSpacing(1);
+                grayLevelsSlider.setPaintTicks(true);
+                grayLevelsSlider.setPaintLabels(true);
+                grayLevelsSlider.setSnapToTicks(true);
                 pane.add(grayLevelsLbl);
-                pane.add(grayLevelsCb);
+                pane.add(grayLevelsSlider);
 
-                final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, true, () -> {
-                    final String tick = tickTextField.getText();
-                    if (tick.isEmpty()) {
-                        return translate("tick.msg1");
+                tickMillisSlider.addChangeListener(e -> {
+                    actualTick.setText(tickMillisSlider.getValue() < 1000 ? format("%dms", tickMillisSlider.getValue()) : "1s");
+                    if (!tickMillisSlider.getValueIsAdjusting()) {
+                        sendCaptureConfiguration(new CaptureEngineConfiguration(tickMillisSlider.getValue(),
+                                toGrayLevel(grayLevelsSlider.getValue())));
                     }
-                    try {
-                        if (Integer.parseInt(tick) < 50) {
-                            return translate("tick.msg2");
-                        }
-                    } catch (NumberFormatException ex) {
-                        return translate("tick.msg2");
+                });
+                grayLevelsSlider.addChangeListener(e -> {
+                    actualLevels.setText(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
+                    if (!grayLevelsSlider.getValueIsAdjusting()) {
+                        sendCaptureConfiguration(new CaptureEngineConfiguration(tickMillisSlider.getValue(),
+                                toGrayLevel(grayLevelsSlider.getValue())));
                     }
-                    return null;
                 });
 
+                final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, true, null);
+
                 if (ok) {
-                    final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(Integer.parseInt(tickTextField.getText()),
-                            (Gray8Bits) grayLevelsCb.getSelectedItem());
+                    final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(tickMillisSlider.getValue(),
+                            toGrayLevel(grayLevelsSlider.getValue()));
                     if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
                         captureEngineConfiguration = newCaptureEngineConfiguration;
                         captureEngineConfiguration.persist();
@@ -411,6 +431,25 @@ public class Assistant implements ClipboardOwner {
         configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
         return configure;
+    }
+
+    private Gray8Bits toGrayLevel(int value) {
+        switch (value) {
+            case 6:
+                return Gray8Bits.X_256;
+            case 5:
+                return Gray8Bits.X_128;
+            case 4:
+                return Gray8Bits.X_64;
+            case 3:
+                return Gray8Bits.X_32;
+            case 2:
+                return Gray8Bits.X_16;
+            case 1:
+                return Gray8Bits.X_8;
+            default:
+                return Gray8Bits.X_4;
+        }
     }
 
     /**

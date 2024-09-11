@@ -8,25 +8,14 @@ import mpo.dayon.common.babylon.Babylon;
  * =====================================================================================================================
  */
 public enum Gray8Bits {
-	/**
-	 * I would say far enough for our initial need.
-	 */
+
 	X_256(256),
-
-	/**
-	 * Actually quite good for our need.
-	 */
+	X_128(128),
+	X_64(64),
 	X_32(32),
-
-	/**
-	 * A bit more of compression.
-	 */
 	X_16(16),
-
-	/**
-	 * Still very much visible.
-	 */
-	X_8(8);
+	X_8(8),
+	X_4(4);
 
 	private final int levels;
 
