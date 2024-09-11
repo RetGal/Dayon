@@ -374,8 +374,7 @@ public class Assistant implements ClipboardOwner {
                 final JLabel tickLbl = new JLabel(translate("tick"));
                 tickLbl.setToolTipText(translate("tick.tooltip"));
                 final JSlider tickMillisSlider = new JSlider(HORIZONTAL, 50, 1000, captureEngineConfiguration.getCaptureTick());
-                @java.lang.SuppressWarnings("squid:S1149") // setLabelTable expects a Dictionary...
-                final Hashtable<Integer, Component> tickLabelTable = new Hashtable<>();
+                final Properties tickLabelTable = new Properties(3);
                 JLabel actualTick = new JLabel(format("%dms", tickMillisSlider.getValue()));
                 tickLabelTable.put(50, new JLabel(translate("min")));
                 tickLabelTable.put(550, actualTick);
@@ -389,8 +388,7 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
                 final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
-                @java.lang.SuppressWarnings("squid:S1149") // setLabelTable expects a Dictionary...
-                final Hashtable<Integer, Component>  grayLabelTable = new Hashtable<>();
+                final Properties grayLabelTable = new Properties(3);
                 JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
                 grayLabelTable.put(0, new JLabel(translate("min")));
                 grayLabelTable.put(3, actualLevels);
