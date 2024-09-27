@@ -178,7 +178,7 @@ public final class Compressor {
     }
 
     private void processUncached(TileCache cache, DataInputStream in, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {
-        final byte[] tdata = new byte[abs(value * 4)];
+        final byte[] tdata = new byte[abs(value)]; // * 4)];
         int toffset = 0;
         int tcount;
         while ((tcount = in.read(tdata, toffset, tdata.length - toffset)) > 0) {
