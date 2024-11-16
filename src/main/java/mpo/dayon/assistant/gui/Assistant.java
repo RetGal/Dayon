@@ -22,6 +22,7 @@ import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.network.FileUtilities;
 import mpo.dayon.common.utils.Language;
+import mpo.dayon.common.version.Version;
 
 import javax.swing.*;
 import javax.swing.Timer;
@@ -49,7 +50,7 @@ import java.util.stream.Stream;
 
 import static java.awt.image.BufferedImage.TYPE_BYTE_GRAY;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE;
-import static java.lang.Math.abs;
+import static java.lang.Math.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static java.lang.Thread.sleep;
@@ -390,11 +391,14 @@ public class Assistant implements ClipboardOwner {
                 pane.add(tickMillisSlider);
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
-                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 5 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                int minLevel = networkConfiguration.isMonochromePeer() ? 3 : 0;
+                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, minLevel, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
                 final Properties grayLabelTable = new Properties(3);
                 JLabel actualLevels = new JLabel(format("  %d  ", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
-                grayLabelTable.put(0, new JLabel(translate("min")));
-                grayLabelTable.put(3, actualLevels);
+                grayLabelTable.put(minLevel, new JLabel(translate("min")));
+                if (!networkConfiguration.isMonochromePeer()) {
+                    grayLabelTable.put(3, actualLevels);
+                }
                 grayLabelTable.put(6, new JLabel(translate("max")));
                 grayLevelsSlider.setLabelTable(grayLabelTable);
                 grayLevelsSlider.setMajorTickSpacing(1);
@@ -406,7 +410,7 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel colorsLbl = new JLabel(translate("colors"));
                 final JCheckBox colorsCb = new JCheckBox();
-                colorsCb.setSelected(captureEngineConfiguration.isCaptureColors() && !networkConfiguration.isMonochromePeer());
+                colorsCb.setSelected(captureEngineConfiguration.isCaptureColors());
                 pane.add(colorsLbl).setEnabled(!networkConfiguration.isMonochromePeer());
                 pane.add(colorsCb).setEnabled(!networkConfiguration.isMonochromePeer());
 
@@ -867,10 +871,19 @@ public class Assistant implements ClipboardOwner {
          */
         @Override
         public void onConnected(Socket connection, char osId, String inputLocale, int peerMajorVersion) {
+            assureCompatibility(peerMajorVersion);
             sendCaptureConfiguration(captureEngineConfiguration);
             sendCompressorConfiguration(compressorEngineConfiguration);
             frame.resetCanvas();
             frame.onSessionStarted(osId, inputLocale, peerMajorVersion);
+        }
+
+        private void assureCompatibility(int peerMajorVersion) {
+            if (!Version.isColoredVersion(peerMajorVersion) && (captureEngineConfiguration.isCaptureColors() || captureEngineConfiguration.getCaptureQuantization().getLevels() < Gray8Bits.X_32.getLevels())) {
+                Log.warn(format("Pre color version detected. CaptureEngineConfiguration will be adjusted to %s", Gray8Bits.X_128));
+                captureEngineConfiguration = new CaptureEngineConfiguration(captureEngineConfiguration.getCaptureTick(), Gray8Bits.X_128, false);
+                captureEngineConfiguration.persist();
+            }
         }
 
         @Override
@@ -919,17 +932,20 @@ public class Assistant implements ClipboardOwner {
         @Override
         public void onDisconnecting() {
             frame.onDisconnecting();
+            networkConfiguration.setMonochromePeer(false);
         }
 
         @Override
         public void onTerminating() {
             Log.info("Session got terminated by peer");
             frame.onTerminating();
+            networkConfiguration.setMonochromePeer(false);
         }
 
         @Override
         public void onIOError(IOException error) {
             frame.onIOError(error);
+            networkConfiguration.setMonochromePeer(false);
         }
 
     }

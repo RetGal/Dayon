@@ -45,7 +45,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 		return monochromePeer;
 	}
 
-	void setMonochromePeer(boolean monochromePeer) {
+	public void setMonochromePeer(boolean monochromePeer) {
 		this.monochromePeer = monochromePeer;
 	}
 

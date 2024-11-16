@@ -290,7 +290,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             Log.error(format("Incompatible assisted version: %d.%d", hello.getMajor(), hello.getMinor()));
             throw new IOException("version.wrong");
         }
-        configuration.setMonochromePeer(!isColoredVersion(hello.getMajor(), hello.getMinor()));
+        configuration.setMonochromePeer(!isColoredVersion(hello.getMajor()));
         return hello;
     }
 
