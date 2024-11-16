@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static mpo.dayon.common.version.Version.isCompatibleVersion;
-import static mpo.dayon.common.version.Version.isProd;
+import static java.lang.Integer.parseInt;
+import static mpo.dayon.common.version.Version.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VersionTest {
@@ -101,6 +101,30 @@ class VersionTest {
 
         // when then
         assertTrue(isCompatibleVersion(other.getMajor(), other.getMinor(), that));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "15,14", "15,13"})
+    void isOutdatedVersionShouldReturnTrueForOutdatedVersions(String thatV, String otherV) {
+        // given when then
+        assertTrue(isOutdatedVersion(parseInt(thatV), parseInt(otherV)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "15,16", "15,15", "0,13", "15,0", "0,0"})
+    void isOutdatedVersionShouldReturnFalseForNotOutdatedVersions(String thatV, String otherV) {
+        // given when then
+        assertFalse(isOutdatedVersion(parseInt(thatV), parseInt(otherV)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "15.0.0", "15.1.2", "0.0.0" })
+    void isColoredVersionShouldReturnTrueForHardCodedVersions(String thatV) {
+        // given
+        Version that = new Version(thatV);
+
+        // when then
+        assertTrue(isColoredVersion(that.getMajor(), that.getMinor()));
     }
 
 }

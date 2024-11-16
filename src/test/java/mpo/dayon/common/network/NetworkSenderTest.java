@@ -1,5 +1,6 @@
 package mpo.dayon.common.network;
 
+import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;
@@ -104,16 +105,32 @@ class NetworkSenderTest {
     }
 
     @Test
-    void sendCaptureConfiguration() throws IOException {
+    void sendCaptureConfigurationToLegacyPeerShouldNotIncludeCaptureColorValue() throws IOException {
         // given
         CaptureEngineConfiguration configuration = new CaptureEngineConfiguration();
+        boolean monochromePeer = true;
         // when
-        sender.sendCaptureConfiguration(configuration);
+        sender.sendCaptureConfiguration(configuration, monochromePeer);
         // then
         verify(outMock, timeout(50)).writeByte(MAGIC_NUMBER);
         verify(outMock).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
         verify(outMock).write(configuration.getCaptureQuantization().ordinal());
         verify(outMock).writeInt(configuration.getCaptureTick());
+    }
+
+    @Test
+    void sendCaptureConfigurationIncludeTheRightCaptureColorValue() throws IOException {
+        // given
+        CaptureEngineConfiguration configuration = new CaptureEngineConfiguration(333, Gray8Bits.X_16, true);
+        boolean monochromePeer = false;
+        // when
+        sender.sendCaptureConfiguration(configuration, monochromePeer);
+        // then
+        verify(outMock, timeout(50)).writeByte(MAGIC_NUMBER);
+        verify(outMock).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
+        verify(outMock).write(configuration.getCaptureQuantization().ordinal());
+        verify(outMock).writeInt(configuration.getCaptureTick());
+        verify(outMock).writeShort(1);
     }
 
     @Test

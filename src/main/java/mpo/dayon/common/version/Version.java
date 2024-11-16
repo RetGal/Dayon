@@ -96,8 +96,11 @@ public class Version {
         return that.getMajor() == major && that.getMinor() == minor;
     }
 
-    public static boolean isOutdatedVersion(int major) {
-        return Version.get().getMajor() > major;
+    public static boolean isOutdatedVersion(int major, int otherMajor) {
+        if (major == 0 || otherMajor == 0) {
+            return false;
+        }
+        return major > otherMajor;
     }
 
     public static boolean isColoredVersion(int major, int minor) {
