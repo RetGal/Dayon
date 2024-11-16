@@ -24,6 +24,7 @@ import mpo.dayon.common.network.FileUtilities;
 import mpo.dayon.common.utils.Language;
 
 import javax.swing.*;
+import javax.swing.Timer;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
@@ -42,7 +43,9 @@ import java.time.Duration;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -403,7 +406,7 @@ public class Assistant implements ClipboardOwner {
                 pane.add(grayLevelsLbl).setEnabled(!captureEngineConfiguration.isCaptureColors());
                 pane.add(grayLevelsSlider).setEnabled(!captureEngineConfiguration.isCaptureColors());
 
-                final JLabel colorsLbl = new JLabel(translate("capture.colors"));
+                final JLabel colorsLbl = new JLabel(translate("colors"));
                 final JCheckBox colorsCb = new JCheckBox();
                 colorsCb.setSelected(captureEngineConfiguration.isCaptureColors());
                 pane.add(colorsLbl);
@@ -431,7 +434,7 @@ public class Assistant implements ClipboardOwner {
                 });
                 grayLevelsSlider.addChangeListener(e -> {
                     actualLevels.setText(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
-                    if (!grayLevelsSlider.getValueIsAdjusting()) {
+                    if (!grayLevelsSlider.getValueIsAdjusting() && !captureEngineConfiguration.isCaptureColors()) {
                         sendCaptureConfiguration(new CaptureEngineConfiguration(tickMillisSlider.getValue(),
                                 toGrayLevel(grayLevelsSlider.getValue()), false));
                     }
@@ -447,9 +450,7 @@ public class Assistant implements ClipboardOwner {
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(tickMillisSlider.getValue(),
                             toGrayLevel(grayLevelsSlider.getValue()), colorsCb.isSelected());
                     if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
-                        captureEngineConfiguration = newCaptureEngineConfiguration;
-                        captureEngineConfiguration.persist();
-                        sendCaptureConfiguration(captureEngineConfiguration);
+                        updateCaptureConfiguration(newCaptureEngineConfiguration);
                     }
                 }
             }
@@ -457,6 +458,32 @@ public class Assistant implements ClipboardOwner {
         configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.settings"));
         configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAPTURE_SETTINGS));
         return configure;
+    }
+
+    private void updateCaptureConfiguration(CaptureEngineConfiguration newCaptureEngineConfiguration) {
+        if (captureEngineConfiguration.isCaptureColors() == newCaptureEngineConfiguration.isCaptureColors()) {
+            captureEngineConfiguration = newCaptureEngineConfiguration;
+            captureEngineConfiguration.persist();
+            sendCaptureConfiguration(captureEngineConfiguration);
+        } else if (newCaptureEngineConfiguration.isCaptureColors()) {
+            // safety first - wait one tick after switching the assisted to colors
+            sendCaptureConfiguration(newCaptureEngineConfiguration);
+            int delay = newCaptureEngineConfiguration.getCaptureTick()+123;
+            Timer timer = new Timer(delay, e -> {
+                captureEngineConfiguration = newCaptureEngineConfiguration;
+                captureEngineConfiguration.persist();
+            });
+            timer.setRepeats(false);
+            timer.start();
+        } else {
+            // safety first - wait one tick before switching the assisted to monochrome
+            int delay = captureEngineConfiguration.getCaptureTick()+123;
+            captureEngineConfiguration = newCaptureEngineConfiguration;
+            captureEngineConfiguration.persist();
+            Timer timer = new Timer(delay, e -> sendCaptureConfiguration(captureEngineConfiguration));
+            timer.setRepeats(false);
+            timer.start();
+        }
     }
 
     private Gray8Bits toGrayLevel(int value) {
