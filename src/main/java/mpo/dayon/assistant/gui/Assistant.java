@@ -391,13 +391,15 @@ public class Assistant implements ClipboardOwner {
                 pane.add(tickMillisSlider);
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
-                int minLevel = networkConfiguration.isMonochromePeer() ? 3 : 0;
-                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, minLevel, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
                 final Properties grayLabelTable = new Properties(3);
                 JLabel actualLevels = new JLabel(format("  %d  ", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
-                grayLabelTable.put(minLevel, new JLabel(translate("min")));
                 if (!networkConfiguration.isMonochromePeer()) {
+                    grayLabelTable.put(0, new JLabel(translate("min")));
                     grayLabelTable.put(3, actualLevels);
+                } else {
+                    grayLabelTable.put(3, new JLabel(translate("min")));
+                    grayLevelsSlider.setMinimum(3);
                 }
                 grayLabelTable.put(6, new JLabel(translate("max")));
                 grayLevelsSlider.setLabelTable(grayLabelTable);
