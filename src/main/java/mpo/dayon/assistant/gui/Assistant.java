@@ -392,9 +392,9 @@ public class Assistant implements ClipboardOwner {
                 pane.add(tickMillisSlider);
 
                 final JLabel grayLevelsLbl = new JLabel(translate("grays"));
-                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
+                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 5 - captureEngineConfiguration.getCaptureQuantization().ordinal());
                 final Properties grayLabelTable = new Properties(3);
-                JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
+                JLabel actualLevels = new JLabel(format("  %d  ", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
                 grayLabelTable.put(0, new JLabel(translate("min")));
                 grayLabelTable.put(3, actualLevels);
                 grayLabelTable.put(6, new JLabel(translate("max")));
