@@ -9,6 +9,7 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
 import mpo.dayon.common.utils.Language;
+import mpo.dayon.common.version.Version;
 
 import javax.swing.*;
 import java.awt.*;
@@ -481,7 +482,7 @@ class AssistantFrame extends BaseFrame {
         toggleTransferControls(true);
     }
 
-    void onSessionStarted(char osId, String inputLocale) {
+    void onSessionStarted(char osId, String inputLocale, int assistedMajorVersion) {
         this.osId = osId;
         if (osId == 'm') {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.CMD));
@@ -489,6 +490,10 @@ class AssistantFrame extends BaseFrame {
         } else {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.WIN));
             windowsKeyToggleButton.setToolTipText(translate("send.winKey"));
+        }
+        if (Version.isOutdatedVersion(assistedMajorVersion)) {
+            String infoMessage = format("%s%n%s", translate("outdated.msg1"), translate("outdated.msg2"));
+            JOptionPane.showMessageDialog(this,  infoMessage, "", JOptionPane.INFORMATION_MESSAGE);
         }
         if (!inputLocale.isEmpty() && !inputLocale.equals(InputContext.getInstance().getLocale().toString())) {
             String infoMessage = format("%s%n%s%n%s", translate("keyboardlayout.msg1", inputLocale), translate("keyboardlayout.msg2"), translate("keyboardlayout.msg3"));

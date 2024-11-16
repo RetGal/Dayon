@@ -18,6 +18,8 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	private final String tokenServerUrl;
 
+	private boolean monochromePeer = false;
+
 	/**
 	 * Default : takes its values from the current preferences.
 	 */
@@ -37,6 +39,14 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	public String getTokenServerUrl() {
 		return tokenServerUrl;
+	}
+
+	public boolean isMonochromePeer() {
+		return monochromePeer;
+	}
+
+	void setMonochromePeer(boolean monochromePeer) {
+		this.monochromePeer = monochromePeer;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import java.security.cert.CertificateEncodingException;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
+import static mpo.dayon.common.version.Version.isColoredVersion;
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantEngineConfiguration> {
@@ -289,6 +290,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             Log.error(format("Incompatible assisted version: %d.%d", hello.getMajor(), hello.getMinor()));
             throw new IOException("version.wrong");
         }
+        configuration.setMonochromePeer(!isColoredVersion(hello.getMajor(), hello.getMinor()));
         return hello;
     }
 
@@ -297,7 +299,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
      */
     public void sendCaptureConfiguration(CaptureEngineConfiguration configuration) {
         if (sender != null) {
-            sender.sendCaptureConfiguration(configuration);
+            sender.sendCaptureConfiguration(configuration, this.configuration.isMonochromePeer());
         }
     }
 
@@ -359,7 +361,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void fireOnConnected(Socket connection, NetworkHelloMessage hello) {
-        listeners.getListeners().forEach(listener -> listener.onConnected(connection, hello.getOsId(), hello.getInputLocale()));
+        listeners.getListeners().forEach(listener -> listener.onConnected(connection, hello.getOsId(), hello.getInputLocale(), hello.getMajor()));
     }
 
     private void fireOnByteReceived(int count) {

@@ -408,22 +408,9 @@ public class Assistant implements ClipboardOwner {
 
                 final JLabel colorsLbl = new JLabel(translate("colors"));
                 final JCheckBox colorsCb = new JCheckBox();
-                colorsCb.setSelected(captureEngineConfiguration.isCaptureColors());
-                pane.add(colorsLbl);
-                pane.add(colorsCb);
-                final JSlider grayLevelsSlider = new JSlider(HORIZONTAL, 0, 6, 6 - captureEngineConfiguration.getCaptureQuantization().ordinal());
-                final Properties grayLabelTable = new Properties(3);
-                JLabel actualLevels = new JLabel(format("%d", toGrayLevel(grayLevelsSlider.getValue()).getLevels()));
-                grayLabelTable.put(0, new JLabel(translate("min")));
-                grayLabelTable.put(3, actualLevels);
-                grayLabelTable.put(6, new JLabel(translate("max")));
-                grayLevelsSlider.setLabelTable(grayLabelTable);
-                grayLevelsSlider.setMajorTickSpacing(1);
-                grayLevelsSlider.setPaintTicks(true);
-                grayLevelsSlider.setPaintLabels(true);
-                grayLevelsSlider.setSnapToTicks(true);
-                pane.add(grayLevelsLbl);
-                pane.add(grayLevelsSlider);
+                colorsCb.setSelected(captureEngineConfiguration.isCaptureColors() && !networkConfiguration.isMonochromePeer());
+                pane.add(colorsLbl).setEnabled(!networkConfiguration.isMonochromePeer());
+                pane.add(colorsCb).setEnabled(!networkConfiguration.isMonochromePeer());
 
                 tickMillisSlider.addChangeListener(e -> {
                     actualTick.setText(tickMillisSlider.getValue() < 1000 ? format("%dms", tickMillisSlider.getValue()) : "1s");
@@ -880,11 +867,11 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onConnected(Socket connection, char osId, String inputLocale) {
+        public void onConnected(Socket connection, char osId, String inputLocale, int peerMajorVersion) {
             sendCaptureConfiguration(captureEngineConfiguration);
             sendCompressorConfiguration(compressorEngineConfiguration);
             frame.resetCanvas();
-            frame.onSessionStarted(osId, inputLocale);
+            frame.onSessionStarted(osId, inputLocale, peerMajorVersion);
         }
 
         @Override
