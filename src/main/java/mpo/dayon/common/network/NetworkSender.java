@@ -100,8 +100,8 @@ public class NetworkSender {
      * <p/>
      * Assistant 2 assisted.
      */
-    public void sendCaptureConfiguration(CaptureEngineConfiguration configuration) {
-        send(true, new NetworkCaptureConfigurationMessage(configuration));
+    public void sendCaptureConfiguration(CaptureEngineConfiguration configuration, boolean monochromePeer) {
+        send(true, new NetworkCaptureConfigurationMessage(configuration, monochromePeer));
     }
 
     /**

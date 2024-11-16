@@ -7,9 +7,11 @@ import mpo.dayon.common.capture.Gray8Bits;
 
 public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	private final CaptureEngineConfiguration configuration;
+	private final boolean monochromePeer;
 
-	public NetworkCaptureConfigurationMessage(CaptureEngineConfiguration configuration) {
+	public NetworkCaptureConfigurationMessage(CaptureEngineConfiguration configuration, boolean monochromePeer) {
 		this.configuration = configuration;
+		this.monochromePeer = monochromePeer;
 	}
 
 	@Override
@@ -27,6 +29,10 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	 */
 	@Override
     public int getWireSize() {
+		// for backwards compatibility
+		if (monochromePeer) {
+			return 6;
+		}
 		return 8; // type (byte) + quantization (byte) + tick (int) + colors (short)
 	}
 
@@ -35,13 +41,17 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 		marshallEnum(out, getType());
 		marshallEnum(out, configuration.getCaptureQuantization());
 		out.writeInt(configuration.getCaptureTick());
-		out.writeShort(configuration.isCaptureColors() ? 1 : 0);
+		// for backwards compatibility
+		if (!monochromePeer) {
+			out.writeShort(configuration.isCaptureColors() ? 1 : 0);
+		}
 	}
 
 	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
 		final int tick = in.readInt();
-		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization,in.readShort() == 1));
+		final boolean colors = in.readShort() == 1;
+		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization, colors), false);
 	}
 
 	public String toString() {
