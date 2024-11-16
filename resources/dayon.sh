@@ -20,7 +20,7 @@ elif [ ! -f /etc/alternatives/java ]; then
 else
   JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}')
 fi
-JAVA_OPTS="-Xmx256M"
+JAVA_OPTS="-Xmx512M"
 case "$@" in
   *log=console*)
     LOG=
