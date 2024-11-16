@@ -103,8 +103,8 @@ public class Version {
         return major > otherMajor;
     }
 
-    public static boolean isColoredVersion(int major, int minor) {
-        return major > 14 || !isProd(major, minor);
+    public static boolean isColoredVersion(int major) {
+        return major > 14 || major == 0;
     }
 
     static boolean isProd(int major, int minor) {

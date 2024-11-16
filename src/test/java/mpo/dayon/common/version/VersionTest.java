@@ -118,13 +118,13 @@ class VersionTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "15.0.0", "15.1.2", "0.0.0" })
+    @CsvSource({ "15.0.0", "0.0.0" })
     void isColoredVersionShouldReturnTrueForHardCodedVersions(String thatV) {
         // given
         Version that = new Version(thatV);
 
         // when then
-        assertTrue(isColoredVersion(that.getMajor(), that.getMinor()));
+        assertTrue(isColoredVersion(that.getMajor()));
     }
 
 }
