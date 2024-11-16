@@ -43,9 +43,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.DelayQueue;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
@@ -436,9 +434,7 @@ public class Assistant implements ClipboardOwner {
                 if (ok) {
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(tickMillisSlider.getValue(),
                             toGrayLevel(grayLevelsSlider.getValue()), colorsCb.isSelected());
-                    if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
-                        updateCaptureConfiguration(newCaptureEngineConfiguration);
-                    }
+                    updateCaptureConfiguration(newCaptureEngineConfiguration);
                 }
             }
         };
@@ -448,6 +444,9 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void updateCaptureConfiguration(CaptureEngineConfiguration newCaptureEngineConfiguration) {
+        if (newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
+            return;
+        }
         if (captureEngineConfiguration.isCaptureColors() == newCaptureEngineConfiguration.isCaptureColors()) {
             captureEngineConfiguration = newCaptureEngineConfiguration;
             captureEngineConfiguration.persist();
