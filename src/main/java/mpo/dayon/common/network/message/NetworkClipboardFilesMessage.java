@@ -52,11 +52,14 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             if (!append) {
                 Log.info("Receiving " + fileName);
             }
-            String tempFilePath = format("%s%s%s%s", tmpDir, File.separator, helper.getTransferId(), fileName);
+            if (!tmpDir.endsWith(File.separator)) {
+                tmpDir += File.separator;
+            }
+            String tempFilePath = format("%s%s%s", tmpDir, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
 
             if (getRemainingTotalFilesSize(helper, read, position) == 0) {
-                String rootPath = format("%s%s%s", tmpDir, File.separator, helper.getTransferId());
+                String rootPath = format("%s%s", tmpDir, helper.getTransferId());
                 File[] filesArray = new File(rootPath).listFiles();
                 if (filesArray != null) {
                     helper.setFiles(Arrays.asList(Objects.requireNonNull(filesArray)));
