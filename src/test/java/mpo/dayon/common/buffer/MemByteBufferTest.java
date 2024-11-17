@@ -67,9 +67,10 @@ class MemByteBufferTest {
 
     @Test
     void copyConstructor() throws IOException {
-        buffer.fill(33, BEAST);
+        int size = 42;
+        buffer.fill(size, BEAST);
         try(MemByteBuffer memBuffer = new MemByteBuffer(buffer.getInternal())) {
-            assertEquals(64, memBuffer.size());
+            assertEquals(size, memBuffer.size());
             assertEquals(buffer.getInternal().length, memBuffer.getInternal().length);
         }
     }
