@@ -163,7 +163,7 @@ public class Capture {
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final int capWidth = captureDimension.width;
 		final int capHeight = captureDimension.height;
-		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight) ? prevBuffer : new byte[capWidth * capHeight];
+		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight && prevBuffer.length == capWidth * capHeight) ? prevBuffer : new byte[capWidth * capHeight];
 		Arrays.stream(dirty)
 				.parallel()
 				.filter(Objects::nonNull)
@@ -190,7 +190,7 @@ public class Capture {
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedColoredImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final int capWidth = captureDimension.width;
 		final int capHeight = captureDimension.height;
-		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight) ? prevBuffer : new byte[capWidth * capHeight * 4];
+		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight && prevBuffer.length == capWidth * capHeight * 4) ? prevBuffer : new byte[capWidth * capHeight * 4];
 		Arrays.stream(dirty)
 				.parallel()
 				.filter(Objects::nonNull)
