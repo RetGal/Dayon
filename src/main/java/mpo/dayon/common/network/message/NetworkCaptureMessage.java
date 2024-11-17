@@ -102,6 +102,6 @@ public class NetworkCaptureMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[id:%d] [%s]", id, UnitUtilities.toBitSize(8d * payload.size()));
+		return String.format("[id:%d][%s]", id, UnitUtilities.toBitSize(8d * payload.size()));
 	}
 }
