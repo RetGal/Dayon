@@ -69,6 +69,6 @@ public class NetworkHelloMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[major:%d] [minor:%d] [osId:%c] [inputLocale:%s]", major, minor, osId, inputLocale);
+		return String.format("[major:%d][minor:%d][osId:%c][inputLocale:%s]", major, minor, osId, inputLocale);
 	}
 }

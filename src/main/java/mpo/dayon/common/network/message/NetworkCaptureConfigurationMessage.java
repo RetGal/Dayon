@@ -55,7 +55,7 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[quantization:%s] [tick:%d] [colors:%b]", configuration.getCaptureQuantization(), configuration.getCaptureTick(), configuration.isCaptureColors());
+		return String.format("[quantization:%s][tick:%d][colors:%b]", configuration.getCaptureQuantization(), configuration.getCaptureTick(), configuration.isCaptureColors());
 	}
 
 }

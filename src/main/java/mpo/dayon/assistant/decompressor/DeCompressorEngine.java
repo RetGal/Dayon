@@ -103,7 +103,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 					cache = configuration.useCache() ? new RegularTileCache(configuration.getCacheMaxSize(), configuration.getCachePurgeSize())
 							: new NullTileCache();
 
-					Log.info("De-Compressor engine has been reconfigured [tile:" + message.getId() + "] " + configuration);
+					Log.info("De-Compressor engine has been reconfigured [tile:" + message.getId() + "]" + configuration);
 				}
 
 				cache.clearHits();
