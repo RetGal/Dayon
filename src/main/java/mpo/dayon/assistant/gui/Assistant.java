@@ -367,7 +367,7 @@ public class Assistant implements ClipboardOwner {
                 tickLbl.setToolTipText(translate("tick.tooltip"));
                 final JSlider tickMillisSlider = new JSlider(HORIZONTAL, 50, 1000, captureEngineConfiguration.getCaptureTick());
                 final Properties tickLabelTable = new Properties(3);
-                JLabel actualTick = new JLabel(format("%dms", tickMillisSlider.getValue()));
+                JLabel actualTick = new JLabel(format("  %dms  ", tickMillisSlider.getValue()));
                 tickLabelTable.put(50, new JLabel(translate("min")));
                 tickLabelTable.put(550, actualTick);
                 tickLabelTable.put(1000, new JLabel(translate("max")));
