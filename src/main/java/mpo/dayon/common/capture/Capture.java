@@ -129,7 +129,7 @@ public class Capture {
 		}
 		skipped.addAndGet(xskipped);
 		merged.set(1 + xmerged);
-		Log.warn(String.format("Merged [id:%d] [count:%d] [skipped:%d][merged:%d]", id, olders.length, skipped.get(), merged.get()));
+		Log.warn(String.format("Merged [id:%d][count:%d][skipped:%d][merged:%d]", id, olders.length, skipped.get(), merged.get()));
 	}
 
 	/**
@@ -163,9 +163,7 @@ public class Capture {
 	 */
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final boolean isGray = stream(dirty)
-				.parallel()
-				.filter(Objects::nonNull)
-				.anyMatch(tile -> tile.getCapture().size() == tile.getWidth() * tile.getHeight());
+				.anyMatch(tile -> tile != null && tile.getCapture().size() == tile.getWidth() * tile.getHeight());
 		return isGray ? createBufferedMonochromeImage(prevBuffer, prevWidth, prevHeight) : createBufferedColorImage(prevBuffer, prevWidth, prevHeight);
 	}
 

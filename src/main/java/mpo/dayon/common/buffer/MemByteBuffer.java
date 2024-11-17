@@ -10,7 +10,6 @@ public class MemByteBuffer extends OutputStream {
 	private static final int DEFAULT_INITIAL_CAPACITY = 32;
 
 	private byte[] buffer;
-
 	private int count;
 
 	public MemByteBuffer() {
@@ -26,8 +25,8 @@ public class MemByteBuffer extends OutputStream {
 	 *            the newly created buffer is adopting that byte array (!)
 	 */
 	public MemByteBuffer(byte[] data) {
-		buffer = data.clone();
 		count = data.length;
+		buffer = Arrays.copyOf(data, count);
 	}
 
 	public int size() {
@@ -35,7 +34,7 @@ public class MemByteBuffer extends OutputStream {
 	}
 
 	public byte[] getInternal() {
-		return buffer.clone();
+		return Arrays.copyOf(buffer, count);
 	}
 
 	public int mark() {
@@ -53,8 +52,8 @@ public class MemByteBuffer extends OutputStream {
 	 * <code>b</code>. The 24 high-order bits of <code>b</code> are ignored.
 	 */
 	@Override
-    public void write(int val) {
-		increaseBuffer(count + 1);
+	public void write(int val) {
+		ensureCapacity(count + 1);
 		buffer[count++] = (byte) val;
 	}
 
@@ -62,25 +61,24 @@ public class MemByteBuffer extends OutputStream {
 	 * @see #write(int)
 	 */
 	private void write(int val1, int val2) {
-		increaseBuffer(count + 2);
+		ensureCapacity(count + 2);
 		buffer[count++] = (byte) val1;
 		buffer[count++] = (byte) val2;
 	}
 
 	@Override
-    public void write(byte[] buffer) {
+	public void write(byte[] buffer) {
 		write(buffer, 0, buffer.length);
 	}
 
 	@Override
-    public void write(byte[] buffer, int off, int len) {
+	public void write(byte[] buffer, int off, int len) {
 		if (len == 0) {
 			return;
 		}
-		final int newCount = count + len;
-		increaseBuffer(newCount);
+		ensureCapacity(count + len);
 		System.arraycopy(buffer, off, this.buffer, count, len);
-		count = newCount;
+		count += len;
 	}
 
 	/**
@@ -107,20 +105,18 @@ public class MemByteBuffer extends OutputStream {
 	}
 
 	public void fill(int len, int val) {
-		final int newCount = count + len;
-		increaseBuffer(newCount);
-		Arrays.fill(buffer, count, newCount, (byte) val);
-		count = newCount;
+		ensureCapacity(count + len);
+		Arrays.fill(buffer, count, count + len, (byte) val);
+		count += len;
 	}
 
 	public void arraycopy(byte[] in, int start, int len) {
-		final int newCount = count + len;
-		increaseBuffer(newCount);
+		ensureCapacity(count + len);
 		System.arraycopy(in, start, buffer, count, len);
-		count = newCount;
+		count += len;
 	}
 
-	private void increaseBuffer(int newCount) {
+	private void ensureCapacity(int newCount) {
 		if (newCount > buffer.length) {
 			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
 		}
