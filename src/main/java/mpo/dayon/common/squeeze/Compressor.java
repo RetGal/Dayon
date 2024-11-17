@@ -64,7 +64,7 @@ public final class Compressor {
         encoded.write(capture.getSkipped()); // as a byte (!)
         encoded.write(capture.getMerged()); // as a byte (!)
         if (capture.isReset()) {
-            Log.info("Clear compressor cache [tile:" + capture.getId() + "]");
+            Log.debug("Clear compressor cache [tile:" + capture.getId() + "]");
             cache.clear(); // here for symmetry with the de-compressor (!)
         }
         encoded.writeShort(capture.getWidth());
@@ -139,7 +139,7 @@ public final class Compressor {
         final int cId = in.readInt();
         final boolean cReset = in.read() == 1;
         if (cReset) {
-            Log.info("Clear de-compressor cache [tile:" + cId + "]");
+            Log.debug("Clear de-compressor cache [tile:" + cId + "]");
             cache.clear();
         }
         final int cSkipped = in.readByte() & 0xFF;
