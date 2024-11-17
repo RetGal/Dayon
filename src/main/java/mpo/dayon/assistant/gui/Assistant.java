@@ -52,7 +52,6 @@ import static java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE;
 import static java.lang.Math.*;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
-import static java.lang.Thread.sleep;
 import static javax.swing.SwingConstants.HORIZONTAL;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
@@ -89,6 +88,8 @@ public class Assistant implements ClipboardOwner {
     private CompressorEngineConfiguration compressorEngineConfiguration;
 
     private final Object prevBufferLOCK = new Object();
+
+    private final Object upnpEnabledLOCK = new Object();
 
     private byte[] prevBuffer = null;
 
@@ -170,18 +171,6 @@ public class Assistant implements ClipboardOwner {
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
-    }
-
-    public boolean isUpnpEnabled() {
-        while (upnpEnabled == null) {
-            try {
-                sleep(10L);
-            } catch (InterruptedException e) {
-                Log.warn("Swallowed", e);
-                Thread.currentThread().interrupt();
-            }
-        }
-        return upnpEnabled;
     }
 
     public NetworkAssistantEngine getNetworkEngine() {
@@ -764,12 +753,29 @@ public class Assistant implements ClipboardOwner {
         }
     }
 
+    public boolean isUpnpEnabled() {
+        synchronized (upnpEnabledLOCK) {
+            while (upnpEnabled == null) {
+                try {
+                    upnpEnabledLOCK.wait();
+                } catch (InterruptedException e) {
+                    Log.warn("Swallowed", e);
+                    Thread.currentThread().interrupt();
+                }
+            }
+            return upnpEnabled;
+        }
+    }
+
     private void initUpnp() {
-        CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
-            Log.info(format("UPnP is %s", enabled.booleanValue() ? "enabled" : "disabled"));
-            upnpEnabled = enabled;
-            return enabled;
-        });
+        synchronized (upnpEnabledLOCK) {
+            CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
+                Log.info(format("UPnP is %s", enabled.booleanValue() ? "enabled" : "disabled"));
+                upnpEnabled = enabled;
+                return enabled;
+            });
+            upnpEnabledLOCK.notify();
+        }
     }
 
     private class MyDeCompressorEngineListener implements DeCompressorEngineListener {
@@ -782,7 +788,7 @@ public class Assistant implements ClipboardOwner {
             final AbstractMap.SimpleEntry<BufferedImage, byte[]> image;
             // synchronized because of the reset onStarting()
             synchronized (prevBufferLOCK) {
-                image = captureEngineConfiguration.isCaptureColors() ? capture.createBufferedColoredImage(prevBuffer, prevWidth, prevHeight) : capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
+                image = capture.createBufferedImage(prevBuffer, prevWidth, prevHeight);
                 prevBuffer = image.getValue();
                 prevWidth = image.getKey().getWidth();
                 prevHeight = image.getKey().getHeight();
@@ -860,7 +866,7 @@ public class Assistant implements ClipboardOwner {
 
         private void assureCompatibility(int peerMajorVersion) {
             if (!Version.isColoredVersion(peerMajorVersion) && (captureEngineConfiguration.isCaptureColors() || captureEngineConfiguration.getCaptureQuantization().getLevels() < Gray8Bits.X_32.getLevels())) {
-                Log.warn(format("Pre color version detected. CaptureEngineConfiguration will be adjusted to %s", Gray8Bits.X_128));
+                Log.warn(format("Pre color v%d.x.x peer detected: CaptureEngineConfiguration adjusted to %s", peerMajorVersion, Gray8Bits.X_128));
                 captureEngineConfiguration = new CaptureEngineConfiguration(captureEngineConfiguration.getCaptureTick(), Gray8Bits.X_128, false);
                 captureEngineConfiguration.persist();
             }
