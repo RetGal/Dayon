@@ -25,7 +25,6 @@ import mpo.dayon.common.utils.Language;
 import mpo.dayon.common.version.Version;
 
 import javax.swing.*;
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.ActionEvent;
@@ -450,31 +449,10 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void updateCaptureConfiguration(CaptureEngineConfiguration newCaptureEngineConfiguration) {
-        if (newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
-            return;
-        }
-        if (captureEngineConfiguration.isCaptureColors() == newCaptureEngineConfiguration.isCaptureColors()) {
+        if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
             captureEngineConfiguration = newCaptureEngineConfiguration;
             captureEngineConfiguration.persist();
             sendCaptureConfiguration(captureEngineConfiguration);
-        } else if (newCaptureEngineConfiguration.isCaptureColors()) {
-            // safety first - wait one tick after switching the assisted to colors
-            sendCaptureConfiguration(newCaptureEngineConfiguration);
-            int delay = newCaptureEngineConfiguration.getCaptureTick()+123;
-            Timer timer = new Timer(delay, e -> {
-                captureEngineConfiguration = newCaptureEngineConfiguration;
-                captureEngineConfiguration.persist();
-            });
-            timer.setRepeats(false);
-            timer.start();
-        } else {
-            // safety first - wait one tick before switching the assisted to monochrome
-            int delay = captureEngineConfiguration.getCaptureTick()+123;
-            captureEngineConfiguration = newCaptureEngineConfiguration;
-            captureEngineConfiguration.persist();
-            Timer timer = new Timer(delay, e -> sendCaptureConfiguration(captureEngineConfiguration));
-            timer.setRepeats(false);
-            timer.start();
         }
     }
 
