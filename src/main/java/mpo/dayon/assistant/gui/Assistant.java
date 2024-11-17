@@ -774,7 +774,7 @@ public class Assistant implements ClipboardOwner {
                 upnpEnabled = enabled;
                 return enabled;
             });
-            upnpEnabledLOCK.notify();
+            upnpEnabledLOCK.notifyAll();
         }
     }
 
