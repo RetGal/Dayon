@@ -74,27 +74,4 @@
 	<target name="sign" description="Signs the distribution project jar">
 		<signjar keystore="${dir.jares}/trust/X509" storepass="spasspass" alias="mykey" jar="${dir.dist}/dayon.jar" tsaurl="http://timestamp.sectigo.com"/>
 	</target>
-
-	<target name="tar" description="Creates a gzipped tar archive of the distribution for Linux">
-		<copy todir="${dir.dist}/tar/dayon">
-			<fileset dir="${dir.dist}">
-				<exclude name="jre/"/>
-				<exclude name="jrex/"/>
-			</fileset>
-		</copy>
-		<tar destfile="${dir.dist}/dayon.${version}.tgz" longfile="gnu" compression="gzip">
-			<tarfileset dir="${dir.dist}/tar">
-				<include name="**/*"/>
-				<exclude name="**/*.sh"/>
-				<exclude name="**/favicon.ico"/>
-			</tarfileset>
-			<tarfileset dir="${dir.dist}/tar" filemode="755">
-				<include name="**/dayon.sh"/>
-				<include name="**/dayon_assistant.sh"/>
-				<include name="**/dayon_assisted.sh"/>
-				<include name="**/setup.sh"/>
-			</tarfileset>
-		</tar>
-		<delete dir="${dir.dist}/tar"/>
-	</target>
 </project>
