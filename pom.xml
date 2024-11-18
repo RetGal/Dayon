@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>14.0.2</version>
+    <version>15.0.0</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -658,7 +658,7 @@
                         <version>1.8.3</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
-                            <fileName>assisted.command</fileName>
+                            <fileName>Assisted.command</fileName>
                             <label>Dayon! Assisted ${project.version}</label>
                             <startupScript>./dayon_assisted.sh</startupScript>
                         </configuration>
@@ -718,7 +718,7 @@
                         <version>1.8.3</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
-                            <fileName>assistant.command</fileName>
+                            <fileName>Assistant.command</fileName>
                             <label>Dayon! Assistant ${project.version}</label>
                             <startupScript>./dayon_assistant.sh</startupScript>
                         </configuration>
