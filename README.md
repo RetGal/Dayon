@@ -32,9 +32,9 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v14.0.2 (Candid Clover II) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v15.0.0 (Dolly Double) - released more than ten years after the initial release.
 
-This version comes with a completely redesigned user interface, full HiDPI support, enhanced macOS friendliness and numerous new functions! For a complete list of changes see: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
+This is the first version in which the remote desktop can also be transmitted in colour - in addition to the bandwidth-saving greyscales. For a complete list of changes see: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
 
 The app is available directly from the [Microsoft Store](https://apps.microsoft.com/detail/9PBM5KW0C790):
 
