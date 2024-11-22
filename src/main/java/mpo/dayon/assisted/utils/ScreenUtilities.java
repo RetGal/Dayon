@@ -77,7 +77,7 @@ public final class ScreenUtilities {
 
     public static byte[] captureColors() {
         final int[] ints = captureRGB(sharedScreenSize);
-        ByteBuffer bb = ByteBuffer.allocateDirect(4 * ints.length);
+        ByteBuffer bb = ByteBuffer.allocate(4 * ints.length);
         bb.asIntBuffer().put(ints);
         return bb.array();
     }
