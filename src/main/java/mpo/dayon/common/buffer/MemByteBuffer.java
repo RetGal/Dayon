@@ -25,8 +25,8 @@ public class MemByteBuffer extends OutputStream {
 	 *            the newly created buffer is adopting that byte array (!)
 	 */
 	public MemByteBuffer(byte[] data) {
+		buffer = data;
 		count = data.length;
-		buffer = Arrays.copyOf(data, count);
 	}
 
 	public int size() {
@@ -106,7 +106,9 @@ public class MemByteBuffer extends OutputStream {
 
 	public void fill(int len, int val) {
 		ensureCapacity(count + len);
-		Arrays.fill(buffer, count, count + len, (byte) val);
+		for (int i = count; i < count + len; i++) {
+			buffer[i] = (byte) val;
+		}
 		count += len;
 	}
 
@@ -118,7 +120,11 @@ public class MemByteBuffer extends OutputStream {
 
 	private void ensureCapacity(int newCount) {
 		if (newCount > buffer.length) {
-			buffer = Arrays.copyOf(buffer, Math.max(buffer.length << 1, newCount));
+			int newCapacity = Math.max(buffer.length << 1, newCount);
+			if (newCapacity < buffer.length * 3 / 2) {
+				newCapacity = buffer.length * 3 / 2;
+			}
+			buffer = Arrays.copyOf(buffer, newCapacity);
 		}
 	}
 }
