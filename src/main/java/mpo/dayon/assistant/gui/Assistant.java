@@ -909,7 +909,7 @@ public class Assistant implements ClipboardOwner {
          */
         @Override
         public void onResizeScreen(int width, int height) {
-            frame.computeScaleFactors(width, height, false);
+            frame.computeScaleFactors(width, height, frame.getKeepAspectRatioActivated());
         }
 
         /**
