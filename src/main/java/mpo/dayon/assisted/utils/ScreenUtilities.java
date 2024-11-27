@@ -83,15 +83,10 @@ public final class ScreenUtilities {
     }
 
     private static int[] captureRGB(Rectangle bounds) {
-        BufferedImage image = ROBOT.createScreenCapture(bounds);
+        BufferedImage image = (BufferedImage) ROBOT.createMultiResolutionScreenCapture(bounds).getResolutionVariant(bounds.width, bounds.height);
         final int imageHeight = min(image.getHeight(), bounds.height);
         final int imageWidth = min(image.getWidth(), bounds.width);
-        int[] pixels = new int[imageHeight * imageWidth];
-        return image.getRGB(0, 0, imageWidth, imageHeight, pixels, 0, imageWidth);
-    }
-
-    public static byte[] captureGray(Rectangle bounds, Gray8Bits quantization) {
-        return rgbToGray8(quantization, captureRGB(bounds));
+        return image.getRGB(0, 0, imageWidth, imageHeight, null, 0, imageWidth);
     }
 
     private static byte[] rgbToGray8(Gray8Bits quantization, int[] rgb) {
