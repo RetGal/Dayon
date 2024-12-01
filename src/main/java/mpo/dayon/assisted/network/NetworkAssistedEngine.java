@@ -118,6 +118,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         connection.setSoTimeout(15000);
         // abort the connection attempt after 5 seconds if the assistant cannot be reached
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
+        // once connected, remain connected until cancelled
+        connection.setSoTimeout(0);
         createInputStream();
         runReceiversIfNecessary();
         receiver.start();
