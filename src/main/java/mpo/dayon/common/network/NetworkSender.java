@@ -18,7 +18,6 @@ import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
-import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
 import mpo.dayon.common.error.FatalErrorHandler;
@@ -71,9 +70,9 @@ public class NetworkSender {
      * <p/>
      * Assisted 2 assistant.
      */
-    public void sendCapture(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
+    public void sendCapture(int captureId, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
                             MemByteBuffer compressed) {
-        send(true, new NetworkCaptureMessage(capture.getId(), compressionMethod, compressionConfiguration, compressed));
+        send(true, new NetworkCaptureMessage(captureId, compressionMethod, compressionConfiguration, compressed));
     }
 
     /**

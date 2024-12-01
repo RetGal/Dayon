@@ -531,18 +531,19 @@ class AssistantFrame extends BaseFrame {
         JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }
 
-    void computeScaleFactors(int sourceWidth, int sourceHeight, boolean keepAspectRatio) {
+    void computeScaleFactors(int sourceWidth, int sourceHeight) {
+        Log.debug(format("ComputeScaleFactors for w: %d h: %d", sourceWidth, sourceHeight));
         canvas = assistantPanelWrapper.getSize();
         canvas.setSize(canvas.getWidth() - OFFSET, canvas.getHeight() - OFFSET);
         xFactor = canvas.getWidth() / sourceWidth;
         yFactor = canvas.getHeight() / sourceHeight;
-        if (keepAspectRatio && !isImmutableWindowsSize.get() && abs(xFactor - yFactor) > 0.01) {
+        if (keepAspectRatioActivated.get() && !isImmutableWindowsSize.get() && abs(xFactor - yFactor) > 0.01) {
             resizeWindow(sourceWidth, sourceHeight);
         }
     }
 
     private void resizeWindow(int sourceWidth, int sourceHeight) {
-        Log.debug("%s", () -> format("Resize  W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
+        Log.debug("%s", () -> format("Resize  W:H %d:%d x:y %f:%f", this.getWidth(), this.getHeight(), xFactor, yFactor));
         int menuHeight = this.getHeight() - canvas.height;
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         if (xFactor < yFactor) {
@@ -566,7 +567,7 @@ class AssistantFrame extends BaseFrame {
                 this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
             }
         }
-        Log.debug("%s", () -> format("Resized W:H %s:%s x:y %s:%s", this.getWidth(), this.getHeight(), xFactor, yFactor));
+        Log.debug("%s", () -> format("Resized W:H %d:%d x:y %f:%f", this.getWidth(), this.getHeight(), xFactor, yFactor));
     }
 
     private void resetFactors() {

@@ -161,7 +161,7 @@ public abstract class NetworkEngine {
         cancelling.set(false);
     }
 
-    protected void initInputStream() throws IOException {
+    protected void createInputStream() throws IOException {
         try {
             in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {

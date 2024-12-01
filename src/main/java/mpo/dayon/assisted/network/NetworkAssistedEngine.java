@@ -5,7 +5,6 @@ import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngineListener;
 import mpo.dayon.common.buffer.MemByteBuffer;
-import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.Configurable;
 import mpo.dayon.common.error.FatalErrorHandler;
@@ -116,23 +115,30 @@ public class NetworkAssistedEngine extends NetworkEngine
         connection = (SSLSocket) ssf.createSocket();
         connection.setNeedClientAuth(true);
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
-        initInputStream();
-
-        if (receiver == null) {
-            Log.info("Getting the receivers ready");
-            runReceivers();
-        }
+        createInputStream();
+        runReceiversIfNecessary();
         receiver.start();
 
         initSender(1);
-        // The first message being sent to the assistant (e.g. version identification).
+        // The first message being sent to the assistant (e.g. version identification, locale and OS).
         sender.sendHello(osId);
 
         fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
         initFileSender();
-        fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+        createFileInputStream();
         fileReceiver.start();
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+    }
+
+    private void createFileInputStream() throws IOException {
+        fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+    }
+
+    private void runReceiversIfNecessary() {
+        if (receiver == null) {
+            Log.info("Getting the receivers ready");
+            runReceivers();
+        }
     }
 
     /**
@@ -156,48 +162,35 @@ public class NetworkAssistedEngine extends NetworkEngine
 
                 switch (type) {
                     case CAPTURE_CONFIGURATION:
-                        final NetworkCaptureConfigurationMessage captureConfigurationMessage = NetworkCaptureConfigurationMessage.unmarshall(in);
-                        captureConfigurationHandler.handleConfiguration(captureConfigurationMessage);
+                        captureConfigurationHandler.handleConfiguration(NetworkCaptureConfigurationMessage.unmarshall(in));
                         break;
-
                     case COMPRESSOR_CONFIGURATION:
-                        final NetworkCompressorConfigurationMessage compressorConfigurationMessage = NetworkCompressorConfigurationMessage.unmarshall(in);
-                        compressorConfigurationHandler.handleConfiguration(compressorConfigurationMessage);
+                        compressorConfigurationHandler.handleConfiguration(NetworkCompressorConfigurationMessage.unmarshall(in));
                         break;
-
                     case MOUSE_CONTROL:
-                        final NetworkMouseControlMessage mouseControlMessage = NetworkMouseControlMessage.unmarshall(in);
-                        controlHandler.handleMessage(mouseControlMessage);
+                        controlHandler.handleMessage(NetworkMouseControlMessage.unmarshall(in));
                         break;
-
                     case KEY_CONTROL:
-                        final NetworkKeyControlMessage keyControlMessage = NetworkKeyControlMessage.unmarshall(in);
-                        controlHandler.handleMessage(keyControlMessage);
+                        controlHandler.handleMessage(NetworkKeyControlMessage.unmarshall(in));
                         break;
-
                     case CLIPBOARD_REQUEST:
                         clipboardRequestHandler.handleClipboardRequest();
                         break;
-
                     case CLIPBOARD_TEXT:
-                        final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                        var clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                         setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
                         sender.ping();
                         break;
-
                     case CLIPBOARD_GRAPHIC:
-                        final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
+                        var clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
                         setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
                         sender.ping();
                         break;
-
                     case SCREENSHOT_REQUEST:
                         screenshotRequestHandler.handleScreenshotRequest();
                         break;
-
                     case PING:
                         break;
-
                     default:
                         throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
                 }
@@ -227,10 +220,10 @@ public class NetworkAssistedEngine extends NetworkEngine
      * capture.
      */
     @Override
-    public void onCompressed(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
+    public void onCompressed(int captureId, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
                              MemByteBuffer compressed) {
         if (sender != null) {
-            sender.sendCapture(capture, compressionMethod, compressionConfiguration, compressed);
+            sender.sendCapture(captureId, compressionMethod, compressionConfiguration, compressed);
         }
     }
 

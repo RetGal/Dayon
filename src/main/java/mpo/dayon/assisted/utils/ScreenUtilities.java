@@ -34,7 +34,7 @@ public final class ScreenUtilities {
     static {
         NUMBER_OF_SCREENS = countScreens();
         DEFAULT_SIZE = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds();
-        COMBINED_SCREEN_SIZE = new Rectangle(getCombinedScreenSize());
+        COMBINED_SCREEN_SIZE = getCombinedScreenSize();
         sharedScreenSize = shareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
         rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
         gray = new byte[rgb.length];

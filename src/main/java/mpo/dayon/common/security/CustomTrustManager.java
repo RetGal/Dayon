@@ -40,17 +40,13 @@ public class CustomTrustManager implements X509TrustManager {
 	public static SSLContext initSslContext(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException {
 		final char[] keyStorePass = "spasspass".toCharArray();
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+		Path keystorePath = Paths.get(new File(getProperty("dayon.home"), "keystore.jks").getAbsolutePath());
 		try {
 			KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-			final Path keystorePath = Paths.get(new File(getProperty("dayon.home"), "keystore.jks").getAbsolutePath());
-			if (compatibilityMode || !keystorePath.toFile().exists()) {
-				try (InputStream inputStream = CustomTrustManager.class.getResourceAsStream("/trust/X509")) {
-					keyStore.load(inputStream, keyStorePass);
-				}
-			} else {
-				try (InputStream keystoreInputStream = Files.newInputStream(keystorePath)) {
-					keyStore.load(keystoreInputStream, keyStorePass);
-				}
+			try (InputStream inputStream = compatibilityMode || !keystorePath.toFile().exists()
+					? CustomTrustManager.class.getResourceAsStream("/trust/X509")
+					: Files.newInputStream(keystorePath)) {
+				keyStore.load(inputStream, keyStorePass);
 			}
 			kmf.init(keyStore, keyStorePass);
 		} catch (KeyStoreException | CertificateException | UnrecoverableKeyException e) {

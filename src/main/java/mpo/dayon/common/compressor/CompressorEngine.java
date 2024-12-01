@@ -133,39 +133,36 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		@Override
 		protected void execute() throws IOException {
-			try {
-				final CompressorEngineConfiguration xconfiguration;
-				final boolean xreconfigured;
-				synchronized (reconfigurationLOCK) {
-					xconfiguration = configuration;
-					xreconfigured = reconfigured;
-					if (reconfigured) {
-						cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
-								: new NullTileCache();
-						reconfigured = false;
-						Log.info("Compressor engine has been reconfigured [tile:" + getCapture().getId() + "] " + xconfiguration);
-					}
+			final CompressorEngineConfiguration xconfiguration;
+			final boolean xreconfigured;
+			synchronized (reconfigurationLOCK) {
+				xconfiguration = configuration;
+				xreconfigured = reconfigured;
+				if (reconfigured) {
+					cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
+							: new NullTileCache();
+					reconfigured = false;
+					Log.info("Compressor engine has been reconfigured [tile:" + capture.getId() + "] " + xconfiguration);
 				}
-				final Compressor compressor = Compressor.get(xconfiguration.getMethod());
-				final MemByteBuffer compressed = compressor.compress(cache, getCapture());
-
-				// Possibly blocking - no problem as we'll replace (and merge) in our queue
-				// the oldest capture (if any) until we can compress it and send it to the next
-				// stage of processing.
-				if (!xreconfigured) {
-					fireOnCompressed(getCapture(), compressor.getMethod(), null, compressed);
-				} else {
-					// we have to send the whole configuration => de-compressor synchronization (!)
-					fireOnCompressed(getCapture(), compressor.getMethod(), xconfiguration, compressed);
-				}
-			} finally {
-				cache.onCaptureProcessed();
 			}
+			final Compressor compressor = Compressor.get(xconfiguration.getMethod());
+			final MemByteBuffer compressed = compressor.compress(cache, capture);
+
+			// Possibly blocking - no problem as we'll replace (and merge) in our queue
+			// the oldest capture (if any) until we can compress it and send it to the next
+			// stage of processing.
+			if (!xreconfigured) {
+				fireOnCompressed(capture.getId(), compressor.getMethod(), null, compressed);
+			} else {
+				// we have to send the whole configuration => de-compressor synchronization (!)
+				fireOnCompressed(capture.getId(), compressor.getMethod(), xconfiguration, compressed);
+			}
+			cache.onCaptureProcessed();
 		}
 
-		private void fireOnCompressed(Capture capture, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
+		private void fireOnCompressed(int captureId, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,
 									  MemByteBuffer compressed) {
-			listeners.getListeners().forEach(listener -> listener.onCompressed(capture, compressionMethod, compressionConfiguration, compressed));
+			listeners.getListeners().forEach(listener -> listener.onCompressed(captureId, compressionMethod, compressionConfiguration, compressed));
 		}
 
 		Capture getCapture() {

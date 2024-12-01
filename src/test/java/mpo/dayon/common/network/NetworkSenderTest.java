@@ -3,7 +3,6 @@ package mpo.dayon.common.network;
 import mpo.dayon.common.capture.Gray8Bits;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
-import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
@@ -68,13 +67,11 @@ class NetworkSenderTest {
     @Test
     void sendCapture() throws IOException {
         // given
-        Dimension screenDim = new Dimension(1024, 768);
-        Dimension tileDim = new Dimension(32, 32);
         CaptureTile[] dirty = new CaptureTile[0];
         int noNewCompressionConfig = 0;
-        Capture capture = new Capture(1, false, 0, 0, screenDim, tileDim, dirty);
+        int captureId = 1;
         // when
-        sender.sendCapture(capture, CompressionMethod.NONE, null, new MemByteBuffer());
+        sender.sendCapture(captureId, CompressionMethod.NONE, null, new MemByteBuffer());
         // then
         verify(outMock, timeout(50)).writeByte(MAGIC_NUMBER);
         verify(outMock).write(NetworkMessageType.CAPTURE.ordinal());
@@ -83,7 +80,7 @@ class NetworkSenderTest {
         final List<Integer> capturedValues = valueCaptor.getAllValues();
         int first = capturedValues.get(0);
         int last = capturedValues.get(capturedValues.size() - 1);
-        assertEquals(capture.getId(), first);
+        assertEquals(captureId, first);
         assertEquals(dirty.length, last);
     }
 

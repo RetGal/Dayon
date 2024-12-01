@@ -121,7 +121,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             awaitConnections(compatibilityMode);
             startFileReceiver();
             initSender(8);
-            initInputStream();
+            createInputStream();
 
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
