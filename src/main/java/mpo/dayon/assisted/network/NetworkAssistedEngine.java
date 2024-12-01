@@ -114,6 +114,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         SSLSocketFactory ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         connection = (SSLSocket) ssf.createSocket();
         connection.setNeedClientAuth(true);
+        // grace period of 15 seconds for the assistant to accept the connection
+        connection.setSoTimeout(15000);
+        // abort the connection attempt after 5 seconds if the assistant cannot be reached
         connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
         createInputStream();
         runReceiversIfNecessary();
