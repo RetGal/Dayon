@@ -7,4 +7,12 @@ case "$@" in
     LOG="-Ddayon.log=file"
     ;;
 esac
-java ${LOG} -Xmx1g -jar "$@"
+case "$@" in
+  *assistant*)
+    JAVA_OPTS="-Xmx512m"
+    ;;
+  *)
+    JAVA_OPTS="-Xmx1g"
+    ;;
+esac
+java ${JAVA_OPTS} ${LOG} -jar "$@"

@@ -20,13 +20,20 @@ elif [ ! -f /etc/alternatives/java ]; then
 else
   JAVA=$(ls -l /etc/alternatives/java | awk -F'> ' '{print $2}')
 fi
-JAVA_OPTS="-Xmx512M"
 case "$@" in
   *log=console*)
     LOG=
     ;;
   *)
     LOG="-Ddayon.log=file"
+    ;;
+esac
+case "$@" in
+  *assistant*)
+    JAVA_OPTS="-Xmx512m"
+    ;;
+  *)
+    JAVA_OPTS="-Xmx1g"
     ;;
 esac
 JAR="${DAYON_HOME}/dayon.jar"
