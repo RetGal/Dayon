@@ -85,13 +85,7 @@ img {
   font-size:110%;
 }
 
-#intro {
-  min-height:120px;
-  background:url('intro.png') no-repeat 5px 5px;
-}
-
 #intro p {
-  margin-left:220px;
   font-size:130%;
 }
 
