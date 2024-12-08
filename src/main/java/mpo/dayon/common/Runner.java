@@ -68,7 +68,7 @@ public interface Runner {
 
     static void setDebug(String[] args) {
         if (Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("debug"))) {
-            System.setProperty("dayon.debug", "on");
+            System.setProperty("dayon.debug", "true");
         }
     }
 

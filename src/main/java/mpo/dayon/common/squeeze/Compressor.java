@@ -142,8 +142,8 @@ public final class Compressor {
             Log.debug("Clear de-compressor cache [tile:" + cId + "]");
             cache.clear();
         }
-        final int cSkipped = in.readByte() & 0xFF;
-        final int cMerged = in.readByte() & 0xFF;
+        final int cSkipped = in.readUnsignedByte();
+        final int cMerged = in.readUnsignedByte();
         final Dimension captureDimension = new Dimension(in.readShort(), in.readShort());
         final Dimension tileDimension = new Dimension(in.readShort(), in.readShort());
         final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(captureDimension.width, captureDimension.height, tileDimension.width, tileDimension.height);

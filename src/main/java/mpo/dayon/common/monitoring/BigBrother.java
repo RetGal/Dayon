@@ -1,7 +1,8 @@
 package mpo.dayon.common.monitoring;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import mpo.dayon.common.monitoring.counter.Counter;
 
@@ -10,37 +11,26 @@ public final class BigBrother {
     private BigBrother() {
     }
 
-    private static class Helper {
-        private static final BigBrother INSTANCE = new BigBrother();
-    }
+    private static final BigBrother INSTANCE = new BigBrother();
 
     public static BigBrother get() {
-        return Helper.INSTANCE;
+        return INSTANCE;
     }
 
-    private final Timer timer = new Timer("BigBrother");
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
     /**
      * @param instantRatePeriod millis
      */
     public void registerCounter(final Counter<?> counter, final long instantRatePeriod) {
-        timer.scheduleAtFixedRate(new SecondsCounter(counter), 0, instantRatePeriod);
+        scheduler.scheduleAtFixedRate(counter::computeAndResetInstantValue, 0, instantRatePeriod, TimeUnit.MILLISECONDS);
     }
 
-    public void registerRamInfo(TimerTask callback) {
-        timer.scheduleAtFixedRate(callback, 0, 1000);
+    public void registerRamInfo(Runnable callback) {
+        scheduler.scheduleAtFixedRate(callback, 0, 1, TimeUnit.SECONDS);
     }
 
-    private static class SecondsCounter extends TimerTask {
-        private final Counter<?> counter;
-
-        private SecondsCounter(Counter<?> counter) {
-            this.counter = counter;
-        }
-
-        @Override
-        public void run() {
-            counter.computeAndResetInstantValue();
-        }
+    public void shutdown() {
+        scheduler.shutdown();
     }
 }

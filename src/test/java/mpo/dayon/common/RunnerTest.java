@@ -90,7 +90,7 @@ class RunnerTest {
         // when
         setDebug(args);
         // then
-        assertEquals("on", System.getProperty("dayon.debug"), "Debug should have been activated");
+        assertTrue(Boolean.getBoolean("dayon.debug"), "Debug should have been activated");
     }
 
     @Test
