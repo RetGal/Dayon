@@ -470,11 +470,13 @@ class AssistantFrame extends BaseFrame {
         toggleTransferControls(false);
     }
 
-    void onClipboardSending() {
+    @Override
+    public void onClipboardSending() {
         toggleTransferControls(false);
     }
 
-    void onClipboardSent() {
+    @Override
+    public void onClipboardSent() {
         toggleTransferControls(true);
     }
 

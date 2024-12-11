@@ -1,10 +1,7 @@
 package mpo.dayon.assisted.gui;
 
 import mpo.dayon.assisted.capture.CaptureEngine;
-import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
-import mpo.dayon.common.compressor.CompressorEngine;
-import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.control.RobotNetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngine;
@@ -12,6 +9,9 @@ import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngineListener;
 import mpo.dayon.assisted.utils.ScreenUtilities;
+import mpo.dayon.common.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngine;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
@@ -19,18 +19,16 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.network.TransferableImage;
+import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.message.*;
-import mpo.dayon.common.network.FileUtilities;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.ClipboardOwner;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -56,6 +54,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private CompressorEngine compressorEngine;
 
     private NetworkAssistedEngine networkEngine;
+
+    private final ClipboardDispatcher clipboardDispatcher;
 
     private boolean coldStart = true;
 
@@ -84,6 +84,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         } catch (Exception ex) {
             Log.warn(format("Could not set the L&F [%s]", lnf), ex);
         }
+        clipboardDispatcher = new ClipboardDispatcher();
     }
 
     /**
@@ -331,7 +332,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable transferable) {
-        Log.error("Lost clipboard ownership");
+        Log.debug("Lost clipboard ownership");
     }
 
     /**
@@ -393,42 +394,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
      * Should not block as called from the network incoming message thread (!)
      */
     private void onClipboardRequested() {
-
         Log.info("Clipboard transfer request received");
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        Transferable content = clipboard.getContents(this);
-
-        if (content == null) return;
-
-        try {
-            if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                // noinspection unchecked
-                List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
-                if (!files.isEmpty()) {
-                    final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: %s", () -> String.valueOf(totalFilesSize));
-                    networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent());
-                    return;
-                }
-            } else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
-                Log.debug("Clipboard contains text: " + text);
-                networkEngine.sendClipboardText(text);
-                return;
-            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor)) {
-                final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
-                Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
-                networkEngine.sendClipboardGraphic(new TransferableImage(image));
-                return;
-            } else {
-                Log.debug("Clipboard contains no supported data");
-            }
-        } catch (IOException | UnsupportedFlavorException ex) {
-            Log.error("Clipboard error " + ex.getMessage());
-        }
-        String text = "\uD83E\uDD84";
-        Log.debug("Sending a unicorn: " + text);
-        networkEngine.sendClipboardText(text);
+        clipboardDispatcher.sendClipboard(networkEngine, frame, this);
     }
 
     private void onScreenshotRequested(){

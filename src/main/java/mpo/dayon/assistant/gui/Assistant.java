@@ -17,10 +17,9 @@ import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
-import mpo.dayon.common.network.TransferableImage;
+import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import mpo.dayon.common.network.FileUtilities;
 import mpo.dayon.common.utils.Language;
 import mpo.dayon.common.version.Version;
 
@@ -32,7 +31,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
-import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URI;
@@ -40,7 +38,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.List;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -49,7 +46,7 @@ import java.util.stream.Stream;
 
 import static java.awt.image.BufferedImage.TYPE_BYTE_GRAY;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB_PRE;
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static javax.swing.SwingConstants.HORIZONTAL;
@@ -64,6 +61,8 @@ public class Assistant implements ClipboardOwner {
     private final String tokenServerUrl;
 
     private final NetworkAssistantEngine networkEngine;
+
+    private final ClipboardDispatcher clipboardDispatcher;
 
     private BitCounter receivedBitCounter;
 
@@ -146,6 +145,7 @@ public class Assistant implements ClipboardOwner {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
         initGui();
+        clipboardDispatcher = new ClipboardDispatcher();
     }
 
     private void initGui() {
@@ -200,7 +200,7 @@ public class Assistant implements ClipboardOwner {
 
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable transferable) {
-        Log.error("Lost clipboard ownership");
+        Log.debug("Lost clipboard ownership");
     }
 
     private Action createWhatIsMyIpAction() {
@@ -306,41 +306,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void sendLocalClipboard() {
-        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-        Transferable content = clipboard.getContents(this);
-
-        if (content == null) return;
-
-        try {
-            if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
-                // noinspection unchecked
-                List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
-                if (!files.isEmpty()) {
-                    final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: %s", () -> String.valueOf(totalFilesSize));
-                    // Ok as very few of that (!)
-                    new Thread(() -> networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
-                    frame.onClipboardSending();
-                }
-            } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
-                final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
-                Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
-                // Ok as very few of that (!)
-                new Thread(() -> networkEngine.sendClipboardGraphic(new TransferableImage(image)), "sendClipboardGraphic").start();
-                frame.onClipboardSending();
-            }  else if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                String text = valueOf(clipboard.getData(DataFlavor.stringFlavor));
-                Log.debug("Clipboard contains text: " + text);
-                // Ok as very few of that (!)
-                new Thread(() -> networkEngine.sendClipboardText(text), "sendClipboardText").start();
-                frame.onClipboardSending();
-            } else {
-                Log.debug("Clipboard contains no supported data");
-            }
-        } catch (IOException | UnsupportedFlavorException ex) {
-            Log.error("Clipboard error " + ex.getMessage());
-            frame.onClipboardSent();
-        }
+        clipboardDispatcher.sendClipboard(networkEngine, frame, this);
     }
 
     /**
@@ -446,22 +412,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Gray8Bits toGrayLevel(int value) {
-        switch (value) {
-            case 6:
-                return Gray8Bits.X_256;
-            case 5:
-                return Gray8Bits.X_128;
-            case 4:
-                return Gray8Bits.X_64;
-            case 3:
-                return Gray8Bits.X_32;
-            case 2:
-                return Gray8Bits.X_16;
-            case 1:
-                return Gray8Bits.X_8;
-            default:
-                return Gray8Bits.X_4;
-        }
+        return Gray8Bits.values()[6 - value];
     }
 
     /**
