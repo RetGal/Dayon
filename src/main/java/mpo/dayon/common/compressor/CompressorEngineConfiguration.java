@@ -3,7 +3,6 @@ package mpo.dayon.common.compressor;
 import mpo.dayon.common.configuration.Configuration;
 import mpo.dayon.common.preference.Preferences;
 import mpo.dayon.common.squeeze.CompressionMethod;
-import mpo.dayon.common.squeeze.RegularTileCache;
 
 public class CompressorEngineConfiguration extends Configuration {
     private static final String PREF_VERSION = "assistant.compression.version";
@@ -15,6 +14,10 @@ public class CompressorEngineConfiguration extends Configuration {
     private static final String PREF_CACHE_MAX_SIZE = "assistant.compression.cacheMaxSize";
 
     private static final String PREF_CACHE_PURGE_SIZE = "assistant.compression.cachePurgeSize";
+    // Default maximum number of tiles; currently a tile is basically a 32x32 byte array (i.e., 1K for gray, 4K for color).
+    private static final int DEFAULT_MAX_SIZE = 32 * 1024;
+    // Default number of tiles after a purge.
+    private static final int DEFAULT_PURGE_SIZE = 16 * 1024;
 
     private final CompressionMethod method;
 
@@ -31,10 +34,10 @@ public class CompressorEngineConfiguration extends Configuration {
      */
     public CompressorEngineConfiguration() {
         final Preferences prefs = Preferences.getPreferences();
-        this.method = prefs.getEnumPreference(PREF_METHOD, CompressionMethod.ZIP, CompressionMethod.values());
-        this.useCache = prefs.getBooleanPreference(PREF_USE_CACHE, true);
-        this.maxSize = prefs.getIntPreference(PREF_CACHE_MAX_SIZE, RegularTileCache.DEFAULT_MAX_SIZE);
-        this.purgeSize = prefs.getIntPreference(PREF_CACHE_PURGE_SIZE, RegularTileCache.DEFAULT_PURGE_SIZE);
+        method = prefs.getEnumPreference(PREF_METHOD, CompressionMethod.ZIP, CompressionMethod.values());
+        useCache = prefs.getBooleanPreference(PREF_USE_CACHE, true);
+        maxSize = prefs.getIntPreference(PREF_CACHE_MAX_SIZE, DEFAULT_MAX_SIZE);
+        purgeSize = prefs.getIntPreference(PREF_CACHE_PURGE_SIZE, DEFAULT_PURGE_SIZE);
     }
 
     public CompressorEngineConfiguration(CompressionMethod method, boolean useCache, int maxSize, int purgeSize) {
@@ -69,7 +72,7 @@ public class CompressorEngineConfiguration extends Configuration {
             return false;
         }
         final CompressorEngineConfiguration that = (CompressorEngineConfiguration) o;
-        return maxSize == that.getCacheMaxSize() && purgeSize == that.getCachePurgeSize() && useCache == that.useCache() && method == that.getMethod();
+        return maxSize == that.maxSize && purgeSize == that.purgeSize && useCache == that.useCache && method == that.method;
     }
 
     @Override
