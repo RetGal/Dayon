@@ -35,27 +35,29 @@ public class FileAppender extends LogAppender {
 		setupFile(filename, true);
 	}
 
-	@Override
-    public synchronized void append(LogLevel level, String message, Throwable error) {
-		try {
-			StringBuilder builder = new StringBuilder();
-			builder.append(format(level, message)).append(System.lineSeparator());
-			if (error != null) {
-				builder.append(getStackTrace(error)).append(System.lineSeparator());
-			}
-			count += builder.length();
-			if (count >= MAX_FILE_SIZE && count >= nextRolloverCount) {
-				rollOver();
-			}
-			writer.write(builder.toString());
-			writer.flush();
-		} catch (RuntimeException ex) {
-			fallback.append(level, message, error);
-			fallback.append(LogLevel.WARN, "[FileAppender] error", ex);
-		}
-	}
+    @Override
+    public void append(LogLevel level, String message, Throwable error) {
+        synchronized (this) {
+            try {
+                StringBuilder builder = new StringBuilder(64);
+                builder.append(format(level, message)).append(System.lineSeparator());
+                if (error != null) {
+                    builder.append(getStackTrace(error)).append(System.lineSeparator());
+                }
+                count += builder.length();
+                if (count >= MAX_FILE_SIZE && count >= nextRolloverCount) {
+                    rollOver();
+                }
+                writer.write(builder.toString());
+                writer.flush();
+            } catch (RuntimeException ex) {
+                fallback.append(level, message, error);
+                fallback.append(LogLevel.WARN, "[FileAppender] error", ex);
+            }
+        }
+    }
 
-	private String getStackTrace(Throwable error) {
+	private static String getStackTrace(Throwable error) {
 		final StringWriter out = new StringWriter();
 		final PrintWriter printer = new PrintWriter(out);
 		error.printStackTrace(printer);
@@ -67,7 +69,7 @@ public class FileAppender extends LogAppender {
 		final File file = new File(filename);
 		count = file.length();
 	}
-	
+
 	@java.lang.SuppressWarnings("squid:S106")
 	private void rollOver() {
 		nextRolloverCount = count + MAX_FILE_SIZE;

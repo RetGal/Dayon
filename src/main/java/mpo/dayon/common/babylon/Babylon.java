@@ -16,25 +16,27 @@ public final class Babylon {
     private Babylon() {
     }
 
-    public static synchronized String translate(String tag, Object... arguments) {
-        final Locale locale = Locale.getDefault();
-        final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE, locale);
-        String value;
-        try {
-            value = bundle.getString(tag);
-            if (value.trim().isEmpty()) {
+    public static String translate(String tag, Object... arguments) {
+        synchronized (Babylon.class) {
+            final Locale locale = Locale.getDefault();
+            final ResourceBundle bundle = ResourceBundle.getBundle(BUNDLE, locale);
+            String value;
+            try {
+                value = bundle.getString(tag);
+                if (value.trim().isEmpty()) {
+                    value = tag;
+                }
+            } catch (MissingResourceException ignored) {
                 value = tag;
             }
-        } catch (MissingResourceException ignored) {
-            value = tag;
+            if (arguments != null && arguments.length > 0) {
+                value = formatValue(locale, value, tag, arguments);
+            }
+            if (value != null) {
+                return value.trim();
+            }
+            return null;
         }
-        if (arguments != null && arguments.length > 0) {
-            value = formatValue(locale, value, tag, arguments);
-        }
-        if (value != null) {
-            return value.trim();
-        }
-        return null;
     }
 
     @java.lang.SuppressWarnings("squid:S4973")

@@ -15,7 +15,10 @@ import static java.lang.String.valueOf;
 
 public class ClipboardDispatcher {
 
-    public void sendClipboard(NetworkEngine networkEngine, BaseFrame frame, ClipboardOwner owner) {
+    private ClipboardDispatcher() {
+    }
+
+    public static void sendClipboard(NetworkEngine networkEngine, BaseFrame frame, ClipboardOwner owner) {
 
         Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
         Transferable content = clipboard.getContents(owner);

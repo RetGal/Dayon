@@ -11,7 +11,7 @@ import mpo.dayon.common.log.Log;
 
 public interface NetworkUtilities {
 	static List<String> getInetAddresses() {
-		final List<String> addresses = new ArrayList<>();
+		final List<String> addresses = new ArrayList<>(8);
 
 		try {
 			InetAddress loopback = null;

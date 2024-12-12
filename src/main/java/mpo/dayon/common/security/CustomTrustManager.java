@@ -19,9 +19,11 @@ import static java.lang.String.format;
 import static java.lang.System.getProperty;
 
 public class CustomTrustManager implements X509TrustManager {
+	private static final X509Certificate[] ACCEPTED = {};
+
 	@Override
 	public X509Certificate[] getAcceptedIssuers() {
-		return new X509Certificate[]{};
+		return ACCEPTED;
 	}
 
 	@Override

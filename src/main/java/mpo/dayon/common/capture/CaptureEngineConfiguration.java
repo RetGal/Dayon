@@ -65,7 +65,7 @@ public class CaptureEngineConfiguration extends Configuration {
 
         final CaptureEngineConfiguration that = (CaptureEngineConfiguration) o;
 
-        return captureTick == that.getCaptureTick() && captureQuantization == that.getCaptureQuantization() && captureColors == that.captureColors;
+        return captureTick == that.captureTick && captureQuantization == that.captureQuantization && captureColors == that.captureColors;
     }
 
     @Override

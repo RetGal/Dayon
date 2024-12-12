@@ -80,23 +80,23 @@ public abstract class NetworkEngine {
         }
     }
 
-    protected void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
+    protected static void setClipboardContents(String string, ClipboardOwner clipboardOwner) {
         Log.debug(CLIPBOARD_DEBUG, () -> string);
         StringSelection stringSelection = new StringSelection(string);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(stringSelection, clipboardOwner);
     }
 
-    public void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
+    public static void setClipboardContents(BufferedImage image, ClipboardOwner clipboardOwner) {
         Log.debug(CLIPBOARD_DEBUG, () -> format("%dx%d", image.getWidth(), image.getHeight()));
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableImage(image), clipboardOwner);
     }
 
-    private void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
+    private static void setClipboardContents(List<File> files, ClipboardOwner clipboardOwner) {
         Log.debug(CLIPBOARD_DEBUG, () -> String.valueOf(files));
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new TransferableFiles(files), clipboardOwner);
     }
 
-    private NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
+    private static NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
         if (filesHelper.isDone()) {
             setClipboardContents(filesHelper.getFiles(), clipboardOwner);
             return new NetworkClipboardFilesHelper();

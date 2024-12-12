@@ -87,13 +87,13 @@ public class Version {
     }
 
     public static boolean isCompatibleVersion(int major, int minor, Version that) {
-        if (!isProd(major, minor) || !isProd(that.getMajor(), that.getMajor())) {
+        if (!isProd(major, minor) || !isProd(that.major, that.major)) {
             return true;
         }
-        if (that.getMajor() > 10 && (major > 10 || (major == 1 && minor == 10))) {
+        if (that.major > 10 && (major > 10 || (major == 1 && minor == 10))) {
             return true;
         }
-        return that.getMajor() == major && that.getMinor() == minor;
+        return that.major == major && that.minor == minor;
     }
 
     public static boolean isOutdatedVersion(int major, int otherMajor) {

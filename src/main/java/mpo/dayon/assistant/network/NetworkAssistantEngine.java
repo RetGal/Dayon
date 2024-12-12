@@ -93,7 +93,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
-    public void manageRouterPorts(int oldPort, int newPort) {
+    public static void manageRouterPorts(int oldPort, int newPort) {
         if (!UPnP.isUPnPAvailable()) {
             return;
         }

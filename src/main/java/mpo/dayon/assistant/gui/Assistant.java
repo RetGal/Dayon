@@ -62,8 +62,6 @@ public class Assistant implements ClipboardOwner {
 
     private final NetworkAssistantEngine networkEngine;
 
-    private final ClipboardDispatcher clipboardDispatcher;
-
     private BitCounter receivedBitCounter;
 
     private TileCounter receivedTileCounter;
@@ -145,7 +143,6 @@ public class Assistant implements ClipboardOwner {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
         initGui();
-        clipboardDispatcher = new ClipboardDispatcher();
     }
 
     private void initGui() {
@@ -306,7 +303,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void sendLocalClipboard() {
-        clipboardDispatcher.sendClipboard(networkEngine, frame, this);
+        ClipboardDispatcher.sendClipboard(networkEngine, frame, this);
     }
 
     /**
@@ -411,7 +408,7 @@ public class Assistant implements ClipboardOwner {
         }
     }
 
-    private Gray8Bits toGrayLevel(int value) {
+    private static Gray8Bits toGrayLevel(int value) {
         return Gray8Bits.values()[6 - value];
     }
 
@@ -504,7 +501,7 @@ public class Assistant implements ClipboardOwner {
         return configure;
     }
 
-    private String validatePurgeValue(JTextField purgeSizeTf, int maxValue) {
+    private static String validatePurgeValue(JTextField purgeSizeTf, int maxValue) {
         final String purge = purgeSizeTf.getText();
         if (purge.isEmpty()) {
             return translate("compression.cache.purge.msg1");
@@ -708,7 +705,7 @@ public class Assistant implements ClipboardOwner {
         synchronized (upnpEnabledLOCK) {
             while (upnpEnabled == null) {
                 try {
-                    upnpEnabledLOCK.wait();
+                    upnpEnabledLOCK.wait(5000);
                 } catch (InterruptedException e) {
                     Log.warn("Swallowed", e);
                     Thread.currentThread().interrupt();

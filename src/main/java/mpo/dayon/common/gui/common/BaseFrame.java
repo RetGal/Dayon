@@ -146,11 +146,11 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    protected JButton createButton(Action action) {
+    protected static JButton createButton(Action action) {
         return createButton(action, true);
     }
 
-    protected JButton createButton(Action action, boolean visible) {
+    protected static JButton createButton(Action action, boolean visible) {
         final JButton button = new JButton();
         addButtonProperties(action, button);
         button.setVisible(visible);
@@ -161,7 +161,7 @@ public abstract class BaseFrame extends JFrame {
         return createToggleButton(action, true);
     }
 
-    protected JToggleButton createToggleButton(Action action, boolean visible) {
+    protected static JToggleButton createToggleButton(Action action, boolean visible) {
         final JToggleButton button = new JToggleButton();
         addButtonProperties(action, button);
         button.setVisible(visible);
@@ -174,7 +174,7 @@ public abstract class BaseFrame extends JFrame {
         return button;
     }
 
-    private void addButtonProperties(Action action, AbstractButton button) {
+    private static void addButtonProperties(Action action, AbstractButton button) {
         button.setMargin(ZERO_INSETS);
         button.setHideActionText(true);
         button.setAction(action);
@@ -401,7 +401,7 @@ public abstract class BaseFrame extends JFrame {
         return panel;
     }
 
-    private String toUpperFirst(String text) {
+    private static String toUpperFirst(String text) {
         return Pattern.compile("^.").matcher(text).replaceFirst(m -> m.group().toUpperCase());
     }
 
@@ -428,7 +428,7 @@ public abstract class BaseFrame extends JFrame {
         return null;
     }
 
-    private void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
+    private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
         final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
                 addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
@@ -437,19 +437,19 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
+    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
         final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
                 Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
         NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
         if (!newNetworkConfiguration.equals(networkConfiguration)) {
-            networkEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
+            NetworkAssistantEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
             newNetworkConfiguration.persist();
             networkEngine.reconfigure(newNetworkConfiguration);
         }
     }
 
-    private void updateSystemProperty(String newTokenServerUrl) {
+    private static void updateSystemProperty(String newTokenServerUrl) {
         if (newTokenServerUrl.isEmpty()) {
             System.clearProperty("dayon.custom.tokenServer");
             return;
@@ -457,7 +457,7 @@ public abstract class BaseFrame extends JFrame {
         System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
     }
 
-    private GridBagConstraints createGridBagConstraints(int gridy) {
+    private static GridBagConstraints createGridBagConstraints(int gridy) {
         GridBagConstraints gc = new GridBagConstraints();
         gc.fill = HORIZONTAL;
         gc.gridx = 0;
@@ -465,7 +465,7 @@ public abstract class BaseFrame extends JFrame {
         return gc;
     }
 
-    private boolean isActiveTokenServer(String tokenServer) {
+    private static boolean isActiveTokenServer(String tokenServer) {
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             try {
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
@@ -575,7 +575,7 @@ public abstract class BaseFrame extends JFrame {
         return fingerprints;
     }
 
-    protected void clearFingerprints() {
+    protected static void clearFingerprints() {
         fingerprints.setText(null);
         fingerprints.setIcon(null);
         fingerprints.setCursor(null);

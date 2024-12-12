@@ -39,7 +39,7 @@ public class RegularRunLengthEncoder implements RunLengthEncoder {
         }
     }
 
-    private void writeNonZero(MemByteBuffer out, int count) {
+    private static void writeNonZero(MemByteBuffer out, int count) {
         if (count > 0) {
             out.write(count);
         }
