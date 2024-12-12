@@ -14,24 +14,19 @@ public class RegularTileCache implements TileCache {
     private final Map<Integer, CaptureTile> tiles;
     private final int maxSize;
     private final int purgeSize;
-    private int hits;
+    private int hits = 0;
 
     public RegularTileCache(int maxSize, int purgeSize) {
         this.maxSize = maxSize;
         this.purgeSize = purgeSize;
         tiles = new LinkedHashMap<>(maxSize, 0.75f, true) {
             @Override
-            protected boolean removeEldestEntry(Map.Entry<Integer, CaptureTile> eldest) {
-                return size() > maxSize;
-            }
-
-            @Override
             public CaptureTile get(Object key) {
                 CaptureTile tile = super.get(key);
                 if (tile != null) {
                     ++hits;
                 }
-                return tile;
+                return tile != null ? tile : CaptureTile.MISSING;
             }
         };
         Log.info("Regular cache created [MAX:" + maxSize + "][PURGE:" + purgeSize + "]");
@@ -53,8 +48,7 @@ public class RegularTileCache implements TileCache {
 
     @Override
     public CaptureTile get(int cacheId) {
-        CaptureTile tile = tiles.get(cacheId);
-        return tile != null ? tile : CaptureTile.MISSING;
+        return tiles.get(cacheId);
     }
 
     @Override

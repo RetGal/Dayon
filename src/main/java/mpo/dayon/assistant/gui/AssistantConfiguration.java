@@ -41,7 +41,7 @@ public class AssistantConfiguration extends Configuration {
 			return false;
 		}
 		final AssistantConfiguration that = (AssistantConfiguration) o;
-		return language.equals(that.getLanguage());
+		return language.equals(that.language);
 	}
 
 	@Override

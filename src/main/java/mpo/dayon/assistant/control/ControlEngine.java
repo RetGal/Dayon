@@ -65,7 +65,7 @@ public class ControlEngine implements AssistantFrameListener {
 		});
 	}
 	
-	private int getActingMouseButton(final int button) {
+	private static int getActingMouseButton(final int button) {
 		if (MouseEvent.BUTTON1 == button) {
 			return NetworkMouseControlMessage.BUTTON1;
 		}
@@ -91,7 +91,7 @@ public class ControlEngine implements AssistantFrameListener {
 	/**
 	 * Fix missing pair'd PRESSED event from RELEASED
 	 */
-	private final HashMap<Integer, Character> pressedKeys = new HashMap<>();
+	private final HashMap<Integer, Character> pressedKeys = new HashMap<>(4);
 
 	/**
 	 * From AWT thread (!)

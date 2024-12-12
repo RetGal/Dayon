@@ -45,11 +45,13 @@ public final class ScreenUtilities {
         }
     }
 
-    public static synchronized void setShareAllScreens(boolean doShareAllScreens) {
-        shareAllScreens = doShareAllScreens;
-        sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
-        rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-        gray = new byte[rgb.length];
+    public static void setShareAllScreens(boolean doShareAllScreens) {
+        synchronized (ScreenUtilities.class) {
+            shareAllScreens = doShareAllScreens;
+            sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
+            rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
+            gray = new byte[rgb.length];
+        }
     }
 
     public static Rectangle getSharedScreenSize() {

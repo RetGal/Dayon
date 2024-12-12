@@ -60,7 +60,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 		final NetworkAssistantEngineConfiguration that = (NetworkAssistantEngineConfiguration) o;
 
-		return port == that.getPort() && tokenServerUrl.equals(that.getTokenServerUrl());
+		return port == that.port && tokenServerUrl.equals(that.tokenServerUrl);
 	}
 
 	@Override

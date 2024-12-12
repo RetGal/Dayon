@@ -280,7 +280,7 @@ class AssistantFrame extends BaseFrame {
         return tabbedPane;
     }
 
-    private Component createTokenButton(Action tokenAction) {
+    private static Component createTokenButton(Action tokenAction) {
         String token = (String) tokenAction.getValue("token");
         JButton button = createButton(tokenAction);
         if (token != null) {
@@ -290,7 +290,7 @@ class AssistantFrame extends BaseFrame {
         return button;
     }
 
-    private StatusBar createStatusBar(ArrayList<Counter<?>> counters) {
+    private static StatusBar createStatusBar(ArrayList<Counter<?>> counters) {
         final StatusBar statusBar = new StatusBar();
         final Component horizontalStrut = Box.createHorizontalStrut(10);
         statusBar.add(horizontalStrut);

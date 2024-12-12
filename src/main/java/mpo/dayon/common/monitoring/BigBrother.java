@@ -27,7 +27,7 @@ public final class BigBrother {
     }
 
     public void registerRamInfo(Runnable callback) {
-        scheduler.scheduleAtFixedRate(callback, 0, 1, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(callback, 0, 1291, TimeUnit.MILLISECONDS);
     }
 
     public void shutdown() {

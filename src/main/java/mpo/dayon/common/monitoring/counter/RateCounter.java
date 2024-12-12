@@ -15,11 +15,9 @@ public abstract class RateCounter extends Counter<Double> {
 
 	protected abstract String formatRate(Double rate);
 
-	public void add(double value) {
-		synchronized (this) {
-			instantValue += value;
-		}
-	}
+	public synchronized void add(double value) {
+        instantValue += value;
+    }
 
 	@Override
     public void computeAndResetInstantValue() {

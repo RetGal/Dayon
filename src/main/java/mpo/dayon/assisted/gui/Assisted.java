@@ -20,6 +20,7 @@ import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.ClipboardDispatcher;
+import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.message.*;
 
 import javax.swing.*;
@@ -55,8 +56,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private NetworkAssistedEngine networkEngine;
 
-    private final ClipboardDispatcher clipboardDispatcher;
-
     private boolean coldStart = true;
 
     private CaptureEngineConfiguration captureEngineConfiguration;
@@ -84,7 +83,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         } catch (Exception ex) {
             Log.warn(format("Could not set the L&F [%s]", lnf), ex);
         }
-        clipboardDispatcher = new ClipboardDispatcher();
     }
 
     /**
@@ -171,14 +169,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return ok;
     }
 
-    private String validateIpAddress(String ipAddress) {
+    private static String validateIpAddress(String ipAddress) {
         if (ipAddress.isEmpty()) {
             return translate("connection.settings.emptyIpAddress");
         }
         return isValidIpAddressOrHostName(ipAddress.trim()) ? null : translate("connection.settings.invalidIpAddress");
     }
 
-    private String validatePortNumber(String portNumber) {
+    private static String validatePortNumber(String portNumber) {
         if (portNumber.isEmpty()) {
             return translate("connection.settings.emptyPortNumber");
         }
@@ -316,7 +314,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         frame.onDisconnecting();
     }
 
-    private NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
+    private static NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
         if (connectionParams != null) {
             int portStart = connectionParams.lastIndexOf('*');
             if (portStart > 0) {
@@ -395,13 +393,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
      */
     private void onClipboardRequested() {
         Log.info("Clipboard transfer request received");
-        clipboardDispatcher.sendClipboard(networkEngine, frame, this);
+        ClipboardDispatcher.sendClipboard(networkEngine, frame, this);
     }
 
     private void onScreenshotRequested(){
         Log.info("Screenshot request received");
         try {
-            networkEngine.setClipboardContents(new Robot().createScreenCapture(ScreenUtilities.getSharedScreenSize()), this);
+            NetworkEngine.setClipboardContents(new Robot().createScreenCapture(ScreenUtilities.getSharedScreenSize()), this);
         } catch (AWTException e) {
             Log.error("Failed to capture screen", e);
         }

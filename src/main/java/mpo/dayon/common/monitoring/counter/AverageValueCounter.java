@@ -13,14 +13,12 @@ public abstract class AverageValueCounter extends Counter<Double> {
 		add(1.0, value);
 	}
 
-	public void add(double weight, double value) {
-		synchronized (this) {
-			final double xvalue = weight * value;
+	public synchronized void add(double weight, double value) {
+        final double xvalue = weight * value;
 
-			instantWeight += weight;
-			instantValue += xvalue;
-		}
-	}
+        instantWeight += weight;
+        instantValue += xvalue;
+    }
 
 	@Override
     public void computeAndResetInstantValue() {

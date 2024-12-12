@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -28,6 +29,8 @@ public final class SystemUtilities {
     public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     public static final String DEFAULT_TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/";
+    private static final Pattern FQ_HOSTNAME_REGEX = Pattern.compile("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]\\.)*[a-zA-Z]{2,}$");
+    private static final Pattern IPV4_REGEX = Pattern.compile("(\\d{1,3})");
 
     private SystemUtilities() {
     }
@@ -69,7 +72,7 @@ public final class SystemUtilities {
     }
 
     public static List<String> getSystemProperties() {
-        final List<String> props = new ArrayList<>();
+        final List<String> props = new ArrayList<>(64);
         final List<String> propNames = System.getProperties().keySet().stream().map(Object::toString).collect(Collectors.toList());
         final int size = propNames.stream().max(Comparator.comparing(String::length)).orElse("").length();
         final String format = "%" + size + "." + size + "s [%s]";
@@ -78,7 +81,7 @@ public final class SystemUtilities {
             String propValue = getProperty(propName);
             // I want to display the actual content of the line separator...
             if (propName.equals("line.separator")) {
-                StringBuilder hex = new StringBuilder();
+                StringBuilder hex = new StringBuilder(3);
                 for (int idx = 0; idx < propValue.length(); idx++) {
                     final int cc = propValue.charAt(idx);
                     hex.append("\\").append(cc);
@@ -188,15 +191,15 @@ public final class SystemUtilities {
     @java.lang.SuppressWarnings("squid:S5998") // matcher input is max 256 chars long
     private static boolean isValidHostname(String serverName) {
         return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
-                serverName.matches("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]\\.)*[a-zA-Z]{2,}$");
+                FQ_HOSTNAME_REGEX.matcher(serverName).matches();
     }
 
     public static boolean isValidUrl(String url) {
         try {
             new URI(url);
             if (url.startsWith("http://") || url.startsWith("https://")) {
-                if (url.lastIndexOf("/") > 7) {
-                    return isValidIpAddressOrHostName(url.substring(url.indexOf("://") + 3, url.indexOf("/", url.indexOf("://") + 3)));
+                if (url.lastIndexOf('/') > 7) {
+                    return isValidIpAddressOrHostName(url.substring(url.indexOf("://") + 3, url.indexOf('/', url.indexOf("://") + 3)));
                 } else {
                     return isValidIpAddressOrHostName(url.substring(url.indexOf("://") + 3));
                 }
@@ -208,7 +211,7 @@ public final class SystemUtilities {
     }
 
     private static boolean isLookingLikeAnIpV4(String serverName) {
-        return Arrays.stream(serverName.split("\\.")).allMatch(e -> e.matches("(\\d{1,3})"));
+        return Arrays.stream(serverName.split("\\.")).allMatch(e -> IPV4_REGEX.matcher(e).matches());
     }
 
     public static boolean isValidToken(String token) throws NoSuchAlgorithmException {
