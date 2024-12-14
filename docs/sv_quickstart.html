@@ -70,10 +70,10 @@
         <br/>
       </p>
 
-      <h3><img src="assistant.png" alt="Hjälpgivare"/> &nbsp;&nbsp;<a id="assistant-setup" class="no"><strong>Använda hjälpgivarens dator</strong></a></h3>
+      <h3><img src="assistant.png" alt="Hjälpgivare"/> &nbsp;&nbsp;<a id="assistant-setup" class="no"><strong>Att använda hjälpgivarens dator</strong></a></h3>
 
       <p>
-        Dayon! Hjäpgivare agerar som en typisk serverapplikation (som <em>hjälptagaren</em> ansluer till) och därför behöver du konfigurera ditt nätverk så att hjälpgivaren kan bli synlig för yttervärlden.<br/><br/>
+        Dayon! <em>Hjälpgivare</em> agerar som en typisk serverapplikation (som <em>hjälptagaren</em> ansluer till) och därför behöver du konfigurera ditt nätverk så att <em>hjälpgivaren</em> kan bli synlig för yttervärlden.<br/><br/>
         Servern lyssnar som standard på <strong>Port</strong> 8080, men du kan ändra det om det skulle behövas.
         Alltsedan version 12 skapar Dayon! portmappningsregeln (port forward) åt dig. Förutsättningen är att <strong>UPnP</strong> är aktiverat i ditt nätverk.
         Annars måste portmappning (port forward) ändå ske, (TCP) via <strong>NAT</strong> på <strong>routern</strong> till datorn.
@@ -116,7 +116,7 @@
 
       <h3>Alternativ variant: anslut utan anslutningsnyckel</h3>
       <p>
-        Om du inte vill generera en åtkomsttoken måste du bestämma vilken IP-adress du vill meddela den <em>hjälptagaren</em>
+        Om du inte vill generera en åtkomsttoken måste du bestämma vilken IP-adress du vill meddela <em>hjälptagaren</em>
         för att ansluta till <em>hjälpgivaren</em>; du ska normalt sett ange din <strong>publika</strong> IP-adress.
         Men för att testa inom ditt lokala nätverk kanske du vill använda ett annat. Du kan hämta din publika IP-adress
         genom att klicka på nätverksknappen:
@@ -137,7 +137,7 @@
 
       <p>
         <em>
-          Observera att denna IP-adress inte är ett krav, då hjälpgivaren lyssnar på alla tillgängliga nätverksanslutningar; men du behöver meddela det till hjälptagaren ändå (mer om det senare).
+          Observera att denna IP-adress inte är ett krav, då <em>hjälpgivaren</em> lyssnar på alla tillgängliga nätverksanslutningar; men du behöver meddela det till <em>hjälptagaren</em> ändå (mer om det senare).
         </em>
       </p>
 
@@ -149,7 +149,7 @@
 
       <p>
         <a id="assistant-start" class="no">
-          Det var det mesta. Efter ett klick på "play"- knappen (längst upp till vänster) så är
+          Efter ett klick på <b>"play"-knappen</b> (längst upp till vänster) så är
           <em>hjälpgivaren</em> klar att ta emot inkommande förfrågningar om anslutning:
         </a>
       </p>
@@ -167,9 +167,9 @@
       </p>
 
       <p>
-        Du är nu ansluten och övervakar den andra datorn på distans. Glöm inte att jämföra <em>hjälpgivare</em> och <em>hjälptagare</em> fingeravtryck.
+        Du är nu ansluten och övervakar den andra datorn på distans. Glöm inte att jämföra <em>hjälpgivarens</em> och <em>hjälptagarens</em> fingeravtryck.
         <br/>
-        <strong>Varning:</strong> Om de inte matchar är anslutningen inte pålitlig!
+        <strong>Varning:</strong> Om de inte visar samma fingeravtryck på båda datorerna så är anslutningen inte pålitlig!
       </p>
 
       <p>
@@ -179,11 +179,11 @@
       <h3><img src="assisted.png" alt="hjälptagare"/> &nbsp;&nbsp;<a id="assisted-setup" class="no"><strong>Använda hjälptagarens dator</strong></a></h3>
 
       <p>
-        Dayon! Hjälptagare är en klientapplikation som anropar yttervärlden. Därför behövs ingen särskild nätverkskonfigurering göras för att kunna installera och använda programmet.
+        <em>Dayon! Hjälptagare</em> är en klientapplikation som anropar yttervärlden. Därför behövs ingen särskild nätverkskonfigurering göras för att kunna installera och använda programmet.
       </p>
 
       <p>
-        Ladda ned och installera Dayon!. Starta sedan <em>Dayon! Hjälptagare</em> (du borde ha en genväg på skrivbordet) och klicka "play"-knappen uppe till vänster.
+        Ladda ned och installera Dayon!. Starta sedan <em>Dayon! Hjälptagare</em> (du borde ha en genväg på skrivbordet) och klicka <b>"play"-knappen</b> uppe till vänster.
       </p>
 
       <p>
@@ -251,7 +251,7 @@
 
       <h3>Urklippsöverföring</h3>
       <p>
-        Genom att klicka på upp- eller ned-pilen, så kan antingen hjälpgivarens urklipp överföras till hjälptagaren (upp) eller hjälptagarens urklipp överföras till hjälpgivaren (ned).
+        Genom att klicka på upp- eller ned-pilen, så kan antingen <em>hjälpgivarens</em> urklipp överföras till <em>hjälptagaren</em> (upp) eller <em>hjälptagarens</em> urklipp överföras till <em>hjälpgivaren</em> (ned).
       </p>
 
       <p>
@@ -262,8 +262,8 @@
       <h4>Nuvarande stöd:</h4>
       <ul>
         <li>
-          <strong>Text:</strong> Välj lokal text eller i hjälptagarens fönster, kopiera (<code>Ctrl + c</code>),
-          klicka upp eller ned. Därefter kan den överförsa texten klistras in i en applikation lokalt eller på distans (<code>Ctrl + v</code>).
+          <strong>Text:</strong> Välj lokal text eller i <em>hjälptagarens</em> fönster, kopiera (<code>Ctrl + c</code>),
+          klicka upp eller ned. Därefter kan den överförda texten klistras in i en applikation lokalt eller på distans (<code>Ctrl + v</code>).
         </li>
 
         <li>
@@ -273,7 +273,7 @@
 
         <li>
           <strong>Grafik:</strong> Om urklippets innehåll är en grafik, t.ex. efter att du tagit en skärmdump - klicka bara uppåt eller nedåt.
-          Urklippstavlan som innehåller grafiken kan sedan användas på destinationen.
+          Urklippstavlan som innehåller grafiken kan sedan användas i destinationen.
         </li>
       </ul>
 
@@ -302,7 +302,7 @@
       <p>
         Oftast överförs <code>Ctrl</code>-tangenten till <em>hjälptagaren</em> på samma sätt som alla andra tangenttryckningar,
         tryck sedan på tangenterna <code>Alt</code> och <code>Delete</code> samtidigt, släpp dem och klicka slutligen på knappen <code>[Ctrl]</code> igen.
-        men intealltid. Till exempel blir kombinationen <code>Ctrl + Alt + Delete</code> "fångad" av <em>hjälpgivarens</em> operativsystem och överförs därmed inte.
+        Men inte alltid: till exempel blir kombinationen <code>Ctrl + Alt + Delete</code> "fångad" av <em>hjälpgivarens</em> operativsystem och överförs därmed inte.
         Vid sådana tillfällen är <code>[Ctrl]</code>-knappen (bredvid Windows-knappen) hos <em>hjälpgivaren</em> praktisk att ha.
         Funktionen är densamma som för Windows-knappen: tangenten förblir nedtryckt tills du klickar på knappen igen.
         <br/>
@@ -311,7 +311,7 @@
         <br/><br/>
         <strong>Varning:</strong> På grund av begränsningar i Windows skickas <strong>inte</strong> kombinationen <code>Ctrl + Alt + Del</code> till
         <em>hjälptagare</em>!<br/>
-        Använd istället tangentkombinationen <code>Windows + R</code> som ger motasvarande funktionalitet.
+        Använd istället tangentkombinationen <code>Windows + R</code> som ger motsvarande funktionalitet.
       </p>
 
       <h3>Ta en skärmdump hos den hjälptagaren</h3>
