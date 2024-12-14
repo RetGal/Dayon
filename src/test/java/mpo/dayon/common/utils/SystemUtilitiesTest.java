@@ -110,7 +110,7 @@ class SystemUtilitiesTest {
 	}
 
 	@ParameterizedTest
-	@CsvSource({"http://127.0.0.1", "http://localhost/token", "https://example.com/rvs/", "https://dayon.example.org"})
+	@CsvSource({"http://127.0.0.1", "http://localhost/token", "https://example.com/rvs/", "https://dayon.example.org", "https://example.org "})
 	void isValidUrlStringShouldReturnTrueForValidUrls(String url) {
 		// when, then
 		assertTrue(isValidUrl(url));

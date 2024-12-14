@@ -293,7 +293,7 @@ public abstract class BaseFrame extends JFrame {
 
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
-                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
+                            isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
                     updateSystemProperty(newTokenServerUrl);
                     if (assistant == null) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
@@ -420,7 +420,7 @@ public abstract class BaseFrame extends JFrame {
         } else if (!isValidPortNumber(portNumber)) {
             return translate("connection.settings.invalidPortNumber");
         } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
-            final String tokenServer = customTokenTextField.getText();
+            final String tokenServer = customTokenTextField.getText().trim();
             if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
                 return translate("connection.settings.invalidTokenServer");
             }
@@ -430,7 +430,7 @@ public abstract class BaseFrame extends JFrame {
 
     private void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
         final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
-                addressTextField.getText(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
+                addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
         if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
             newNetworkConfiguration.persist();
