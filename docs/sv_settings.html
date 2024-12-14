@@ -61,7 +61,7 @@
         Använd formuläret för att ange hur <em>hjälptagarens</em> skärm blir <strong>avläst</strong>; du kan anpassa (i millisekunder) tiden mellan två avläsningar (eller "tick") liksom antal gråskalor i bilden.
         Om det konfigurerade registreringsintervallet (tick) överbelastar motparten, ökar <em>hjälptagare</em> automatiskt värdet tills inga fler registreringar hoppas över.
         Från och med Dayon! 15 kan sRGB-färger också användas som ett alternativ. I detta fall ignoreras antalet gråtoner.
-        Observera att användningen av "Sanna färger" förbrukar mer bandbredd och mer RAM på <em>hjälpgivare</em>-sidan.
+        Observera att användningen av fullfärg förbrukar mer bandbredd och mer internminne hos <em>hjälpgivaren</em>.
       </p>
 
       <p>
@@ -87,7 +87,7 @@
 
       <p>
         Förutom portnumret som <em>hjälpgivare</em> lyssnar på, kan tokenservern som ska användas konfigureras i dialogrutan för nätverksinställningar.
-        Antingen standardtokenservern eller en anpassad kan användas. En lista över tillgängliga tokenservrar finns nedan.
+        Antingen kan standardtokenservern eller en anpassad server användas. En lista över tillgängliga tokenservrar finns nedan.
         <strong>Viktigt:</strong> Se till att du använder samma tokenserver på assistenten och den assisterade sidan!
       </p>
 
@@ -99,8 +99,8 @@
 
       <h3>UAC-inställningar</h3>
       <p>
-        För att <em>hjälpgivare</em> ska se alla systemdialogrutor måste UAC-inställningarna (User Account Control) justeras under Windows.
-        För enkelhetens skull är dialogrutan för UAC-inställningar direkt tillgänglig från det <em>hjälptagare</em> användargränssnittet.
+        För att <em>hjälpgivare</em> ska se alla systemdialogrutor måste UAC-inställningarna (User Account Control) hos <em>hjälptagaren</em> justeras under Windows.
+        För enkelhetens skull är dialogrutan för UAC-inställningar direkt tillgänglig från <em>hjälptagarens</em> användargränssnittet.
         Den näst lägsta inställningen för har visat sig vara användbar.
       </p>
 
@@ -114,10 +114,10 @@
       </p>
 
       <p>
-        I dialogrutan för nätverksinställningar för den <em>hjälptagare</em> kan du konfigurera portnumret och IP-adressen för <em>hjälpgivare</em> manuellt, om du vill
+        I dialogrutan för nätverksinställningar för <em>hjälptagaren</em> kan du konfigurera portnumret och IP-adressen för <em>hjälpgivaren</em> manuellt, om du vill
         ansluta utan token.<br/>
-        Du kan också aktivera eller inaktivera den automatiska anslutningen för den <em>hjälptagare</em>.
-        Om den är aktiverad kommer den <em>hjälptagare</em> att ansluta direkt till den givna värden utan ytterligare förfrågan, nästa gång du startar den <em>hjälptagare</em>.<br/>
+        Du kan också aktivera eller inaktivera den automatiska anslutningen för <em>hjälptagaren</em>.
+        Om den är aktiverad kommer <em>hjälptagaren</em> att ansluta direkt till den givna värden utan ytterligare förfrågan, nästa gång <em>hjälptagaren</em> startas.<br/>
         Du kan också konfigurera tokenservern som ska användas. Antingen kan standardtokenservern eller en anpassad server ställas in.
         En lista över tillgängliga tokenservrar finns <a href="#token_servers">längst ner</a> på den här sidan.<br>
         <strong>Viktigt:</strong> Se till att du använder samma token-server på den hjälptagare som på den hjälpgivare sidan!
@@ -127,7 +127,7 @@
 
       <h3>Automatisk anslutning av hjälptagaren via command line parametrar</h3>
       <p>
-        Värdnamn (Host Name) eller IP-adress och port för hjälpgivaren kan överföras via command line parametrar, där ah=värdnamn eller IP-adress och ap=portnummer:
+        Värdnamn (Host Name) eller IP-adress och port för <em>hjälpgivaren</em> kan överföras via command line parametrar, där ah=värdnamn eller IP-adress och ap=portnummer:
         <ul>
           <li><code>dayon_assisted.sh ah=an.example.com ap=4242</code> (Linux/macOS)</li>
           <li><code>dayon.assisted ah=an.example.com ap=4242</code> (Linux Snap)</li>
@@ -135,18 +135,18 @@
           <li><code>java -jar dayon.jar ah=an.example.com ap=4242</code> (Windows/Linux/macOS)</li>
           <li><code>assisted.exe ah=an.example.com ap=4242</code> (Windows Quick Launch)</li>
         </ul>
-        Om hjälptagaren startas med dessa parametrar, så ansluter den direkt till värden "an.example.com" och porten "4242".
+        Om <em>hjälptagaren</em> startas med dessa parametrar, så ansluter den direkt till värden "an.example.com" och porten "4242".
       </p>
 
       <h3>Konfigurerar Dayon! via konfigurationsfil</h3>
       <p>
         Alltsedan version v11.0.5, så kan anslutningsparametrar (connection parameters) lagras i en <code>YAML</code> fil.
         <br/><br/>
-        Detta gör det möjligt att åsidosätta användarinställningar eftersom konfigurationen från YAML alltid läses och utvärderas vid uppstart. Användare kan göra ändringar i applikationen, men dessa varar bara till nästa start om en YAML-konfiguration finns på plats.
+        Detta gör det möjligt att åsidosätta användarinställningar eftersom konfigurationen från YAML alltid blir inläst vid uppstart. Användare kan göra ändringar i applikationen, men dessa varar bara till nästa start, om en YAML-konfiguration finns på plats.
         <br/><br/>
-        Det primära användningsfallet för YAML-konfigurationer skulle vara för organisationer som vill använda en egenvärdig tokenserver istället för den offentliga tokenservern, eller som vill ange en viss värd som den assisterade automatiskt ska ansluta till vid start.
+        Det primära användningsfallet för YAML-konfigurationer skulle vara för organisationer som vill använda en egendriftad tokenserver istället för den offentliga tokenservern, eller som vill ange en viss värd som den assisterade automatiskt ska ansluta till vid start.
         <br/><br/>
-        Strukturen för den <em>hjälptagaren</em> YAML är extremt enkel:
+        Strukturen för <em>hjälptagarens</em> YAML är extremt enkel:
       </p>
 
 <pre>
@@ -158,13 +158,13 @@ port: 8080
 
       <p>
         <ul>
-          <li>För att förhindra den hjälptagaren från att automatiskt ansluta direkt efter starten, i <code>assisted.yaml</code>
+          <li>För att förhindra <em>hjälptagaren</em> från att automatiskt ansluta direkt efter starten, i <code>assisted.yaml</code>
             avkommenterar du bara följande rad: <code># autoConnect: false</code>
           </li>
           <li>För att få assisterad användning av annan tokenserver än standardservern för offentliga token, i <code>assisted.yaml</code>,
             avkommenterar du bara följande rad och<br/>
             ställer in lämplig URL:<code># tokenServerUrl: "https://example.org/token/"</code><br/>
-            <strong>Viktigt:</strong> se till att använda samma som hjälpgivare!
+            <strong>Viktigt:</strong> se till att använda samma som <em>hjälpgivaren</em>!
           </li>
         </ul>
       </p>
@@ -174,13 +174,13 @@ port: 8080
         <br/>
         <ul>
           <li>
-            För att få hjälpgivare att använda en annan tokenserver än standardservern för offentliga token, i <code>assistant.yaml</code>,
+            För att få <em>hjälpgivaren</em> att använda en annan tokenserver än standardservern för offentliga token, i <code>assistant.yaml</code>,
             avkommentera bara följande rad och<br/>
             ange lämplig URL: <code># tokenServerUrl: "https://example.org/token/"</code><br/>
-            <strong>Viktigt:</strong> se till att använda samma som hjälptagare!
+            <strong>Viktigt:</strong> se till att använda samma som <em>hjälptagaren</em>!
           </li>
         </ul>
-        Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), in användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.
+        Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), i användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.
         <code>.exe</code> filerna. Detta återspeglar också den prioritetsordning som gäller om flera filer finns. (den första vinner)
         <br/>
       </p>
