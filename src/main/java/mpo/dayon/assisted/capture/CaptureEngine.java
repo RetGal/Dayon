@@ -43,6 +43,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private boolean reconfigured;
 
+    private boolean running;
+
     public CaptureEngine(CaptureFactory captureFactory) {
         this.captureFactory = captureFactory;
         this.captureDimension = captureFactory.getDimension();
@@ -50,6 +52,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
         this.previousCapture = new long[x * y];
         resetPreviousCapture();
+        running = true;
 
         this.thread = new Thread(new RunnableEx() {
             @Override
@@ -83,12 +86,19 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public void start() {
         Log.debug("CaptureEngine start");
+        running = true;
         thread.start();
     }
 
     public void stop() {
         Log.debug("CaptureEngine stop");
+        running = false;
         thread.interrupt();
+        try {
+            thread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private void mainLoop() {
@@ -101,7 +111,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         int skipped = 0;
         AtomicBoolean reset = new AtomicBoolean(false);
 
-        while (true) {
+        while (running) {
             synchronized (reconfigurationLOCK) {
                 if (reconfigured) {
                     // assuming everything has changed (!)
