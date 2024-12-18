@@ -165,10 +165,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         while (true) {
             final long captureMaxEnd = start + (captureCount + delayedCaptureCount) * tick;
             final long capturePause = captureMaxEnd - System.currentTimeMillis();
-            if (capturePause < 0) {
+            if (capturePause < 0L) {
                 ++delayedCaptureCount;
-                Log.warn(format("Skipping capture (%d) %s", captureId + delayedCaptureCount, UnitUtilities.toElapsedTime(-capturePause)));
-            } else if (capturePause > 0) {
+                Log.warn(format("Skipping capture (%s) %s", captureId + delayedCaptureCount, UnitUtilities.toElapsedTime(-capturePause)));
+            } else if (capturePause > 0L) {
                 try {
                     TimeUnit.MILLISECONDS.sleep(capturePause);
                 } catch (InterruptedException e) {
@@ -210,7 +210,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
             final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
             for (int tx = 0; tx < captureDimension.width; tx += TILE_DIMENSION.width) {
-                final int tw = Math.min(captureDimension.width - tx, TILE_DIMENSION.width);
+                final int tw = min(captureDimension.width - tx, TILE_DIMENSION.width);
                 tileData = createTile(capture, captureDimension.width, tw, th, tx, ty, pixelSize);
                 final long cs = CaptureTile.computeChecksum(tileData, 0, tileData.length);
                 if (cs != previousCapture[tileId]) {
@@ -230,13 +230,14 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         final int capacity = tw * th * pixelSize;
         final byte[] tile = new byte[capacity];
         final int maxSrcPos = capture.length;
-        final int maxDestPos = capacity - tw * pixelSize + 1;
         int srcPos = ty * width * pixelSize + tx * pixelSize;
         int destPos = 0;
-        while (destPos < maxDestPos && srcPos < maxSrcPos) {
-            System.arraycopy(capture, srcPos, tile, destPos, tw * pixelSize);
-            srcPos += width * pixelSize;
-            destPos += tw * pixelSize;
+        final int screenRowIncrement = width * pixelSize;
+        final int tileRowIncrement = tw * pixelSize;
+        while (destPos < capacity && srcPos < maxSrcPos) {
+            System.arraycopy(capture, srcPos, tile, destPos, tileRowIncrement);
+            srcPos += screenRowIncrement;
+            destPos += tileRowIncrement;
         }
         return tile;
     }
