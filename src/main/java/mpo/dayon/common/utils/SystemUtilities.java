@@ -28,7 +28,6 @@ public final class SystemUtilities {
     public static final String JAVA_CLASS_PATH = "java.class.path";
     public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
-    public static final String DEFAULT_TOKEN_SERVER_URL = "https://fensterkitt.ch/dayon/";
     private static final Pattern FQ_HOSTNAME_REGEX = Pattern.compile("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]\\.)*[a-zA-Z]{2,}$");
     private static final Pattern IPV4_REGEX = Pattern.compile("(\\d{1,3})");
 

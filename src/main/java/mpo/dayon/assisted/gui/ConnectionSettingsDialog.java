@@ -25,7 +25,7 @@ class ConnectionSettingsDialog {
 
     private final JTextField assistantTokenTextField;
 
-    ConnectionSettingsDialog(NetworkAssistedEngineConfiguration configuration) {
+    ConnectionSettingsDialog(NetworkAssistedEngineConfiguration configuration, String token) {
 
         JPanel connectionSettingsDialog = new JPanel(new GridLayout(2, 2, 10, 10));
         connectionSettingsDialog.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
@@ -46,7 +46,7 @@ class ConnectionSettingsDialog {
         connectionTokenDialog.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
         final JLabel assistantToken = new JLabel(getOrCreateIcon(ImageNames.KEY));
-        assistantTokenTextField = new JTextField("", 7);
+        assistantTokenTextField = new JTextField(token, 7);
         assistantTokenTextField.setMargin(new Insets(2,2,2,2));
         assistantTokenTextField.setFont(new Font("Sans Serif", Font.PLAIN, 26));
         assistantTokenTextField.addMouseListener(clearTextOnDoubleClick(assistantTokenTextField));

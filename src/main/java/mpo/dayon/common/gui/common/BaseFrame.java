@@ -30,6 +30,7 @@ import mpo.dayon.common.version.Version;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;

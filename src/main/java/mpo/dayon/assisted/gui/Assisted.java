@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -61,6 +62,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private CaptureEngineConfiguration captureEngineConfiguration;
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
+
+    private String token;
 
     public Assisted(String tokenServerUrl) {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
@@ -144,7 +147,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private boolean requestConnectionSettings() {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
-        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration);
+        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, token);
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
@@ -186,8 +189,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
         CompletableFuture.supplyAsync(() -> {
             final NetworkAssistedEngineConfiguration newConfiguration;
-            String token = connectionSettingsDialog.getToken().trim();
-            if (!token.isEmpty()) {
+            String tokenString = connectionSettingsDialog.getToken().trim();
+            if (!tokenString.isEmpty()) {
+                this.token = tokenString;
                 final Cursor cursor = frame.getCursor();
                 frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 String connectionParams = null;
@@ -212,6 +216,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 networkConfiguration = newConfiguration;
                 networkConfiguration.persist();
                 networkEngine.configure(networkConfiguration);
+                frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
             }
             Log.info("NetworkConfiguration " + networkConfiguration);
         });
@@ -265,7 +270,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         @Override
         protected String doInBackground() {
             if (isConfigured() && !isCancelled()) {
-                frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
                 networkEngine.configure(networkConfiguration);
                 networkEngine.connect();
             }
