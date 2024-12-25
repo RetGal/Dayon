@@ -19,6 +19,8 @@ import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -66,6 +68,24 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.add(listener);
     }
 
+    public boolean selfTest(String publicIp) {
+        if (publicIp == null) {
+            return false;
+        }
+        if (!manageRouterPorts(0, configuration.getPort())) {
+            try (ServerSocket listener = new ServerSocket(configuration.getPort())) {
+                try (Socket socket = new Socket()) {
+                    socket.connect(new InetSocketAddress(publicIp, configuration.getPort()), 1000);
+                }
+                Log.info("Port " + configuration.getPort() + " is reachable from the outside");
+            } catch (IOException e) {
+                Log.error("Port " + configuration.getPort() + " is not reachable from the outside");
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * Called from a GUI action => do not block the AWT thread (!)
      */
@@ -73,7 +93,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get() || receiver != null) {
             return;
         }
-        manageRouterPorts(0, configuration.getPort());
+
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
@@ -93,9 +113,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
-    public static void manageRouterPorts(int oldPort, int newPort) {
+    public static boolean manageRouterPorts(int oldPort, int newPort) {
         if (!UPnP.isUPnPAvailable()) {
-            return;
+            return false;
         }
         if (oldPort != 0 && UPnP.isMappedTCP(oldPort)) {
             UPnP.closePortTCP(oldPort);
@@ -104,10 +124,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (!UPnP.isMappedTCP(newPort)) {
             if (UPnP.openPortTCP(newPort, APP_NAME)) {
                 Log.info(format("Enabled forwarding for port %d", newPort));
-                return;
+                return true;
             }
             Log.warn(format("Failed to enable forwarding for port %d", newPort));
+            return false;
         }
+        return true;
     }
 
     // right, keep streams open - forever!

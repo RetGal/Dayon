@@ -51,6 +51,7 @@ import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static javax.swing.SwingConstants.HORIZONTAL;
 import static mpo.dayon.common.babylon.Babylon.translate;
+import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -250,23 +251,23 @@ public class Assistant implements ClipboardOwner {
                 final Point toolbarLocation = frame.getToolBar().getLocationOnScreen();
                 choices.setLocation(frameLocation.x + 20, toolbarLocation.y + frame.getToolBar().getHeight());
             }
-
-            private void resolvePublicIp() throws IOException, InterruptedException {
-                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @java.lang.SuppressWarnings("squid:S2095")
-                HttpClient client = HttpClient.newHttpClient();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(WHATSMYIP_SERVER_URL))
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                publicIp = client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
-            }
         };
         ip.putValue("DISPLAY_NAME", publicIp); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         ip.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_ADDRESS));
         return ip;
+    }
+
+    private void resolvePublicIp() throws IOException, InterruptedException {
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @java.lang.SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(WHATSMYIP_SERVER_URL))
+                .timeout(Duration.ofSeconds(5))
+                .build();
+        publicIp = client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
     }
 
     private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
@@ -563,6 +564,7 @@ public class Assistant implements ClipboardOwner {
                         return token;
                     }).thenAcceptAsync(tokenString -> {
                         if (tokenString  != null) {
+                            token = tokenString;
                             button.setText(format(" %s", tokenString));
                             button.setToolTipText(translate("token.copy.msg"));
                         }
@@ -684,6 +686,19 @@ public class Assistant implements ClipboardOwner {
 
         private void startNetwork() {
             frame.onGettingReady();
+            if (publicIp == null) {
+                try {
+                    resolvePublicIp();
+                } catch (IOException | InterruptedException ex) {
+                    Log.error("Could not determine public IP", ex);
+                    if (ex instanceof InterruptedException) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
+            if (!networkEngine.selfTest(publicIp)) {
+                JOptionPane.showMessageDialog(frame, translate("port.error.msg1", networkConfiguration.getPort()), translate("port.error"), JOptionPane.WARNING_MESSAGE);
+            }
             networkEngine.start(compatibilityModeActive.get());
         }
 

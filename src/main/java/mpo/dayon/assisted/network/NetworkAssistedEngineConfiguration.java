@@ -5,8 +5,6 @@ import mpo.dayon.common.preference.Preferences;
 
 import java.util.Objects;
 
-import static mpo.dayon.common.utils.SystemUtilities.DEFAULT_TOKEN_SERVER_URL;
-
 public class NetworkAssistedEngineConfiguration extends Configuration {
     private static final String PREF_VERSION = "assisted.network.version";
 
