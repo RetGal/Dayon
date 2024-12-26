@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import mpo.dayon.common.monitoring.counter.Counter;
 
-public final class BigBrother implements CounterRegistry {
+public final class BigBrother {
 
     private BigBrother() {
     }
@@ -22,7 +22,6 @@ public final class BigBrother implements CounterRegistry {
     /**
      * @param instantRatePeriod millis
      */
-    @Override
     public void registerCounter(Counter<?> counter, long instantRatePeriod) {
         scheduler.scheduleAtFixedRate(counter::computeAndResetInstantValue, 0, instantRatePeriod, TimeUnit.MILLISECONDS);
     }

@@ -1,14 +1,12 @@
 package mpo.dayon.common.monitoring.counter;
 
-import mpo.dayon.common.monitoring.BigBrother;
-
 public abstract class AverageValueCounter extends Counter<Double> {
 	private double instantWeight = 0;
 
 	private double instantValue = 0;
 
-	AverageValueCounter(String uid, String shortDescription, BigBrother bigBrother) {
-		super(uid, shortDescription, bigBrother);
+	AverageValueCounter(String uid, String shortDescription) {
+		super(uid, shortDescription);
 	}
 
 	public void add(double value) {

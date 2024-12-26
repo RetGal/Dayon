@@ -1,6 +1,4 @@
 package mpo.dayon.common.monitoring.counter;
-
-import mpo.dayon.common.monitoring.BigBrother;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +26,7 @@ class BitCounterTest {
     @Test
     void formatRate() {
         // given
-        BitCounter bc = new BitCounter(null, null, null);
+        BitCounter bc = new BitCounter(null, null);
 
         // when, // then
         assertEquals("96.00 Kbit/s", bc.formatRate(96000.0));
@@ -37,7 +35,7 @@ class BitCounterTest {
     @Test
     void computeAndResetInstantValue() {
         // given
-        BitCounter bc = new BitCounter(null, null, BigBrother.get());
+        BitCounter bc = new BitCounter(null, null);
         CounterListener<Double> cl = (CounterListener<Double>) mock(CounterListener.class);
         bc.addListener(cl);
         bc.start(1);

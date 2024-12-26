@@ -1,10 +1,8 @@
 package mpo.dayon.common.monitoring.counter;
 
-import mpo.dayon.common.monitoring.BigBrother;
-
 public class TileCounter extends AbsoluteValueCounter {
-	public TileCounter(String uid, String shortDescription, BigBrother bigBrother) {
-		super(uid, shortDescription, bigBrother);
+	public TileCounter(String uid, String shortDescription) {
+		super(uid, shortDescription);
 	}
 
 	public void add(int tiles, int hits) {

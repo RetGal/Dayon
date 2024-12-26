@@ -159,15 +159,15 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void createCounters() {
-        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"), BigBrother.get());
+        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
-        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"), BigBrother.get());
+        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
         receivedTileCounter.start(1000);
-        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"), BigBrother.get());
+        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"));
         skippedTileCounter.start(1000);
-        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"), BigBrother.get());
+        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"));
         mergedTileCounter.start(1000);
-        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"), BigBrother.get());
+        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
