@@ -197,6 +197,7 @@ public class Assistant implements ClipboardOwner {
         JButton button = (JButton) frame.getActions().getTokenAction().getValue("button");
         if (button != null) {
             button.setText("");
+            button.setToolTipText(translate("token.create.msg"));
         }
     }
 

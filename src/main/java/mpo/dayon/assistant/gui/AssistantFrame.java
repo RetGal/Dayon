@@ -407,7 +407,6 @@ class AssistantFrame extends BaseFrame {
         hideSpinner();
         validate();
         repaint();
-        this.setCursor(Cursor.getDefaultCursor());
         // connection
         actions.getStartAction().setEnabled(true);
         actions.getStopAction().setEnabled(false);
@@ -429,7 +428,6 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onHttpStarting(int port) {
-        this.setCursor(Cursor.getDefaultCursor());
         // connection
         startButton.setVisible(false);
         actions.getStopAction().setEnabled(true);
@@ -444,7 +442,6 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onGettingReady() {
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         actions.getStartAction().setEnabled(false);
         showSpinner();
     }
