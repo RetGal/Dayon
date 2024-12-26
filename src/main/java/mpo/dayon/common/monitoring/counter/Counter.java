@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 
 import mpo.dayon.common.monitoring.BigBrother;
+import mpo.dayon.common.monitoring.CounterRegistry;
 
 public abstract class Counter<T> {
 	private final List<CounterListener<T>> listeners = new CopyOnWriteArrayList<>();
@@ -13,14 +14,14 @@ public abstract class Counter<T> {
 
 	private final String shortDescription;
 
-	private final BigBrother bigBrother;
+	private final CounterRegistry counterRegistry;
 
 	AtomicLong instantStart;
 
-	Counter(String uid, String shortDescription, BigBrother bigBrother) {
+	Counter(String uid, String shortDescription, CounterRegistry counterRegistry) {
 		this.uid = uid;
 		this.shortDescription = shortDescription;
-		this.bigBrother = bigBrother;
+		this.counterRegistry = counterRegistry;
 	}
 
 	public void addListener(CounterListener<T> listener) {
@@ -51,7 +52,7 @@ public abstract class Counter<T> {
 	 */
 	public void start(long instantPeriod) {
 		initialize();
-		bigBrother.registerCounter(this, instantPeriod);
+		counterRegistry.registerCounter(this, instantPeriod);
 	}
 
 	public abstract void computeAndResetInstantValue();
