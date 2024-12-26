@@ -1,4 +1,5 @@
 package mpo.dayon.common.monitoring.counter;
+
 import mpo.dayon.common.utils.UnitUtilities;
 
 public class BitCounter extends RateCounter {
