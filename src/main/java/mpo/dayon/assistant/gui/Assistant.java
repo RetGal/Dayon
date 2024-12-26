@@ -149,7 +149,7 @@ public class Assistant implements ClipboardOwner {
     private void initGui() {
         createCounters();
         if (frame != null) {
-            frame.setVisible(false);
+            frame.dispose();
         }
         frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), this);
         FatalErrorHandler.attachFrame(frame);
@@ -189,6 +189,14 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setStopAction(createStopAction());
         assistantActions.setToggleCompatibilityModeAction(createToggleCompatibilityModeAction());
         return assistantActions;
+    }
+
+    public void clearToken() {
+        token = null;
+        JButton button = (JButton) frame.getActions().getTokenAction().getValue("button");
+        if (button != null) {
+            button.setText("");
+        }
     }
 
     private void stopNetwork() {
@@ -549,6 +557,7 @@ public class Assistant implements ClipboardOwner {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 final JButton button = (JButton) ev.getSource();
+                this.putValue("button", button);
 
                 if (token == null) {
                     CompletableFuture.supplyAsync(() -> {

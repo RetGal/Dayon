@@ -299,7 +299,7 @@ public abstract class BaseFrame extends JFrame {
                     if (assistant == null) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                     } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, assistant.getNetworkEngine());
+                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, assistant);
                     }
                 }
             }
@@ -438,7 +438,7 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
+    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, Assistant assistant) {
         final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
                 Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
@@ -446,7 +446,8 @@ public abstract class BaseFrame extends JFrame {
         if (!newNetworkConfiguration.equals(networkConfiguration)) {
             NetworkAssistantEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
             newNetworkConfiguration.persist();
-            networkEngine.reconfigure(newNetworkConfiguration);
+            assistant.getNetworkEngine().reconfigure(newNetworkConfiguration);
+            assistant.clearToken();
         }
     }
 

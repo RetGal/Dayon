@@ -66,6 +66,8 @@ class AssistantFrame extends BaseFrame {
 
     private final JButton screenshotButton;
 
+    private final JButton tokenButton;
+
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
 
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
@@ -97,6 +99,7 @@ class AssistantFrame extends BaseFrame {
         this.actions.setNetworkConfigurationAction(createConnectionSettingsAction(assistant));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
+        this.tokenButton = createTokenButton(actions.getTokenAction());
         this.compatibilityToggleButton = createToggleButton(actions.getToggleCompatibilityModeAction(), true, compatibilityModeActive);
         this.controlToggleButton = createToggleButton(createToggleControlMode());
         this.fitToScreenToggleButton = createToggleButton(createToggleFixScreenAction());
@@ -116,6 +119,10 @@ class AssistantFrame extends BaseFrame {
         addListeners();
         // the network has been before we've been registered as a listener ...
         onReady();
+    }
+
+    public AssistantActions getActions() {
+        return actions;
     }
 
     private void addListeners() {
@@ -248,7 +255,7 @@ class AssistantFrame extends BaseFrame {
         connectionPanel.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
         connectionPanel.add(startButton);
         connectionPanel.add(stopButton);
-        connectionPanel.add(createTokenButton(actions.getTokenAction()));
+        connectionPanel.add(tokenButton);
         connectionPanel.add(createButton(actions.getIpAddressAction()));
         connectionPanel.add(compatibilityToggleButton);
 
@@ -280,7 +287,7 @@ class AssistantFrame extends BaseFrame {
         return tabbedPane;
     }
 
-    private static Component createTokenButton(Action tokenAction) {
+    private static JButton createTokenButton(Action tokenAction) {
         String token = (String) tokenAction.getValue("token");
         JButton button = createButton(tokenAction);
         if (token != null) {
