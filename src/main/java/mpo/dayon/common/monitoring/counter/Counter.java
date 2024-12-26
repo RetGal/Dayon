@@ -13,11 +13,14 @@ public abstract class Counter<T> {
 
 	private final String shortDescription;
 
+	private final BigBrother bigBrother;
+
 	AtomicLong instantStart;
 
-	Counter(String uid, String shortDescription) {
+	Counter(String uid, String shortDescription, BigBrother bigBrother) {
 		this.uid = uid;
 		this.shortDescription = shortDescription;
+		this.bigBrother = bigBrother;
 	}
 
 	public void addListener(CounterListener<T> listener) {
@@ -48,7 +51,7 @@ public abstract class Counter<T> {
 	 */
 	public void start(long instantPeriod) {
 		initialize();
-		BigBrother.get().registerCounter(this, instantPeriod);
+		bigBrother.registerCounter(this, instantPeriod);
 	}
 
 	public abstract void computeAndResetInstantValue();

@@ -16,6 +16,7 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
@@ -158,15 +159,15 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void createCounters() {
-        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
+        receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"), BigBrother.get());
         receivedBitCounter.start(1000);
-        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
+        receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"), BigBrother.get());
         receivedTileCounter.start(1000);
-        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"));
+        skippedTileCounter = new SkippedTileCounter("skippedTiles", translate("skippedCaptureNumber"), BigBrother.get());
         skippedTileCounter.start(1000);
-        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"));
+        mergedTileCounter = new MergedTileCounter("mergedTiles", translate("mergedCaptureNumber"), BigBrother.get());
         mergedTileCounter.start(1000);
-        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
+        captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"), BigBrother.get());
         captureCompressionCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }

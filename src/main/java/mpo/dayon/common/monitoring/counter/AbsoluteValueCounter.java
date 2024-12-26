@@ -1,12 +1,14 @@
 package mpo.dayon.common.monitoring.counter;
 
+import mpo.dayon.common.monitoring.BigBrother;
+
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class AbsoluteValueCounter extends Counter<Long> {
 	private final AtomicLong instantValue = new AtomicLong(0);
 
-	AbsoluteValueCounter(String uid, String shortDescription) {
-		super(uid, shortDescription);
+	AbsoluteValueCounter(String uid, String shortDescription, BigBrother bigBrother) {
+		super(uid, shortDescription, bigBrother);
 	}
 
 	public void add(long value) {
