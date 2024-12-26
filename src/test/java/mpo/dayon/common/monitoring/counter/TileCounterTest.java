@@ -1,5 +1,6 @@
 package mpo.dayon.common.monitoring.counter;
 
+import mpo.dayon.common.monitoring.BigBrother;
 import org.junit.jupiter.api.Test;
 
 import java.util.Locale;
@@ -17,7 +18,7 @@ class TileCounterTest {
         int tiles = 300;
         int hits = 200;
         long sixtySix = ((long) tiles << 32) | hits;
-        TileCounter tc= new TileCounter(null, null);
+        TileCounter tc= new TileCounter(null, null, null);
 
         // when, then
         Locale.setDefault(Locale.forLanguageTag("de-CH"));
@@ -33,7 +34,7 @@ class TileCounterTest {
     @Test
     void computeAndResetInstantValue() {
         // given
-        TileCounter tc= new TileCounter(null, null);
+        TileCounter tc= new TileCounter(null, null, BigBrother.get());
         tc.start(1000);
         CounterListener<Long> cl = (CounterListener<Long>) mock(CounterListener.class);
         tc.addListener(cl);

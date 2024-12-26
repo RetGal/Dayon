@@ -1,5 +1,6 @@
 package mpo.dayon.common.monitoring.counter;
 
+import mpo.dayon.common.monitoring.BigBrother;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
@@ -10,7 +11,7 @@ class CaptureCompressionCounterTest {
     @Test
     void computeAndResetInstantValue() {
         // given
-        CaptureCompressionCounter ccc = new CaptureCompressionCounter(null, null);
+        CaptureCompressionCounter ccc = new CaptureCompressionCounter(null, null, BigBrother.get());
         ccc.start(1000);
         CounterListener<Double> cl = (CounterListener<Double>) mock(CounterListener.class);
         ccc.addListener(cl);

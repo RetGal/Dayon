@@ -1,10 +1,11 @@
 package mpo.dayon.common.monitoring.counter;
 
+import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.utils.UnitUtilities;
 
 public class BitCounter extends RateCounter {
-	public BitCounter(String uid, String shortDescription) {
-		super(uid, shortDescription);
+	public BitCounter(String uid, String shortDescription, BigBrother bigBrother) {
+		super(uid, shortDescription, bigBrother);
 	}
 
 	@Override
