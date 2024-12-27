@@ -91,7 +91,6 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onConnecting(String serverName, int serverPort) {
-        this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         toggleStartButton(false);
         connectionSettingsButton.setEnabled(false);
         getStatusBar().setMessage(translate("connecting", serverName, serverPort));
