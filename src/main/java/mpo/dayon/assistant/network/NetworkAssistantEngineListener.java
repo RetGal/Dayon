@@ -53,4 +53,6 @@ public interface NetworkAssistantEngineListener extends Listener {
 	void onIOError(IOException error);
 
 	void onFingerprinted(String fingerprints);
+
+	void onReconfigured(NetworkAssistantEngineConfiguration configuration);
 }

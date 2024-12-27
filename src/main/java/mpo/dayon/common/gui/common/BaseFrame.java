@@ -18,7 +18,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import com.dosse.upnp.UPnP;
-import mpo.dayon.assistant.gui.Assistant;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
@@ -31,6 +30,8 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
+import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
+import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
@@ -115,8 +116,8 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupToolBar(ToolBar toolBar) {
-        float alignmentY = frameType.equals(FrameType.ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
-        if (FrameType.ASSISTANT.equals(frameType)) {
+        float alignmentY = frameType.equals(ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
+        if (ASSISTANT.equals(frameType)) {
             // poor man's vertical align top
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
@@ -124,7 +125,7 @@ public abstract class BaseFrame extends JFrame {
         toolBar.addAction(createShowInfoAction(), alignmentY);
         toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
-        if (FrameType.ASSISTANT.equals(frameType)) {
+        if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
         }
         add(toolBar, BorderLayout.NORTH);
@@ -275,7 +276,15 @@ public abstract class BaseFrame extends JFrame {
         return showSystemInfo;
     }
 
-    protected Action createConnectionSettingsAction(Assistant assistant) {
+    protected Action createAssistedConnectionSettingsAction() {
+        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null);
+    }
+
+    protected Action createAssistantConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
+        return createConnectionSettingsAction(isUpnpEnabled, networkEngine);
+    }
+
+    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -287,7 +296,7 @@ public abstract class BaseFrame extends JFrame {
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, (assistant != null && assistant.isUpnpEnabled()));
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, isUpnpEnabled.join());
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
@@ -296,10 +305,10 @@ public abstract class BaseFrame extends JFrame {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
                     updateSystemProperty(newTokenServerUrl);
-                    if (assistant == null) {
+                    if (ASSISTED.equals(frameType)) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                     } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, assistant);
+                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkEngine);
                     }
                 }
             }
@@ -316,7 +325,7 @@ public abstract class BaseFrame extends JFrame {
         int gridy = 0;
         String currentTokenServer;
 
-        if (frameType.equals(FrameType.ASSISTED)) {
+        if (ASSISTED.equals(frameType)) {
             final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
             currentTokenServer = networkConfiguration.getTokenServerUrl();
             final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
@@ -407,7 +416,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-        if (frameType.equals(FrameType.ASSISTED)) {
+        if (ASSISTED.equals(frameType)) {
             final String ipAddress = addressTextField.getText();
             if (ipAddress.isEmpty()) {
                 return translate("connection.settings.emptyIpAddress");
@@ -430,24 +439,23 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
-        final NetworkAssistedEngineConfiguration newNetworkConfiguration = new NetworkAssistedEngineConfiguration(
+        final NetworkAssistedEngineConfiguration newConfig = new NetworkAssistedEngineConfiguration(
                 addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
-        if (!newNetworkConfiguration.equals(new NetworkAssistedEngineConfiguration())) {
-            newNetworkConfiguration.persist();
+        if (!newConfig.equals(new NetworkAssistedEngineConfiguration())) {
+            newConfig.persist();
         }
     }
 
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, Assistant assistant) {
-        final NetworkAssistantEngineConfiguration newNetworkConfiguration = new NetworkAssistantEngineConfiguration(
+    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
+        final NetworkAssistantEngineConfiguration oldConfig = new NetworkAssistantEngineConfiguration();
+        final NetworkAssistantEngineConfiguration newConfig = new NetworkAssistantEngineConfiguration(
                 Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
-        NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-        if (!newNetworkConfiguration.equals(networkConfiguration)) {
-            NetworkAssistantEngine.manageRouterPorts(networkConfiguration.getPort(), newNetworkConfiguration.getPort());
-            newNetworkConfiguration.persist();
-            assistant.getNetworkEngine().reconfigure(newNetworkConfiguration);
-            assistant.clearToken();
+        if (!newConfig.equals(oldConfig)) {
+            NetworkAssistantEngine.manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
+            newConfig.persist();
+            networkEngine.reconfigure(newConfig);
         }
     }
 
