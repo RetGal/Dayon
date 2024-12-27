@@ -85,15 +85,20 @@ public class MemByteBuffer extends OutputStream {
 	 * Equivalent to the DataOutputStream version (!)
 	 */
 	public final void writeInt(int val) {
-		write((val >>> 24) & 0xFF, (val >>> 16) & 0xFF);
-		write((val >>> 8) & 0xFF, val & 0xFF);
+		ensureCapacity(count + 4);
+		buffer[count++] = (byte) ((val >>> 24) & 0xFF);
+		buffer[count++] = (byte) ((val >>> 16) & 0xFF);
+		buffer[count++] = (byte) ((val >>> 8) & 0xFF);
+		buffer[count++] = (byte) (val & 0xFF);
 	}
 
 	/**
 	 * Equivalent to the DataOutputStream version (!)
 	 */
 	public final void writeShort(int val) {
-		write((val >>> 8) & 0xFF, val & 0xFF);
+		ensureCapacity(count + 2);
+		buffer[count++] = (byte) ((val >>> 8) & 0xFF);
+		buffer[count++] = (byte) (val & 0xFF);
 	}
 
 	public void writeLenAsShort(int mark) {
@@ -106,9 +111,7 @@ public class MemByteBuffer extends OutputStream {
 
 	public void fill(int len, int val) {
 		ensureCapacity(count + len);
-		for (int i = count; i < count + len; i++) {
-			buffer[i] = (byte) val;
-		}
+		Arrays.fill(buffer, count, count + len, (byte) val);
 		count += len;
 	}
 
