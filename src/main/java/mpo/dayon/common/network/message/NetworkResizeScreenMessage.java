@@ -49,6 +49,6 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[width:%d height:%d]", width, height);
+		return String.format("[width:%d][height:%d]", width, height);
 	}
 }

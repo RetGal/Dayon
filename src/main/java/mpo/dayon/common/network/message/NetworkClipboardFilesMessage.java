@@ -41,7 +41,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             FileMetaData meta = helper.getFileMetadatas().get(position);
 
             long fileSize = meta.getFileSize();
-            Log.debug("%s", () -> format("FileSize/left: %s/%s", fileSize, helper.getFileBytesLeft()));
+            Log.debug("%s", () -> format("FileSize: %d left: %d", fileSize, helper.getFileBytesLeft()));
 
             byte[] buffer = new byte[min(toIntExact(helper.getFileBytesLeft()), MAX_READ_BUFFER_CAPACITY)];
             BufferedInputStream bis = new BufferedInputStream(in);
@@ -153,17 +153,16 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         long fileSize = file.length();
         Log.info("Sending " + file.getName());
         Log.debug("Bytes to be sent: " + fileSize);
-        byte[] buffer = new byte[min(toIntExact(fileSize), MAX_SEND_BUFFER_CAPACITY)];
+        byte[] buffer = new byte[MAX_SEND_BUFFER_CAPACITY];
         try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
             int read;
             long remainingSize = fileSize;
-            while (remainingSize > 0) {
-                Log.debug(format("FileSize/left: %s/%s", fileSize, remainingSize));
-                read = bis.read(buffer,0, buffer.length);
-                out.write(copyOf(buffer, read));
-                Log.debug("Bytes sent: " + read);
+            while ((read = bis.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
                 remainingSize -= read;
+                Log.debug(format("FileSize: %d left: %d", fileSize, remainingSize));
             }
+        } finally {
             out.flush();
         }
     }

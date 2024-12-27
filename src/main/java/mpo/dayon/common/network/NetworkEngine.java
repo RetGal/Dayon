@@ -127,6 +127,9 @@ public abstract class NetworkEngine {
                 NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
                 type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
                 Log.debug("Received " + type.name());
+                if (!type.equals(CLIPBOARD_FILES) && !type.equals(PING)) {
+                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
+                }
             } else {
                 type = CLIPBOARD_FILES;
             }
@@ -137,8 +140,6 @@ public abstract class NetworkEngine {
                 if (filesHelper.isDone()) {
                     fireOnClipboardReceived();
                 }
-            } else if (!type.equals(PING)) {
-                throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
             }
         }
     }

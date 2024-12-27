@@ -128,9 +128,9 @@ public class NetworkMouseControlMessage extends NetworkMessage {
 
 	public String toString() {
 		if (isWheel()) {
-			return String.format("[x:%d][y:%s][WHEEL][%d]", x, y, rotations);
+			return String.format("[x:%d][y:%d][WHEEL][%d]", x, y, rotations);
 		}
-		return String.format("[x:%d][y:%s][%s][%s]", x, y, toStringPressed(), toStringButton());
+		return String.format("[x:%d][y:%d][%s][%s]", x, y, toStringPressed(), toStringButton());
 	}
 
 	private String toStringPressed() {

@@ -51,6 +51,6 @@ public class NetworkMouseLocationMessage extends NetworkMessage {
 	}
 
 	public String toString() {
-		return String.format("[x:%d][y:%s]", x, y);
+		return String.format("[x:%d][y:%d]", x, y);
 	}
 }
