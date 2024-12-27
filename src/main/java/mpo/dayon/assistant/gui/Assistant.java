@@ -151,7 +151,7 @@ public class Assistant implements ClipboardOwner {
         if (frame != null) {
             frame.dispose();
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), this);
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, isUpnpEnabled());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);
@@ -169,10 +169,6 @@ public class Assistant implements ClipboardOwner {
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
         counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
-    }
-
-    public NetworkAssistantEngine getNetworkEngine() {
-        return networkEngine;
     }
 
     private AssistantActions createAssistantActions() {

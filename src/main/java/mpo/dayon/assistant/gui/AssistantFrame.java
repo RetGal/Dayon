@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.gui;
 
+import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.gui.common.BaseFrame;
 import mpo.dayon.common.gui.common.FrameType;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.*;
@@ -92,11 +94,11 @@ class AssistantFrame extends BaseFrame {
 
     private char osId;
 
-    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, Assistant assistant) {
+    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, CompletableFuture<Boolean> isUpnpEnabled) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
-        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(assistant.isUpnpEnabled(), assistant.getNetworkEngine()));
+        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(isUpnpEnabled, networkEngine));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.tokenButton = createTokenButton(actions.getTokenAction());
