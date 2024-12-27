@@ -41,7 +41,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private CaptureEngineConfiguration configuration;
 
-    private boolean reconfigured;
+    private volatile boolean reconfigured;
 
     private boolean running;
 
@@ -112,33 +112,37 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         AtomicBoolean reset = new AtomicBoolean(false);
 
         while (running) {
-            synchronized (reconfigurationLOCK) {
-                if (reconfigured) {
-                    // assuming everything has changed (!)
-                    quantization = configuration.getCaptureQuantization();
-                    captureColors = configuration.isCaptureColors();
-                    tick = configuration.getCaptureTick();
-                    start = System.currentTimeMillis();
-                    captureCount = 0;
-                    skipped = 0;
-                    resetPreviousCapture();
-                    // I'm using a flag to tag the capture as a RESET - it is then easier
-                    // to handle the reset message until the assistant without having to
-                    // change anything (e.g., merging mechanism in the compressor engine).
-                    reset.set(true);
-                    Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId, configuration));
-                    reconfigured = false;
+            if (reconfigured) {
+                synchronized (reconfigurationLOCK) {
+                    if (reconfigured) {
+                        // assuming everything has changed (!)
+                        quantization = configuration.getCaptureQuantization();
+                        captureColors = configuration.isCaptureColors();
+                        tick = configuration.getCaptureTick();
+                        start = System.currentTimeMillis();
+                        captureCount = 0;
+                        skipped = 0;
+                        resetPreviousCapture();
+                        // I'm using a flag to tag the capture as a RESET - it is then easier
+                        // to handle the reset message until the assistant without having to
+                        // change anything (e.g., merging mechanism in the compressor engine).
+                        reset.set(true);
+                        Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId, configuration));
+                        reconfigured = false;
+                    }
                 }
             }
-            ++captureCount;
-            ++captureId;
-            final byte[] pixels = captureColors ? captureFactory.captureScreen(null) : captureFactory.captureScreen(quantization);
 
+            final byte[] pixels = captureColors ? captureFactory.captureScreen(null) : captureFactory.captureScreen(quantization);
             if (pixels == null) {
                 // testing purpose (!)
                 Log.info("CaptureFactory has finished!");
                 break;
             }
+
+            ++captureCount;
+            ++captureId;
+
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
             final CaptureTile[] dirty = computeDirtyTiles(pixels);
 
@@ -150,9 +154,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             }
 
             skipped = syncOnTick(start, captureCount, captureId, tick);
-            captureCount += skipped;
-            captureId += skipped;
             if (skipped > 0) {
+                captureCount += skipped;
+                captureId += skipped;
                 tick +=10;
                 Log.info("Increased capture tick to " + tick);
             }

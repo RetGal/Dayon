@@ -122,7 +122,7 @@ public class Capture {
 	public void mergeDirtyTiles(Capture[] olders) {
 		int xskipped = 0;
 		int xmerged = 0;
-		for (final Capture older : olders) {
+		for (Capture older : olders) {
 			doMergeDirtyTiles(older);
 			xskipped += older.getSkipped();
 			xmerged += older.getMerged();
@@ -149,11 +149,10 @@ public class Capture {
 			return; // we're keeping the newest (FULL capture anyway)
 		}
 
+		CaptureTile[] olderDirty = older.getDirty();
 		for (int idx = 0; idx < dirty.length; idx++) {
-			final CaptureTile thisTile = dirty[idx];
-			final CaptureTile olderTile = older.getDirty()[idx];
-			if (olderTile != null && thisTile == null) {
-				dirty[idx] = olderTile;
+			if (olderDirty[idx] != null && dirty[idx] == null) {
+				dirty[idx] = olderDirty[idx];
 			}
 		}
 	}
