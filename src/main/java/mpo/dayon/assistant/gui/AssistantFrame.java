@@ -96,7 +96,7 @@ class AssistantFrame extends BaseFrame {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
-        this.actions.setNetworkConfigurationAction(createConnectionSettingsAction(assistant));
+        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(assistant.isUpnpEnabled(), assistant.getNetworkEngine()));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.tokenButton = createTokenButton(actions.getTokenAction());

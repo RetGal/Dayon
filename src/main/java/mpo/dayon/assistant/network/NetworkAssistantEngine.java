@@ -62,6 +62,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     @Override
     public void reconfigure(NetworkAssistantEngineConfiguration configuration) {
         this.configuration = configuration;
+        fireOnReconfigured(configuration);
     }
 
     public void addListener(NetworkAssistantEngineListener listener) {
@@ -418,5 +419,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private void fireOnFingerprinted(String fingerprints) {
         listeners.getListeners().forEach(listener -> listener.onFingerprinted(fingerprints));
+    }
+
+    private void fireOnReconfigured(NetworkAssistantEngineConfiguration configuration) {
+        listeners.getListeners().forEach(listener -> listener.onReconfigured(configuration));
     }
 }

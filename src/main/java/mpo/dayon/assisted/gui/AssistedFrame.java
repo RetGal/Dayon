@@ -33,7 +33,7 @@ class AssistedFrame extends BaseFrame {
         this.startAction = startAction;
         this.startButton = createButton(this.startAction);
         this.stopButton = createButton(this.stopAction, false);
-        this.connectionSettingsButton = createButton(createConnectionSettingsAction(null));
+        this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction());
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());

@@ -79,7 +79,7 @@ public class Assistant implements ClipboardOwner {
 
     private AssistantConfiguration configuration;
 
-    private final NetworkAssistantEngineConfiguration networkConfiguration;
+    private NetworkAssistantEngineConfiguration networkConfiguration;
 
     private CaptureEngineConfiguration captureEngineConfiguration;
 
@@ -726,18 +726,20 @@ public class Assistant implements ClipboardOwner {
         }
     }
 
-    public boolean isUpnpEnabled() {
-        synchronized (upnpEnabledLOCK) {
-            while (upnpEnabled == null) {
-                try {
-                    upnpEnabledLOCK.wait(5000);
-                } catch (InterruptedException e) {
-                    Log.warn("Swallowed", e);
-                    Thread.currentThread().interrupt();
+    public CompletableFuture<Boolean> isUpnpEnabled() {
+        return CompletableFuture.supplyAsync(() -> {
+            synchronized (upnpEnabledLOCK) {
+                while (upnpEnabled == null) {
+                    try {
+                        upnpEnabledLOCK.wait(5000);
+                    } catch (InterruptedException e) {
+                        Log.warn("Swallowed", e);
+                        Thread.currentThread().interrupt();
+                    }
                 }
+                return upnpEnabled;
             }
-            return upnpEnabled;
-        }
+        });
     }
 
     private void initUpnp() {
@@ -906,5 +908,10 @@ public class Assistant implements ClipboardOwner {
             networkConfiguration.setMonochromePeer(false);
         }
 
+        @Override
+        public void onReconfigured(NetworkAssistantEngineConfiguration networkEngineConfiguration) {
+            networkConfiguration = networkEngineConfiguration;
+            clearToken();
+        }
     }
 }
