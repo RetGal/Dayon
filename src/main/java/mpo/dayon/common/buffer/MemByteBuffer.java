@@ -57,15 +57,6 @@ public class MemByteBuffer extends OutputStream {
 		buffer[count++] = (byte) val;
 	}
 
-	/**
-	 * @see #write(int)
-	 */
-	private void write(int val1, int val2) {
-		ensureCapacity(count + 2);
-		buffer[count++] = (byte) val1;
-		buffer[count++] = (byte) val2;
-	}
-
 	@Override
 	public void write(byte[] buffer) {
 		write(buffer, 0, buffer.length);
