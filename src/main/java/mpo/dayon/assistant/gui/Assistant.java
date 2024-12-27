@@ -16,7 +16,6 @@ import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
-import mpo.dayon.common.monitoring.BigBrother;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
