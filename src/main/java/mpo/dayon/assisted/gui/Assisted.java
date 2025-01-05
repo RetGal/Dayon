@@ -333,25 +333,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return null;
     }
 
-    private void capsOff() {
-        if (Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK)) {
-            Log.info("Caps Lock is on, turning it off");
-            try {
-                Toolkit.getDefaultToolkit().setLockingKeyState(VK_CAPS_LOCK, false);
-            } catch (UnsupportedOperationException e) {
-                final Robot robot;
-                try {
-                    robot = new Robot();
-                } catch (AWTException ex) {
-                    throw new IllegalStateException("Could not initialize the AWT robot!", ex);
-                }
-                robot.keyPress(VK_CAPS_LOCK);
-                robot.delay(10);
-                robot.keyRelease(VK_CAPS_LOCK);
-            }
-        }
-    }
-
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable transferable) {
         Log.debug("Lost clipboard ownership");
@@ -478,6 +459,25 @@ public class Assisted implements Subscriber, ClipboardOwner {
         public void onIOError(IOException error) {
             stop(getNetworkConfiguration().getServerName());
             frame.onDisconnecting();
+        }
+
+        private void capsOff() {
+            if (Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK)) {
+                Log.info("Caps Lock is on, turning it off");
+                try {
+                    Toolkit.getDefaultToolkit().setLockingKeyState(VK_CAPS_LOCK, false);
+                } catch (UnsupportedOperationException e) {
+                    final Robot robot;
+                    try {
+                        robot = new Robot();
+                    } catch (AWTException ex) {
+                        throw new IllegalStateException("Could not initialize the AWT robot!", ex);
+                    }
+                    robot.keyPress(VK_CAPS_LOCK);
+                    robot.delay(10);
+                    robot.keyRelease(VK_CAPS_LOCK);
+                }
+            }
         }
     }
 }
