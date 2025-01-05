@@ -27,6 +27,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.version.Version;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
+import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
@@ -138,13 +139,24 @@ public abstract class BaseFrame extends JFrame {
         add(statusBar, BorderLayout.SOUTH);
         this.statusBar = statusBar;
         updateInputLocale();
-        new Timer(5000, e -> updateInputLocale()).start();
+        updateCapsLockState();
+        new Timer(3000, e -> {
+            updateInputLocale();
+            updateCapsLockState();
+        }).start();
     }
 
     private void updateInputLocale() {
         String currentKeyboardLayout = InputContext.getInstance().getLocale().toString();
         if (!currentKeyboardLayout.equals(statusBar.getKeyboardLayout())) {
             statusBar.setKeyboardLayout(currentKeyboardLayout);
+        }
+    }
+
+    private void updateCapsLockState() {
+        boolean currentCapsLockState = Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK);
+        if (currentCapsLockState != statusBar.isCapsLockOn()) {
+            statusBar.setCapsLockIndicator(currentCapsLockState);
         }
     }
 

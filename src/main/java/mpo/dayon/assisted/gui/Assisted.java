@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
 import static mpo.dayon.common.babylon.Babylon.translate;
@@ -332,6 +333,25 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return null;
     }
 
+    private void capsOff() {
+        if (Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK)) {
+            Log.info("Caps Lock is on, turning it off");
+            try {
+                Toolkit.getDefaultToolkit().setLockingKeyState(VK_CAPS_LOCK, false);
+            } catch (UnsupportedOperationException e) {
+                final Robot robot;
+                try {
+                    robot = new Robot();
+                } catch (AWTException ex) {
+                    throw new IllegalStateException("Could not initialize the AWT robot!", ex);
+                }
+                robot.keyPress(VK_CAPS_LOCK);
+                robot.delay(10);
+                robot.keyRelease(VK_CAPS_LOCK);
+            }
+        }
+    }
+
     @Override
     public void lostOwnership(Clipboard clipboard, Transferable transferable) {
         Log.debug("Lost clipboard ownership");
@@ -422,6 +442,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onConnecting(String serverName, int serverPort) {
+            capsOff();
             frame.onConnecting(serverName, serverPort);
         }
 

@@ -19,6 +19,7 @@ public class StatusBar extends JPanel {
     private final JLabel message = new JLabel();
     private final JLabel sessionDuration = new JLabel("00:00:00");
     private final JLabel keyboardLayout = new JLabel();
+    private final JLabel capsLockIndicator = new JLabel();
 
     public StatusBar() {
         setLayout(new BoxLayout(this, LINE_AXIS));
@@ -27,6 +28,7 @@ public class StatusBar extends JPanel {
         add(Box.createHorizontalGlue());
         addSeparator();
         addKeyboardLayout();
+        addCapsLockIndicator();
     }
 
     public void clearMessage() {
@@ -52,6 +54,19 @@ public class StatusBar extends JPanel {
 
     private void addKeyboardLayout() {
         add(keyboardLayout);
+    }
+
+    private void addCapsLockIndicator() {
+        add(capsLockIndicator);
+    }
+
+    public boolean isCapsLockOn() {
+        return !capsLockIndicator.getText().isBlank();
+    }
+
+    public void setCapsLockIndicator(boolean isCapsLockOn) {
+        capsLockIndicator.setText(isCapsLockOn ? " ⛰ " : "");
+        capsLockIndicator.setToolTipText("Caps Lock");
     }
 
     public <T> void addCounter(Counter<T> counter, int width) {

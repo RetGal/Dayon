@@ -80,7 +80,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 }
                 Log.info("Port " + configuration.getPort() + " is reachable from the outside");
             } catch (IOException e) {
-                Log.error("Port " + configuration.getPort() + " is not reachable from the outside");
+                Log.warn("Port " + configuration.getPort() + " is not reachable from the outside");
                 return false;
             }
         }
