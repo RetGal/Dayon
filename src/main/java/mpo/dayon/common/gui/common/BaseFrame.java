@@ -385,9 +385,8 @@ public abstract class BaseFrame extends JFrame {
         tokenServerLbl.setFont(titleFont);
         panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
 
-        final JPanel tokenPanel = new JPanel(new GridLayout(3, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-
+        final JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
+        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
 
         final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
         defaultTokenRadio.setActionCommand("default");

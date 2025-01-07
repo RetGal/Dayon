@@ -32,10 +32,7 @@ public final class Babylon {
             if (arguments != null && arguments.length > 0) {
                 value = formatValue(locale, value, tag, arguments);
             }
-            if (value != null) {
-                return value.trim();
-            }
-            return null;
+            return value != null ? value.trim() : null;
         }
     }
 
