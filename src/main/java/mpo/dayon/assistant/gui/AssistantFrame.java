@@ -237,6 +237,14 @@ class AssistantFrame extends BaseFrame {
             public void focusLost(FocusEvent ev) {
                 if (controlActivated.get()) {
                     fireOnKeyReleased(-1, Character.MIN_VALUE);
+                    if (windowsKeyActivated.get()) {
+                        windowsKeyToggleButton.setSelected(false);
+                        windowsKeyActivated.set(!windowsKeyActivated.get());
+                    }
+                    if (ctrlKeyActivated.get()) {
+                        ctrlKeyToggleButton.setSelected(false);
+                        ctrlKeyActivated.set(!ctrlKeyActivated.get());
+                    }
                 }
             }
         });
