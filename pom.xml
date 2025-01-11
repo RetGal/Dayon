@@ -17,7 +17,7 @@
             <email>reto@galante.ch</email>
         </developer>
     </developers>
-    <inceptionYear>2016-2024</inceptionYear>
+    <inceptionYear>2016-2025</inceptionYear>
     <licenses>
         <license>
             <name>GPL-3</name>
@@ -33,6 +33,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.10</xz.version>
         <waifpunp.version>1.3.1</waifpunp.version>
+        <makeself.version>1.8.4</makeself.version>
         <junit.jupiter.version>5.11.4</junit.jupiter.version>
         <mockito.core.version>5.15.2</mockito.core.version>
     </properties>
@@ -529,7 +530,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.8.4</version>
+                        <version>${makeself.version}</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assisted.sh</fileName>
@@ -598,7 +599,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.8.4</version>
+                        <version>${makeself.version}</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>assistant.sh</fileName>
@@ -655,7 +656,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.8.4</version>
+                        <version>${makeself.version}</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>Assisted.command</fileName>
@@ -715,7 +716,7 @@
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
-                        <version>1.8.4</version>
+                        <version>${makeself.version}</version>
                         <configuration>
                             <archiveDir>../dist/</archiveDir>
                             <fileName>Assistant.command</fileName>
