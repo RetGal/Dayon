@@ -176,6 +176,7 @@
                                                 <exclude>META-INF/**</exclude>
                                                 <exclude>com/sun/jna/aix*/**</exclude>
                                                 <exclude>com/sun/jna/darwin*/**</exclude>
+                                                <exclude>com/sun/jna/dragonfly*/**</exclude>
                                                 <exclude>com/sun/jna/freebsd*/**</exclude>
                                                 <exclude>com/sun/jna/linux*/**</exclude>
                                                 <exclude>com/sun/jna/openbsd*/**</exclude>
