@@ -49,8 +49,8 @@
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipfileset src="${dir.binfile}/lib/xz-1.10.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.2/WaifUPnP-1.3.2.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/jna-5.10.0.jar" excludes="META-INF/**,com/sun/jna/aix*/**,com/sun/jna/darwin*/**,com/sun/jna/freebsd*/**,com/sun/jna/linux*/**,com/sun/jna/openbsd*/**,com/sun/jna/sunos*/**"/>
-			<zipfileset src="${dir.binfile}/lib/jna-platform-5.10.0.jar" excludes="META-INF/**,com/sun/jna/platform/mac/**,com/sun/jna/platform/linux/**,com/sun/jna/platform/unix/**,com/sun/jna/platform/*$X11*,com/sun/jna/platform/*$Mac*,com/sun/jna/platform/Window*,com/sun/jna/platform/win32/COM/**,com/sun/jna/platform/win32/Crypt*,com/sun/jna/platform/win32/D*,com/sun/jna/platform/win32/G*,com/sun/jna/platform/win32/Net*,com/sun/jna/platform/win32/HighLevel*,com/sun/jna/platform/win32/IPHlp*,com/sun/jna/platform/win32/LM*,com/sun/jna/platform/win32/LowLevel*,com/sun/jna/platform/win32/O*"/>
+            <zipfileset src="${dir.binfile}/lib/jna-5.16.0.jar" excludes="META-INF/**,com/sun/jna/aix*/**,com/sun/jna/darwin*/**,com/sun/jna/dragonfly*/**,com/sun/jna/freebsd*/**,com/sun/jna/linux*/**,com/sun/jna/openbsd*/**,com/sun/jna/sunos*/**"/>
+			<zipfileset src="${dir.binfile}/lib/jna-platform-5.16.0.jar" excludes="META-INF/**,com/sun/jna/platform/mac/**,com/sun/jna/platform/linux/**,com/sun/jna/platform/unix/**,com/sun/jna/platform/*$X11*,com/sun/jna/platform/*$Mac*,com/sun/jna/platform/Window*,com/sun/jna/platform/win32/COM/**,com/sun/jna/platform/win32/Crypt*,com/sun/jna/platform/win32/D*,com/sun/jna/platform/win32/G*,com/sun/jna/platform/win32/Net*,com/sun/jna/platform/win32/HighLevel*,com/sun/jna/platform/win32/IPHlp*,com/sun/jna/platform/win32/LM*,com/sun/jna/platform/win32/LowLevel*,com/sun/jna/platform/win32/O*"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
