@@ -39,7 +39,6 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
 import static mpo.dayon.common.log.LogAppender.cleanup;
 import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
-import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -183,8 +182,8 @@ public abstract class BaseFrame extends JFrame {
             toolBar.add(sixSeven, BorderLayout.EAST);
         } else {
             toolBar.add(FINGERPRINTS);
-            toolBar.add(addAction(createShowInfoAction()));
-            toolBar.add(addAction(createShowHelpAction()));
+            //toolBar.add(addAction(createShowInfoAction()));
+            //toolBar.add(addAction(createShowHelpAction()));
             toolBar.add(addAction(createExitAction()));
         }
         add(toolBar, BorderLayout.NORTH);
@@ -412,7 +411,7 @@ public abstract class BaseFrame extends JFrame {
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
                 final JComboBox<String> customTokenServersSelection = new JComboBox<>(tokenServerUrlsFromYaml);
-                CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
+                CompletableFuture<Boolean> upnpActive = networkAssistedEngine.isUpnpEnabled();
 
                 JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, customTokenServersSelection, upnpActive);
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
@@ -421,7 +420,7 @@ public abstract class BaseFrame extends JFrame {
                 if (ok) {
                     String newTokenServerUrl = getSelectedTokenServerUrl(tokenRadioGroup, customTokenTextField, customTokenServersSelection);
                     statusBar.setTokenserverIndicator(newTokenServerUrl.isBlank() && tokenServerUrlsFromYaml.length == 0);
-                    applyNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistantEngine, networkAssistedEngine);
+                    applyNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, null, networkAssistedEngine);
                 }
             }
         };
@@ -456,8 +455,6 @@ public abstract class BaseFrame extends JFrame {
         String currentTokenServer = getCurrentTokenServer();
         if (ASSISTED.equals(frameType)) {
             gridy = addAssistedConfiguration(panel, gridy, titleFont, addressTextField, portNumberTextField, autoConnectCheckBox);
-        } else {
-            gridy = addAssistantConfiguration(panel, gridy, titleFont, portNumberTextField, autoConnectCheckBox, upnpActive);
         }
         if (customTokenServersSelection.getItemCount() > 1) {
             return addPreconfiguredTokenServerPanel(panel, gridy, titleFont, customTokenServersSelection);
@@ -466,9 +463,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String getCurrentTokenServer() {
-        if (ASSISTED.equals(frameType)) {
-            return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
-        }
+        return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
     }
 
     private static int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
