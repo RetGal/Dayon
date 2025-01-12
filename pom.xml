@@ -93,7 +93,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>clean-package</id>
@@ -117,7 +117,7 @@
                     <plugin>
                         <groupId>com.aerse.maven</groupId>
                         <artifactId>deb-maven-plugin</artifactId>
-                        <version>1.16</version>
+                        <version>1.19</version>
                         <executions>
                             <execution>
                                 <id>create-deb</id>
@@ -132,7 +132,7 @@
                             <unixGroupId>staff</unixGroupId>
                             <installDir>/usr/bin/</installDir>
                             <osDependencies>
-                                <default-jre>>=2:1.8-56</default-jre>
+                                <default-jre>>=2:1.11</default-jre>
                             </osDependencies>
                             <javaServiceWrapper>false</javaServiceWrapper>
                             <generateVersion>false</generateVersion>
@@ -342,7 +342,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>
