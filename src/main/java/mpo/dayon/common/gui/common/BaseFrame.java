@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
@@ -32,7 +31,6 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
