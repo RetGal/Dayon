@@ -94,7 +94,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <build>
-                <finalName>dayon</finalName>
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -285,10 +284,6 @@
                 <finalName>dayon</finalName>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.3</version>
-                    </plugin>
-                    <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
                         <version>3.5.0</version>
@@ -315,10 +310,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>3.14.0</version>
-                        <configuration>
-                            <compilerArgument>-Xlint:all</compilerArgument>
-                        </configuration>
+                        <version>3.14.1</version>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -343,7 +335,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.6.0</version>
+                        <version>3.6.1</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -351,7 +343,7 @@
                                     <goal>shade</goal>
                                 </goals>
                                 <configuration>
-                                    <minimizeJar>true</minimizeJar>
+                                    <minimizeJar>false</minimizeJar>
                                     <filters>
                                         <filter>
                                             <artifact>net.java.dev.jna:jna</artifact>
