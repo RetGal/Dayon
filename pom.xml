@@ -7,7 +7,7 @@
     <name>Dayon!</name>
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
-    <artifactId>fensterkitt</artifactId>
+    <artifactId>dayon</artifactId>
     <version>15.0.2</version>
     <description>cross platform remote desktop solution</description>
     <developers>
@@ -37,14 +37,6 @@
         <junit.jupiter.version>5.11.4</junit.jupiter.version>
         <mockito.core.version>5.15.2</mockito.core.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>data-local</id>
-            <name>data</name>
-            <url>file://${project.basedir}/lib</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -88,7 +80,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>clean-package</id>
@@ -112,7 +104,7 @@
                     <plugin>
                         <groupId>com.aerse.maven</groupId>
                         <artifactId>deb-maven-plugin</artifactId>
-                        <version>1.16</version>
+                        <version>1.19</version>
                         <executions>
                             <execution>
                                 <id>create-deb</id>
@@ -127,7 +119,7 @@
                             <unixGroupId>staff</unixGroupId>
                             <installDir>/usr/bin/</installDir>
                             <osDependencies>
-                                <default-jre>>=2:1.8-56</default-jre>
+                                <default-jre>>=2:1.11</default-jre>
                             </osDependencies>
                             <javaServiceWrapper>false</javaServiceWrapper>
                             <generateVersion>false</generateVersion>
@@ -170,7 +162,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-clean-plugin</artifactId>
-                        <version>3.3.2</version>
+                        <version>3.4.0</version>
                         <executions>
                             <execution>
                                 <id>clean-package</id>
@@ -196,14 +188,13 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>3.12.1</version>
                         <configuration>
-                            <source>${maven.compiler.source}</source>
-                            <target>${maven.compiler.target}</target>
+                            <release>${maven.compiler.release}</release>
                         </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.3.0</version>
+                        <version>3.4.2</version>
                         <configuration>
                             <archive>
                                 <addMavenDescriptor>false</addMavenDescriptor>
@@ -223,7 +214,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.5.2</version>
+                        <version>3.6.0</version>
                         <executions>
                             <execution>
                                 <phase>package</phase>
@@ -341,7 +332,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.5.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>

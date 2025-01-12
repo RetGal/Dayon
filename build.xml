@@ -11,7 +11,7 @@
 	<property name="dir.dist" value="${dir.binfile}/dist"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.release" value="11"/>
-	<property name="version" value="15.0.1"/>
+	<property name="version" value="15.0.2"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
