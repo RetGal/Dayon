@@ -198,27 +198,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             String tokenString = connectionSettingsDialog.getToken().trim();
             if (!tokenString.isEmpty() && !tokenString.equals(this.token)) {
                 this.token = tokenString;
-                final Cursor cursor = frame.getCursor();
-                frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-                String connectionParams = null;
-                try {
-                    Log.debug("Resolving token using: " + tokenServerUrl);
-                    connectionParams = resolveToken(tokenServerUrl, token);
-                } catch (IOException | InterruptedException ex) {
-                    Log.warn("Could not resolve token " + token);
-                    if (ex instanceof InterruptedException) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                Log.debug("Connection params " + connectionParams);
-                newConfiguration = extractConfiguration(connectionParams);
-                if (newConfiguration == null) {
-                    // expired or wrong token server
-                    Log.warn("Invalid token " + token);
-                    JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
-                    this.token = null;
-                }
-                frame.setCursor(cursor);
+                newConfiguration = resolveNetworkConfigurationFromToken();
             } else {
                 newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
                         Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
@@ -234,6 +214,33 @@ public class Assisted implements Subscriber, ClipboardOwner {
             }
             Log.info("NetworkConfiguration " + networkConfiguration);
         });
+    }
+
+    private NetworkAssistedEngineConfiguration resolveNetworkConfigurationFromToken() {
+        final Cursor cursor = frame.getCursor();
+        frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        final NetworkAssistedEngineConfiguration newConfiguration;
+        String connectionParams = null;
+        try {
+            Log.debug("Resolving token using: " + tokenServerUrl);
+            connectionParams = resolveToken(tokenServerUrl, token);
+        } catch (IOException | InterruptedException ex) {
+            Log.warn("Could not resolve token " + token);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        } finally {
+            frame.setCursor(cursor);
+        }
+        if (connectionParams == null || connectionParams.trim().isEmpty()) {
+            // expired or wrong token server
+            Log.warn("Invalid token " + token);
+            JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+            this.token = null;
+        }
+        newConfiguration = extractConfiguration(connectionParams);
+        Log.debug("Connection params " + connectionParams);
+        return newConfiguration;
     }
 
     private Action createToggleMultiScreenAction() {
