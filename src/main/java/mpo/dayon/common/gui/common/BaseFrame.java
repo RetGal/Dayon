@@ -17,8 +17,6 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import mpo.dayon.assistant.network.NetworkAssistantEngine;
-import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
@@ -288,14 +286,10 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
-        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null, networkEngine);
+        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  networkEngine);
     }
 
-    protected Action createAssistantConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(isUpnpEnabled, networkEngine, null);
-    }
-
-    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
+    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistedEngine networkAssistedEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -315,8 +309,7 @@ public abstract class BaseFrame extends JFrame {
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    updateSystemProperty(newTokenServerUrl);
-                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
                 }
             }
         };
