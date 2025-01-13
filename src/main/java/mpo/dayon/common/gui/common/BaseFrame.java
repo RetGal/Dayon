@@ -17,6 +17,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -27,7 +28,6 @@ import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
-import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
@@ -99,7 +99,6 @@ public abstract class BaseFrame extends JFrame {
     protected void setFrameType(FrameType frameType) {
         this.frameType = frameType;
         setupWindow();
-        setTitle(format("Dayon! (%s) %s", translate(frameType.getPrefix()), Version.get()));
     }
 
     private void setupWindow() {
@@ -110,6 +109,7 @@ public abstract class BaseFrame extends JFrame {
         this.position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         this.setSize(dimension.width, dimension.height);
+        setTitle(format("Fensterkitt Support App %s", Version.get()));
         this.setLocation(position.getX(), position.getY());
     }
 
@@ -120,6 +120,8 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
+        //toolBar.addAction(createShowInfoAction(), alignmentY);
+        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -284,14 +286,10 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
-        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null, networkEngine);
+        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  networkEngine);
     }
 
-    protected Action createAssistantConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(isUpnpEnabled, networkEngine, null);
-    }
-
-    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
+    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistedEngine networkAssistedEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -310,15 +308,8 @@ public abstract class BaseFrame extends JFrame {
 
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
-                            isValidUrl(customTokenTextField.getText()) ? customTokenTextField.getText() : "";
-                    updateSystemProperty(newTokenServerUrl);
-                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    if (ASSISTED.equals(frameType)) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
-                    } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkAssistantEngine);
-                    }
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
                 }
             }
         };
@@ -356,44 +347,6 @@ public abstract class BaseFrame extends JFrame {
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
         }
 
-        final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-
-        final JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-
-        final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-        defaultTokenRadio.setActionCommand("default");
-        final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(CUSTOM);
-        tokenRadioGroup.add(defaultTokenRadio);
-        tokenRadioGroup.add(customTokenRadio);
-        boolean customTextFieldEditable = false;
-        if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-            currentTokenServer = "";
-            defaultTokenRadio.setSelected(true);
-        } else {
-            customTokenRadio.setSelected(true);
-            customTextFieldEditable = true;
-        }
-
-        final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
-        defaultTokenTextField.setEditable(false);
-        defaultTokenTextField.setFocusable(false);
-        customTokenTextField.setText(currentTokenServer);
-        customTokenTextField.setEditable(customTextFieldEditable);
-
-        defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
-        customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
-
-        tokenPanel.add(defaultTokenRadio);
-        tokenPanel.add(defaultTokenTextField);
-
-        tokenPanel.add(customTokenRadio);
-        tokenPanel.add(customTokenTextField);
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
-
         return panel;
     }
 
@@ -429,18 +382,6 @@ public abstract class BaseFrame extends JFrame {
                 addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
         if (!newConfig.equals(new NetworkAssistedEngineConfiguration())) {
-            newConfig.persist();
-            networkEngine.reconfigure(newConfig);
-        }
-    }
-
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
-        final NetworkAssistantEngineConfiguration oldConfig = new NetworkAssistantEngineConfiguration();
-        final NetworkAssistantEngineConfiguration newConfig = new NetworkAssistantEngineConfiguration(
-                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
-
-        if (!newConfig.equals(oldConfig)) {
-            NetworkAssistantEngine.manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
             newConfig.persist();
             networkEngine.reconfigure(newConfig);
         }
@@ -660,4 +601,8 @@ public abstract class BaseFrame extends JFrame {
             browse(format(CHAT_URL, fingerprints.getText().trim().replace(":", "-")));
         }
     }
+
+    public void onClipboardSending() {}
+
+    public void onClipboardSent() {}
 }
