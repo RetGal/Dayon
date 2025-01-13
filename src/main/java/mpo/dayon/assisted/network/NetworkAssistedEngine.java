@@ -6,7 +6,7 @@ import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngineListener;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.concurrent.RunnableEx;
-import mpo.dayon.common.configuration.Configurable;
+import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
@@ -30,7 +30,7 @@ import java.security.cert.CertificateEncodingException;
 import static java.lang.String.format;
 
 public class NetworkAssistedEngine extends NetworkEngine
-        implements Configurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
+        implements ReConfigurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
     private NetworkAssistedEngineConfiguration configuration;
 
     private final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler;
@@ -86,6 +86,12 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void configure(NetworkAssistedEngineConfiguration configuration) {
         Log.debug(format("New configuration %s", configuration));
         this.configuration = configuration;
+    }
+
+    @Override
+    public void reconfigure(NetworkAssistedEngineConfiguration configuration) {
+        this.configuration = configuration;
+        fireOnReconfigured(configuration);
     }
 
     public void addListener(NetworkAssistedEngineListener listener) {
@@ -285,6 +291,10 @@ public class NetworkAssistedEngine extends NetworkEngine
     @Override
     protected void fireOnIOError(IOException ex) {
         listeners.getListeners().forEach(listener -> listener.onIOError(ex));
+    }
+
+    private void fireOnReconfigured(NetworkAssistedEngineConfiguration configuration) {
+        listeners.getListeners().forEach(listener -> listener.onReconfigured(configuration));
     }
 
 }

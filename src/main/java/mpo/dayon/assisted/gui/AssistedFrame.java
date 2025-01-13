@@ -1,12 +1,13 @@
 package mpo.dayon.assisted.gui;
 
+import mpo.dayon.assisted.network.NetworkAssistedEngine;
+import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.gui.common.BaseFrame;
 import mpo.dayon.common.gui.common.FrameType;
 import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
-import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.log.Log;
 
 import javax.swing.*;
@@ -27,13 +28,13 @@ class AssistedFrame extends BaseFrame {
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
 
-    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction) {
+    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine) {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
         this.startAction = startAction;
         this.startButton = createButton(this.startAction);
         this.stopButton = createButton(this.stopAction, false);
-        this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction());
+        this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction(networkEngine));
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());

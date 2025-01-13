@@ -59,7 +59,7 @@ public class Assistant implements ClipboardOwner {
 
     private static final String PORT_PARAM = "?port=%s";
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
-    private final String tokenServerUrl;
+    private String tokenServerUrl;
 
     private final NetworkAssistantEngine networkEngine;
 
@@ -105,18 +105,7 @@ public class Assistant implements ClipboardOwner {
 
     public Assistant(String tokenServerUrl, String language) {
         networkConfiguration = new NetworkAssistantEngineConfiguration();
-
-        if (tokenServerUrl != null) {
-            this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
-        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
-            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAM;
-        } else {
-            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
-        }
-
-        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
-        }
+        updateTokenServerUrl(tokenServerUrl);
 
         this.configuration = new AssistantConfiguration();
         // has not been overridden by command line
@@ -144,6 +133,22 @@ public class Assistant implements ClipboardOwner {
             Log.warn("Could not set the [" + lnf + "] L&F!", ex);
         }
         initGui();
+    }
+
+    private void updateTokenServerUrl(String tokenServerUrl) {
+        if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
+            this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
+        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAM;
+        } else {
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
+        }
+
+        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl.substring(0, this.tokenServerUrl.indexOf('?')));
+        } else {
+            System.clearProperty("dayon.custom.tokenServer");
+        }
     }
 
     private void initGui() {
@@ -582,6 +587,7 @@ public class Assistant implements ClipboardOwner {
             }
 
             private void requestToken() throws IOException, InterruptedException {
+                Log.debug("Requesting token using: " + tokenServerUrl);
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
                 @java.lang.SuppressWarnings("squid:S2095")
                 HttpClient client = HttpClient.newBuilder().build();
@@ -907,6 +913,7 @@ public class Assistant implements ClipboardOwner {
         @Override
         public void onReconfigured(NetworkAssistantEngineConfiguration networkEngineConfiguration) {
             networkConfiguration = networkEngineConfiguration;
+            updateTokenServerUrl(networkConfiguration.getTokenServerUrl());
             clearToken();
         }
     }

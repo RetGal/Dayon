@@ -20,6 +20,7 @@ import javax.swing.border.EmptyBorder;
 import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.assistant.network.NetworkAssistantEngineConfiguration;
+import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
@@ -288,15 +289,15 @@ public abstract class BaseFrame extends JFrame {
         return showSystemInfo;
     }
 
-    protected Action createAssistedConnectionSettingsAction() {
-        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null);
+    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
+        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null, networkEngine);
     }
 
     protected Action createAssistantConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(isUpnpEnabled, networkEngine);
+        return createConnectionSettingsAction(isUpnpEnabled, networkEngine, null);
     }
 
-    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
+    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -316,11 +317,10 @@ public abstract class BaseFrame extends JFrame {
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    updateSystemProperty(newTokenServerUrl);
                     if (ASSISTED.equals(frameType)) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl);
+                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
                     } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkEngine);
+                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkAssistantEngine);
                     }
                 }
             }
@@ -449,12 +449,13 @@ public abstract class BaseFrame extends JFrame {
         return null;
     }
 
-    private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl) {
+    private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl, NetworkAssistedEngine networkEngine) {
         final NetworkAssistedEngineConfiguration newConfig = new NetworkAssistedEngineConfiguration(
                 addressTextField.getText().trim(), Integer.parseInt(portNumberTextField.getText()), autoConnectCheckBox.isSelected(), newTokenServerUrl);
 
         if (!newConfig.equals(new NetworkAssistedEngineConfiguration())) {
             newConfig.persist();
+            networkEngine.reconfigure(newConfig);
         }
     }
 
@@ -468,14 +469,6 @@ public abstract class BaseFrame extends JFrame {
             newConfig.persist();
             networkEngine.reconfigure(newConfig);
         }
-    }
-
-    private static void updateSystemProperty(String newTokenServerUrl) {
-        if (newTokenServerUrl.isEmpty()) {
-            System.clearProperty("dayon.custom.tokenServer");
-            return;
-        }
-        System.setProperty("dayon.custom.tokenServer", newTokenServerUrl);
     }
 
     private static GridBagConstraints createGridBagConstraints(int gridy) {

@@ -46,7 +46,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private static final String TOKEN_PARAM = "?token=%s";
 
-    private final String tokenServerUrl;
+    private String tokenServerUrl;
 
     private AssistedFrame frame;
 
@@ -68,18 +68,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     public Assisted(String tokenServerUrl) {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
-
-        if (tokenServerUrl != null) {
-            this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
-        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
-            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAM;
-        } else {
-            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
-        }
-
-        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl);
-        }
+        updateTokenServerUrl(tokenServerUrl);
 
         final String lnf = getDefaultLookAndFeel();
         try {
@@ -89,18 +78,26 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
     }
 
+    private void updateTokenServerUrl(String tokenServerUrl) {
+        if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
+            this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
+        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAM;
+        } else {
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
+        }
+
+        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
+            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl.substring(0, this.tokenServerUrl.indexOf('?')));
+        } else {
+            System.clearProperty("dayon.custom.tokenServer");
+        }
+    }
+
     /**
      * Returns true if we have a valid configuration
      */
     public boolean start(String serverName, String portNumber, boolean autoConnect) {
-        if (frame == null) {
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction());
-            FatalErrorHandler.attachFrame(frame);
-            KeyboardErrorHandler.attachFrame(frame);
-            frame.setVisible(true);
-            Log.info("Assisted start");
-        }
-
         // these should not block as they are called from the network incoming message thread (!)
         final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
         final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
@@ -112,6 +109,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler,
                 controlHandler, clipboardRequestHandler, screenshotRequestHandler, this);
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
+
+        if (frame == null) {
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction(), networkEngine);
+            FatalErrorHandler.attachFrame(frame);
+            KeyboardErrorHandler.attachFrame(frame);
+            frame.setVisible(true);
+            Log.info("Assisted start");
+        }
 
         return configureConnection(serverName, portNumber, autoConnect);
     }
@@ -191,12 +196,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         CompletableFuture.supplyAsync(() -> {
             final NetworkAssistedEngineConfiguration newConfiguration;
             String tokenString = connectionSettingsDialog.getToken().trim();
-            if (!tokenString.isEmpty()) {
+            if (!tokenString.isEmpty() && !tokenString.equals(this.token)) {
                 this.token = tokenString;
                 final Cursor cursor = frame.getCursor();
                 frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
                 String connectionParams = null;
                 try {
+                    Log.debug("Resolving token using: " + tokenServerUrl);
                     connectionParams = resolveToken(tokenServerUrl, token);
                 } catch (IOException | InterruptedException ex) {
                     Log.warn("Could not resolve token " + token);
@@ -206,10 +212,17 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 }
                 Log.debug("Connection params " + connectionParams);
                 newConfiguration = extractConfiguration(connectionParams);
+                if (newConfiguration == null) {
+                    // expired or wrong token server
+                    Log.warn("Invalid token " + token);
+                    JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+                    this.token = null;
+                }
                 frame.setCursor(cursor);
             } else {
                 newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
                         Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
+                this.token = null;
             }
             return newConfiguration;
         }).thenAcceptAsync(newConfiguration -> {
@@ -459,6 +472,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
         public void onIOError(IOException error) {
             stop(getNetworkConfiguration().getServerName());
             frame.onDisconnecting();
+        }
+
+        @Override
+        public void onReconfigured(NetworkAssistedEngineConfiguration configuration) {
+            networkConfiguration = configuration;
+            updateTokenServerUrl(configuration.getTokenServerUrl());
         }
 
         private void capsOff() {

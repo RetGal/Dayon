@@ -41,4 +41,6 @@ public interface NetworkAssistedEngineListener extends Listener {
 	 */
 	void onIOError(IOException error);
 
+	void onReconfigured(NetworkAssistedEngineConfiguration configuration);
+
 }
