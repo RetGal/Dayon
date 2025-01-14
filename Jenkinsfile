@@ -12,7 +12,7 @@ pipeline {
         timeout(time: 10, unit: 'MINUTES')
         timestamps()  // Timestamper Plugin
         //disableConcurrentBuilds()
-        skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
+        //skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
     }
     environment {
         COMPANY = 'Puzzle ITC'
