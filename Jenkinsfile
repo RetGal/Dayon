@@ -3,16 +3,16 @@ pipeline {
         label 'docker'
     }
     options {
-        buildDiscarder(logRotator(numToKeepStr: '5'))
-        timeout(time: 10, unit: 'MINUTES')
-        timestamps()  // Timestamper Plugin
-        disableConcurrentBuilds()
-        skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
         throttleJobProperty(
             categories: ['multiBranch'],
             throttleEnabled: true,
             throttleOption: 'category'
         )
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timeout(time: 10, unit: 'MINUTES')
+        timestamps()  // Timestamper Plugin
+        disableConcurrentBuilds()
+        skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
     }
     environment {
         COMPANY = 'Puzzle ITC'
