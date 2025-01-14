@@ -6,6 +6,11 @@ pipeline {
         timestamps()  // Timestamper Plugin
         disableConcurrentBuilds()
         skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
+        throttleJobProperty(
+            categories: ['multiBranch'],
+            throttleEnabled: true,
+            throttleOption: 'category'
+        )
     }
     environment {
         COMPANY = 'Puzzle ITC'
