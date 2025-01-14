@@ -22,8 +22,6 @@ public final class ScreenUtilities {
 
     private static Rectangle sharedScreenSize;
 
-    private static int[] rgb;
-
     private static byte[] gray;
 
     private static boolean shareAllScreens;
@@ -35,9 +33,7 @@ public final class ScreenUtilities {
         NUMBER_OF_SCREENS = countScreens();
         DEFAULT_SIZE = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds();
         COMBINED_SCREEN_SIZE = getCombinedScreenSize();
-        sharedScreenSize = shareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
-        rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-        gray = new byte[rgb.length];
+        init();
         try {
             ROBOT = new Robot();
         } catch (AWTException ex) {
@@ -45,13 +41,14 @@ public final class ScreenUtilities {
         }
     }
 
-    public static void setShareAllScreens(boolean doShareAllScreens) {
-        synchronized (ScreenUtilities.class) {
-            shareAllScreens = doShareAllScreens;
-            sharedScreenSize = doShareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
-            rgb = new int[sharedScreenSize.height * sharedScreenSize.width];
-            gray = new byte[rgb.length];
-        }
+    public static synchronized  void setShareAllScreens(boolean doShareAllScreens) {
+        shareAllScreens = doShareAllScreens;
+        init();
+    }
+
+    private static void init() {
+        sharedScreenSize = shareAllScreens ? COMBINED_SCREEN_SIZE : DEFAULT_SIZE;
+        gray = new byte[sharedScreenSize.height * sharedScreenSize.width];
     }
 
     public static Rectangle getSharedScreenSize() {
@@ -68,8 +65,9 @@ public final class ScreenUtilities {
 
     private static Rectangle getCombinedScreenSize() {
         Rectangle fullSize = new Rectangle();
-        GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        stream(environment.getScreenDevices()).flatMap(gd -> stream(gd.getConfigurations())).forEach(graphicsConfiguration -> Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize));
+        stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .flatMap(gd -> stream(gd.getConfigurations()))
+                .forEach(graphicsConfiguration -> Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize));
         return fullSize.getBounds();
     }
 

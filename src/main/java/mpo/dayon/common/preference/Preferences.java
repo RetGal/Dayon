@@ -57,22 +57,12 @@ public final class Preferences {
         }
 
         try {
-            final Preferences xpreferences;
             final File file = getOrCreatePreferencesFile();
-
-            if (file.exists()) {
-                Log.info("Preferences (existing) [" + file.getAbsolutePath() + "]");
-            } else {
-                Log.info("Preferences (new) [" + file.getAbsolutePath() + "]");
-            }
-            xpreferences = new Preferences(file);
-            setupPersister(xpreferences);
-            preferences = xpreferences;
-            return preferences;
+            Log.info("Preferences (" + (file.exists() ? "existing" : "new") + ") [" + file.getAbsolutePath() + "]");
+            return preferences = setupPersister(new Preferences(file));
         } catch (IOException ex) {
             Log.warn("Preferences get/create error!", ex);
-            preferences = NULL;
-            return preferences;
+            return preferences = NULL;
         }
     }
 
@@ -180,11 +170,11 @@ public final class Preferences {
 
     /**
      * Some components are possibly sending a lot of updates (e.g., main frame
-     * resize) and it makes no sense to write every changes as we want the last
+     * resize) and it makes no sense to write every change as we want the last
      * one only => I'm polling instead of saving each time a value has changed
      * ...
      */
-    private static void setupPersister(final Preferences preferences) {
+    private static Preferences setupPersister(final Preferences preferences) {
         new Timer("PreferencesWriter").schedule(new TimerTask() {
             @Override
             public void run() {
@@ -192,29 +182,20 @@ public final class Preferences {
                     return;
                 }
 
-                try {
-                    Properties cloned = null;
-                    synchronized (preferences.getCloneLOCK()) {
-                        if (preferences.getDirty().get()) {
-                            cloned = (Properties) preferences.getProps().clone();
-                            preferences.getDirty().set(false);
-                        }
-                    }
-                    if (cloned != null) {
-                        Log.debug("Writing the preferences [%s]", () -> preferences.getFile().getAbsolutePath());
+                synchronized (preferences.getCloneLOCK()) {
+                    if (preferences.getDirty().get()) {
                         try (PrintWriter out = new PrintWriter(preferences.getFile(), UTF_8)) {
-                            cloned.store(out, null);
-                            out.flush();
+                            Log.debug("Writing the preferences [%s]", () -> preferences.getFile().getAbsolutePath());
+                            preferences.getProps().store(out, null);
+                            preferences.getDirty().set(false);
+                        } catch (IOException ex) {
+                            Log.error("Preferences write error!", ex);
+                            preferences.getWriteError().set(true);
                         }
                     }
-                } catch (FileNotFoundException e) {
-                    Log.error("Preferences (write) permission denied");
-                    preferences.getWriteError().set(true);
-                } catch (IOException ex) {
-                    Log.error("Preferences write error!", ex);
-                    preferences.getWriteError().set(true);
                 }
             }
         }, 0, 2000);
+        return preferences;
     }
 }

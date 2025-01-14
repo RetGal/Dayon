@@ -78,8 +78,7 @@ public class CaptureEngineConfiguration extends Configuration {
      */
     @Override
     protected void persist(boolean clear) {
-        final Preferences.Props props = getProps(clear);
-        Preferences.getPreferences().update(props); // atomic (!)
+        Preferences.getPreferences().update(getProps(clear)); // atomic (!)
     }
 
     private Preferences.Props getProps(boolean clear) {
