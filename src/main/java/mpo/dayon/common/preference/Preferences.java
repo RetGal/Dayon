@@ -59,10 +59,12 @@ public final class Preferences {
         try {
             final File file = getOrCreatePreferencesFile();
             Log.info("Preferences (" + (file.exists() ? "existing" : "new") + ") [" + file.getAbsolutePath() + "]");
-            return preferences = setupPersister(new Preferences(file));
+            preferences = setupPersister(new Preferences(file));
+            return preferences;
         } catch (IOException ex) {
             Log.warn("Preferences get/create error!", ex);
-            return preferences = NULL;
+            preferences = NULL;
+            return preferences;
         }
     }
 
