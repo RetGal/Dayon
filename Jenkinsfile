@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent docker
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 10, unit: 'MINUTES')
@@ -19,10 +19,6 @@ pipeline {
     parameters {
         string(name: 'smile', defaultValue: ':)', description: 'just smile')
     }
-//     tools {
-//         jdk 'jdk11'
-//         maven 'maven36'
-//     }
     stages {
         stage('Info') {
             steps {
