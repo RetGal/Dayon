@@ -27,9 +27,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                withMaven { // Requires Pipeline Maven Integration plugin
-                    sh 'mvn -B -Pdefault,deb -DskipTests clean package -Dsurefire.useFile=false -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
-                }
+                sh 'mvn -Pdefault,deb -DskipTests clean package -Dsurefire.useFile=false -DargLine="-Djdk.net.URLClassPath.disableClassPathURLCheck=true"'
             }
         }
         stage('Test') {
@@ -42,11 +40,11 @@ pipeline {
                 }
             }
         }
-        stage('Human sanity check') {
-            steps {
-                input "Does everything look fine?"
-            }
-        }
+//         stage('Human sanity check') {
+//             steps {
+//                 input "Does everything look fine?"
+//             }
+//         }
         stage('Deploy') {
             steps {
                 echo 'Deploying..'
