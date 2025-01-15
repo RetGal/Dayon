@@ -32,9 +32,14 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v15.0.0 (Dolly Double) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v15.0.2 (Dolly Double II) - released more than ten years after the initial release.
 
-This is the first version in which the remote desktop can also be transmitted in colour - in addition to the bandwidth-saving greyscales. For a complete list of changes see: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
+While v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales,  
+this one comes with a connection self-test for the assistant.
+
+A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v15.0.2)
+ and an overview of the changes between the major versions can be found at: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
+
 
 The app is available directly from the [Microsoft Store](https://apps.microsoft.com/detail/9PBM5KW0C790):
 
