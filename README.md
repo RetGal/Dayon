@@ -34,8 +34,7 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v15.0.2 (Dolly Double II) - released more than ten years after the initial release.
 
-While v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales,  
-this one comes with a connection self-test for the assistant.
+While v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, this one comes with a connection self-test for the assistant.
 
 A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v15.0.2)
  and an overview of the changes between the major versions can be found at: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
@@ -105,4 +104,4 @@ For example translations for additional languages would make this app more usefu
 
 Also, improvements of the existing translations and documentation are very welcome! As my knowledge of Chinese is far below zero - and my knowledge of Russian or Turkish just fractions better..
 
-Further testing, especially on macOS would also be highly appreciated.
+Further testing, especially on macOS with silicon (M series) would also be greatly appreciated.
