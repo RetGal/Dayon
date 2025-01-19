@@ -317,12 +317,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private void stop() {
-        stop(networkConfiguration.getServerName());
-    }
-
-    private void stop(String serverName) {
-        Log.info(format("Assisted stop [%s]", serverName));
-        if (networkEngine != null && networkEngine.getConfiguration().getServerName().equals(serverName)) {
+        Log.info("Assisted stop");
+        if (networkEngine != null) {
             networkEngine.farewell();
             networkEngine.cancel();
             networkEngine = null;
@@ -449,19 +445,19 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onHostNotFound(String serverName) {
-            stop(serverName);
+            stop();
             frame.onHostNotFound(serverName);
         }
 
         @Override
         public void onConnectionTimeout(String serverName, int serverPort) {
-            stop(serverName);
+            stop();
             frame.onConnectionTimeout(serverName, serverPort);
         }
 
         @Override
         public void onRefused(String serverName, int serverPort) {
-            stop(serverName);
+            stop();
             frame.onRefused(serverName, serverPort);
         }
 
@@ -477,7 +473,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onIOError(IOException error) {
-            stop(getNetworkConfiguration().getServerName());
+            stop();
             frame.onDisconnecting();
         }
 
