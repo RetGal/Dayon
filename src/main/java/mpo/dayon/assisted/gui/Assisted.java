@@ -121,10 +121,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return configureConnection(serverName, portNumber, autoConnect);
     }
 
-    private NetworkAssistedEngineConfiguration getNetworkConfiguration() {
-        return networkConfiguration;
-    }
-
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
         if (isValidIpAddressOrHostName(serverName) && isValidPortNumber(portNumber)) {
             networkConfiguration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber), autoConnect);
@@ -313,6 +309,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 Log.info("NetWorker was cancelled");
                 Thread.currentThread().interrupt();
             }
+        }
+
+        private NetworkAssistedEngineConfiguration getNetworkConfiguration() {
+            return networkConfiguration;
         }
     }
 
