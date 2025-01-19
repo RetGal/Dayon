@@ -15,10 +15,9 @@ public class ZipZipper implements Zipper {
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
 		final MemByteBuffer zipped = new MemByteBuffer();
-		final OutputStream zip = createZipOutputStream(zipped);
-		zip.write(unzipped.getInternal(), 0, unzipped.size());
-		zip.flush();
-		zip.close();
+		try (OutputStream zip = createZipOutputStream(zipped)) {
+			zip.write(unzipped.getInternal(), 0, unzipped.size());
+		}
 		return zipped;
 	}
 
