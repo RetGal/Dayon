@@ -55,6 +55,9 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             if (!tmpDir.endsWith(File.separator)) {
                 tmpDir += File.separator;
             }
+            if (!fileName.startsWith(File.separator)) {
+                fileName = File.separator+fileName;
+            }
             String tempFilePath = format("%s%s%s", tmpDir, helper.getTransferId(), fileName);
             writeToTempFile(buffer, read, tempFilePath, append);
 

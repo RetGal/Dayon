@@ -27,11 +27,12 @@ public abstract class NetworkMessage {
     }
 
     public static <T extends Enum<T>> T unmarshallEnum(ObjectInputStream in, Class<T> enumClass) throws IOException {
-        byte ordinal = in.readByte();
-        return Arrays.stream(enumClass.getEnumConstants())
-                .filter(x -> x.ordinal() == ordinal)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Unknown " + enumClass.getSimpleName() + " enum!"));
+        int ordinal = in.readUnsignedByte();
+        T[] enumConstants = enumClass.getEnumConstants();
+        if (ordinal < 0 || ordinal >= enumConstants.length) {
+            throw new IllegalArgumentException("Unknown " + enumClass.getSimpleName() + " enum!");
+        }
+        return enumConstants[ordinal];
     }
 
     @Override
