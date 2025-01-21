@@ -1,7 +1,6 @@
 package mpo.dayon.common.network.message;
 
 import java.io.*;
-import java.util.Arrays;
 
 public abstract class NetworkMessage {
     private static final byte MAGIC_NUMBER = (byte) 170;
