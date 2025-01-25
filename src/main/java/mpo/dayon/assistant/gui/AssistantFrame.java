@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.awt.event.KeyEvent.*;
@@ -94,11 +93,13 @@ class AssistantFrame extends BaseFrame {
 
     private char osId;
 
-    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, CompletableFuture<Boolean> isUpnpEnabled) {
+    Timer peerStatusTimer;
+
+    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
-        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(isUpnpEnabled, networkEngine));
+        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.tokenButton = createTokenButton(actions.getTokenAction());
@@ -308,9 +309,8 @@ class AssistantFrame extends BaseFrame {
     }
 
     private static StatusBar createStatusBar(ArrayList<Counter<?>> counters) {
-        final StatusBar statusBar = new StatusBar();
-        final Component horizontalStrut = Box.createHorizontalStrut(10);
-        statusBar.add(horizontalStrut);
+        final StatusBar statusBar = new StatusBar(20);
+        statusBar.add(Box.createHorizontalStrut(10));
         for (Counter<?> counter : counters) {
             statusBar.addSeparator();
             statusBar.addCounter(counter, counter.getWidth());
@@ -319,7 +319,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.addRamInfo();
         statusBar.addSeparator();
         statusBar.addConnectionDuration();
-        statusBar.add(horizontalStrut);
+        statusBar.add(Box.createHorizontalStrut(15));
         return statusBar;
     }
 
@@ -435,20 +435,26 @@ class AssistantFrame extends BaseFrame {
         disableControls();
         clearFingerprints();
         getStatusBar().setMessage(translate("ready"));
+        getStatusBar().resetPortStateIndicator();
+        getStatusBar().resetPeerStateIndicator();
     }
 
-    void onHttpStarting(int port) {
+    void onHttpStarting(int port, boolean isPortAccessible) {
         // connection
         startButton.setVisible(false);
         actions.getStopAction().setEnabled(true);
         stopButton.setVisible(true);
+        actions.getTokenAction().setEnabled(false);
         actions.getToggleCompatibilityModeAction().setEnabled(false);
         actions.getIpAddressAction().setEnabled(false);
         // settings
         actions.getNetworkConfigurationAction().setEnabled(false);
         languageSelection.setEnabled(false);
         clearFingerprints();
+        getStatusBar().resetSessionDuration();
         getStatusBar().setMessage(translate("listening", port));
+        getStatusBar().setPortStateIndicator(isPortAccessible ? Color.green : Color.red);
+        getStatusBar().setPeerStateIndicator(isPortAccessible ? Color.green : Color.gray);
     }
 
     void onGettingReady() {
@@ -462,6 +468,10 @@ class AssistantFrame extends BaseFrame {
     }
 
     boolean onAccepted(Socket connection) {
+        if (connection == null) {
+            Log.warn("Connection was null");
+            return false;
+        }
         if (JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
             translate("connection.incoming", connection.getInetAddress().getHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
             getOrCreateIcon(ImageNames.USERS), okCancelOptions, okCancelOptions[1]) == 0) {
@@ -672,6 +682,30 @@ class AssistantFrame extends BaseFrame {
 
     private void fireOnKeyReleased(int keyCode, char keyChar) {
         listeners.getListeners().forEach(listener -> listener.onKeyReleased(keyCode, keyChar));
+    }
+
+    public void onPeerIsAccessible(String address, int port,boolean isPeerAccessible) {
+        if (isPeerAccessible) {
+            getStatusBar().setMessage(translate("connecting", address, port));
+            getStatusBar().setPeerStateIndicator(Color.orange);
+        } else {
+            getStatusBar().setPeerStateIndicator(Color.red);
+        }
+
+    }
+
+    public void onCheckingPeerStatus(boolean active) {
+        if (active) {
+            getStatusBar().setMessage(translate("peerStatus"));
+            final boolean[] dimm = {false};
+            peerStatusTimer = new Timer(1000, e -> {
+                getStatusBar().setPeerStateIndicator(dimm[0] ? Color.gray : Color.darkGray);
+                dimm[0] = !dimm[0];
+            });
+            peerStatusTimer.start();
+        } else {
+            peerStatusTimer.stop();
+        }
     }
 
     private static class Spinner extends JPanel {

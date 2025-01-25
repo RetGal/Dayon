@@ -16,19 +16,32 @@ import static mpo.dayon.common.babylon.Babylon.translate;
 public class StatusBar extends JPanel {
 
     private static final int HEIGHT = 5;
+    private static final Color DEFAULT_INDICATOR_COLOR = Color.darkGray;
+    private static final String INITIAL_SESSION_DURATION = "00:00:00";
+    private final JLabel portStateIndicator = stateIndicator();
+    private final JLabel peerStateIndicator = stateIndicator();
     private final JLabel message = new JLabel();
-    private final JLabel sessionDuration = new JLabel("00:00:00");
+    private final JLabel sessionDuration = new JLabel(INITIAL_SESSION_DURATION);
     private final JLabel keyboardLayout = new JLabel();
     private final JLabel capsLockIndicator = new JLabel();
 
-    public StatusBar() {
+    public StatusBar(int strutWidth) {
         setLayout(new BoxLayout(this, LINE_AXIS));
-        add(Box.createHorizontalStrut(10));
+        add(Box.createHorizontalStrut(strutWidth));
+        add(portStateIndicator);
+        add(peerStateIndicator);
+        add(Box.createHorizontalStrut(5));
         add(message);
         add(Box.createHorizontalGlue());
         addSeparator();
         addKeyboardLayout();
         addCapsLockIndicator();
+    }
+
+    private JLabel stateIndicator() {
+        JLabel stateIndicator = new JLabel("\u25CF ");
+        stateIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
+        return stateIndicator;
     }
 
     public void clearMessage() {
@@ -39,8 +52,28 @@ public class StatusBar extends JPanel {
         this.message.setText(message);
     }
 
+    public void setPortStateIndicator(Color color) {
+        portStateIndicator.setForeground(color);
+    }
+
+    public void resetPortStateIndicator() {
+        portStateIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
+    }
+
+    public void setPeerStateIndicator(Color color) {
+        peerStateIndicator.setForeground(color);
+    }
+
+    public void resetPeerStateIndicator() {
+        peerStateIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
+    }
+
     public void setSessionDuration(String sessionDuration) {
         this.sessionDuration.setText(sessionDuration);
+    }
+
+    public void resetSessionDuration() {
+        this.sessionDuration.setText(INITIAL_SESSION_DURATION);
     }
 
     public void setKeyboardLayout(String keyboardLayout) {
@@ -78,6 +111,7 @@ public class StatusBar extends JPanel {
 
     public void addRamInfo() {
         JLabel label = createLabel("", 110);
+        label.setHorizontalAlignment(RIGHT);
         BigBrother.get().registerRamInfo(new MemoryCounter(label));
         label.setToolTipText(translate("memory.info"));
         add(label);

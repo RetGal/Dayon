@@ -1,6 +1,5 @@
 package mpo.dayon.assistant.gui;
 
-import com.dosse.upnp.UPnP;
 import mpo.dayon.assistant.control.ControlEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngine;
 import mpo.dayon.assistant.decompressor.DeCompressorEngineListener;
@@ -18,6 +17,7 @@ import mpo.dayon.common.gui.common.ImageNames;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.ClipboardDispatcher;
+import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Language;
@@ -57,8 +57,12 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    private static final String PORT_PARAM = "?port=%s";
-    private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
+    public static final String PORT_PARAMS = "?port=%s&closed=%d&v=1.3";
+
+    public static final String TOKEN_PARAMS = "?token=%s&closed=%d&v=1.3";
+
+    private static final Token TOKEN = new Token();
+
     private String tokenServerUrl;
 
     private final NetworkAssistantEngine networkEngine;
@@ -87,17 +91,11 @@ public class Assistant implements ClipboardOwner {
 
     private final Object prevBufferLOCK = new Object();
 
-    private final Object upnpEnabledLOCK = new Object();
-
     private byte[] prevBuffer = null;
 
     private int prevWidth = -1;
 
     private int prevHeight = -1;
-
-    private String token;
-
-    private Boolean upnpEnabled;
 
     private String publicIp;
 
@@ -113,8 +111,6 @@ public class Assistant implements ClipboardOwner {
             Locale.setDefault(Locale.forLanguageTag(configuration.getLanguage()));
         }
 
-        initUpnp();
-
         DeCompressorEngine decompressor = new DeCompressorEngine(new MyDeCompressorEngineListener());
         decompressor.start(8);
 
@@ -122,6 +118,7 @@ public class Assistant implements ClipboardOwner {
         networkEngine = new NetworkAssistantEngine(decompressor, mouseHandler, this);
         networkEngine.configure(networkConfiguration);
         networkEngine.addListener(new MyNetworkAssistantEngineListener());
+        networkEngine.initUpnp();
 
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
@@ -137,11 +134,11 @@ public class Assistant implements ClipboardOwner {
 
     private void updateTokenServerUrl(String tokenServerUrl) {
         if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
-            this.tokenServerUrl = tokenServerUrl + PORT_PARAM;
+            this.tokenServerUrl = tokenServerUrl + PORT_PARAMS;
         } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
-            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAM;
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAMS;
         } else {
-            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAM;
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAMS;
         }
 
         if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
@@ -156,7 +153,7 @@ public class Assistant implements ClipboardOwner {
         if (frame != null) {
             frame.dispose();
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, isUpnpEnabled());
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine);
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);
@@ -193,7 +190,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     public void clearToken() {
-        token = null;
+        TOKEN.reset();
         JButton button = (JButton) frame.getActions().getTokenAction().getValue("button");
         if (button != null) {
             button.setText("");
@@ -225,7 +222,7 @@ public class Assistant implements ClipboardOwner {
                 if (publicIp == null) {
                     CompletableFuture.supplyAsync(() -> {
                         try {
-                            resolvePublicIp();
+                            publicIp = networkEngine.resolvePublicIp();
                         } catch (IOException | InterruptedException ex) {
                             Log.error("Could not determine public IP", ex);
                             JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
@@ -267,17 +264,6 @@ public class Assistant implements ClipboardOwner {
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         ip.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_ADDRESS));
         return ip;
-    }
-
-    private void resolvePublicIp() throws IOException, InterruptedException {
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @java.lang.SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(WHATSMYIP_SERVER_URL))
-                .timeout(Duration.ofSeconds(5))
-                .build();
-        publicIp = client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
     }
 
     private JMenuItem getJMenuItemCopyIpAndPort(JButton button) {
@@ -561,44 +547,42 @@ public class Assistant implements ClipboardOwner {
                 final JButton button = (JButton) ev.getSource();
                 this.putValue("button", button);
 
-                if (token == null) {
-                    CompletableFuture.supplyAsync(() -> {
-                        try {
-                            requestToken();
-                        } catch (IOException | InterruptedException ex) {
-                            Log.error("Could not obtain token", ex);
-                            JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
-                            if (ex instanceof InterruptedException) {
-                                Thread.currentThread().interrupt();
-                            }
+                CompletableFuture.supplyAsync(() -> {
+                    try {
+                        if (publicIp == null) {
+                            publicIp = networkEngine.resolvePublicIp();
                         }
-                        return token;
-                    }).thenAcceptAsync(tokenString -> {
-                        if (tokenString  != null) {
-                            token = tokenString;
-                            button.setText(format(" %s", tokenString));
-                            button.setToolTipText(translate("token.copy.msg"));
+                        requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()));
+                    } catch (IOException | InterruptedException ex) {
+                        Log.error("Could not obtain token", ex);
+                        JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+                        if (ex instanceof InterruptedException) {
+                            Thread.currentThread().interrupt();
                         }
-                    });
-                }
-                final StringSelection value = new StringSelection(token);
-                final Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                clipboard.setContents(value, value);
+                    }
+                    return TOKEN;
+                }).thenAcceptAsync(token -> {
+                    if (token.getTokenString() != null) {
+                        button.setText(format(" %s", token.getTokenString()));
+                        Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(token.getTokenString()), null);
+                    }
+                });
             }
 
-            private void requestToken() throws IOException, InterruptedException {
-                Log.debug("Requesting token using: " + tokenServerUrl);
+            private void requestToken(boolean closed) throws IOException, InterruptedException {
+                String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0);
+                Log.debug("Requesting token using: " + query);
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @java.lang.SuppressWarnings("squid:S2095")
+                @SuppressWarnings("squid:S2095")
                 HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(format(tokenServerUrl, networkConfiguration.getPort())))
+                        .uri(URI.create(query))
                         .timeout(Duration.ofSeconds(5))
                         .build();
-                token = client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
+                TOKEN.setTokenString(client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim());
             }
         };
-        tokenAction.putValue("token", token);
+        tokenAction.putValue("token", TOKEN.getTokenString());
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
@@ -608,7 +592,7 @@ public class Assistant implements ClipboardOwner {
         final Action startAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                new Assistant.NetWorker().execute();
+                new NetWorker().execute();
             }
         };
         startAction.setEnabled(false);
@@ -700,7 +684,7 @@ public class Assistant implements ClipboardOwner {
             frame.onGettingReady();
             if (publicIp == null) {
                 try {
-                    resolvePublicIp();
+                    publicIp = networkEngine.resolvePublicIp();
                 } catch (IOException | InterruptedException ex) {
                     Log.error("Could not determine public IP", ex);
                     if (ex instanceof InterruptedException) {
@@ -708,10 +692,10 @@ public class Assistant implements ClipboardOwner {
                     }
                 }
             }
-            if (!networkEngine.selfTest(publicIp)) {
-                JOptionPane.showMessageDialog(frame, translate("port.error.msg1", networkConfiguration.getPort()), translate("port.error"), JOptionPane.WARNING_MESSAGE);
+            if (!networkEngine.selfTest(publicIp, networkConfiguration.getPort())) {
+                JOptionPane.showMessageDialog(frame, translate("port.error.msg1", networkConfiguration.getPort(), networkConfiguration.getPort()), translate("port.error"), JOptionPane.WARNING_MESSAGE);
             }
-            networkEngine.start(compatibilityModeActive.get());
+            networkEngine.start(compatibilityModeActive.get(), TOKEN);
         }
 
         @Override
@@ -725,33 +709,6 @@ public class Assistant implements ClipboardOwner {
                 Log.info("NetWorker was cancelled");
                 Thread.currentThread().interrupt();
             }
-        }
-    }
-
-    public CompletableFuture<Boolean> isUpnpEnabled() {
-        return CompletableFuture.supplyAsync(() -> {
-            synchronized (upnpEnabledLOCK) {
-                while (upnpEnabled == null) {
-                    try {
-                        upnpEnabledLOCK.wait(5000);
-                    } catch (InterruptedException e) {
-                        Log.warn("Swallowed", e);
-                        Thread.currentThread().interrupt();
-                    }
-                }
-                return upnpEnabled;
-            }
-        });
-    }
-
-    private void initUpnp() {
-        synchronized (upnpEnabledLOCK) {
-            CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
-                Log.info(format("UPnP is %s", enabled.booleanValue() ? "enabled" : "disabled"));
-                upnpEnabled = enabled;
-                return enabled;
-            });
-            upnpEnabledLOCK.notifyAll();
         }
     }
 
@@ -811,13 +768,26 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onStarting(int port) {
-            frame.onHttpStarting(port);
+        public void onStarting(int port, boolean isPortAccessible) {
+            frame.onHttpStarting(port, isPortAccessible);
             synchronized (prevBufferLOCK) {
                 prevBuffer = null;
                 prevWidth = -1;
                 prevHeight = -1;
             }
+        }
+
+        @Override
+        public void onCheckingPeerStatus(boolean active) {
+            frame.onCheckingPeerStatus(active);
+        }
+
+        @Override
+        public void onPeerIsAccessible(String address, int port, boolean isPeerAccessible) {
+            if (!isPeerAccessible) {
+                frame.onHttpStarting(port, false);
+            }
+            frame.onPeerIsAccessible(address, port, isPeerAccessible);
         }
 
         /**
@@ -914,6 +884,7 @@ public class Assistant implements ClipboardOwner {
         public void onReconfigured(NetworkAssistantEngineConfiguration networkEngineConfiguration) {
             networkConfiguration = networkEngineConfiguration;
             updateTokenServerUrl(networkConfiguration.getTokenServerUrl());
+            Log.debug("Reconfigured: " + networkConfiguration);
             clearToken();
         }
     }

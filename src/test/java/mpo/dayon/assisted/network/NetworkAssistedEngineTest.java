@@ -1,5 +1,6 @@
 package mpo.dayon.assisted.network;
 
+import mpo.dayon.common.network.Token;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +26,7 @@ class NetworkAssistedEngineTest {
         engine.configure(configuration);
 
         // when
-        engine.connect();
+        engine.connect(new Token());
 
         // then
         verify(listener).onConnecting(configuration.getServerName(), configuration.getServerPort());

@@ -1,5 +1,6 @@
 package mpo.dayon.assistant.network;
 
+import mpo.dayon.common.network.Token;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,10 +28,10 @@ class NetworkAssistantEngineTest {
         engine.reconfigure(configuration);
 
         // when
-        engine.start(false);
+        engine.start(false, new Token());
 
         // then
-        verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort());
+        verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort(), true);
     }
 
     @Test
@@ -48,29 +49,32 @@ class NetworkAssistantEngineTest {
     void selfTestShouldFailIfPublicIpIsNull() {
         // given
         String publicIp = null;
-        engine.configure(new NetworkAssistantEngineConfiguration(12345, ""));
+        int portNumber = 12345;
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
 
         // when // then
-        assertFalse(engine.selfTest(publicIp));
+        assertFalse(engine.selfTest(publicIp, portNumber));
     }
 
     @Test
     void selfTestShouldFailForUnreachablePort() {
         // given
         String publicIp = "1.2.3.4";
-        engine.configure(new NetworkAssistantEngineConfiguration(5, ""));
+        int portNumber = 5;
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
 
         // when // then
-        assertFalse(engine.selfTest(publicIp));
+        assertFalse(engine.selfTest(publicIp, portNumber));
     }
 
     @Test
     void selfTestShouldSucceedForReachablePort() {
         // given
         String publicIp = "127.0.0.1";
-        engine.configure(new NetworkAssistantEngineConfiguration(12345, ""));
+        int portNumber = 12345;
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
 
         // when // then
-        assertTrue(engine.selfTest(publicIp));
+        assertTrue(engine.selfTest(publicIp, portNumber));
     }
 }

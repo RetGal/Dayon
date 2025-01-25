@@ -1,5 +1,6 @@
 package mpo.dayon.common.network;
 
+import com.dosse.upnp.UPnP;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
 
@@ -10,8 +11,18 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -29,6 +40,8 @@ public abstract class NetworkEngine {
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
     private static final String CLIPBOARD_DEBUG = "setClipboardContents %s";
+
+    private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
 
     protected NetworkSender sender; // out
 
@@ -51,6 +64,12 @@ public abstract class NetworkEngine {
     protected SSLSocket fileConnection;
 
     protected final AtomicBoolean cancelling = new AtomicBoolean(false);
+
+    private final Object upnpEnabledLOCK = new Object();
+
+    private Boolean upnpEnabled;
+
+    protected static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
 
     /**
      * Might be blocking if the sender queue is full (!)
@@ -180,6 +199,87 @@ public abstract class NetworkEngine {
     }
 
     protected void fireOnIOError(IOException error) {
+    }
+
+    public String resolvePublicIp() throws IOException, InterruptedException {
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @java.lang.SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newHttpClient();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(WHATSMYIP_SERVER_URL))
+                .timeout(Duration.ofSeconds(5))
+                .build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
+    }
+
+    public boolean selfTest(String publicIp, int portNumber) {
+        if (publicIp == null) {
+            isOwnPortAccessible.set(false);
+            return false;
+        }
+        if (!manageRouterPorts(0, portNumber)) {
+            try (ServerSocket listener = new ServerSocket(portNumber)) {
+                try (Socket socket = new Socket()) {
+                    socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
+                }
+            } catch (IOException e) {
+                Log.warn("Port " + portNumber + " is not reachable from the outside");
+                isOwnPortAccessible.set(false);
+                return false;
+            }
+        }
+        Log.debug("Port " + portNumber + " is reachable from the outside");
+        isOwnPortAccessible.set(true);
+        return true;
+    }
+
+    public static boolean manageRouterPorts(int oldPort, int newPort) {
+        if (!UPnP.isUPnPAvailable()) {
+            return false;
+        }
+        if (oldPort != 0 && UPnP.isMappedTCP(oldPort)) {
+            UPnP.closePortTCP(oldPort);
+            Log.info(format("Disabled forwarding for port %d", oldPort));
+        }
+        if (!UPnP.isMappedTCP(newPort)) {
+            if (UPnP.openPortTCP(newPort, "Dayon!")) {
+                Log.info(format("Enabled forwarding for port %d", newPort));
+                isOwnPortAccessible.set(true);
+                return true;
+            }
+            Log.warn(format("Failed to enable forwarding for port %d", newPort));
+            isOwnPortAccessible.set(false);
+            return false;
+        }
+        isOwnPortAccessible.set(true);
+        return true;
+    }
+
+    public CompletableFuture<Boolean> isUpnpEnabled() {
+        return CompletableFuture.supplyAsync(() -> {
+            synchronized (upnpEnabledLOCK) {
+                while (upnpEnabled == null) {
+                    try {
+                        upnpEnabledLOCK.wait(5000);
+                    } catch (InterruptedException e) {
+                        Log.warn("Swallowed", e);
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                return upnpEnabled;
+            }
+        });
+    }
+
+    public void initUpnp() {
+        synchronized (upnpEnabledLOCK) {
+            CompletableFuture.supplyAsync(UPnP::isUPnPAvailable).thenApply(enabled -> {
+                Log.info(format("UPnP is %s", enabled.booleanValue() ? "enabled" : "disabled"));
+                upnpEnabled = enabled;
+                return enabled;
+            });
+            upnpEnabledLOCK.notifyAll();
+        }
     }
 
 }

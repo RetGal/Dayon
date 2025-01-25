@@ -43,4 +43,7 @@ public interface NetworkAssistedEngineListener extends Listener {
 
 	void onReconfigured(NetworkAssistedEngineConfiguration configuration);
 
+    void onPeerIsAccessible(boolean isPeerAccessible);
+
+	void onAccepting(int port);
 }
