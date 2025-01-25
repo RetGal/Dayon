@@ -5,15 +5,11 @@ import javax.swing.plaf.metal.MetalLookAndFeel;
 import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -221,15 +217,5 @@ public final class SystemUtilities {
         MessageDigest objSHA = MessageDigest.getInstance("SHA-1");
         String hash = new BigInteger(1, objSHA.digest(input.getBytes())).toString(16);
         return hash.substring(hash.length()-1).toUpperCase();
-    }
-
-    public static String resolveToken(String tokenServerUrl, String token) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(format(tokenServerUrl, token)))
-                .timeout(Duration.ofSeconds(5))
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response.body().trim();
     }
 }

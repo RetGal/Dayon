@@ -27,6 +27,7 @@ class AssistedFrame extends BaseFrame {
     private final JButton connectionSettingsButton;
     private final Cursor mouseCursor = this.getCursor();
     private boolean connected;
+    private Timer peerStatusTimer;
 
     AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine) {
         super.setFrameType(FrameType.ASSISTED);
@@ -70,9 +71,10 @@ class AssistedFrame extends BaseFrame {
     }
 
     private StatusBar createStatusBar() {
-        final StatusBar statusBar = new StatusBar();
+        final StatusBar statusBar = new StatusBar(15);
         statusBar.addSeparator();
         statusBar.addRamInfo();
+        statusBar.add(Box.createHorizontalStrut(5));
         return statusBar;
     }
 
@@ -81,6 +83,11 @@ class AssistedFrame extends BaseFrame {
         toggleStartButton(true);
         connectionSettingsButton.setEnabled(true);
         getStatusBar().setMessage(translate("ready"));
+        if (peerStatusTimer != null) {
+            peerStatusTimer.stop();
+        }
+        getStatusBar().resetPortStateIndicator();
+        getStatusBar().resetPeerStateIndicator();
         connected = false;
     }
 
@@ -99,6 +106,11 @@ class AssistedFrame extends BaseFrame {
     }
 
     void onConnected(String fingerprints) {
+        // must be an inverted connection -> peer status always red
+        if (peerStatusTimer != null) {
+            peerStatusTimer.stop();
+            getStatusBar().setPeerStateIndicator(Color.red);
+        }
         this.setCursor(mouseCursor);
         toggleStartButton(false);
         setFingerprints(fingerprints);
@@ -133,6 +145,22 @@ class AssistedFrame extends BaseFrame {
     void onDisconnecting() {
         clearFingerprints();
         onReady();
+    }
+
+    public void onPeerIsAccessible(boolean isPeerAccessible) {
+        getStatusBar().setPortStateIndicator(isPeerAccessible ? Color.green : Color.red);
+        getStatusBar().setPeerStateIndicator(isPeerAccessible ? Color.green : Color.red);
+    }
+
+    public void onAccepting(int port) {
+        getStatusBar().setPortStateIndicator(Color.orange);
+        getStatusBar().setMessage(translate("accepting", port));
+        final boolean[] dimm = {false};
+        peerStatusTimer = new Timer(1000, e -> {
+            getStatusBar().setPeerStateIndicator(dimm[0] ? Color.red : Color.gray);
+            dimm[0] = !dimm[0];
+        });
+        peerStatusTimer.start();
     }
 
     private static class AssistedAbstractAction extends AbstractAction {

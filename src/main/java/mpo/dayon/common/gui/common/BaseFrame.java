@@ -37,6 +37,7 @@ import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
+import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -290,14 +291,14 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
-        return createConnectionSettingsAction(CompletableFuture.completedFuture(false),  null, networkEngine);
+        return createConnectionSettingsAction(null, networkEngine);
     }
 
-    protected Action createAssistantConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(isUpnpEnabled, networkEngine, null);
+    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine) {
+        return createConnectionSettingsAction(networkEngine, null);
     }
 
-    protected Action createConnectionSettingsAction(CompletableFuture<Boolean> isUpnpEnabled, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
+    protected Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -308,8 +309,9 @@ public abstract class BaseFrame extends JFrame {
                 final JCheckBox autoConnectCheckBox = new JCheckBox();
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
+                CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, isUpnpEnabled.join());
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
@@ -330,7 +332,7 @@ public abstract class BaseFrame extends JFrame {
         return conf;
     }
 
-    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, boolean upnpActive) {
+    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive) {
         final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -367,7 +369,7 @@ public abstract class BaseFrame extends JFrame {
 
             final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
             upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive)), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive))));
+            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive.join())), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive.join()))));
             upnpPanel.add(upnpStatus);
             panel.add(upnpPanel, createGridBagConstraints(gridy++));
 
@@ -465,7 +467,7 @@ public abstract class BaseFrame extends JFrame {
                 Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
         if (!newConfig.equals(oldConfig)) {
-            NetworkAssistantEngine.manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
+            manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
             newConfig.persist();
             networkEngine.reconfigure(newConfig);
         }

@@ -11,7 +11,7 @@ public interface NetworkAssistantEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onStarting(int port);
+	void onStarting(int port, boolean isPortAccessible);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)
@@ -55,4 +55,8 @@ public interface NetworkAssistantEngineListener extends Listener {
 	void onFingerprinted(String fingerprints);
 
 	void onReconfigured(NetworkAssistantEngineConfiguration configuration);
+
+	void onCheckingPeerStatus(boolean blink);
+
+	void onPeerIsAccessible(String address, int port, boolean isPeerAccessible);
 }

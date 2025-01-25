@@ -92,7 +92,7 @@ class ConnectionSettingsDialog {
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) {
-                textField.setText(null);
+                textField.setText("");
             }
         }
     }

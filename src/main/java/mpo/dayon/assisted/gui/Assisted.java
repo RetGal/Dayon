@@ -17,10 +17,10 @@ import mpo.dayon.common.error.KeyboardErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
-import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.NetworkEngine;
+import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 
 import javax.swing.*;
@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
 import static java.lang.String.valueOf;
+import static mpo.dayon.assisted.network.NetworkAssistedEngine.resolveToken;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
@@ -44,7 +45,9 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
 
-    private static final String TOKEN_PARAM = "?token=%s";
+    public static final String TOKEN_PARAMS = "?token=%s&open=%d&v=1.3";
+
+    private static final Token TOKEN = new Token();
 
     private String tokenServerUrl;
 
@@ -64,8 +67,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
-    private String token;
-
     public Assisted(String tokenServerUrl) {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
         updateTokenServerUrl(tokenServerUrl);
@@ -80,11 +81,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private void updateTokenServerUrl(String tokenServerUrl) {
         if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
-            this.tokenServerUrl = tokenServerUrl + TOKEN_PARAM;
+            this.tokenServerUrl = tokenServerUrl + TOKEN_PARAMS;
         } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
-            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAM;
+            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + TOKEN_PARAMS;
         } else {
-            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAM;
+            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAMS;
         }
 
         if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
@@ -111,6 +112,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
 
         if (frame == null) {
+            networkEngine.initUpnp();
             frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction(), networkEngine);
             FatalErrorHandler.attachFrame(frame);
             KeyboardErrorHandler.attachFrame(frame);
@@ -129,7 +131,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             networkConfiguration.persist();
         } else {
             networkConfiguration = new NetworkAssistedEngineConfiguration();
-            if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(String.valueOf(networkConfiguration.getServerPort()))) {
+            if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(valueOf(networkConfiguration.getServerPort()))) {
                 autoConnect = networkConfiguration.isAutoConnect();
                 if (autoConnect) {
                     networkEngine.configure(networkConfiguration);
@@ -140,7 +142,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         if (coldStart) {
             coldStart = false;
             if (autoConnect) {
-                networkEngine.connect();
+                networkEngine.connect(TOKEN);
             }
             return true;
         }
@@ -149,7 +151,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private boolean requestConnectionSettings() {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
-        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, token);
+        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
@@ -192,19 +194,23 @@ public class Assisted implements Subscriber, ClipboardOwner {
         CompletableFuture.supplyAsync(() -> {
             final NetworkAssistedEngineConfiguration newConfiguration;
             String tokenString = connectionSettingsDialog.getToken().trim();
-            if (!tokenString.isEmpty() && !tokenString.equals(this.token)) {
-                this.token = tokenString;
-                newConfiguration = resolveNetworkConfigurationFromToken();
+            if (!tokenString.isEmpty() && !tokenString.equals(TOKEN.getTokenString())) {
+                TOKEN.setTokenString(tokenString);
+                String connectionParams = obtainConnectionParamsFromTokenServer();
+                newConfiguration = extractNetworkConfigurationFromConnectionParams(connectionParams);
             } else {
                 newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
                         Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
-                this.token = null;
             }
             return newConfiguration;
         }).thenAcceptAsync(newConfiguration -> {
-            if (newConfiguration != null && !newConfiguration.equals(networkConfiguration)) {
+            if (newConfiguration != null && !newConfiguration.getServerName().equals(networkConfiguration.getServerName())
+                    || newConfiguration.getServerPort() != networkConfiguration.getServerPort()) {
                 networkConfiguration = newConfiguration;
                 networkConfiguration.persist();
+                if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPort()) {
+                    TOKEN.reset();
+                }
                 networkEngine.configure(networkConfiguration);
                 frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
             }
@@ -212,31 +218,37 @@ public class Assisted implements Subscriber, ClipboardOwner {
         });
     }
 
-    private NetworkAssistedEngineConfiguration resolveNetworkConfigurationFromToken() {
+    private NetworkAssistedEngineConfiguration extractNetworkConfigurationFromConnectionParams(String connectionParams) {
+        final NetworkAssistedEngineConfiguration newConfiguration;
+        if (connectionParams == null || connectionParams.trim().isEmpty()) {
+            // expired or wrong token server
+            Log.warn("Invalid token " + TOKEN.getTokenString());
+            JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+            TOKEN.reset();
+            stop();
+            onReady();
+            return null;
+        }
+        newConfiguration = extractConfiguration(connectionParams);
+        Log.debug("Connection params " + connectionParams);
+        return newConfiguration;
+    }
+
+    private String obtainConnectionParamsFromTokenServer() {
         final Cursor cursor = frame.getCursor();
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        final NetworkAssistedEngineConfiguration newConfiguration;
         String connectionParams = null;
         try {
-            Log.debug("Resolving token using: " + tokenServerUrl);
-            connectionParams = resolveToken(tokenServerUrl, token);
+            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), null);
         } catch (IOException | InterruptedException ex) {
-            Log.warn("Could not resolve token " + token);
+            Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {
                 Thread.currentThread().interrupt();
             }
         } finally {
             frame.setCursor(cursor);
         }
-        if (connectionParams == null || connectionParams.trim().isEmpty()) {
-            // expired or wrong token server
-            Log.warn("Invalid token " + token);
-            JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
-            this.token = null;
-        }
-        newConfiguration = extractConfiguration(connectionParams);
-        Log.debug("Connection params " + connectionParams);
-        return newConfiguration;
+        return connectionParams;
     }
 
     private Action createToggleMultiScreenAction() {
@@ -266,7 +278,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         };
         stopAction.setEnabled(false);
         stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
-        stopAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.STOP_LARGE));
+        stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP_LARGE));
         return stopAction;
     }
 
@@ -279,7 +291,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
             }
         };
         startAction.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
-        startAction.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.START_LARGE));
+        startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START_LARGE));
         return startAction;
     }
 
@@ -288,7 +300,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         protected String doInBackground() {
             if (isConfigured() && !isCancelled()) {
                 networkEngine.configure(networkConfiguration);
-                networkEngine.connect();
+                networkEngine.connect(TOKEN);
             }
             return null;
         }
@@ -337,13 +349,18 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private static NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
         if (connectionParams != null) {
-            int portStart = connectionParams.lastIndexOf('*');
-            if (portStart > 0) {
-                String address = connectionParams.substring(0, portStart);
-                String port = connectionParams.substring(portStart + 1);
-                if (isValidIpAddressOrHostName(address) && isValidPortNumber(port)) {
-                    return new NetworkAssistedEngineConfiguration(address, Integer.parseInt(port));
+            String[] parts = connectionParams.split("\\*");
+            if (parts.length > 1) {
+                String assistantAddress = parts[0];
+                String port = parts[1];
+                // maybe extract timestamps of open and closed as well?
+                if (parts.length > 4) {
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[3].equals("0"));
+                } else {
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), null);
                 }
+                Log.debug(TOKEN.toString());
+                return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));
             }
         }
         return null;
@@ -444,6 +461,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         @Override
+        public void onPeerIsAccessible(boolean isPeerAccessible) {
+            frame.onPeerIsAccessible(isPeerAccessible);
+        }
+
+        @Override
         public void onHostNotFound(String serverName) {
             stop();
             frame.onHostNotFound(serverName);
@@ -475,6 +497,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
         public void onIOError(IOException error) {
             stop();
             frame.onDisconnecting();
+        }
+
+        @Override
+        public void onAccepting(int port) {
+            frame.onAccepting(port);
         }
 
         @Override

@@ -8,6 +8,7 @@ import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
+import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
@@ -15,18 +16,25 @@ import mpo.dayon.common.version.Version;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
 import java.net.InetSocketAddress;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
+import java.time.Duration;
 
 import static java.lang.String.format;
+import static mpo.dayon.assistant.gui.Assistant.TOKEN_PARAMS;
+import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 import static mpo.dayon.common.version.Version.isColoredVersion;
 import static mpo.dayon.common.version.Version.isCompatibleVersion;
@@ -43,9 +51,15 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private NetworkAssistantEngineConfiguration configuration;
 
-    private SSLServerSocketFactory ssf;
+    private SSLServerSocketFactory sssf;
 
-    private static final String APP_NAME = "Dayon!";
+    private SSLSocketFactory ssf;
+
+    private boolean isInvertibleConnection;
+
+    private volatile boolean hasRejected = false;
+
+    private Token token;
 
     public NetworkAssistantEngine(NetworkCaptureMessageHandler captureMessageHandler, NetworkMouseLocationMessageHandler mouseMessageHandler, ClipboardOwner clipboardOwner) {
         this.captureMessageHandler = captureMessageHandler;
@@ -69,31 +83,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.add(listener);
     }
 
-    public boolean selfTest(String publicIp) {
-        if (publicIp == null) {
-            return false;
-        }
-        if (!manageRouterPorts(0, configuration.getPort())) {
-            try (ServerSocket listener = new ServerSocket(configuration.getPort())) {
-                try (Socket socket = new Socket()) {
-                    socket.connect(new InetSocketAddress(publicIp, configuration.getPort()), 1000);
-                }
-                Log.info("Port " + configuration.getPort() + " is reachable from the outside");
-            } catch (IOException e) {
-                Log.warn("Port " + configuration.getPort() + " is not reachable from the outside");
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Called from a GUI action => do not block the AWT thread (!)
      */
-    public void start(boolean compatibilityMode) {
+    public void start(boolean compatibilityMode, Token token) {
         if (cancelling.get() || receiver != null) {
             return;
         }
+        this.token = token;
 
         receiver = new Thread(new RunnableEx() {
             @Override
@@ -114,43 +111,32 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         fireOnDisconnecting();
     }
 
-    public static boolean manageRouterPorts(int oldPort, int newPort) {
-        if (!UPnP.isUPnPAvailable()) {
-            return false;
-        }
-        if (oldPort != 0 && UPnP.isMappedTCP(oldPort)) {
-            UPnP.closePortTCP(oldPort);
-            Log.info(format("Disabled forwarding for port %d", oldPort));
-        }
-        if (!UPnP.isMappedTCP(newPort)) {
-            if (UPnP.openPortTCP(newPort, APP_NAME)) {
-                Log.info(format("Enabled forwarding for port %d", newPort));
-                return true;
-            }
-            Log.warn(format("Failed to enable forwarding for port %d", newPort));
-            return false;
-        }
-        return true;
-    }
-
     // right, keep streams open - forever!
     @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
     private void receivingLoop(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
         boolean introduced = false;
         boolean proceed = true;
+        isInvertibleConnection = false;
 
         try {
             awaitConnections(compatibilityMode);
             startFileReceiver();
             initSender(8);
             createInputStream();
-
+            if (isInvertibleConnection && hasRejected) {
+                Log.debug("Inverted connection rejected by user");
+                cancelling.set(true);
+                proceed = false;
+                hasRejected = false;
+            } else if (isInvertibleConnection) {
+                fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+            }
+            // receiving loop
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
                 Log.debug("Received %s", type::name);
-
                 if (introduced) {
                     proceed = processIntroduced(type, in);
                 } else {
@@ -172,8 +158,31 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void awaitConnections(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
-        fireOnStarting(configuration.getPort());
-        ssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
+        fireOnStarting(configuration.getPort(), isOwnPortAccessible.get());
+        // if we can not expose our port, we check if the public ip of the assisted is available and if its port is accessible
+        if (Boolean.FALSE.equals(isOwnPortAccessible.get()) && !compatibilityMode && token.getTokenString() != null) {
+            fireOnCheckingPeerStatus(true);
+            queryPeerStatus();
+            fireOnCheckingPeerStatus(false);
+            isInvertibleConnection = isReverseConnectionPossible();
+            if (isInvertibleConnection) {
+                return;
+            }
+        } else if (Boolean.FALSE.equals(isOwnPortAccessible.get()) && (compatibilityMode || token.getTokenString() == null)) {
+            Log.warn("Port not accessible from the outside, starting as server anyway");
+            fireOnPeerIsAccessible(null, configuration.getPort(),false);
+        }
+
+        if (cancelling.get()) {
+            throw new IOException("Cancelled");
+        }
+
+        // if we can expose our port, we start as server, wait for the assisted to connect and the assistant to accept
+        startServerMode(compatibilityMode);
+    }
+
+    private void startServerMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
+        sssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
         if (compatibilityMode) {
             Log.warn("Compatibility mode enabled, using legacy certificate");
@@ -181,10 +190,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (server != null && server.isBound()) {
             safeClose(server);
         }
-        server = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
+        server = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
         server.setNeedClientAuth(true);
-        Log.info("Accepting...");
 
+        Log.info("Accepting...");
         do {
             if (connection != null && connection.isBound()) {
                 safeClose(connection); // we might have refused the accepted connection (!)
@@ -195,14 +204,103 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnFingerprinted(null);
                 throw new IOException("Certificate error, try enabling compatibility mode!");
             }
-            fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } while (!fireOnAccepted(connection) && !cancelling.get());
+        fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
 
         if (server.isBound()) {
             safeClose(server);
         }
         server = null;
+    }
+
+    private boolean isReverseConnectionPossible() throws NoSuchAlgorithmException, IOException, KeyManagementException {
+        if (Boolean.TRUE.equals(token.isPeerAccessible())) {
+            fireOnPeerIsAccessible(token.getPeerAddress(), configuration.getPort(), true);
+            Log.info("Trying to connect to the assisted");
+            ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
+            while (!connectToAssisted(token.getPeerAddress()) && !cancelling.get()) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+            hasRejected = !fireOnAccepted(connection);
+            Log.info("Connected to the assisted");
+            return true;
+        }
+        fireOnPeerIsAccessible(token.getPeerAddress(), configuration.getPort(), false);
+        Log.warn("Assisted not accessible, starting as server");
+        return false;
+    }
+
+    private void queryPeerStatus() {
+        String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
+        try {
+            Log.info("Trying to obtain the assisted address");
+            while (token.getPeerAddress() == null && !cancelling.get()) {
+                obtainPeerAddressAndStatus(tokenServerUrl + TOKEN_PARAMS, !isOwnPortAccessible.get());
+                Thread.sleep(5000);
+            }
+        } catch (IOException | InterruptedException ex) {
+            Log.warn("Unable to query the token server " + token.getTokenString());
+            fireOnCheckingPeerStatus(false);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private boolean connectToAssisted(String peerAddress) {
+        Log.debug("Assisted address is " + peerAddress);
+        try {
+            connection = (SSLSocket) ssf.createSocket();
+            connection.setNeedClientAuth(true);
+            // grace period of 500 millis for the assisted to accept the connection
+            connection.setSoTimeout(500);
+            // abort the connection attempt after 5 seconds if the assisted cannot be reached
+            connection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 5000);
+            // once connected, remain connected until cancelled
+            connection.setSoTimeout(0);
+        } catch (IOException e) {
+            Log.warn("Unable to connect to the assisted");
+            return false;
+        }
+        return true;
+    }
+
+    private boolean initFileConnection(String peerAddress) {
+        try {
+            fileConnection = (SSLSocket) ssf.createSocket();
+            // grace period of 500 millis for the assisted to accept the connection
+            fileConnection.setSoTimeout(500);
+            // abort the connection attempt after 5 seconds if the assistant cannot be reached
+            fileConnection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 5000);
+            // once connected, remain connected until cancelled
+            fileConnection.setSoTimeout(0);
+        } catch (IOException e) {
+            Log.warn("Unable to connect to the assisted (file server)");
+            return false;
+        }
+        return true;
+    }
+
+    private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newBuilder().build();
+        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0);
+        Log.debug("Querying token server " + query);
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(query))
+                .timeout(Duration.ofSeconds(4))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        Log.debug("Got %s", () -> response.body().trim());
+        String[] parts = response.body().trim().split("\\*");
+        if (parts.length > 4 && !parts[2].isEmpty() && !parts[4].equals("-1")) {
+            token.setPeerAddress(parts[2]);
+            token.setPeerAccessible(!parts[4].equals("0"));
+        }
     }
 
     private void startFileReceiver() {
@@ -223,8 +321,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.info(format("Dayon! file server [port:%d]", configuration.getPort()));
 
         try {
-            fileServer = (SSLServerSocket) ssf.createServerSocket(configuration.getPort());
-            fileConnection = (SSLSocket) fileServer.accept();
+            if (isInvertibleConnection) {
+                initFileConnection(token.getPeerAddress());
+            } else {
+                fileServer = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
+                fileConnection = (SSLSocket) fileServer.accept();
+                safeClose(fileServer);
+            }
             initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
 
@@ -375,8 +478,16 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.getListeners().forEach(NetworkAssistantEngineListener::onReady);
     }
 
-    private void fireOnStarting(int port) {
-        listeners.getListeners().forEach(listener -> listener.onStarting(port));
+    private void fireOnStarting(int port, boolean isOwnPortAccessible) {
+        listeners.getListeners().forEach(listener -> listener.onStarting(port, isOwnPortAccessible));
+    }
+
+    private void fireOnPeerIsAccessible(String address, int port, boolean isPeerAccessible) {
+        listeners.getListeners().forEach(listener -> listener.onPeerIsAccessible(address, port, isPeerAccessible));
+    }
+
+    private void fireOnCheckingPeerStatus(boolean blink) {
+        listeners.getListeners().forEach(listener -> listener.onCheckingPeerStatus(blink));
     }
 
     private boolean fireOnAccepted(Socket connection) {
