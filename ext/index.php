@@ -28,14 +28,15 @@ if (isset($_GET['port'])) {
     // param missing = legacy mode (assisted never open)
     if (!isset($_GET['v'])) {
         echo readBasicToken($pdo, $token),"\n";
-        updateAssisted($pdo, $token, 0, $_SERVER['REMOTE_ADDR']);
+        updateAssisted($pdo, $token, 0, $_SERVER['REMOTE_ADDR'], 0);
     } else {
         if (isset($_GET['closed'])) {
             $closed = isset($_GET['closed']) ? clean($_GET['closed'], 2) : 0;
             updateAssistant($pdo, $token, $closed);
         } else {
             $open = isset($_GET['open']) ? clean($_GET['open'], 2) : 0;
-            updateAssisted($pdo, $token, $open, $_SERVER['REMOTE_ADDR']);
+            $rport = isset($_GET['rport']) ? clean($_GET['rport'], 6) : 0;
+            updateAssisted($pdo, $token, $open, $_SERVER['REMOTE_ADDR'], $rport);
         }
         echo readToken($pdo, $token),"\n";
     }
@@ -125,28 +126,31 @@ function readBasicToken($pdo, $token) {
 }
 
 function readToken($pdo, $token) {
-    $sql = "SELECT assistant,port,assisted,closed,open FROM tokens WHERE token = :token";
+    $sql = "SELECT assistant,port,closed,assisted,rport,open FROM tokens WHERE token = :token";
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([":token" => $token])) {
         $stmt->bindColumn(1, $assistant);
         $stmt->bindColumn(2, $port);
-        $stmt->bindColumn(3, $assisted);
-        $stmt->bindColumn(4, $closed);
-        $stmt->bindColumn(5, $open);
-        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assisted*$closed*$open" : "";
+        $stmt->bindColumn(3, $closed);
+        $stmt->bindColumn(4, $assisted);
+        $stmt->bindColumn(5, $rport);
+        $stmt->bindColumn(6, $open);
+        //return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assisted*$closed*$open" : "";
+        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$closed*$assisted*$rport*$open" : "";
     } else {
         return "";
     }
 }
 
-function updateAssisted($pdo, $token, $open, $address) {
-    $sql = "UPDATE tokens SET assisted = :address,open = :open,ts = :ts WHERE token = :token";
+function updateAssisted($pdo, $token, $open, $address, $rport) {
+    $sql = "UPDATE tokens SET assisted = :address, rport = :rport,open = :open,ts = :ts WHERE token = :token";
     $ts = time();
     // assisted -1 unknown, 0 not open, 1 open -> ts
     $open = $open == 1 ? $ts : $open;
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':address', $address, PDO::PARAM_STR);
     $stmt->bindParam(':open', $open, PDO::PARAM_INT);
+    $stmt->bindParam(':rport', $rport, PDO::PARAM_INT);
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->execute();
@@ -164,7 +168,7 @@ function updateAssistant($pdo, $token, $closed) {
 }
 
 function createDatabase($pdo) {
-    $sql = "CREATE TABLE IF NOT EXISTS `tokens` (`token` TEXT,`assistant` TEXT,`port` INTEGER,`assisted` TEXT,`closed` INTEGER,`open` INTEGER,`ts` INTEGER, PRIMARY KEY(`token`))";
+    $sql = "CREATE TABLE IF NOT EXISTS `tokens` (`token` TEXT,`assistant` TEXT,`port` INTEGER,`closed` INTEGER,`assisted` TEXT,`rport` INTEGER,`open` INTEGER,`ts` INTEGER, PRIMARY KEY(`token`));";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     // print_r($stmt->errorInfo());
