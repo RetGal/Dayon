@@ -28,7 +28,7 @@ class NetworkAssistantEngineTest {
         engine.reconfigure(configuration);
 
         // when
-        engine.start(false, new Token());
+        engine.start(false, new Token("params"));
 
         // then
         verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort(), true);

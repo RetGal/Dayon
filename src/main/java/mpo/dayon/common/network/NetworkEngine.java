@@ -201,7 +201,7 @@ public abstract class NetworkEngine {
     protected void fireOnIOError(IOException error) {
     }
 
-    public String resolvePublicIp() throws IOException, InterruptedException {
+    public String resolvePublicIp() {
         // HttpClient doesn't implement AutoCloseable nor close before Java 21!
         @java.lang.SuppressWarnings("squid:S2095")
         HttpClient client = HttpClient.newHttpClient();
@@ -209,7 +209,15 @@ public abstract class NetworkEngine {
                 .uri(URI.create(WHATSMYIP_SERVER_URL))
                 .timeout(Duration.ofSeconds(5))
                 .build();
-        return client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
+        } catch (IOException | InterruptedException ex) {
+            Log.error("Could not determine public IP", ex);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        return null;
     }
 
     public boolean selfTest(String publicIp, int portNumber) {

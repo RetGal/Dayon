@@ -162,6 +162,11 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
+    public void resetConnectionIndicators() {
+        statusBar.resetPortStateIndicator();
+        statusBar.resetPeerStateIndicator();
+    }
+
     protected static JButton createButton(Action action) {
         return createButton(action, true);
     }

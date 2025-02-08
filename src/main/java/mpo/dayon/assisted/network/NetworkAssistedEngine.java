@@ -1,5 +1,6 @@
 package mpo.dayon.assisted.network;
 
+import com.dosse.upnp.UPnP;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
@@ -35,7 +36,6 @@ import java.time.Duration;
 
 import static java.lang.String.format;
 
-import static mpo.dayon.assisted.gui.Assisted.TOKEN_PARAMS;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -127,6 +127,8 @@ public class NetworkAssistedEngine extends NetworkEngine
             fireOnRefused(configuration);
         } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
+        } finally {
+            UPnP.closePortTCP(configuration.getServerPort());
         }
     }
 
@@ -223,15 +225,16 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void checkAndUpdateRVS(boolean incomplete) throws IOException {
         try {
-            String queryParams = incomplete? TOKEN_PARAMS + "&inc" : TOKEN_PARAMS;
+            String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
             String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), isOwnPortAccessible.get());
+            // just using the server port for now
+            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), configuration.getServerPort(), isOwnPortAccessible.get());
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
                 String port = parts[1];
-                if (parts.length > 4) {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[3].equals("0"));
+                if (parts.length > 5) {
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"));
                 } else {
                     token.updateToken(assistantAddress, Integer.parseInt(port), null);
                 }
@@ -241,23 +244,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void detectEnvironment() throws IOException {
+    private void detectEnvironment() {
         if (publicIp == null) {
-            try {
-                publicIp = resolvePublicIp();
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
+            publicIp = resolvePublicIp();
         }
-        if (!selfTest(publicIp, configuration.getServerPort())) {
-            if (!manageRouterPorts(0, configuration.getServerPort())) {
-                Log.warn(format("Port %d forwarding failed", configuration.getServerPort()));
-            } else {
-                Log.info(format("Port %d forwarding successful", configuration.getServerPort()));
-            }
-        } else {
-            Log.info(format("Port %d open", configuration.getServerPort()));
-        }
+        selfTest(publicIp, configuration.getServerPort());
     }
 
     private void connectToAssistant() {
@@ -286,12 +277,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public static String resolveToken(String tokenServerUrl, String token, Boolean open) throws IOException, InterruptedException {
+    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open) throws IOException, InterruptedException {
         if (open == null) {
             isOwnPortAccessible.set(null);
         }
         // null = unknown = -1, true = open = 1, false = closed = 0
-        String query = format(tokenServerUrl, token, toInt(open));
+        String query = format(tokenServerUrl, token, port, toInt(open));
         Log.debug("Resolving token using: " + query);
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()

@@ -33,7 +33,6 @@ import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 
 import static java.lang.String.format;
-import static mpo.dayon.assistant.gui.Assistant.TOKEN_PARAMS;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 import static mpo.dayon.common.version.Version.isColoredVersion;
@@ -154,7 +153,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             UPnP.closePortTCP(configuration.getPort());
             fireOnReady();
         }
-
     }
 
     private void awaitConnections(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
@@ -176,12 +174,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         if (cancelling.get()) {
             throw new IOException("Cancelled");
         }
-
         // if we can expose our port, we start as server, wait for the assisted to connect and the assistant to accept
-        startServerMode(compatibilityMode);
+        startClassicMode(compatibilityMode);
     }
 
-    private void startServerMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
+    private void startClassicMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
         sssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
         if (compatibilityMode) {
@@ -240,8 +237,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         try {
             Log.info("Trying to obtain the assisted address");
             while (token.getPeerAddress() == null && !cancelling.get()) {
-                obtainPeerAddressAndStatus(tokenServerUrl + TOKEN_PARAMS, !isOwnPortAccessible.get());
-                Thread.sleep(5000);
+                obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get());
+                Thread.sleep(4000);
             }
         } catch (IOException | InterruptedException ex) {
             Log.warn("Unable to query the token server " + token.getTokenString());
@@ -260,7 +257,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             // grace period of 500 millis for the assisted to accept the connection
             connection.setSoTimeout(500);
             // abort the connection attempt after 5 seconds if the assisted cannot be reached
-            connection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 5000);
+            connection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 4000);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
         } catch (IOException e) {
@@ -276,7 +273,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             // grace period of 500 millis for the assisted to accept the connection
             fileConnection.setSoTimeout(500);
             // abort the connection attempt after 5 seconds if the assistant cannot be reached
-            fileConnection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 5000);
+            fileConnection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 4000);
             // once connected, remain connected until cancelled
             fileConnection.setSoTimeout(0);
         } catch (IOException e) {
@@ -297,9 +294,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Log.debug("Got %s", () -> response.body().trim());
         String[] parts = response.body().trim().split("\\*");
-        if (parts.length > 4 && !parts[2].isEmpty() && !parts[4].equals("-1")) {
-            token.setPeerAddress(parts[2]);
-            token.setPeerAccessible(!parts[4].equals("0"));
+        // ignore unknown closed status "-1"
+        if (parts.length > 5 && !parts[3].isEmpty() && !parts[5].equals("-1")) {
+            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"));
         }
     }
 
@@ -327,6 +324,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fileServer = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
                 fileConnection = (SSLSocket) fileServer.accept();
                 safeClose(fileServer);
+                fileServer = null;
             }
             initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
