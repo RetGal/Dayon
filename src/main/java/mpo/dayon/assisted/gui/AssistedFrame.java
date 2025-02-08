@@ -86,8 +86,6 @@ class AssistedFrame extends BaseFrame {
         if (peerStatusTimer != null) {
             peerStatusTimer.stop();
         }
-        getStatusBar().resetPortStateIndicator();
-        getStatusBar().resetPeerStateIndicator();
         connected = false;
     }
 

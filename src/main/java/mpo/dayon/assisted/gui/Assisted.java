@@ -45,9 +45,9 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
 
-    public static final String TOKEN_PARAMS = "?token=%s&open=%d&v=1.3";
+    private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&v=1.3";
 
-    private static final Token TOKEN = new Token();
+    private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
     private String tokenServerUrl;
 
@@ -239,7 +239,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String connectionParams = null;
         try {
-            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), null);
+            // using 0 as port and null for open as both are not known at this point
+            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null);
         } catch (IOException | InterruptedException ex) {
             Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {
@@ -332,9 +333,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
         Log.info("Assisted stop");
         if (networkEngine != null) {
             networkEngine.farewell();
-            networkEngine.cancel();
-            networkEngine = null;
-
             if (captureEngine != null) {
                 captureEngine.stop();
                 captureEngine = null;
@@ -343,6 +341,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 compressorEngine.stop();
                 compressorEngine = null;
             }
+            networkEngine.cancel();
+            networkEngine = null;
         }
         frame.onDisconnecting();
     }
@@ -354,8 +354,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 String assistantAddress = parts[0];
                 String port = parts[1];
                 // maybe extract timestamps of open and closed as well?
-                if (parts.length > 4) {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[3].equals("0"));
+                if (parts.length > 5) {
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"));
                 } else {
                     TOKEN.updateToken(assistantAddress, Integer.parseInt(port), null);
                 }
@@ -508,6 +508,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         public void onReconfigured(NetworkAssistedEngineConfiguration configuration) {
             networkConfiguration = configuration;
             updateTokenServerUrl(configuration.getTokenServerUrl());
+            frame.resetConnectionIndicators();
         }
 
         private void capsOff() {

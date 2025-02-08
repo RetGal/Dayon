@@ -10,7 +10,12 @@ public class Token {
     private final AtomicInteger port = new AtomicInteger();
     private final AtomicReference<String> peerAddress = new AtomicReference<>();
     private final AtomicReference<Boolean> peerAccessible = new AtomicReference<>();
+    private final String queryParams;
     private final ReentrantLock lock = new ReentrantLock();
+
+    public Token(String tokenParams) {
+        queryParams = tokenParams;
+    }
 
     public void setTokenString(String tokenString) {
         lock.lock();
@@ -93,6 +98,10 @@ public class Token {
         } finally {
             lock.unlock();
         }
+    }
+
+    public String getQueryParams() {
+        return queryParams;
     }
 
     public void reset() {

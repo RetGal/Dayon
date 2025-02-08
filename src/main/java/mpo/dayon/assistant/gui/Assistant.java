@@ -59,9 +59,9 @@ public class Assistant implements ClipboardOwner {
 
     public static final String PORT_PARAMS = "?port=%s&closed=%d&v=1.3";
 
-    public static final String TOKEN_PARAMS = "?token=%s&closed=%d&v=1.3";
+    private static final String TOKEN_PARAMS = "?token=%s&closed=%d&v=1.3";
 
-    private static final Token TOKEN = new Token();
+    private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
     private String tokenServerUrl;
 
@@ -196,6 +196,7 @@ public class Assistant implements ClipboardOwner {
             button.setText("");
             button.setToolTipText(translate("token.create.msg"));
         }
+        frame.resetConnectionIndicators();
     }
 
     private void stopNetwork() {
@@ -221,14 +222,9 @@ public class Assistant implements ClipboardOwner {
 
                 if (publicIp == null) {
                     CompletableFuture.supplyAsync(() -> {
-                        try {
-                            publicIp = networkEngine.resolvePublicIp();
-                        } catch (IOException | InterruptedException ex) {
-                            Log.error("Could not determine public IP", ex);
+                        publicIp = networkEngine.resolvePublicIp();
+                        if (publicIp == null) {
                             JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
-                            if (ex instanceof InterruptedException) {
-                                Thread.currentThread().interrupt();
-                            }
                         }
                         return publicIp;
                     }).thenAcceptAsync(ip -> {
@@ -548,10 +544,10 @@ public class Assistant implements ClipboardOwner {
                 this.putValue("button", button);
 
                 CompletableFuture.supplyAsync(() -> {
+                    if (publicIp == null) {
+                        publicIp = networkEngine.resolvePublicIp();
+                    }
                     try {
-                        if (publicIp == null) {
-                            publicIp = networkEngine.resolvePublicIp();
-                        }
                         requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()));
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
@@ -683,14 +679,7 @@ public class Assistant implements ClipboardOwner {
         private void startNetwork() {
             frame.onGettingReady();
             if (publicIp == null) {
-                try {
-                    publicIp = networkEngine.resolvePublicIp();
-                } catch (IOException | InterruptedException ex) {
-                    Log.error("Could not determine public IP", ex);
-                    if (ex instanceof InterruptedException) {
-                        Thread.currentThread().interrupt();
-                    }
-                }
+                publicIp = networkEngine.resolvePublicIp();
             }
             if (!networkEngine.selfTest(publicIp, networkConfiguration.getPort())) {
                 JOptionPane.showMessageDialog(frame, translate("port.error.msg1", networkConfiguration.getPort(), networkConfiguration.getPort()), translate("port.error"), JOptionPane.WARNING_MESSAGE);

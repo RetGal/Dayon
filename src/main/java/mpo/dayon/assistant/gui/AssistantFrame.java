@@ -435,8 +435,6 @@ class AssistantFrame extends BaseFrame {
         disableControls();
         clearFingerprints();
         getStatusBar().setMessage(translate("ready"));
-        getStatusBar().resetPortStateIndicator();
-        getStatusBar().resetPeerStateIndicator();
     }
 
     void onHttpStarting(int port, boolean isPortAccessible) {
@@ -468,8 +466,8 @@ class AssistantFrame extends BaseFrame {
     }
 
     boolean onAccepted(Socket connection) {
-        if (connection == null) {
-            Log.warn("Connection was null");
+        if (connection == null || !connection.isConnected()) {
+            Log.warn("Connection was already terminated");
             return false;
         }
         if (JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
