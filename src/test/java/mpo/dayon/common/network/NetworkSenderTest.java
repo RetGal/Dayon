@@ -57,7 +57,7 @@ class NetworkSenderTest {
         sender.sendHello(osId);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.HELLO.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.HELLO.ordinal());
         verify(outMock, times(2)).writeInt(anyInt());
         verify(outMock).writeChar(osId);
         verify(outMock).writeUTF(inputLocale);
@@ -74,7 +74,7 @@ class NetworkSenderTest {
         sender.sendCapture(captureId, CompressionMethod.NONE, null, new MemByteBuffer());
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.CAPTURE.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.CAPTURE.ordinal());
         verify(outMock, times(2)).writeInt(valueCaptor.capture());
         verify(outMock).writeByte(noNewCompressionConfig);
         final List<Integer> capturedValues = valueCaptor.getAllValues();
@@ -92,7 +92,7 @@ class NetworkSenderTest {
         sender.sendMouseLocation(location);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.MOUSE_LOCATION.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.MOUSE_LOCATION.ordinal());
         verify(outMock, times(2)).writeShort(valueCaptor.capture());
         final List<Integer> capturedValues = valueCaptor.getAllValues();
         int first = capturedValues.get(0);
@@ -110,7 +110,7 @@ class NetworkSenderTest {
         sender.sendCaptureConfiguration(configuration, monochromePeer);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
         verify(outMock).write(configuration.getCaptureQuantization().ordinal());
         verify(outMock).writeInt(configuration.getCaptureTick());
     }
@@ -124,7 +124,7 @@ class NetworkSenderTest {
         sender.sendCaptureConfiguration(configuration, monochromePeer);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.CAPTURE_CONFIGURATION.ordinal());
         verify(outMock).write(configuration.getCaptureQuantization().ordinal());
         verify(outMock).writeInt(configuration.getCaptureTick());
         verify(outMock).writeShort(1);
@@ -138,7 +138,7 @@ class NetworkSenderTest {
         sender.sendCompressorConfiguration(configuration);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.COMPRESSOR_CONFIGURATION.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.COMPRESSOR_CONFIGURATION.ordinal());
         verify(outMock).write(configuration.getMethod().ordinal());
         verify(outMock).writeInt(configuration.getCacheMaxSize());
         verify(outMock).writeInt(configuration.getCachePurgeSize());
@@ -154,7 +154,7 @@ class NetworkSenderTest {
         sender.sendMouseControl(message);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.MOUSE_CONTROL.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.MOUSE_CONTROL.ordinal());
         verify(outMock, times(2)).writeShort(valueCaptor.capture());
         verify(outMock, times(1)).writeInt(valueCaptor.capture());
         final List<Integer> capturedValues = valueCaptor.getAllValues();
@@ -176,7 +176,7 @@ class NetworkSenderTest {
         sender.sendKeyControl(message);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.KEY_CONTROL.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.KEY_CONTROL.ordinal());
         verify(outMock, times(2)).writeInt(valueCaptor.capture());
         verify(outMock, times(1)).writeChar(valueCaptor.capture());
         final List<Integer> capturedValues = valueCaptor.getAllValues();
@@ -205,7 +205,7 @@ class NetworkSenderTest {
         sender.sendClipboardContentText(payload, payload.getBytes().length);
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
-        verify(outMock).write(NetworkMessageType.CLIPBOARD_TEXT.ordinal());
+        verify(outMock, timeout(250)).write(NetworkMessageType.CLIPBOARD_TEXT.ordinal());
         verify(outMock).writeUTF(payload);
     }
 

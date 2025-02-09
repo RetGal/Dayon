@@ -117,7 +117,7 @@ public class Token {
         tokenString.set(newToken);
         port.set(0);
         peerAddress.set(null);
-        peerAccessible.set(false);
+        peerAccessible.set(null);
     }
 
     @Override
