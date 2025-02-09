@@ -26,7 +26,7 @@ class NetworkAssistedEngineTest {
         engine.configure(configuration);
 
         // when
-        engine.connect(new Token("params"));
+        engine.connect(new Token("?token=%s"));
 
         // then
         verify(listener).onConnecting(configuration.getServerName(), configuration.getServerPort());
