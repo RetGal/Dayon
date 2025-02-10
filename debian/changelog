@@ -1,3 +1,9 @@
+dayon (16.0.0) stable; urgency=medium
+
+  * Ability to revert connection establishment if assistant is not reachable
+
+ -- Reto Galante <reto@galante.ch>  Tue, 11 February 2025 12:00:00 +0000
+
 dayon (15.0.2) stable; urgency=low
 
   * Connection self-test
