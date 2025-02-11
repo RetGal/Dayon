@@ -296,7 +296,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         String[] parts = response.body().trim().split("\\*");
         // ignore unknown closed status "-1"
         if (parts.length > 5 && !parts[3].isEmpty() && !parts[5].equals("-1")) {
-            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"));
+            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"), Integer.parseInt(parts[1]));
         }
     }
 

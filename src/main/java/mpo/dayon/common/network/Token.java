@@ -7,9 +7,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Token {
 
     private final AtomicReference<String> tokenString = new AtomicReference<>();
-    private final AtomicInteger port = new AtomicInteger();
+    private final AtomicInteger peerPort = new AtomicInteger();
     private final AtomicReference<String> peerAddress = new AtomicReference<>();
     private final AtomicReference<Boolean> peerAccessible = new AtomicReference<>();
+    private final AtomicInteger localPort = new AtomicInteger();
     private final String queryParams;
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -26,12 +27,13 @@ public class Token {
         }
     }
 
-    public void updateToken(String peerAddress, int port, Boolean peerAccessible) {
+    public void updateToken(String peerAddress, int peerPort, Boolean peerAccessible, int localPort) {
         lock.lock();
         try {
-            this.port.set(port);
+            this.peerPort.set(peerPort);
             this.peerAddress.set(peerAddress);
             this.peerAccessible.set(peerAccessible);
+            this.localPort.set(localPort);
         } finally {
             lock.unlock();
         }
@@ -46,28 +48,19 @@ public class Token {
         }
     }
 
-    public void setPort(int port) {
+    public int getPeerPort() {
         lock.lock();
         try {
-            this.port.set(port);
+            return peerPort.get();
         } finally {
             lock.unlock();
         }
     }
 
-    public int getPort() {
+    public int getLocalPort() {
         lock.lock();
         try {
-            return port.get();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void setPeerAccessible(Boolean is) {
-        lock.lock();
-        try {
-            this.peerAccessible.set(is);
+            return localPort.get();
         } finally {
             lock.unlock();
         }
@@ -77,15 +70,6 @@ public class Token {
         lock.lock();
         try {
             return peerAccessible.get();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    public void setPeerAddress(String peerAddress) {
-        lock.lock();
-        try {
-            this.peerAddress.set(peerAddress);
         } finally {
             lock.unlock();
         }
@@ -115,16 +99,17 @@ public class Token {
 
     private void reset(String newToken) {
         tokenString.set(newToken);
-        port.set(0);
+        peerPort.set(0);
         peerAddress.set(null);
         peerAccessible.set(null);
+        localPort.set(0);
     }
 
     @Override
     public String toString() {
         lock.lock();
         try {
-            return "Token [token=" + tokenString + ", port=" + port + ", peerAddress=" + peerAddress + ", peerAccessible=" + peerAccessible + "]";
+            return "Token [token=" + tokenString + ", peerPort=" + peerPort + ", peerAddress=" + peerAddress + ", peerAccessible=" + peerAccessible + ", localPort=" + localPort + "]";
         } finally {
             lock.unlock();
         }
