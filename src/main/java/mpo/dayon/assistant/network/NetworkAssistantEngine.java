@@ -213,10 +213,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private boolean isReverseConnectionPossible() throws NoSuchAlgorithmException, IOException, KeyManagementException {
         if (Boolean.TRUE.equals(token.isPeerAccessible())) {
-            fireOnPeerIsAccessible(token.getPeerAddress(), configuration.getPort(), true);
+            int peerPort = token.getPeerPort();
+            fireOnPeerIsAccessible(token.getPeerAddress(), peerPort, true);
             Log.info("Trying to connect to the assisted");
             ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
-            while (!connectToAssisted(token.getPeerAddress(), token.getPeerPort()) && !cancelling.get()) {
+            while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
