@@ -210,7 +210,6 @@ public class NetworkAssistedEngine extends NetworkEngine
             connection = (SSLSocket) server.accept();
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-            safeClose(server);
         } catch (IOException e) {
             Log.error("Error accepting incoming connection", e);
             closeConnections();
@@ -218,9 +217,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
 
         try {
-            fileServer = (SSLServerSocket) sssf.createServerSocket(port);
-            fileConnection = (SSLSocket) fileServer.accept();
-            safeClose(fileServer);
+            fileConnection = (SSLSocket) server.accept();
+            safeClose(server);
             Log.debug("File connection established");
         } catch (IOException e) {
             Log.error("Error establishing file connection", e);

@@ -59,8 +59,6 @@ public abstract class NetworkEngine {
 
     protected SSLSocket connection;
 
-    protected SSLServerSocket fileServer;
-
     protected SSLSocket fileConnection;
 
     protected final AtomicBoolean cancelling = new AtomicBoolean(false);
@@ -177,7 +175,7 @@ public abstract class NetworkEngine {
             fileSender.cancel();
         }
         fileReceiver = safeInterrupt(fileReceiver);
-        safeClose(fileIn, fileConnection, fileServer);
+        safeClose(fileIn, fileConnection);
         cancelling.set(false);
     }
 

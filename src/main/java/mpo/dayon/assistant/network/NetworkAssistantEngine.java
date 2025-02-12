@@ -106,7 +106,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     public void cancel() {
         Log.info("Cancelling the network assistant engine...");
         cancelling.set(true);
-        safeClose(server, connection, fileServer, fileConnection);
+        safeClose(server, connection, fileConnection);
         fireOnDisconnecting();
     }
 
@@ -322,10 +322,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             if (isInvertibleConnection) {
                 initFileConnection(token.getPeerAddress(), token.getPeerPort());
             } else {
-                fileServer = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
-                fileConnection = (SSLSocket) fileServer.accept();
-                safeClose(fileServer);
-                fileServer = null;
+                server = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
+                fileConnection = (SSLSocket) server.accept();
+                safeClose(server);
+                server = null;
             }
             initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
