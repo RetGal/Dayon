@@ -253,9 +253,11 @@ public class NetworkAssistedEngine extends NetworkEngine
             publicIp = resolvePublicIp();
         }
         String remoteHost = configuration.getServerName();
-        if (!selfTest(publicIp, configuration.getServerPort(), remoteHost)) {
+        // reuse the port number if possible
+        int portNumber = token.getLocalPort() != 0 ? token.getLocalPort() : configuration.getServerPort();
+        if (!selfTest(publicIp, portNumber, remoteHost)) {
             // try a random port number if we couldn't open the one of the server
-            int portNumber = new Random().nextInt(8975) + 1025;
+            portNumber = new Random().nextInt(8975) + 1025;
             if (selfTest(publicIp, portNumber, remoteHost)) {
                 return portNumber;
             }
