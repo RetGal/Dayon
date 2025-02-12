@@ -31,6 +31,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 
@@ -58,6 +59,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
 
     private final char osId = System.getProperty("os.name").toLowerCase().charAt(0);
+
+    private final SecureRandom random = new SecureRandom();
 
     private Token token;
 
@@ -128,7 +131,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
         } finally {
-            UPnP.closePortTCP(configuration.getServerPort());
+            if (token.getLocalPort() != 0) {
+                UPnP.closePortTCP(token.getLocalPort(), token.getPeerAddress());
+            }
         }
     }
 
@@ -136,12 +141,13 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
         Log.debug(token.toString());
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
+        int localPort;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
-            // got public ip and able to expose port?
-            detectEnvironment();
-            checkAndUpdateRVS(true);
+            // got public ip and able to expose a port?
+            localPort = detectEnvironment();
+            checkAndUpdateRVS(localPort, true);
         }
         fireOnConnecting(configuration);
 
@@ -149,15 +155,18 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (token.getTokenString() != null && Boolean.FALSE.equals(token.isPeerAccessible())) {
             fireOnPeerIsAccessible(false);
             Log.info("Assistant is not accessible");
-            // got public ip and able to expose port?
-            detectEnvironment();
-            // update the rvs
-            checkAndUpdateRVS(false);
+            if (token.getLocalPort() == 0) {
+                // got public ip and able to expose a port?
+                localPort = detectEnvironment();
+                // update the rvs
+                checkAndUpdateRVS(localPort, false);
+            }
             Log.debug(String.valueOf(token));
             // revert the connection and start server if necessary and possible
             if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
-                fireOnAccepting(token.getPort());
-                startServer();
+                localPort = token.getLocalPort();
+                fireOnAccepting(localPort);
+                startServer(localPort);
                 Log.debug("Connected");
             } else {
                 // guess we are out of options
@@ -194,18 +203,17 @@ public class NetworkAssistedEngine extends NetworkEngine
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
     }
 
-    private void startServer() throws NoSuchAlgorithmException, KeyManagementException {
+    private void startServer(int port) throws NoSuchAlgorithmException, KeyManagementException {
         SSLServerSocketFactory sssf;
         try {
             sssf = CustomTrustManager.initSslContext(false).getServerSocketFactory();
-            Log.info(format("Dayon! server [port:%d]", configuration.getServerPort()));
-            server = (SSLServerSocket) sssf.createServerSocket(configuration.getServerPort());
+            Log.info(format("Dayon! server [port:%d]", port));
+            server = (SSLServerSocket) sssf.createServerSocket(port);
             server.setNeedClientAuth(true);
             Log.info("Accepting...");
             connection = (SSLSocket) server.accept();
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-            safeClose(server);
         } catch (IOException e) {
             Log.error("Error accepting incoming connection", e);
             closeConnections();
@@ -213,9 +221,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
 
         try {
-            fileServer = (SSLServerSocket) sssf.createServerSocket(configuration.getServerPort());
-            fileConnection = (SSLSocket) fileServer.accept();
-            safeClose(fileServer);
+            fileConnection = (SSLSocket) server.accept();
+            safeClose(server);
             Log.debug("File connection established");
         } catch (IOException e) {
             Log.error("Error establishing file connection", e);
@@ -223,20 +230,19 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void checkAndUpdateRVS(boolean incomplete) throws IOException {
+    private void checkAndUpdateRVS(int localPort, boolean incomplete) throws IOException {
         try {
             String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
             String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
-            // just using the server port for now
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), configuration.getServerPort(), isOwnPortAccessible.get());
+            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get());
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
                 String port = parts[1];
                 if (parts.length > 5) {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"));
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"), localPort);
                 } else {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), null);
+                    token.updateToken(assistantAddress, Integer.parseInt(port), null, 0);
                 }
             }
         } catch (InterruptedException e) {
@@ -244,11 +250,22 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void detectEnvironment() {
+    private int detectEnvironment() {
         if (publicIp == null) {
             publicIp = resolvePublicIp();
         }
-        selfTest(publicIp, configuration.getServerPort());
+        String remoteHost = configuration.getServerName();
+        // reuse the port number if possible
+        int portNumber = token.getLocalPort() != 0 ? token.getLocalPort() : configuration.getServerPort();
+        if (!selfTest(publicIp, portNumber, remoteHost)) {
+            // try a random port number if we couldn't open the one of the server
+            portNumber = random.nextInt(8975) + 1025;
+            if (selfTest(publicIp, portNumber, remoteHost)) {
+                return portNumber;
+            }
+            return 0;
+        }
+        return configuration.getServerPort();
     }
 
     private void connectToAssistant() {

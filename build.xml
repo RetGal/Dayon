@@ -49,7 +49,7 @@
 	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipfileset src="${dir.binfile}/lib/xz-1.10.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.1/WaifUPnP-1.3.1.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.2/WaifUPnP-1.3.2.jar" excludes="META-INF/**"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>

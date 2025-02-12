@@ -682,7 +682,7 @@ class AssistantFrame extends BaseFrame {
         listeners.getListeners().forEach(listener -> listener.onKeyReleased(keyCode, keyChar));
     }
 
-    public void onPeerIsAccessible(String address, int port,boolean isPeerAccessible) {
+    public void onPeerIsAccessible(String address, int port, boolean isPeerAccessible) {
         if (isPeerAccessible) {
             getStatusBar().setMessage(translate("connecting", address, port));
             getStatusBar().setPeerStateIndicator(Color.orange);

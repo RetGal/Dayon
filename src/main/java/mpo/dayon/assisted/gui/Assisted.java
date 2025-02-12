@@ -208,7 +208,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                     || newConfiguration.getServerPort() != networkConfiguration.getServerPort()) {
                 networkConfiguration = newConfiguration;
                 networkConfiguration.persist();
-                if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPort()) {
+                if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPeerPort()) {
                     TOKEN.reset();
                 }
                 networkEngine.configure(networkConfiguration);
@@ -355,9 +355,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 String port = parts[1];
                 // maybe extract timestamps of open and closed as well?
                 if (parts.length > 5) {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"));
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"), Integer.parseInt(parts[4]));
                 } else {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), null);
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), null, 0);
                 }
                 Log.debug(TOKEN.toString());
                 return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));

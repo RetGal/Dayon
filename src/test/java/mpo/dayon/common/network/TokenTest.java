@@ -17,7 +17,7 @@ class TokenTest {
 
         // then
         assertNull(token.getPeerAddress());
-        assertEquals(0, token.getPort());
+        assertEquals(0, token.getPeerPort());
         assertEquals("?token=%s", token.getQueryParams());
         assertNull(token.getTokenString());
     }
@@ -28,12 +28,13 @@ class TokenTest {
         Token token = new Token("?token=%s");
 
         // when
-        token.updateToken("127.0.0.1", 1234, true);
+        token.updateToken("127.0.0.1", 1234, true, 8080);
 
         // then
         assertEquals("127.0.0.1", token.getPeerAddress());
-        assertEquals(1234, token.getPort());
+        assertEquals(1234, token.getPeerPort());
         assertTrue(token.isPeerAccessible());
+        assertEquals(8080, token.getLocalPort());
         assertEquals("?token=%s", token.getQueryParams());
         assertNull(token.getTokenString());
 
@@ -42,8 +43,9 @@ class TokenTest {
 
         // then
         assertNull(token.getPeerAddress());
-        assertEquals(0, token.getPort());
+        assertEquals(0, token.getPeerPort());
         assertNull(token.isPeerAccessible());
+        assertEquals(0, token.getLocalPort());
         assertEquals("?token=%s", token.getQueryParams());
         assertEquals("1234A", token.getTokenString());
     }

@@ -106,7 +106,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     public void cancel() {
         Log.info("Cancelling the network assistant engine...");
         cancelling.set(true);
-        safeClose(server, connection, fileServer, fileConnection);
+        safeClose(server, connection, fileConnection);
         fireOnDisconnecting();
     }
 
@@ -213,10 +213,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private boolean isReverseConnectionPossible() throws NoSuchAlgorithmException, IOException, KeyManagementException {
         if (Boolean.TRUE.equals(token.isPeerAccessible())) {
-            fireOnPeerIsAccessible(token.getPeerAddress(), configuration.getPort(), true);
+            int peerPort = token.getPeerPort();
+            fireOnPeerIsAccessible(token.getPeerAddress(), peerPort, true);
             Log.info("Trying to connect to the assisted");
             ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
-            while (!connectToAssisted(token.getPeerAddress()) && !cancelling.get()) {
+            while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException ex) {
@@ -249,7 +250,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private boolean connectToAssisted(String peerAddress) {
+    private boolean connectToAssisted(String peerAddress, int peerPort) {
         Log.debug("Assisted address is " + peerAddress);
         try {
             connection = (SSLSocket) ssf.createSocket();
@@ -257,7 +258,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             // grace period of 500 millis for the assisted to accept the connection
             connection.setSoTimeout(500);
             // abort the connection attempt after 5 seconds if the assisted cannot be reached
-            connection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 4000);
+            connection.connect(new InetSocketAddress(peerAddress, peerPort), 4000);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
         } catch (IOException e) {
@@ -267,13 +268,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return true;
     }
 
-    private boolean initFileConnection(String peerAddress) {
+    private boolean initFileConnection(String peerAddress, int peerPort) {
         try {
             fileConnection = (SSLSocket) ssf.createSocket();
             // grace period of 500 millis for the assisted to accept the connection
             fileConnection.setSoTimeout(500);
             // abort the connection attempt after 5 seconds if the assistant cannot be reached
-            fileConnection.connect(new InetSocketAddress(peerAddress, configuration.getPort()), 4000);
+            fileConnection.connect(new InetSocketAddress(peerAddress, peerPort), 4000);
             // once connected, remain connected until cancelled
             fileConnection.setSoTimeout(0);
         } catch (IOException e) {
@@ -296,7 +297,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         String[] parts = response.body().trim().split("\\*");
         // ignore unknown closed status "-1"
         if (parts.length > 5 && !parts[3].isEmpty() && !parts[5].equals("-1")) {
-            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"));
+            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"), Integer.parseInt(parts[1]));
         }
     }
 
@@ -319,12 +320,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         try {
             if (isInvertibleConnection) {
-                initFileConnection(token.getPeerAddress());
+                initFileConnection(token.getPeerAddress(), token.getPeerPort());
             } else {
-                fileServer = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
-                fileConnection = (SSLSocket) fileServer.accept();
-                safeClose(fileServer);
-                fileServer = null;
+                server = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
+                fileConnection = (SSLSocket) server.accept();
+                safeClose(server);
+                server = null;
             }
             initFileSender();
             fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
