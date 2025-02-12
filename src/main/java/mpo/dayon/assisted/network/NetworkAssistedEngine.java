@@ -31,9 +31,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
-import java.util.Random;
 
 import static java.lang.String.format;
 
@@ -59,6 +59,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
 
     private final char osId = System.getProperty("os.name").toLowerCase().charAt(0);
+
+    private final SecureRandom random = new SecureRandom();
 
     private Token token;
 
@@ -257,7 +259,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         int portNumber = token.getLocalPort() != 0 ? token.getLocalPort() : configuration.getServerPort();
         if (!selfTest(publicIp, portNumber, remoteHost)) {
             // try a random port number if we couldn't open the one of the server
-            portNumber = new Random().nextInt(8975) + 1025;
+            portNumber = random.nextInt(8975) + 1025;
             if (selfTest(publicIp, portNumber, remoteHost)) {
                 return portNumber;
             }
