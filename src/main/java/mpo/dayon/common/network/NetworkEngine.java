@@ -218,12 +218,18 @@ public abstract class NetworkEngine {
         return null;
     }
 
+    // creates unrestricted port forwarding
     public boolean selfTest(String publicIp, int portNumber) {
+        return selfTest(publicIp, portNumber, null);
+    }
+
+    // creates port forwarding for the specific remote host only
+    public boolean selfTest(String publicIp, int portNumber, String remoteHost) {
         if (publicIp == null) {
             isOwnPortAccessible.set(false);
             return false;
         }
-        if (!manageRouterPorts(0, portNumber)) {
+        if (!manageRouterPorts(0, portNumber, remoteHost)) {
             try (ServerSocket listener = new ServerSocket(portNumber)) {
                 try (Socket socket = new Socket()) {
                     socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
@@ -239,7 +245,7 @@ public abstract class NetworkEngine {
         return true;
     }
 
-    public static boolean manageRouterPorts(int oldPort, int newPort) {
+    public static boolean manageRouterPorts(int oldPort, int newPort, String remoteHost) {
         if (!UPnP.isUPnPAvailable()) {
             return false;
         }
@@ -248,7 +254,7 @@ public abstract class NetworkEngine {
             Log.info(format("Disabled forwarding for port %d", oldPort));
         }
         if (!UPnP.isMappedTCP(newPort)) {
-            if (UPnP.openPortTCP(newPort, "Dayon!")) {
+            if (UPnP.openPortTCP(newPort, remoteHost, "Dayon!")) {
                 Log.info(format("Enabled forwarding for port %d", newPort));
                 isOwnPortAccessible.set(true);
                 return true;

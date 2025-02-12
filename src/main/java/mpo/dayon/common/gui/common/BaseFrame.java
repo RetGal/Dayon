@@ -472,7 +472,7 @@ public abstract class BaseFrame extends JFrame {
                 Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
 
         if (!newConfig.equals(oldConfig)) {
-            manageRouterPorts(oldConfig.getPort(), newConfig.getPort());
+            manageRouterPorts(oldConfig.getPort(), newConfig.getPort(), null);
             newConfig.persist();
             networkEngine.reconfigure(newConfig);
         }

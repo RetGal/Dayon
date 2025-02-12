@@ -129,7 +129,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
         } finally {
-            UPnP.closePortTCP(configuration.getServerPort());
+            if (token.getLocalPort() != 0) {
+                UPnP.closePortTCP(token.getLocalPort(), token.getPeerAddress());
+            }
         }
     }
 
@@ -250,10 +252,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (publicIp == null) {
             publicIp = resolvePublicIp();
         }
-        if (!selfTest(publicIp, configuration.getServerPort())) {
+        String remoteHost = configuration.getServerName();
+        if (!selfTest(publicIp, configuration.getServerPort(), remoteHost)) {
             // try a random port number if we couldn't open the one of the server
             int portNumber = new Random().nextInt(8975) + 1025;
-            if (selfTest(publicIp, portNumber)) {
+            if (selfTest(publicIp, portNumber, remoteHost)) {
                 return portNumber;
             }
             return 0;
