@@ -240,7 +240,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         String connectionParams = null;
         try {
             // using 0 as port and null for open as both are not known at this point
-            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null);
+            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null, networkEngine.getLocalAddress());
         } catch (IOException | InterruptedException ex) {
             Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {

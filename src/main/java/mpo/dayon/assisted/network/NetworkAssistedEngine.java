@@ -143,6 +143,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.debug(token.toString());
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         int localPort;
+        boolean isAssitantInSameNetwork = false;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
@@ -169,23 +170,12 @@ public class NetworkAssistedEngine extends NetworkEngine
                 fireOnAccepting(localPort);
                 startServer(localPort);
                 Log.debug("Connected");
-            } else if (publicIp.equals(token.getPeerAddress())) {
-                Log.debug("Connecting to the assistants local address");
-                configuration.setServerName(token.getPeerLocalAddress());
-                fireOnConnecting(configuration);
-                try {
-                    sleep(4000);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
             } else {
-                // guess we are out of options
-                Log.debug("Out of options");
-                fireOnRefused(configuration);
+                isAssitantInSameNetwork = detectLocalAssistant();
             }
         }
 
-        if (token.getTokenString() == null || token.isPeerAccessible() || publicIp.equals(token.getPeerAddress())) {
+        if (token.getTokenString() == null || token.isPeerAccessible() || isAssitantInSameNetwork) {
             fireOnPeerIsAccessible(true);
             Log.debug("Assistant is accessible");
             Log.info(format("Connecting to [%s:%s]...", configuration.getServerName(), configuration.getServerPort()));
@@ -211,6 +201,24 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileReceiver.start();
         Log.info("Connected with the assistant!");
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+    }
+
+    private boolean detectLocalAssistant() {
+        if (publicIp.equals(token.getPeerAddress())) {
+            Log.debug("Connecting to the assistants local address");
+            configuration.setServerName(token.getPeerLocalAddress());
+            fireOnConnecting(configuration);
+            try {
+                sleep(4000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return true;
+        }
+        // guess we are out of options
+        Log.debug("Out of options");
+        fireOnRefused(configuration);
+        return false;
     }
 
     private void startServer(int port) throws NoSuchAlgorithmException, KeyManagementException {
@@ -244,7 +252,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         try {
             String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
             String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get());
+            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
@@ -304,7 +312,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open) throws IOException, InterruptedException {
+    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open, String localAddress) throws IOException, InterruptedException {
         if (open == null) {
             isOwnPortAccessible.set(null);
         }

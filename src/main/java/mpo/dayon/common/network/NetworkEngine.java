@@ -69,7 +69,7 @@ public abstract class NetworkEngine {
 
     protected static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
 
-    public static volatile String localAddress = "0";
+    private String localAddress = "0";
 
     /**
      * Might be blocking if the sender queue is full (!)
@@ -199,6 +199,10 @@ public abstract class NetworkEngine {
     }
 
     protected void fireOnIOError(IOException error) {
+    }
+
+    public String getLocalAddress() {
+        return localAddress;
     }
 
     public String resolvePublicIp() {

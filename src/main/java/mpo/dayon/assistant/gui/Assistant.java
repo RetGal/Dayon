@@ -548,7 +548,7 @@ public class Assistant implements ClipboardOwner {
                         publicIp = networkEngine.resolvePublicIp();
                     }
                     try {
-                        requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()), networkEngine.localAddress);
+                        requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()), networkEngine.getLocalAddress());
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
