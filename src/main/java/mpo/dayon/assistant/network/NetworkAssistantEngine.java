@@ -239,7 +239,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             Log.info("Trying to obtain the assisted address");
             while (token.getPeerAddress() == null && !cancelling.get()) {
                 obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get());
-                Thread.sleep(4000);
+                if (token.isPeerAccessible() == null) {
+                    Thread.sleep(4000);
+                }
             }
         } catch (IOException | InterruptedException ex) {
             Log.warn("Unable to query the token server " + token.getTokenString());
@@ -286,7 +288,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newBuilder().build();
-        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0);
+        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, localAddress);
         Log.debug("Querying token server " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
@@ -296,8 +298,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.debug("Got %s", () -> response.body().trim());
         String[] parts = response.body().trim().split("\\*");
         // ignore unknown closed status "-1"
-        if (parts.length > 5 && !parts[3].isEmpty() && !parts[5].equals("-1")) {
-            token.updateToken(parts[3], Integer.parseInt(parts[4]), !parts[5].equals("0"), Integer.parseInt(parts[1]));
+        if (parts.length > 7 && !parts[4].isEmpty() && !parts[7].equals("-1")) {
+            token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]));
         }
     }
 

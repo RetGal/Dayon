@@ -9,6 +9,7 @@ public class Token {
     private final AtomicReference<String> tokenString = new AtomicReference<>();
     private final AtomicInteger peerPort = new AtomicInteger();
     private final AtomicReference<String> peerAddress = new AtomicReference<>();
+    private final AtomicReference<String> peerLocalAddress = new AtomicReference<>();
     private final AtomicReference<Boolean> peerAccessible = new AtomicReference<>();
     private final AtomicInteger localPort = new AtomicInteger();
     private final String queryParams;
@@ -27,11 +28,12 @@ public class Token {
         }
     }
 
-    public void updateToken(String peerAddress, int peerPort, Boolean peerAccessible, int localPort) {
+    public void updateToken(String peerAddress, int peerPort, String peerLocalAddress, Boolean peerAccessible, int localPort) {
         lock.lock();
         try {
             this.peerPort.set(peerPort);
             this.peerAddress.set(peerAddress);
+            this.peerLocalAddress.set(peerLocalAddress);
             this.peerAccessible.set(peerAccessible);
             this.localPort.set(localPort);
         } finally {
@@ -84,6 +86,15 @@ public class Token {
         }
     }
 
+    public String getPeerLocalAddress() {
+        lock.lock();
+        try {
+            return peerLocalAddress.get();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public String getQueryParams() {
         return queryParams;
     }
@@ -101,6 +112,7 @@ public class Token {
         tokenString.set(newToken);
         peerPort.set(0);
         peerAddress.set(null);
+        peerLocalAddress.set(null);
         peerAccessible.set(null);
         localPort.set(0);
     }
@@ -109,7 +121,7 @@ public class Token {
     public String toString() {
         lock.lock();
         try {
-            return "Token [token=" + tokenString + ", peerPort=" + peerPort + ", peerAddress=" + peerAddress + ", peerAccessible=" + peerAccessible + ", localPort=" + localPort + "]";
+            return "Token " + tokenString + " [peerPort=" + peerPort + ", peerAddress=" + peerAddress + ", peerAccessible=" + peerAccessible + ", peerLocalAddress=" + peerLocalAddress + ", localPort=" + localPort + "]";
         } finally {
             lock.unlock();
         }

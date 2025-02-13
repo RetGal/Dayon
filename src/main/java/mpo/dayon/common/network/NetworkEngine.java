@@ -69,6 +69,8 @@ public abstract class NetworkEngine {
 
     protected static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
 
+    public static volatile String localAddress = "0";
+
     /**
      * Might be blocking if the sender queue is full (!)
      */
@@ -237,12 +239,23 @@ public abstract class NetworkEngine {
             } catch (IOException e) {
                 Log.warn("Port " + portNumber + " is not reachable from the outside");
                 isOwnPortAccessible.set(false);
+                localAddress = obtainLocalAddress();
                 return false;
             }
         }
         Log.debug("Port " + portNumber + " is reachable from the outside");
         isOwnPortAccessible.set(true);
         return true;
+    }
+
+    private String obtainLocalAddress() {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress("example.com", 80), 2000);
+            return socket.getLocalAddress().getHostAddress();
+        } catch (IOException ex) {
+            Log.warn("No internet connection");
+            return "0";
+        }
     }
 
     public static boolean manageRouterPorts(int oldPort, int newPort, String remoteHost) {
