@@ -37,6 +37,7 @@ import java.time.Duration;
 
 import static java.lang.String.format;
 
+import static java.lang.Thread.sleep;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -142,6 +143,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.debug(token.toString());
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         int localPort;
+        boolean isAssitantInSameNetwork = false;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
@@ -169,16 +171,14 @@ public class NetworkAssistedEngine extends NetworkEngine
                 startServer(localPort);
                 Log.debug("Connected");
             } else {
-                // guess we are out of options
-                Log.debug("Out of options");
-                fireOnRefused(configuration);
+                isAssitantInSameNetwork = detectLocalAssistant();
             }
         }
 
-        if (token.getTokenString() == null || token.isPeerAccessible()) {
+        if (token.getTokenString() == null || token.isPeerAccessible() || isAssitantInSameNetwork) {
             fireOnPeerIsAccessible(true);
             Log.debug("Assistant is accessible");
-            Log.info(format("Connecting to [%s][%s]...", configuration.getServerName(), configuration.getServerPort()));
+            Log.info(format("Connecting to [%s:%s]...", configuration.getServerName(), configuration.getServerPort()));
             connectToAssistant();
         }
 
@@ -201,6 +201,25 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileReceiver.start();
         Log.info("Connected with the assistant!");
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+    }
+
+    private boolean detectLocalAssistant() {
+        if (publicIp.equals(token.getPeerAddress())) {
+            Log.debug("Connecting to the assistants local address");
+            configuration.setServerName(token.getPeerLocalAddress());
+            fireOnConnecting(configuration);
+            // grace period for the assistant to get ready
+            try {
+                sleep(4000);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+            return true;
+        }
+        // guess we are out of options
+        Log.debug("Out of options");
+        fireOnRefused(configuration);
+        return false;
     }
 
     private void startServer(int port) throws NoSuchAlgorithmException, KeyManagementException {
@@ -234,15 +253,15 @@ public class NetworkAssistedEngine extends NetworkEngine
         try {
             String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
             String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get());
+            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
                 String port = parts[1];
-                if (parts.length > 5) {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"), localPort);
+                if (parts.length > 7) {
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort);
                 } else {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), null, 0);
+                    token.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0);
                 }
             }
         } catch (InterruptedException e) {
@@ -274,8 +293,8 @@ public class NetworkAssistedEngine extends NetworkEngine
             connection.setNeedClientAuth(true);
             // grace period of 15 seconds for the assistant to accept the connection
             connection.setSoTimeout(15000);
-            // abort the connection attempt after 5 seconds if the assistant cannot be reached
-            connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 5000);
+            // abort the connection attempt after 7 seconds if the assistant cannot be reached
+            connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 7000);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
         } catch (IOException e) {
@@ -294,12 +313,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open) throws IOException, InterruptedException {
+    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open, String localAddress) throws IOException, InterruptedException {
         if (open == null) {
             isOwnPortAccessible.set(null);
         }
         // null = unknown = -1, true = open = 1, false = closed = 0
-        String query = format(tokenServerUrl, token, port, toInt(open));
+        String query = format(tokenServerUrl, token, port, toInt(open), localAddress);
         Log.debug("Resolving token using: " + query);
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()

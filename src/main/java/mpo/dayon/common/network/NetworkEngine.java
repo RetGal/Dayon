@@ -69,6 +69,8 @@ public abstract class NetworkEngine {
 
     protected static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
 
+    private String localAddress = "0";
+
     /**
      * Might be blocking if the sender queue is full (!)
      */
@@ -199,6 +201,10 @@ public abstract class NetworkEngine {
     protected void fireOnIOError(IOException error) {
     }
 
+    public String getLocalAddress() {
+        return localAddress;
+    }
+
     public String resolvePublicIp() {
         // HttpClient doesn't implement AutoCloseable nor close before Java 21!
         @java.lang.SuppressWarnings("squid:S2095")
@@ -237,12 +243,28 @@ public abstract class NetworkEngine {
             } catch (IOException e) {
                 Log.warn("Port " + portNumber + " is not reachable from the outside");
                 isOwnPortAccessible.set(false);
+                localAddress = obtainLocalAddress();
                 return false;
             }
         }
         Log.debug("Port " + portNumber + " is reachable from the outside");
         isOwnPortAccessible.set(true);
         return true;
+    }
+
+    private String obtainLocalAddress() {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress("fensterkitt.ch", 80), 5000);
+            return socket.getLocalAddress().getHostAddress();
+        } catch (IOException e) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("info.cern.ch", 80), 5000);
+                return socket.getLocalAddress().getHostAddress();
+            } catch (IOException ex) {
+                Log.warn("No internet connection");
+                return "0";
+            }
+        }
     }
 
     public static boolean manageRouterPorts(int oldPort, int newPort, String remoteHost) {

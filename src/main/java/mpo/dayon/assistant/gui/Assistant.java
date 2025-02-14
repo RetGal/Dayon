@@ -57,9 +57,9 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    public static final String PORT_PARAMS = "?port=%s&closed=%d&v=1.3";
+    public static final String PORT_PARAMS = "?port=%s&closed=%d&laddr=%s&v=1.4";
 
-    private static final String TOKEN_PARAMS = "?token=%s&closed=%d&v=1.3";
+    private static final String TOKEN_PARAMS = "?token=%s&closed=%d&laddr=%s&v=1.4";
 
     private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
@@ -548,7 +548,8 @@ public class Assistant implements ClipboardOwner {
                         publicIp = networkEngine.resolvePublicIp();
                     }
                     try {
-                        requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()));
+                        boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
+                        requestToken(closed, networkEngine.getLocalAddress());
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
@@ -565,8 +566,8 @@ public class Assistant implements ClipboardOwner {
                 });
             }
 
-            private void requestToken(boolean closed) throws IOException, InterruptedException {
-                String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0);
+            private void requestToken(boolean closed, String localAddress) throws IOException, InterruptedException {
+                String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
                 Log.debug("Requesting token using: " + query);
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
                 @SuppressWarnings("squid:S2095")

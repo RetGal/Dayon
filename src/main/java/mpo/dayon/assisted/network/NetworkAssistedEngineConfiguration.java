@@ -16,7 +16,7 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 
     private static final String PREF_TOKEN_SERVER_URL = "assisted.network.tokenServerUrl";
 
-    private final String serverName;
+    private String serverName;
 
     private final int serverPort;
 
@@ -64,6 +64,10 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 
     public int getServerPort() {
         return serverPort;
+    }
+
+    public void setServerName(String serverName) {
+        this.serverName = serverName;
     }
 
     public String getTokenServerUrl() {

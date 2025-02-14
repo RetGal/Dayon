@@ -45,7 +45,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
 
-    private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&v=1.3";
+    private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&laddr=%s&v=1.4";
 
     private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
@@ -240,7 +240,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         String connectionParams = null;
         try {
             // using 0 as port and null for open as both are not known at this point
-            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null);
+            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null, networkEngine.getLocalAddress());
         } catch (IOException | InterruptedException ex) {
             Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {
@@ -354,10 +354,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 String assistantAddress = parts[0];
                 String port = parts[1];
                 // maybe extract timestamps of open and closed as well?
-                if (parts.length > 5) {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2].equals("0"), Integer.parseInt(parts[4]));
+                if (parts.length > 7) {
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[5]));
                 } else {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), null, 0);
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0);
                 }
                 Log.debug(TOKEN.toString());
                 return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));

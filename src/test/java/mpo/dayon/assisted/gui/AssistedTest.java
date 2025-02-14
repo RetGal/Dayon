@@ -47,7 +47,7 @@ class AssistedTest {
             // when then
             assertTrue(assisted.start("localhost", "12345", true));
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:12345]");
-            verify(logApp).append(LogLevel.INFO, "Connecting to [localhost][12345]...");
+            verify(logApp).append(LogLevel.INFO, "Connecting to [localhost:12345]...");
         }
     }
 
@@ -58,7 +58,7 @@ class AssistedTest {
             // when then
             assertTrue(assisted.start("localhost", "23456", false));
             verify(logApp).append(LogLevel.INFO, "Autoconfigured [ip:localhost][port:23456]");
-            verify(logApp, never()).append(LogLevel.INFO, "Connecting to [localhost][23456]...");
+            verify(logApp, never()).append(LogLevel.INFO, "Connecting to [localhost:23456]...");
         }
     }
 }

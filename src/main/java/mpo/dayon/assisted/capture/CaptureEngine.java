@@ -127,7 +127,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                         // to handle the reset message until the assistant without having to
                         // change anything (e.g., merging mechanism in the compressor engine).
                         reset.set(true);
-                        Log.info(format("Capture engine has been reconfigured [tile: %d] %s", captureId, configuration));
+                        Log.info(format("Capture engine has been reconfigured [tile:%d]%s", captureId, configuration));
                         reconfigured = false;
                     }
                 }

@@ -28,11 +28,12 @@ class TokenTest {
         Token token = new Token("?token=%s");
 
         // when
-        token.updateToken("127.0.0.1", 1234, true, 8080);
+        token.updateToken("85.85.85.85", 1234, "192.168.10.10", true, 8080);
 
         // then
-        assertEquals("127.0.0.1", token.getPeerAddress());
+        assertEquals("85.85.85.85", token.getPeerAddress());
         assertEquals(1234, token.getPeerPort());
+        assertEquals("192.168.10.10", token.getPeerLocalAddress());
         assertTrue(token.isPeerAccessible());
         assertEquals(8080, token.getLocalPort());
         assertEquals("?token=%s", token.getQueryParams());
