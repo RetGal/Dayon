@@ -143,7 +143,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.debug(token.toString());
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         int localPort;
-        boolean isAssitantInSameNetwork = false;
+        boolean isAssistantInSameNetwork = false;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
@@ -171,11 +171,11 @@ public class NetworkAssistedEngine extends NetworkEngine
                 startServer(localPort);
                 Log.debug("Connected");
             } else {
-                isAssitantInSameNetwork = detectLocalAssistant();
+                isAssistantInSameNetwork = detectLocalAssistant();
             }
         }
 
-        if (token.getTokenString() == null || token.isPeerAccessible() || isAssitantInSameNetwork) {
+        if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork) {
             fireOnPeerIsAccessible(true);
             Log.debug("Assistant is accessible");
             Log.info(format("Connecting to [%s:%s]...", configuration.getServerName(), configuration.getServerPort()));
