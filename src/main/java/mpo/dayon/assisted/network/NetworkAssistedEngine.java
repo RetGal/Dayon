@@ -208,6 +208,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             Log.debug("Connecting to the assistants local address");
             configuration.setServerName(token.getPeerLocalAddress());
             fireOnConnecting(configuration);
+            // grace period for the assistant to get ready
             try {
                 sleep(4000);
             } catch (InterruptedException e) {

@@ -33,6 +33,7 @@ import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 
 import static java.lang.String.format;
+import static java.lang.Thread.sleep;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 import static mpo.dayon.common.version.Version.isColoredVersion;
@@ -219,7 +220,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
             while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
                 try {
-                    Thread.sleep(2000);
+                    sleep(2000);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                 }
@@ -240,7 +241,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (token.getPeerAddress() == null && !cancelling.get()) {
                 obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get());
                 if (token.isPeerAccessible() == null) {
-                    Thread.sleep(4000);
+                    sleep(4000);
                 }
             }
         } catch (IOException | InterruptedException ex) {

@@ -57,7 +57,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    public static final String PORT_PARAMS = "?port=%s&closed=%d&v=1.4";
+    public static final String PORT_PARAMS = "?port=%s&closed=%d&laddr=%s&v=1.4";
 
     private static final String TOKEN_PARAMS = "?token=%s&closed=%d&laddr=%s&v=1.4";
 
@@ -548,7 +548,8 @@ public class Assistant implements ClipboardOwner {
                         publicIp = networkEngine.resolvePublicIp();
                     }
                     try {
-                        requestToken(!networkEngine.selfTest(publicIp, networkConfiguration.getPort()), networkEngine.getLocalAddress());
+                        boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
+                        requestToken(closed, networkEngine.getLocalAddress());
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);

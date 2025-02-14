@@ -254,11 +254,16 @@ public abstract class NetworkEngine {
 
     private String obtainLocalAddress() {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress("example.com", 80), 2000);
+            socket.connect(new InetSocketAddress("fensterkitt.ch", 80), 5000);
             return socket.getLocalAddress().getHostAddress();
-        } catch (IOException ex) {
-            Log.warn("No internet connection");
-            return "0";
+        } catch (IOException e) {
+            try (Socket socket = new Socket()) {
+                socket.connect(new InetSocketAddress("info.cern.ch", 80), 5000);
+                return socket.getLocalAddress().getHostAddress();
+            } catch (IOException ex) {
+                Log.warn("No internet connection");
+                return "0";
+            }
         }
     }
 
