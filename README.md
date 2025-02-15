@@ -37,7 +37,7 @@ The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v16.0.
 While v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, 
 this one comes with the ability of automatically reversing the connection establishment in cases the assistant side is blocked by a NAT or firewall.
 
-A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v15.0.2)
+A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v16.0.0)
  and an overview of the changes between the major versions can be found at: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
 
 
