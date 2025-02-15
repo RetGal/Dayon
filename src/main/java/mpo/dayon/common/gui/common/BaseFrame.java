@@ -571,12 +571,14 @@ public abstract class BaseFrame extends JFrame {
         try {
             if (isSnapped()) {
                 new ProcessBuilder(getSnapBrowserCommand(), uri.toString()).start();
-            } else if (Desktop.isDesktopSupported()) {
-                final Desktop desktop = Desktop.getDesktop();
-                if (desktop.isSupported(Desktop.Action.BROWSE)) {
-                    desktop.browse(uri);
+            } else {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(uri);
                 } else if (isFlat()) {
                     new ProcessBuilder(FLATPAK_BROWSER, uri.toString()).start();
+                } else {
+                    final String URL = uri.toString();
+                    new ProcessBuilder("sh", "-c", String.format("xdg-open %s || sensible-browser %s || x-www-browser %s || open %s", URL, URL, URL, URL)).start();
                 }
             }
         } catch (IOException ex) {
