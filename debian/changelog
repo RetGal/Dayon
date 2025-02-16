@@ -1,3 +1,11 @@
+dayon (16.0.1) stable; urgency=medium
+
+  * Enhanced ability to revert connection establishment if assistant is not reachable
+  * Automatically connect to the assistants private address if both sides are behind same firewall
+  * Enhanced integration for non gnome desktops
+
+ -- Reto Galante <reto@galante.ch>  Mon, 17 February 2025 12:00:00 +0000
+
 dayon (16.0.0) stable; urgency=medium
 
   * Ability to revert connection establishment if assistant is not reachable

@@ -12,7 +12,7 @@
 	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.release" value="11"/>
-	<property name="version" value="16.0.0"/>
+	<property name="version" value="16.0.1"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
