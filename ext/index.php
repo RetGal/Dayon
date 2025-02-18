@@ -29,7 +29,7 @@ if (isset($_GET['port'])) {
     // param missing = legacy mode (assisted never open)
     if (!isset($_GET['v'])) {
         echo readBasicToken($pdo, $token),"\n";
-        updateAssisted($pdo, $token, 0, $_SERVER['REMOTE_ADDR'], 0);
+        updateAssisted($pdo, $token, 0, $_SERVER['REMOTE_ADDR'], 0, 0);
     } else {
         $localAddress = isset($_GET['laddr']) ? clean($_GET['laddr'], 45) : 0;
         if (isset($_GET['closed'])) {
