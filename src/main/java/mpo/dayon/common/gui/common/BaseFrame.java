@@ -590,7 +590,7 @@ public abstract class BaseFrame extends JFrame {
                     new ProcessBuilder(FLATPAK_BROWSER, uri.toString()).start();
                 } else {
                     final String URL = uri.toString();
-                    new ProcessBuilder("sh", "-c", String.format("xdg-open %s || sensible-browser %s || x-www-browser %s || open %s", URL, URL, URL, URL)).start();
+                    new ProcessBuilder("/bin/sh", "-c", String.format("xdg-open %s || sensible-browser %s || x-www-browser %s || open %s", URL, URL, URL, URL)).start();
                 }
             }
         } catch (IOException ex) {
