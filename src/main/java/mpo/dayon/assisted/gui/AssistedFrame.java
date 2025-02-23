@@ -92,7 +92,7 @@ class AssistedFrame extends BaseFrame {
     private static class ButtonMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse("https://retgal.github.io/Dayon/wayland.xorg.gif");
+            browse("https://retgal.github.io/Dayon/wayland.to.xorg.gif");
         }
     }
 
