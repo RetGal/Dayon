@@ -101,7 +101,10 @@ public class Assistant implements ClipboardOwner {
 
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
+    private final String tokenServerUrlFromYaml;
+
     public Assistant(String tokenServerUrl, String language) {
+        tokenServerUrlFromYaml = tokenServerUrl;
         networkConfiguration = new NetworkAssistantEngineConfiguration();
         updateTokenServerUrl(tokenServerUrl);
 
@@ -132,6 +135,10 @@ public class Assistant implements ClipboardOwner {
         initGui();
     }
 
+    public boolean hasTokenServerUrlFromYaml() {
+        return tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty();
+    }
+
     private void updateTokenServerUrl(String tokenServerUrl) {
         if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
             this.tokenServerUrl = tokenServerUrl + PORT_PARAMS;
@@ -153,7 +160,7 @@ public class Assistant implements ClipboardOwner {
         if (frame != null) {
             frame.dispose();
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine);
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, hasTokenServerUrlFromYaml());
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);

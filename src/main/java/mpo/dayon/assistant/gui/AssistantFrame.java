@@ -95,11 +95,11 @@ class AssistantFrame extends BaseFrame {
 
     Timer peerStatusTimer;
 
-    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine) {
+    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         this.actions = actions;
-        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine));
+        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.tokenButton = createTokenButton(actions.getTokenAction());

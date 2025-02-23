@@ -209,7 +209,7 @@ public abstract class BaseFrame extends JFrame {
         button.setSelected(false);
     }
 
-    private Action createExitAction() {
+    protected Action createExitAction() {
         final Action exit = new AbstractAction() {
 
             @Override
@@ -295,15 +295,15 @@ public abstract class BaseFrame extends JFrame {
         return showSystemInfo;
     }
 
-    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
-        return createConnectionSettingsAction(null, networkEngine);
+    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
+        return createConnectionSettingsAction(null, networkEngine, hasTokenServerUrlFromYaml);
     }
 
-    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine) {
-        return createConnectionSettingsAction(networkEngine, null);
+    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
+        return createConnectionSettingsAction(networkEngine, null, hasTokenServerUrlFromYaml);
     }
 
-    protected Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
+    protected Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -316,7 +316,7 @@ public abstract class BaseFrame extends JFrame {
                 final JTextField customTokenTextField = new JTextField();
                 CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive);
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive, hasTokenServerUrlFromYaml);
 
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
@@ -337,7 +337,7 @@ public abstract class BaseFrame extends JFrame {
         return conf;
     }
 
-    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive) {
+    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive, boolean hasTokenServerUrlFromYaml) {
         final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
@@ -386,6 +386,18 @@ public abstract class BaseFrame extends JFrame {
             portPanel.add(portNumberLbl);
             portPanel.add(portNumberTextField);
             panel.add(portPanel, createGridBagConstraints(gridy++));
+        }
+
+        if (hasTokenServerUrlFromYaml) {
+            final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
+            tokenServerLbl.setFont(titleFont);
+            panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
+            final JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+            final JLabel preconfiguredLbl = new JLabel(translate("token.server.preconfigured"));
+            tokenPanel.add(preconfiguredLbl);
+            panel.add(tokenPanel, createGridBagConstraints(gridy));
+            return panel;
         }
 
         final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
@@ -559,7 +571,7 @@ public abstract class BaseFrame extends JFrame {
         return showHelp;
     }
 
-    private static void browse(String url) {
+    public static void browse(String url) {
         try {
             browse(new URI(url));
         } catch (URISyntaxException ex) {
