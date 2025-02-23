@@ -11,11 +11,15 @@ import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 
+import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
 class AssistedFrame extends BaseFrame {
@@ -29,17 +33,20 @@ class AssistedFrame extends BaseFrame {
     private boolean connected;
     private Timer peerStatusTimer;
 
-    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine) {
+    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml, boolean showWaylandWarning) {
         super.setFrameType(FrameType.ASSISTED);
         this.stopAction = stopAction;
         this.startAction = startAction;
         this.startButton = createButton(this.startAction);
         this.stopButton = createButton(this.stopAction, false);
-        this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction(networkEngine));
+        this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml));
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());
         onReady();
+        if (showWaylandWarning) {
+            showWarning();
+        }
     }
 
     private ToolBar createToolBar() {
@@ -68,6 +75,25 @@ class AssistedFrame extends BaseFrame {
         showUacSettings.putValue(Action.SHORT_DESCRIPTION, translate("uacSettings"));
         showUacSettings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SHIELD));
         return showUacSettings;
+    }
+
+    private void showWarning() {
+        final JButton warning = new JButton(format("<html><center>%s<br>%s</center></html>", translate("wayland.warning"), translate("wayland.fix.me")));
+        warning.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        warning.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        this.setMinimumSize(new Dimension(500, 140));
+        warning.addMouseListener(new ButtonMouseAdapter());
+        JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.setBorder(new EmptyBorder(5, 15, 5, 15));
+        contentPane.add(warning, BorderLayout.CENTER);
+        add(contentPane, BorderLayout.CENTER);
+    }
+
+    private static class ButtonMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            browse("https://retgal.github.io/Dayon/wayland.to.xorg.gif");
+        }
     }
 
     private StatusBar createStatusBar() {

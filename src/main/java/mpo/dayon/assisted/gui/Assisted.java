@@ -67,7 +67,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
+    private final String tokenServerUrlFromYaml;
+
+    private static boolean isWayland = false;
+
     public Assisted(String tokenServerUrl) {
+        tokenServerUrlFromYaml = tokenServerUrl;
         networkConfiguration = new NetworkAssistedEngineConfiguration();
         updateTokenServerUrl(tokenServerUrl);
 
@@ -77,6 +82,22 @@ public class Assisted implements Subscriber, ClipboardOwner {
         } catch (Exception ex) {
             Log.warn(format("Could not set the L&F [%s]", lnf), ex);
         }
+        detectDesktopSession();
+    }
+
+    private static void detectDesktopSession() {
+        String sessionType = System.getenv("XDG_SESSION_TYPE");
+        if (sessionType != null) {
+            if (sessionType.equals("wayland")) {
+                Log.warn("Wayland session detected");
+                isWayland = true;
+            }
+            System.setProperty("xdg.session.type", sessionType);
+        }
+    }
+
+    private boolean hasTokenServerUrlFromYaml() {
+        return tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty();
     }
 
     private void updateTokenServerUrl(String tokenServerUrl) {
@@ -113,7 +134,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         if (frame == null) {
             networkEngine.initUpnp();
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction(), networkEngine);
+            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction(), networkEngine, hasTokenServerUrlFromYaml(), isWayland);
             FatalErrorHandler.attachFrame(frame);
             KeyboardErrorHandler.attachFrame(frame);
             frame.setVisible(true);
