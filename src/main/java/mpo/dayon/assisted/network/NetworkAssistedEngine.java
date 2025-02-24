@@ -195,12 +195,13 @@ public class NetworkAssistedEngine extends NetworkEngine
             fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
             Log.debug("File connection established");
         }
+
         // common part
+        Log.info("Connected with the assistant!");
+        fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
         initFileSender();
         createFileInputStream();
         fileReceiver.start();
-        Log.info("Connected with the assistant!");
-        fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
     }
 
     private boolean detectLocalAssistant() {
