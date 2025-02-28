@@ -135,7 +135,7 @@ public interface Runner {
 
     static Map<String, String> parsePresetFileContent(File presetFile) {
         try (Stream<String> lines = Files.lines(presetFile.toPath())) {
-            final Map<String, String> content = lines.map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), Runner::parseValue));
+            final Map<String, String> content = lines.filter(line -> !line.startsWith("#")).map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), Runner::parseValue));
             if ((content.containsKey("host") && content.containsKey("port")) || content.containsKey("tokenServerUrl")) {
                 Log.info(format("Using connection settings from [%s]", presetFile.getPath()));
                 return content;
