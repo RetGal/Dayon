@@ -190,15 +190,10 @@ public class NetworkAssistedEngine extends NetworkEngine
         // The first message being sent to the assistant (e.g. version identification, locale and OS).
         sender.sendHello(osId);
 
-        // if we were initiation the connection, we also need to establish a file connection
-        if (Boolean.FALSE.equals(isOwnPortAccessible.get())) {
-            fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-            Log.debug("File connection established");
-        }
-
-        // common part
-        Log.info("Connected with the assistant!");
+        fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+        Log.debug("File connection established");
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+        Log.info("Connected with the assistant!");
         initFileSender();
         createFileInputStream();
         fileReceiver.start();
