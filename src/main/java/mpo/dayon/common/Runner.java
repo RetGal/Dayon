@@ -147,7 +147,10 @@ public interface Runner {
     }
 
     static String parseValue(String[] s) {
-        return String.join(":", Arrays.stream(s).skip(1).map(str -> str.trim().replaceAll("^\"|\"$", "")).toArray(String[]::new));
+        return String.join(":", Arrays.stream(s)
+                .skip(1)
+                .map(str -> str.trim().replaceAll("(^[\"'])|([\"']$)", ""))
+                .toArray(String[]::new));
     }
 
     static boolean isAutoConnect(Map<String, String> config) {
