@@ -174,7 +174,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
         ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
 
-        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, () -> {
+        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, true, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
             if (!token.isEmpty()) {
                 return isValidToken(token) ? null : translate("connection.settings.invalidToken");

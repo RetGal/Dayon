@@ -26,6 +26,15 @@ public abstract class DialogFactory {
      * @return {@code true} for {@code OK}, {@code false} for {@code CANCEL}.
      */
     public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final boolean bordered, final Validator validator) {
+        return showOkCancel(owner, title, payloadPane, bordered, false, validator);
+    }
+
+    /**
+     * Creates and show a modal dialog with ok/cancel buttons.
+     *
+     * @return {@code true} for {@code OK}, {@code false} for {@code CANCEL}.
+     */
+    public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final boolean bordered, final boolean setFocusOnFirstInputField, final Validator validator) {
         final JButton ok = new JButton(translate("ok"));
         final JButton cancel = new JButton(translate("cancel"));
         final JButton[] buttons = new JButton[]{ok, cancel};
@@ -51,6 +60,13 @@ public abstract class DialogFactory {
             result[0] = false;
             dialog.dispose();
         });
+
+        if (setFocusOnFirstInputField) {
+            Component firstInputField = getFirstInputField(payloadPane);
+            if (firstInputField != null) {
+                SwingUtilities.invokeLater(firstInputField::requestFocusInWindow);
+            }
+        }
 
         dialog.setVisible(true);
         return result[0];
@@ -135,6 +151,23 @@ public abstract class DialogFactory {
         final int result = JOptionPane.showOptionDialog(owner, message, title, JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options,
                 options[0]);
         return result == 0;
+    }
+
+    private static Component getFirstInputField(Component component) {
+        if (component instanceof JTabbedPane) {
+            return getFirstInputField(((JTabbedPane) component).getComponentAt(0));
+        } else if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                if (child instanceof JTextField || child instanceof JTextArea || child instanceof JComboBox) {
+                    return child;
+                }
+                Component firstInputField = getFirstInputField(child);
+                if (firstInputField != null) {
+                    return firstInputField;
+                }
+            }
+        }
+        return null;
     }
 
 }
