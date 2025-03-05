@@ -125,6 +125,19 @@ h1 {
   transform: translateY(52%);
 }
 
+img {
+  animation: slideIn ease 2s;
+  -webkit-animation: slideIn ease 2s;
+  -moz-animation: slideIn ease 2s;
+  -o-animation: slideIn ease 2s;
+  -ms-animation: slideIn ease 2s;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
 #toggle {
   display: none;
 }
