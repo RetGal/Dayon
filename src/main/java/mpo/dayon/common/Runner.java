@@ -77,30 +77,19 @@ public interface Runner {
     }
 
     static File getOrCreateAppHomeDir() {
-        final String homeDir = System.getProperty("user.home"); // *.log4j.xml are using that one (!)
+        final String homeDir = System.getProperty("user.home");
         if (homeDir == null) {
             Log.warn("Home directory [user.home] is null!");
             return null;
         }
 
-        final File home = new File(homeDir);
-        if (!home.isDirectory()) {
-            Log.warn(format("Home directory [%s] is not a directory!", homeDir));
-            return null;
-        }
+        File appHomeDir = isSnapped() ?
+                new File(format("%s%s.jar/dayon.jar", homeDir, System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar"))), ".dayon")
+                : new File(homeDir, ".dayon");
 
-        File appHomeDir;
-        if (isSnapped()) {
-            final String classPath = System.getProperty(JAVA_CLASS_PATH);
-            final String userDataDir = format("%s%s", homeDir, classPath.substring(0, classPath.indexOf("/jar/dayon.jar")));
-            appHomeDir = new File(userDataDir, ".dayon");
-        } else {
-            appHomeDir = new File(home, ".dayon");
-        }
-
-        if (!appHomeDir.exists() && !appHomeDir.mkdir()) {
+        if (!appHomeDir.exists() && !appHomeDir.mkdirs()) {
             Log.warn(format("Could not create the application directory [%s]!", appHomeDir.getAbsolutePath()));
-            return home;
+            return new File(homeDir);
         }
         System.setProperty("dayon.home", appHomeDir.getAbsolutePath());
         return appHomeDir;
