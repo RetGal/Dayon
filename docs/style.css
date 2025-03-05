@@ -138,6 +138,7 @@ h1 {
   width: 2em;
   height: 45px;
   z-index: 5;
+  cursor: pointer;
 }
 
 .hamburger div {
