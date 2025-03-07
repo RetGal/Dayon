@@ -1,7 +1,9 @@
 package mpo.dayon.assistant.control;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -122,7 +124,10 @@ public class ControlEngine implements AssistantFrameListener {
 		// -------------------------------------------------------------------------------------------------------------
 		if (keyCode == -1) {
 			Log.warn(format("Got keyCode %s keyChar '%s' - releasing all keys", keyCode, keyChar));
-			pressedKeys.forEach(this::onKeyReleased);
+			for (Map.Entry<Integer, Character> entry : new ArrayList<>(pressedKeys.entrySet())) {
+				onKeyReleased(entry.getKey(), entry.getValue());
+			}
+			pressedKeys.clear();
 			return;
 		}
 
