@@ -70,4 +70,17 @@ class ControlEngineTest {
         // then
         verify(network, timeout(50).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
     }
+
+    @Test
+    void shouldReleaseAllKeysAfterOnKeyCodeMinusOneReleased() {
+        // given
+        controlEngine.onKeyPressed(16, '￿');
+        controlEngine.onKeyPressed(65, 'A');
+
+        // when
+        controlEngine.onKeyReleased(-1, '0');
+
+        // then
+        verify(network, timeout(50).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
+    }
 }

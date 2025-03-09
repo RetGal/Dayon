@@ -1,8 +1,8 @@
 package mpo.dayon.assistant.control;
 
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -32,20 +32,20 @@ public class ControlEngine implements AssistantFrameListener {
 	}
 
 	@Override
-    public void onMouseMove(final int xs, final int ys) {
+	public void onMouseMove(final int xs, final int ys) {
 		executor.execute(new Executable(executor) {
 			@Override
-            protected void execute() {
+			protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(xs, ys));
 			}
 		});
 	}
 
 	@Override
-    public void onMousePressed(final int xs, final int ys, final int button) {
+	public void onMousePressed(final int xs, final int ys, final int button) {
 		executor.execute(new Executable(executor) {
 			@Override
-            protected void execute() {
+			protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(xs, ys, NetworkMouseControlMessage.ButtonState.PRESSED, xbutton));
@@ -53,12 +53,12 @@ public class ControlEngine implements AssistantFrameListener {
 			}
 		});
 	}
-	
+
 	@Override
-    public void onMouseReleased(final int x, final int y, final int button) {
+	public void onMouseReleased(final int x, final int y, final int button) {
 		executor.execute(new Executable(executor) {
 			@Override
-            protected void execute() {
+			protected void execute() {
 				int xbutton = getActingMouseButton(button);
 				if (xbutton != NetworkMouseControlMessage.UNDEFINED) {
 					network.sendMouseControl(new NetworkMouseControlMessage(x, y, NetworkMouseControlMessage.ButtonState.RELEASED, xbutton));
@@ -66,7 +66,7 @@ public class ControlEngine implements AssistantFrameListener {
 			}
 		});
 	}
-	
+
 	private static int getActingMouseButton(final int button) {
 		if (MouseEvent.BUTTON1 == button) {
 			return NetworkMouseControlMessage.BUTTON1;
@@ -81,10 +81,10 @@ public class ControlEngine implements AssistantFrameListener {
 	}
 
 	@Override
-    public void onMouseWheeled(final int x, final int y, final int rotations) {
+	public void onMouseWheeled(final int x, final int y, final int rotations) {
 		executor.execute(new Executable(executor) {
 			@Override
-            protected void execute() {
+			protected void execute() {
 				network.sendMouseControl(new NetworkMouseControlMessage(x, y, rotations));
 			}
 		});
@@ -99,10 +99,10 @@ public class ControlEngine implements AssistantFrameListener {
 	 * From AWT thread (!)
 	 */
 	@Override
-    public void onKeyPressed(final int keyCode, final char keyChar) {
+	public void onKeyPressed(final int keyCode, final char keyChar) {
 		executor.execute(new Executable(executor) {
 			@Override
-            protected void execute() {
+			protected void execute() {
 				pressedKeys.put(keyCode, keyChar);
 				network.sendKeyControl(new NetworkKeyControlMessage(PRESSED, keyCode, keyChar));
 			}
@@ -113,7 +113,7 @@ public class ControlEngine implements AssistantFrameListener {
 	 * From AWT thread (!)
 	 */
 	@Override
-    public void onKeyReleased(final int keyCode, final char keyChar) {
+	public void onKeyReleased(final int keyCode, final char keyChar) {
 		// -------------------------------------------------------------------------------------------------------------
 		// E.g., Windows + R : [Windows.PRESSED] and then the focus is LOST =>
 		// missing RELEASED events
@@ -124,24 +124,23 @@ public class ControlEngine implements AssistantFrameListener {
 		// -------------------------------------------------------------------------------------------------------------
 		if (keyCode == -1) {
 			Log.warn(format("Got keyCode %s keyChar '%s' - releasing all keys", keyCode, keyChar));
-			for (Map.Entry<Integer, Character> entry : new ArrayList<>(pressedKeys.entrySet())) {
+			Iterator<Map.Entry<Integer, Character>> iterator = pressedKeys.entrySet().iterator();
+			while (iterator.hasNext()) {
+				Map.Entry<Integer, Character> entry = iterator.next();
 				onKeyReleased(entry.getKey(), entry.getValue());
+				iterator.remove();
 			}
-			pressedKeys.clear();
 			return;
 		}
 
-		if (!pressedKeys.containsKey(keyCode)) {
-			Log.warn(format("Not releasing unpressed keyCode %s keyChar '%s'", keyCode, keyChar));
-			return;
-		}
-
-		executor.execute(new Executable(executor) {
-			@Override
-            protected void execute() {
+		if (pressedKeys.containsKey(keyCode)) {
+			executor.execute(() -> {
 				pressedKeys.remove(keyCode);
 				network.sendKeyControl(new NetworkKeyControlMessage(RELEASED, keyCode, keyChar));
-			}
-		});
+			});
+			return;
+		}
+		Log.warn(format("Not releasing unpressed keyCode %s keyChar '%s'", keyCode, keyChar));
 	}
+
 }
