@@ -3,7 +3,9 @@ package mpo.dayon.assistant.control;
 import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.*;
@@ -12,10 +14,16 @@ class ControlEngineTest {
     private static NetworkAssistantEngine network;
     private static ControlEngine controlEngine;
 
-    @BeforeAll
-    static void init() {
+    @BeforeEach
+    void init() {
         network = mock(NetworkAssistantEngine.class);
         controlEngine = new ControlEngine(network);
+    }
+
+    @AfterEach
+    void tearDown() {
+        network = null;
+        controlEngine = null;
     }
 
     @Test
