@@ -1,6 +1,5 @@
 package mpo.dayon.assistant.gui;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
@@ -14,7 +13,6 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 class AssistantPanel extends JPanel {
 
 	private static final Image MOUSE_CURSOR = getOrCreateIcon(MOUSE_YELLOW).getImage();
-
 	private static final int MOUSE_CURSOR_WIDTH = 12;
 	private static final int MOUSE_CURSOR_HEIGHT = 20;
 
@@ -36,10 +34,6 @@ class AssistantPanel extends JPanel {
 		if (captureImage != null) {
 			g.drawImage(captureImage, 0, 0, this);
 		}
-		paintMouse(g);
-	}
-
-	private void paintMouse(Graphics g) {
 		if (mouseX > -1 && mouseY > -1) {
 			g.drawImage(MOUSE_CURSOR, mouseX, mouseY, this);
 		}
@@ -55,9 +49,8 @@ class AssistantPanel extends JPanel {
             if (captureWidth != captureImageWidth || captureHeight != captureImageHeight) {
                 this.captureWidth = captureImageWidth;
                 this.captureHeight = captureImageHeight;
-                final Dimension size = new Dimension(captureImageWidth, captureImageHeight);
-                setSize(size);
-                setPreferredSize(size);
+                setSize(captureImageWidth, captureImageHeight);
+                setPreferredSize(getSize());
             }
             this.captureImage = captureImage;
             repaint();
@@ -66,11 +59,11 @@ class AssistantPanel extends JPanel {
 
 	void onMouseLocationUpdated(final int x, final int y) {
 		SwingUtilities.invokeLater(() -> {
-			if (this.mouseX > -1 && this.mouseY > -1) {
-				repaint(this.mouseX, this.mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
+			if (mouseX > -1 && mouseY > -1) {
+				repaint(mouseX, mouseY, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
 			}
-            this.mouseX = x;
-            this.mouseY = y;
+            mouseX = x;
+            mouseY = y;
             repaint(x, y, MOUSE_CURSOR_WIDTH, MOUSE_CURSOR_HEIGHT);
         });
 	}
