@@ -4,7 +4,6 @@ import mpo.dayon.assistant.network.NetworkAssistantEngine;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
