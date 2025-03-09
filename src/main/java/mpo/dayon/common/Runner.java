@@ -84,7 +84,7 @@ public interface Runner {
         }
 
         File appHomeDir = isSnapped() ?
-                new File(format("%s%s.jar/dayon.jar", homeDir, System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar"))), ".dayon")
+                new File(format("%s%s", homeDir, System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar"))), ".dayon")
                 : new File(homeDir, ".dayon");
 
         if (!appHomeDir.exists() && !appHomeDir.mkdirs()) {
