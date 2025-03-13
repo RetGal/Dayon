@@ -583,13 +583,17 @@ public class Assistant implements ClipboardOwner {
                         .uri(URI.create(query))
                         .timeout(Duration.ofSeconds(5))
                         .build();
-                TOKEN.setTokenString(client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim());
+                TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
             }
         };
         tokenAction.putValue("token", TOKEN.getTokenString());
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
+    }
+
+    private String limit(String string) {
+        return string == null ? null : string.substring(0, Math.min(string.trim().length(), 10));
     }
 
     private Action createStartAction() {
