@@ -175,6 +175,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             }
         }
 
+        // preferred case, we initiate the connection
         if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork) {
             fireOnPeerIsAccessible(true);
             Log.debug("Assistant is accessible");
@@ -187,11 +188,16 @@ public class NetworkAssistedEngine extends NetworkEngine
         runReceiversIfNecessary();
         receiver.start();
         initSender(1);
-        // The first message being sent to the assistant (e.g. version identification, locale and OS).
+        // the first message being sent to the assistant (e.g. version identification, locale and OS).
         sender.sendHello(osId);
 
-        fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
-        Log.debug("File connection established");
+        // only if we initiated the connection, we also need to establish a file connection
+        if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork) {
+            fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+            Log.debug("File connection established");
+        }
+
+        // common part
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
         Log.info("Connected with the assistant!");
         initFileSender();
