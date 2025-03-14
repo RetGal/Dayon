@@ -4,7 +4,7 @@
 
 * put the [index.php](https://raw.githubusercontent.com/RetGal/Dayon/master/ext/index.php) file into a webservers directory which runs PHP with the SQLite extension
 * either also put the empty [dayon.db](https://raw.githubusercontent.com/RetGal/Dayon/master/ext/dayon.db) database file into the same directory or let it be generated for you when the first token is being generated
-* assure the user running the webserver has write access to the database file
+* assure the user running the webserver has write access to the database file [.htaccess](https://raw.githubusercontent.com/RetGal/Dayon/master/ext/.htaccess)
 * for security reasons, ensure that the database file can not be downloaded
 
 ## Set up the clients
@@ -27,3 +27,4 @@ Would you like to contribute and add your RVS to the list? [let me know](https:/
 Check the availability of a token server by clicking on its link. If a version number is displayed directly, it is active.
 * https://fensterkitt.ch/dayon/
 * https://dayon.helioho.st/rvs/
+* https://theater-courage.com/rvs/

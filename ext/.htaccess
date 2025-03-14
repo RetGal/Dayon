@@ -1,0 +1,3 @@
+RewriteEngine On
+RewriteCond %{REQUEST_URI} (.*).db [NC]
+RewriteRule ^(.*)$ 404.html [R=404,L]
