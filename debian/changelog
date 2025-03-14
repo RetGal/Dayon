@@ -1,3 +1,10 @@
+dayon (16.0.3) stable; urgency=medium
+
+  * Fix revert connection
+  * Various bug fixes and improvements
+
+ -- Reto Galante <reto@galante.ch>  Fri, 14 March 2025 12:00:00 +0000
+
 dayon (16.0.2) stable; urgency=medium
 
   * Detect and warn about wayland session
