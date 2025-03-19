@@ -4,7 +4,7 @@ pipeline {
     }
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
-        timeout(time: 10, unit: 'MINUTES')
+        timeout(time: 11, unit: 'MINUTES')
         timestamps()  // Timestamper Plugin
         // disableConcurrentBuilds()
         // skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
