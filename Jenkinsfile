@@ -9,7 +9,8 @@ pipeline {
         throttleJobProperty(
                 categories: ['multiBranch'],
                 throttleEnabled: true,
-                throttleOption: 'category'
+                throttleOption: 'category',
+                maxConcurrentBuilds: 1
         )
         // disableConcurrentBuilds()
         // skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
