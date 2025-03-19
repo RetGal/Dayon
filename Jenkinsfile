@@ -10,7 +10,7 @@ pipeline {
                 categories: ['multiBranch'],
                 throttleEnabled: true,
                 throttleOption: 'category',
-                maxConcurrentBuilds: 1
+                maxConcurrentTotal: 1
         )
         // disableConcurrentBuilds()
         // skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
