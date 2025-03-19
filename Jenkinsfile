@@ -19,7 +19,7 @@ pipeline {
     }
     environment {
         COMPANY = 'Puzzle ITC'
-        smile = '(:'
+        smile = '(='
     }
     parameters {
         string(name: 'smile', defaultValue: ':)', description: 'just smile')
