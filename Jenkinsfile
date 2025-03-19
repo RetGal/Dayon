@@ -1,13 +1,8 @@
 pipeline {
     agent {
-        label 'docker'
+        label 'sweb-06'
     }
     options {
-        throttleJobProperty(
-            categories: ['multiBranch'],
-            throttleEnabled: true,
-            throttleOption: 'category'
-        )
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 10, unit: 'MINUTES')
         timestamps()  // Timestamper Plugin
