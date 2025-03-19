@@ -10,6 +10,7 @@ pipeline {
                 categories: ['multiBranch'],
                 throttleEnabled: true,
                 throttleOption: 'category',
+                maxConcurrentPerNode: 1,
                 maxConcurrentTotal: 1
         )
         // disableConcurrentBuilds()
