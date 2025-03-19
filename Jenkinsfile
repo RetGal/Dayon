@@ -6,6 +6,11 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         timeout(time: 10, unit: 'MINUTES')
         timestamps()  // Timestamper Plugin
+        throttleJobProperty(
+                categories: ['multiBranch'],
+                throttleEnabled: true,
+                throttleOption: 'category'
+        )
         // disableConcurrentBuilds()
         // skipStagesAfterUnstable() // instead of currentBuild.currentResult == 'SUCCESS'
     }
