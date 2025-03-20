@@ -9,7 +9,7 @@ pipeline {
         throttleJobProperty(
                 categories: ['multiBranch'],
                 throttleEnabled: true,
-                throttleOption: 'project',
+                throttleOption: 'category',
                 maxConcurrentPerNode: 1,
                 maxConcurrentTotal: 1
         )
@@ -54,6 +54,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying..'
+                sh 'sleep 600'
                 sh 'ls -asl'
             }
         }
