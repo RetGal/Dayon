@@ -54,7 +54,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying..'
-                sh 'sleep 6000'
+                sh 'sleep 600'
                 sh 'ls -asl'
             }
         }
