@@ -9,7 +9,7 @@ pipeline {
         throttleJobProperty(
                 categories: ['multiBranch'],
                 throttleEnabled: true,
-                throttleOption: 'category',
+                throttleOption: 'project',
                 maxConcurrentPerNode: 1,
                 maxConcurrentTotal: 1
         )
