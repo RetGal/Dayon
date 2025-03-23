@@ -117,8 +117,7 @@ public class Assistant implements ClipboardOwner {
         DeCompressorEngine decompressor = new DeCompressorEngine(new MyDeCompressorEngineListener());
         decompressor.start(8);
 
-        NetworkMouseLocationMessageHandler mouseHandler = mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY());
-        networkEngine = new NetworkAssistantEngine(decompressor, mouseHandler, this);
+        networkEngine = new NetworkAssistantEngine(decompressor, mouse -> frame.onMouseLocationUpdated(mouse.getX(), mouse.getY()), this);
         networkEngine.configure(networkConfiguration);
         networkEngine.addListener(new MyNetworkAssistantEngineListener());
         networkEngine.initUpnp();
@@ -126,11 +125,10 @@ public class Assistant implements ClipboardOwner {
         captureEngineConfiguration = new CaptureEngineConfiguration();
         compressorEngineConfiguration = new CompressorEngineConfiguration();
 
-        final String lnf = getDefaultLookAndFeel();
         try {
-            UIManager.setLookAndFeel(lnf);
+            UIManager.setLookAndFeel(getDefaultLookAndFeel());
         } catch (Exception ex) {
-            Log.warn("Could not set the [" + lnf + "] L&F!", ex);
+            Log.warn("Could not set the L&F!", ex);
         }
         initGui();
     }
@@ -140,19 +138,16 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void updateTokenServerUrl(String tokenServerUrl) {
-        if (tokenServerUrl != null && !tokenServerUrl.trim().isEmpty()) {
-            this.tokenServerUrl = tokenServerUrl + PORT_PARAMS;
-        } else if (!networkConfiguration.getTokenServerUrl().isEmpty()) {
-            this.tokenServerUrl = networkConfiguration.getTokenServerUrl() + PORT_PARAMS;
-        } else {
-            this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + PORT_PARAMS;
-        }
-
+        this.tokenServerUrl = getTokenServerUrl(tokenServerUrl, networkConfiguration.getTokenServerUrl()) + PORT_PARAMS;
         if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
             System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl.substring(0, this.tokenServerUrl.indexOf('?')));
         } else {
             System.clearProperty("dayon.custom.tokenServer");
         }
+    }
+
+    private String getTokenServerUrl(String... urls) {
+        return Arrays.stream(urls).filter(url -> url != null && !url.trim().isEmpty()).findFirst().orElse(DEFAULT_TOKEN_SERVER_URL);
     }
 
     private void initGui() {

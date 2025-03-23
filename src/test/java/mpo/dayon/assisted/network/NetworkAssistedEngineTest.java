@@ -33,6 +33,19 @@ class NetworkAssistedEngineTest {
     }
 
     @Test
+    void testReconfigure() {
+        // given
+        engine.configure(new NetworkAssistedEngineConfiguration());
+        final NetworkAssistedEngineConfiguration newConfiguration = new NetworkAssistedEngineConfiguration("localhost", 9999);
+
+        // when
+        engine.reconfigure(newConfiguration);
+
+        // then
+        verify(listener).onReconfigured(newConfiguration);
+    }
+
+    @Test
     void testCancel() {
         // given
 

@@ -41,7 +41,7 @@ public final class ScreenUtilities {
         }
     }
 
-    public static synchronized  void setShareAllScreens(boolean doShareAllScreens) {
+    public static synchronized void setShareAllScreens(boolean doShareAllScreens) {
         shareAllScreens = doShareAllScreens;
         init();
     }
