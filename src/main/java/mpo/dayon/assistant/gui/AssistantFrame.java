@@ -572,23 +572,19 @@ class AssistantFrame extends BaseFrame {
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         if (xFactor < yFactor) {
             if ((sourceWidth * yFactor) + OFFSET < maximumWindowBounds.width) {
-                xFactor = yFactor;
                 Log.debug("Get wider");
-                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
+                this.setSize((int) (sourceWidth * yFactor) + OFFSET, this.getHeight());
             } else {
-                yFactor = xFactor;
                 Log.debug("Get lower");
-                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
+                this.setSize(this.getWidth(), (int) (sourceHeight * xFactor) + menuHeight + OFFSET);
             }
         } else {
             if ((sourceHeight * xFactor) + menuHeight + OFFSET < maximumWindowBounds.height) {
-                yFactor = xFactor;
                 Log.debug("Get higher");
-                this.setSize(this.getWidth(), (int) (sourceHeight * yFactor) + menuHeight + OFFSET);
+                this.setSize(this.getWidth(), (int) (sourceHeight * xFactor) + menuHeight + OFFSET);
             } else {
-                xFactor = yFactor;
                 Log.debug("Get narrower");
-                this.setSize((int) (sourceWidth * xFactor) + OFFSET, this.getHeight());
+                this.setSize((int) (sourceWidth * yFactor) + OFFSET, this.getHeight());
             }
         }
         Log.debug("%s", () -> format("Resized W:H %d:%d x:y %f:%f", this.getWidth(), this.getHeight(), xFactor, yFactor));
