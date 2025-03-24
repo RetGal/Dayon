@@ -37,20 +37,28 @@ public class AssistedRunner {
         if (File.separatorChar == '/') {
             return;
         }
-        final int off = 0x00000000;
-        final int on = 0x00000001;
         final int secureDesktop = Advapi32Util.registryGetIntValue
                 (HKEY_LOCAL_MACHINE,
                         "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
                         "PromptOnSecureDesktop");
-        if (off != secureDesktop) {
+        if (0 != secureDesktop) {
             try {
                 Advapi32Util.registrySetIntValue
                         (HKEY_LOCAL_MACHINE,
-                                "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", "PromptOnSecureDesktop", off);
-                Advapi32Util.registrySetIntValue
-                        (HKEY_LOCAL_MACHINE,
-                                "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", "EnableLUA", on);
+                                "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System", "PromptOnSecureDesktop", 0);
+                // do not enable UAC if its disabled (by the user)
+                if (Advapi32Util.registryGetIntValue(
+                        HKEY_LOCAL_MACHINE,
+                        "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+                        "EnableLUA"
+                ) != 0) {
+                    Advapi32Util.registrySetIntValue(
+                            HKEY_LOCAL_MACHINE,
+                            "Software\\Microsoft\\Windows\\CurrentVersion\\Policies\\System",
+                            "EnableLUA",
+                            1
+                    );
+                }
             } catch(Win32Exception e) {
                 Log.warn("Could not fix UAC behaviour, UAC dialogs will not be visible");
                 Log.warn("Rerun the assisted with admin rights to fix this");
