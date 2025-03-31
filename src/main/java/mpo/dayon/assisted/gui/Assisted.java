@@ -362,8 +362,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 compressorEngine.stop();
                 compressorEngine = null;
             }
-            networkEngine.cancel();
-            networkEngine = null;
+            if (networkEngine != null) {
+                networkEngine.cancel();
+                networkEngine = null;
+            }
         }
         frame.onDisconnecting();
     }
