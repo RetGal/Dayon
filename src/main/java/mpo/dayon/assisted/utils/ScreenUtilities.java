@@ -95,7 +95,7 @@ public final class ScreenUtilities {
 
     private static byte[] doRgbToGray8(Gray8Bits quantization, int[] rgb) {
         final byte[] xLevels = grays[quantization.ordinal()];
-        final int length = rgb.length;
+        final int length = min(rgb.length, gray.length);
         for (int idx = 0; idx < length; idx++) {
             final int pixel = rgb[idx];
             final int red = (pixel >> 16) & 0xFF;
