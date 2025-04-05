@@ -350,6 +350,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
     }
 
+    @SuppressWarnings("java:S2589") // networkEngine can get null after first null check
     private void stop() {
         Log.info("Assisted stop");
         if (networkEngine != null) {

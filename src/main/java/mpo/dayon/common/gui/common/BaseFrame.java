@@ -80,7 +80,7 @@ public abstract class BaseFrame extends JFrame {
 
     private final Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
-    private Action preExitAction;
+    private transient Action preExitAction;
 
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);

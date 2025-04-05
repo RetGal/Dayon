@@ -18,7 +18,6 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.Token;
-import mpo.dayon.common.network.message.NetworkMouseLocationMessageHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Language;
 import mpo.dayon.common.version.Version;
