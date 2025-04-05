@@ -36,8 +36,7 @@ import static java.lang.String.format;
 import static java.lang.Thread.sleep;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
-import static mpo.dayon.common.version.Version.isColoredVersion;
-import static mpo.dayon.common.version.Version.isCompatibleVersion;
+import static mpo.dayon.common.version.Version.*;
 
 public class NetworkAssistantEngine extends NetworkEngine implements ReConfigurable<NetworkAssistantEngineConfiguration> {
 
@@ -106,6 +105,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
      */
     public void cancel() {
         Log.info("Cancelling the network assistant engine...");
+        if (sender != null && configuration.isTerminablePeer()) {
+            sender.sendGoodbye();
+        }
         cancelling.set(true);
         safeClose(server, connection, fileConnection);
         fireOnDisconnecting();
@@ -419,6 +421,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             throw new IOException("version.wrong");
         }
         configuration.setMonochromePeer(!isColoredVersion(hello.getMajor()));
+        configuration.setTerminablePeer(isTerminable(hello.getMajor()));
         return hello;
     }
 

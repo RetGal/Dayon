@@ -18,6 +18,8 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	private boolean monochromePeer = false;
 
+	private boolean terminablePeer = true;
+
 	/**
 	 * Default : takes its values from the current preferences.
 	 */
@@ -45,6 +47,14 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	public void setMonochromePeer(boolean monochromePeer) {
 		this.monochromePeer = monochromePeer;
+	}
+
+	public void setTerminablePeer(boolean terminable) {
+		this.terminablePeer = terminable;
+	}
+
+	public boolean isTerminablePeer() {
+		return terminablePeer;
 	}
 
 	@Override

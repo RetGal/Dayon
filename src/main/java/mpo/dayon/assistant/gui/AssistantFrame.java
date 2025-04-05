@@ -98,6 +98,7 @@ class AssistantFrame extends BaseFrame {
     AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
+        super.setPreExistAction(actions.getStopAction());
         this.actions = actions;
         this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml));
         this.startButton = createButton(actions.getStartAction());

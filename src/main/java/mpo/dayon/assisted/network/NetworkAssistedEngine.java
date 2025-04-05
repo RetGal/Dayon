@@ -388,6 +388,9 @@ public class NetworkAssistedEngine extends NetworkEngine
                     case SCREENSHOT_REQUEST:
                         screenshotRequestHandler.handleScreenshotRequest();
                         break;
+                    case GOODBYE:
+                        cancelling.set(true);
+                        break;
                     case PING:
                         break;
                     default:

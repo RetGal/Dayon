@@ -35,6 +35,7 @@ class AssistedFrame extends BaseFrame {
 
     AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml, boolean showWaylandWarning) {
         super.setFrameType(FrameType.ASSISTED);
+        super.setPreExistAction(stopAction);
         this.stopAction = stopAction;
         this.startAction = startAction;
         this.startButton = createButton(this.startAction);

@@ -107,6 +107,10 @@ public class Version {
         return major > 14 || major == 0;
     }
 
+    public static boolean isTerminable(int major) {
+        return major > 16 || major == 0;
+    }
+
     static boolean isProd(int major, int minor) {
         return major + minor > 0;
     }

@@ -80,6 +80,8 @@ public abstract class BaseFrame extends JFrame {
 
     private final Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
+    private Action preExitAction;
+
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setIconImage(getOrCreateIcon(ImageNames.APP).getImage());
@@ -96,6 +98,9 @@ public abstract class BaseFrame extends JFrame {
         if (JOptionPane.showOptionDialog(this, translate("exit.confirm"), translate("exit"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, okCancelOptions,
                 okCancelOptions[1]) == 1) {
+            if (preExitAction != null) {
+                preExitAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
+            }
             Log.info("Bye!");
             System.exit(0);
         }
@@ -623,6 +628,10 @@ public abstract class BaseFrame extends JFrame {
         fingerprints.setFont(DEFAULT_FONT);
         fingerprints.addMouseListener(new ChatMouseAdapter());
         fingerprints.setCursor(handCursor);
+    }
+
+    protected void setPreExistAction(Action stopAction) {
+        preExitAction = stopAction;
     }
 
     private class LatestVersionLabelUpdater extends SwingWorker<String, Void> {
