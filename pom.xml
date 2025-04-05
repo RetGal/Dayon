@@ -738,6 +738,11 @@
         </profile>
         <profile>
             <id>coverage</id>
+            <properties>
+                <sonar.coverage.jacoco.xmlReportPaths>
+                    target/jacoco.xml
+                </sonar.coverage.jacoco.xmlReportPaths>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -757,6 +762,7 @@
                                     <goal>report</goal>
                                 </goals>
                                 <configuration>
+                                    <outputDirectory>${project.basedir}/target</outputDirectory>
                                     <formats>
                                         <format>XML</format>
                                     </formats>
