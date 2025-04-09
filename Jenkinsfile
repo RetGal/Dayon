@@ -22,7 +22,7 @@ pipeline {
         smile = '(='
     }
     parameters {
-        string(name: 'smile', defaultValue: ':)', description: 'just smile')
+        string(name: 'smile', defaultValue: ':)', description: 'just  smile')
     }
     stages {
         stage('Info') {
