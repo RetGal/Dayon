@@ -30,15 +30,18 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 	private final Object reconfigurationLOCK = new Object();
 
-	private CompressorEngineConfiguration configuration;
+	private volatile CompressorEngineConfiguration configuration;
 
-	private boolean reconfigured;
+	private volatile boolean reconfigured;
+
+	private volatile Compressor compressor;
 
 	@Override
 	public void configure(CompressorEngineConfiguration configuration) {
 		synchronized (reconfigurationLOCK) {
 			this.configuration = configuration;
 			this.reconfigured = true;
+			this.compressor = Compressor.get(configuration.getMethod());
 		}
 	}
 
@@ -133,19 +136,21 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		@Override
 		protected void execute() throws IOException {
-			final CompressorEngineConfiguration xconfiguration;
-			final boolean xreconfigured;
-			synchronized (reconfigurationLOCK) {
-				xconfiguration = configuration;
-				xreconfigured = reconfigured;
-				if (reconfigured) {
-					cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
-							: new NullTileCache();
-					reconfigured = false;
-					Log.info("Compressor engine has been reconfigured [tile:" + capture.getId() + "]" + xconfiguration);
-				}
-			}
-			final Compressor compressor = Compressor.get(xconfiguration.getMethod());
+			CompressorEngineConfiguration xconfiguration = configuration;
+			boolean xreconfigured = reconfigured;
+			if (xreconfigured) {
+                synchronized (reconfigurationLOCK) {
+                    xconfiguration = configuration;
+                    xreconfigured = reconfigured;
+                    if (reconfigured) {
+                        cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
+                                : new NullTileCache();
+                        compressor = Compressor.get(xconfiguration.getMethod());
+                        reconfigured = false;
+                        Log.info("Compressor engine has been reconfigured [tile:" + capture.getId() + "]" + xconfiguration);
+                    }
+                }
+            }
 			final MemByteBuffer compressed = compressor.compress(cache, capture);
 
 			// Possibly blocking - no problem as we'll replace (and merge) in our queue
