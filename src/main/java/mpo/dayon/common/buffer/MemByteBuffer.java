@@ -33,11 +33,8 @@ public class MemByteBuffer extends OutputStream {
 		return count;
 	}
 
-	/**
-	 * @return the internal byte array, promise you won't change it!
-	 */
 	public byte[] getInternal() {
-		return buffer;
+		return Arrays.copyOf(buffer, count);
 	}
 
 	public int mark() {
