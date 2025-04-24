@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import mpo.dayon.assisted.capture.CaptureEngineListener;
 import mpo.dayon.common.buffer.MemByteBuffer;
@@ -28,21 +30,17 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 	private TileCache cache;
 
-	private final Object reconfigurationLOCK = new Object();
+	private final AtomicReference<CompressorEngineConfiguration> configuration = new AtomicReference<>();
 
-	private volatile CompressorEngineConfiguration configuration;
+	private final AtomicBoolean reconfigured = new AtomicBoolean();
 
-	private volatile boolean reconfigured;
-
-	private volatile Compressor compressor;
+	private final AtomicReference<Compressor> compressor = new AtomicReference<>();
 
 	@Override
 	public void configure(CompressorEngineConfiguration configuration) {
-		synchronized (reconfigurationLOCK) {
-			this.configuration = configuration;
-			this.reconfigured = true;
-			this.compressor = Compressor.get(configuration.getMethod());
-		}
+		this.configuration.set(configuration);
+		this.reconfigured.set(true);
+		this.compressor.set(Compressor.get(configuration.getMethod()));
 	}
 
 	@Override
@@ -136,31 +134,27 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		@Override
 		protected void execute() throws IOException {
-			CompressorEngineConfiguration xconfiguration = configuration;
-			boolean xreconfigured = reconfigured;
+			CompressorEngineConfiguration xconfiguration = configuration.get();
+			boolean xreconfigured = reconfigured.get();
+			Compressor xcompressor = compressor.get();
 			if (xreconfigured) {
-                synchronized (reconfigurationLOCK) {
-                    xconfiguration = configuration;
-                    xreconfigured = reconfigured;
-                    if (reconfigured) {
-                        cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
-                                : new NullTileCache();
-                        compressor = Compressor.get(xconfiguration.getMethod());
-                        reconfigured = false;
-                        Log.info("Compressor engine has been reconfigured [tile:" + capture.getId() + "]" + xconfiguration);
-                    }
-                }
-            }
-			final MemByteBuffer compressed = compressor.compress(cache, capture);
+				xconfiguration = configuration.get();
+				xreconfigured = reconfigured.get();
+				if (xreconfigured) {
+					cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
+							: new NullTileCache();
+				}
+			}
+			final MemByteBuffer compressed = xcompressor.compress(cache, capture);
 
 			// Possibly blocking - no problem as we'll replace (and merge) in our queue
 			// the oldest capture (if any) until we can compress it and send it to the next
 			// stage of processing.
 			if (!xreconfigured) {
-				fireOnCompressed(capture.getId(), compressor.getMethod(), null, compressed);
+				fireOnCompressed(capture.getId(), xcompressor.getMethod(), null, compressed);
 			} else {
 				// we have to send the whole configuration => de-compressor synchronization (!)
-				fireOnCompressed(capture.getId(), compressor.getMethod(), xconfiguration, compressed);
+				fireOnCompressed(capture.getId(), xcompressor.getMethod(), xconfiguration, compressed);
 			}
 			cache.onCaptureProcessed();
 		}
