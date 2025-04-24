@@ -139,11 +139,9 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 			Compressor xcompressor = compressor.get();
 			if (xreconfigured) {
 				xconfiguration = configuration.get();
-				xreconfigured = reconfigured.get();
-				if (xreconfigured) {
-					cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
+				cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
 							: new NullTileCache();
-				}
+				reconfigured.set(false);
 			}
 			final MemByteBuffer compressed = xcompressor.compress(cache, capture);
 
