@@ -209,7 +209,7 @@ public class Capture {
 					final int tileWidthByteSize = tile.getWidth() * 4;
 					final int srcSize = tileWidthByteSize * tile.getHeight();
 					int destPos = tile.getY() * capWidthByteSize + tile.getX() * 4;
-					for (int srcPos = 0; srcPos < srcSize; srcPos += tileWidthByteSize) {
+					for (int srcPos = 0; srcPos + tileWidthByteSize <= srcSize; srcPos += tileWidthByteSize) {
 						System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tileWidthByteSize);
 						destPos += capWidthByteSize;
 					}
