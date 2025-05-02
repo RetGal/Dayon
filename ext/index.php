@@ -1,5 +1,5 @@
 <?php
-define('VERSION', "v.1.4");
+define('VERSION', "v.1.5");
 // name of the database file (may also be a path)
 define('DB_NAME', "dayon.db");
 // minimal length of the tokens to be generated (33^N-1 variants)
@@ -15,10 +15,11 @@ if (isset($_GET['port'])) {
     // param missing = legacy mode (assistant never closed)
     $closed = isset($_GET['closed']) ? clean($_GET['closed'], 2) : 0;
     if (isValidPort($port)) {
+        $address = isset($_GET['addr']) ? clean($_GET['addr'], 45) : $_SERVER['REMOTE_ADDR'];
         $localAddress = isset($_GET['laddr']) ? clean($_GET['laddr'], 45) : 0;
         $pdo = new PDO('sqlite:'.DB_NAME);
         createDatabase($pdo);
-        echo createToken($pdo, $port, $localAddress, $closed),"\n";
+        echo createToken($pdo, $address, $port, $localAddress, $closed),"\n";
         if (rand(0, 5) == 5) {
             removeOldTokens($pdo);
         }
@@ -59,13 +60,13 @@ function isValidPort($port) {
     return is_numeric($port) && $port > 0 && $port < 65536;
 }
 
-function createToken($pdo, $port, $localAddress, $closed) {
-    if (checkAvailable($pdo, $_SERVER['REMOTE_ADDR']) <= 0) {
+function createToken($pdo, $address, $port, $localAddress, $closed) {
+    if (checkAvailable($pdo, $address) <= 0) {
        return substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, rand(4, 12))."\n";
     }
     $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
-    while (!insertToken($pdo, $token, $_SERVER['REMOTE_ADDR'], $port, $localAddress, $closed) && $attempt < 10) {
+    while (!insertToken($pdo, $token, $activeAddress, $port, $localAddress, $closed) && $attempt < 10) {
         $length = $attempt < TOKEN_MIN_LENGTH ? TOKEN_MIN_LENGTH : round(TOKEN_MIN_LENGTH+$attempt/2);
         $token = computeToken($length);
         $attempt++;
