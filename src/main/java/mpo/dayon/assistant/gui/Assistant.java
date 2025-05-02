@@ -98,6 +98,8 @@ public class Assistant implements ClipboardOwner {
 
     private String publicIp;
 
+    private String activeIp;
+
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
     private final String tokenServerUrlFromYaml;
@@ -218,7 +220,13 @@ public class Assistant implements ClipboardOwner {
                 final JPopupMenu choices = new JPopupMenu();
 
                 final JMenuItem publicIpItem = new JMenuItem(translate("ipAddressPublic", publicIp));
-                publicIpItem.addActionListener(ev15 -> button.setText(publicIp));
+                publicIpItem.addActionListener(ev15 -> {
+                    button.setText(publicIp);
+                    if (!publicIp.equals(activeIp)) {
+                        activeIp = publicIp;
+                        clearToken();
+                    }
+                });
                 choices.add(publicIpItem);
 
                 if (publicIp == null) {
@@ -237,7 +245,14 @@ public class Assistant implements ClipboardOwner {
                 }
 
                 NetworkUtilities.getInetAddresses().stream().map(JMenuItem::new).forEach(item -> {
-                    item.addActionListener(ev14 -> button.setText(item.getText()));
+                    item.addActionListener(ev14 -> {
+                        String address = item.getText().split("%", 2)[0];
+                        button.setText(address);
+                        if (!address.equals(activeIp)) {
+                            activeIp = address;
+                            clearToken();
+                        }
+                    });
                     choices.add(item);
                 });
 
@@ -545,12 +560,16 @@ public class Assistant implements ClipboardOwner {
                 this.putValue("button", button);
 
                 CompletableFuture.supplyAsync(() -> {
-                    if (publicIp == null) {
+                    if (publicIp == null && activeIp == null) {
                         publicIp = networkEngine.resolvePublicIp();
                     }
                     try {
-                        boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
-                        requestToken(closed, networkEngine.getLocalAddress());
+                        if (publicIp.equals(activeIp)) {
+                            boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
+                            requestToken(closed, networkEngine.getLocalAddress(), null);
+                        } else {
+                            requestToken(false, networkEngine.getLocalAddress(), activeIp);
+                        }
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
@@ -558,6 +577,7 @@ public class Assistant implements ClipboardOwner {
                             Thread.currentThread().interrupt();
                         }
                     }
+                    Log.debug("Current publicIp: " + publicIp + ", activeIp: " + activeIp);
                     return TOKEN;
                 }).thenAcceptAsync(token -> {
                     if (token.getTokenString() != null) {
@@ -567,8 +587,11 @@ public class Assistant implements ClipboardOwner {
                 });
             }
 
-            private void requestToken(boolean closed, String localAddress) throws IOException, InterruptedException {
+            private void requestToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
                 String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
+                if (activeAddress != null) {
+                    query += "&addr=" + activeAddress;
+                }
                 Log.debug("Requesting token using: " + query);
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
                 @SuppressWarnings("squid:S2095")
