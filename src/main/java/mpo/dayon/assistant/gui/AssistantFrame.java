@@ -34,8 +34,10 @@ class AssistantFrame extends BaseFrame {
     private static final int OFFSET = 6;
 
     private static final int DEFAULT_FACTOR = 1;
-    
+
     private static final char EMPTY_CHAR = ' ';
+
+    private static final BufferedImage INVISIBLE_CURSOR = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
@@ -50,39 +52,26 @@ class AssistantFrame extends BaseFrame {
     private JComponent center;
 
     private final JToggleButton controlToggleButton;
-
+    private final JToggleButton cursorToggleButton;
     private final JToggleButton compatibilityToggleButton;
-
     private final JToggleButton windowsKeyToggleButton;
-
     private final JToggleButton ctrlKeyToggleButton;
-
     private final JToggleButton fitToScreenToggleButton;
-
     private final JToggleButton keepAspectRatioToggleButton;
-
     private final JButton startButton;
-
     private final JButton stopButton;
-
     private final JButton screenshotButton;
-
     private final JButton tokenButton;
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
-
+    private final AtomicBoolean cursorHidden = new AtomicBoolean(false);
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
 
     private double xFactor = DEFAULT_FACTOR;
-
     private double yFactor = DEFAULT_FACTOR;
 
     private Dimension canvas;
@@ -106,6 +95,7 @@ class AssistantFrame extends BaseFrame {
         this.tokenButton = createTokenButton(actions.getTokenAction());
         this.compatibilityToggleButton = createToggleButton(actions.getToggleCompatibilityModeAction(), true, compatibilityModeActive);
         this.controlToggleButton = createToggleButton(createToggleControlMode());
+        this.cursorToggleButton = createToggleButton(createToggleCursorVisibility());
         this.fitToScreenToggleButton = createToggleButton(createToggleFixScreenAction());
         this.keepAspectRatioToggleButton = createToggleButton(createToggleKeepAspectRatioAction(), false);
         this.windowsKeyToggleButton = createToggleButton(createSendWindowsKeyAction());
@@ -123,6 +113,14 @@ class AssistantFrame extends BaseFrame {
         addListeners();
         // the network has been before we've been registered as a listener ...
         onReady();
+    }
+
+    private void toggleCursorVisibility(boolean hide) {
+        if (hide) {
+            assistantPanel.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(INVISIBLE_CURSOR, new Point(0, 0), "invisible"));
+        } else {
+            assistantPanel.setCursor(Cursor.getDefaultCursor());
+        }
     }
 
     public AssistantActions getActions() {
@@ -276,6 +274,7 @@ class AssistantFrame extends BaseFrame {
         sessionPanel.add(fitToScreenToggleButton);
         sessionPanel.add(keepAspectRatioToggleButton);
         sessionPanel.add(controlToggleButton);
+        sessionPanel.add(cursorToggleButton);
         sessionPanel.add(windowsKeyToggleButton);
         sessionPanel.add(ctrlKeyToggleButton);
         sessionPanel.add(screenshotButton);
@@ -326,7 +325,6 @@ class AssistantFrame extends BaseFrame {
 
     private Action createToggleControlMode() {
         final Action remoteControl = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 controlActivated.set(!controlActivated.get());
@@ -339,6 +337,22 @@ class AssistantFrame extends BaseFrame {
         remoteControl.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.WATCH));
         remoteControl.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
+    }
+
+    private Action createToggleCursorVisibility() {
+        final Action cursorVisibility = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                cursorHidden.set(!cursorHidden.get());
+                toggleCursorVisibility(cursorHidden.get());
+            }
+        };
+        // TODO use the proper icons
+        cursorVisibility.putValue(Action.SHORT_DESCRIPTION, translate("cursor.visibility"));
+        cursorVisibility.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CONTROL));
+        cursorVisibility.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.CONTROL));
+        cursorVisibility.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.WATCH));
+        return cursorVisibility;
     }
 
     private Action createSendWindowsKeyAction() {

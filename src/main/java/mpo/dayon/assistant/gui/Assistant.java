@@ -222,24 +222,17 @@ public class Assistant implements ClipboardOwner {
                 final JMenuItem publicIpItem = new JMenuItem(translate("ipAddressPublic", publicIp));
                 publicIpItem.addActionListener(ev15 -> {
                     button.setText(publicIp);
-                    if (!publicIp.equals(activeIp)) {
-                        activeIp = publicIp;
-                        clearToken();
-                    }
+                    setActiveIp(publicIp);
                 });
                 choices.add(publicIpItem);
 
                 if (publicIp == null) {
-                    CompletableFuture.supplyAsync(() -> {
-                        publicIp = networkEngine.resolvePublicIp();
-                        if (publicIp == null) {
-                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
-                        }
-                        return publicIp;
-                    }).thenAcceptAsync(ip -> {
+                    CompletableFuture.supplyAsync(networkEngine::resolvePublicIp).thenAcceptAsync(ip -> {
                         if (ip != null) {
                             button.setText(ip);
                             publicIpItem.setText(translate("ipAddressPublic", ip));
+                        } else {
+                            JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
                         }
                     });
                 }
@@ -248,10 +241,7 @@ public class Assistant implements ClipboardOwner {
                     item.addActionListener(ev14 -> {
                         String address = item.getText().split("%", 2)[0];
                         button.setText(address);
-                        if (!address.equals(activeIp)) {
-                            activeIp = address;
-                            clearToken();
-                        }
+                        setActiveIp(address);
                     });
                     choices.add(item);
                 });
@@ -270,8 +260,14 @@ public class Assistant implements ClipboardOwner {
                 final Point toolbarLocation = frame.getToolBar().getLocationOnScreen();
                 choices.setLocation(frameLocation.x + 20, toolbarLocation.y + frame.getToolBar().getHeight());
             }
+
+            private void setActiveIp(String address) {
+                if (!address.equals(activeIp)) {
+                    activeIp = address;
+                    clearToken();
+                }
+            }
         };
-        ip.putValue("DISPLAY_NAME", publicIp); // always a selection
         // ...
         ip.putValue(Action.SHORT_DESCRIPTION, translate("ipAddress.msg1"));
         ip.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.NETWORK_ADDRESS));
@@ -564,12 +560,7 @@ public class Assistant implements ClipboardOwner {
                         publicIp = networkEngine.resolvePublicIp();
                     }
                     try {
-                        if (publicIp.equals(activeIp)) {
-                            boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
-                            requestToken(closed, networkEngine.getLocalAddress(), null);
-                        } else {
-                            requestToken(false, networkEngine.getLocalAddress(), activeIp);
-                        }
+                        requestToken();
                     } catch (IOException | InterruptedException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
@@ -587,7 +578,16 @@ public class Assistant implements ClipboardOwner {
                 });
             }
 
-            private void requestToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
+            private void requestToken() throws IOException, InterruptedException {
+                if (publicIp.equals(activeIp)) {
+                    boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
+                    getToken(closed, networkEngine.getLocalAddress(), null);
+                } else {
+                    getToken(false, networkEngine.getLocalAddress(), activeIp);
+                }
+            }
+
+            private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
                 String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
                 if (activeAddress != null) {
                     query += "&addr=" + activeAddress;
