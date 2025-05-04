@@ -34,8 +34,10 @@ class AssistantFrame extends BaseFrame {
     private static final int OFFSET = 6;
 
     private static final int DEFAULT_FACTOR = 1;
-    
+
     private static final char EMPTY_CHAR = ' ';
+
+    private static final BufferedImage INVISIBLE_CURSOR = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
     private final transient Listeners<AssistantFrameListener> listeners = new Listeners<>();
 
@@ -50,39 +52,24 @@ class AssistantFrame extends BaseFrame {
     private JComponent center;
 
     private final JToggleButton controlToggleButton;
-
     private final JToggleButton compatibilityToggleButton;
-
     private final JToggleButton windowsKeyToggleButton;
-
     private final JToggleButton ctrlKeyToggleButton;
-
     private final JToggleButton fitToScreenToggleButton;
-
     private final JToggleButton keepAspectRatioToggleButton;
-
     private final JButton startButton;
-
     private final JButton stopButton;
-
     private final JButton screenshotButton;
-
     private final JButton tokenButton;
 
     private final AtomicBoolean controlActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean windowsKeyActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean ctrlKeyActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
-
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
 
     private double xFactor = DEFAULT_FACTOR;
-
     private double yFactor = DEFAULT_FACTOR;
 
     private Dimension canvas;
@@ -123,6 +110,14 @@ class AssistantFrame extends BaseFrame {
         addListeners();
         // the network has been before we've been registered as a listener ...
         onReady();
+    }
+
+    private void toggleCursorVisibility(boolean hide) {
+        if (hide) {
+            assistantPanel.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(INVISIBLE_CURSOR, new Point(0, 0), "invisible"));
+        } else {
+            assistantPanel.setCursor(Cursor.getDefaultCursor());
+        }
     }
 
     public AssistantActions getActions() {
@@ -326,10 +321,10 @@ class AssistantFrame extends BaseFrame {
 
     private Action createToggleControlMode() {
         final Action remoteControl = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 controlActivated.set(!controlActivated.get());
+                toggleCursorVisibility(controlActivated.get());
                 windowsKeyToggleButton.setEnabled(controlActivated.get());
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
             }

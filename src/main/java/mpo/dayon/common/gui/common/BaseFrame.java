@@ -205,7 +205,6 @@ public abstract class BaseFrame extends JFrame {
         button.setHideActionText(true);
         button.setAction(action);
         button.setFont(DEFAULT_FONT);
-        button.setText((String) action.getValue(DISPLAY_NAME));
         button.setRolloverIcon((Icon) action.getValue(ROLLOVER_ICON));
         button.setPressedIcon((Icon) action.getValue(PRESSED_ICON));
         button.setSelectedIcon((Icon) action.getValue(SELECTED_ICON));
