@@ -66,7 +66,7 @@ function createToken($pdo, $address, $port, $localAddress, $closed) {
     }
     $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
-    while (!insertToken($pdo, $token, $activeAddress, $port, $localAddress, $closed) && $attempt < 10) {
+    while (!insertToken($pdo, $token, $address, $port, $localAddress, $closed) && $attempt < 10) {
         $length = $attempt < TOKEN_MIN_LENGTH ? TOKEN_MIN_LENGTH : round(TOKEN_MIN_LENGTH+$attempt/2);
         $token = computeToken($length);
         $attempt++;
