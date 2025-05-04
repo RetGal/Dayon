@@ -146,14 +146,20 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 				Log.debug("KeyCode ALT_GRAPH %s", () -> String.valueOf(message));
 				return;
 			}
-			Log.debug("KeyCode %s", () -> String.valueOf(message));
-			try {
-				robot.keyRelease(keyCode);
-				pressedKeys.remove(keyCode);
-			} catch (IllegalArgumentException ie) {
-				Log.warn("Error releasing KeyCode " + message);
+			if (pressedKeys.contains(keyCode)) {
+				Log.debug("KeyCode %s", () -> String.valueOf(message));
+				try {
+					robot.keyRelease(keyCode);
+					pressedKeys.remove(keyCode);
+				} catch (IllegalArgumentException ie) {
+					Log.warn("Error releasing KeyCode " + message);
+				}
+			} else {
+				Log.debug("KeyCode %s was typed as unicode", () -> String.valueOf(message));
 			}
+			return;
 		}
+		Log.warn("Undefined KeyCode " + message);
 	}
 
 	/**
