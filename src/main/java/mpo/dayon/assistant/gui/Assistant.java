@@ -586,27 +586,27 @@ public class Assistant implements ClipboardOwner {
                     getToken(false, networkEngine.getLocalAddress(), activeIp);
                 }
             }
-
-            private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
-                String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
-                if (activeAddress != null) {
-                    query += "&addr=" + activeAddress;
-                }
-                Log.debug("Requesting token using: " + query);
-                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @SuppressWarnings("squid:S2095")
-                HttpClient client = HttpClient.newBuilder().build();
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(query))
-                        .timeout(Duration.ofSeconds(5))
-                        .build();
-                TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
-            }
         };
         tokenAction.putValue("token", TOKEN.getTokenString());
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
+    }
+
+    private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
+        String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
+        if (activeAddress != null) {
+            query += "&addr=" + activeAddress;
+        }
+        Log.debug("Requesting token using: " + query);
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newBuilder().build();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(query))
+                .timeout(Duration.ofSeconds(5))
+                .build();
+        TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
     }
 
     private String limit(String string) {
