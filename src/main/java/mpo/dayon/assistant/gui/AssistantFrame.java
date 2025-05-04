@@ -596,7 +596,6 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void disableControls() {
-        controlActivated.set(false);
         windowsKeyActivated.set(false);
         controlToggleButton.setEnabled(false);
         windowsKeyToggleButton.setEnabled(false);
@@ -610,10 +609,9 @@ class AssistantFrame extends BaseFrame {
     }
 
     private void enableControls() {
-        controlToggleButton.setSelected(false);
         controlToggleButton.setEnabled(true);
-        windowsKeyToggleButton.setSelected(false);
-        ctrlKeyToggleButton.setSelected(false);
+        windowsKeyToggleButton.setEnabled(controlActivated.get());
+        ctrlKeyToggleButton.setEnabled(controlActivated.get());
         toggleTransferControls(true);
     }
 
