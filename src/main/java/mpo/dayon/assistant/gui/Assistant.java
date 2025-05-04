@@ -577,20 +577,20 @@ public class Assistant implements ClipboardOwner {
                     }
                 });
             }
-
-            private void requestToken() throws IOException, InterruptedException {
-                if (publicIp.equals(activeIp)) {
-                    boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
-                    getToken(closed, networkEngine.getLocalAddress(), null);
-                } else {
-                    getToken(false, networkEngine.getLocalAddress(), activeIp);
-                }
-            }
         };
         tokenAction.putValue("token", TOKEN.getTokenString());
         tokenAction.putValue(Action.SHORT_DESCRIPTION, translate("token.create.msg"));
         tokenAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.KEY));
         return tokenAction;
+    }
+
+    private void requestToken() throws IOException, InterruptedException {
+        if (publicIp.equals(activeIp)) {
+            boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
+            getToken(closed, networkEngine.getLocalAddress(), null);
+        } else {
+            getToken(false, networkEngine.getLocalAddress(), activeIp);
+        }
     }
 
     private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
