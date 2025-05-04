@@ -1,7 +1,7 @@
 package mpo.dayon.common.squeeze;
 
-import java.util.Iterator;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import mpo.dayon.common.capture.CaptureTile;
@@ -11,30 +11,23 @@ import static java.lang.String.format;
 
 public class RegularTileCache implements TileCache {
 
-    private final Map<Integer, CaptureTile> tiles;
+    private final Map<Integer, CaptureTile> tiles = new HashMap<>();
+    private final LinkedList<Integer> lru = new LinkedList<>();
+
     private final int maxSize;
     private final int purgeSize;
-    private int hits = 0;
+
+    private int hits;
 
     public RegularTileCache(int maxSize, int purgeSize) {
         this.maxSize = maxSize;
         this.purgeSize = purgeSize;
-        tiles = new LinkedHashMap<>(maxSize, 0.75f, true) {
-            @Override
-            public CaptureTile get(Object key) {
-                CaptureTile tile = super.get(key);
-                if (tile != null) {
-                    ++hits;
-                }
-                return tile != null ? tile : CaptureTile.MISSING;
-            }
-        };
         Log.info("Regular cache created [MAX:" + maxSize + "][PURGE:" + purgeSize + "]");
     }
 
     @Override
     public int getCacheId(CaptureTile tile) {
-        long cs = tile.getChecksum();
+        final long cs = tile.getChecksum();
         if (cs < 0L || cs > 4294967295L) {
             Log.warn(format("CacheId %d truncated to %d", cs , (int) cs));
         }
@@ -43,12 +36,23 @@ public class RegularTileCache implements TileCache {
 
     @Override
     public void add(CaptureTile tile) {
-        tiles.put(getCacheId(tile), tile);
+        if (tiles.size() < maxSize) {
+            final Integer cacheId = getCacheId(tile);
+            tiles.put(cacheId, tile);
+            lru.addFirst(cacheId);
+        }
     }
 
     @Override
     public CaptureTile get(int cacheId) {
-        return tiles.get(cacheId);
+        final Integer xcacheId = cacheId;
+        final CaptureTile tile = tiles.get(xcacheId);
+        if (tile != null) {
+            ++hits;
+            lru.addFirst(xcacheId);
+            return tile;
+        }
+        return CaptureTile.MISSING;
     }
 
     @Override
@@ -60,7 +64,7 @@ public class RegularTileCache implements TileCache {
     public void clear() {
         Log.debug("Clearing the cache...");
         tiles.clear();
-        hits = 0;
+        lru.clear();
     }
 
     /**
@@ -73,13 +77,10 @@ public class RegularTileCache implements TileCache {
      */
     @Override
     public void onCaptureProcessed() {
-        if (tiles.size() >= maxSize) {
+        if (!tiles.isEmpty() && tiles.size() >= maxSize) {
             Log.info("Purging the cache...");
-            int numToRemove = tiles.size() - purgeSize;
-            Iterator<Map.Entry<Integer, CaptureTile>> iterator = tiles.entrySet().iterator();
-            for (int i = 0; i < numToRemove; i++) {
-                iterator.next(); // move to the next entry
-                iterator.remove(); // remove the entry
+            while (tiles.size() > purgeSize) {
+                tiles.remove(lru.removeFirst());
             }
         }
     }
