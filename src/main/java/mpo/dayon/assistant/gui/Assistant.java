@@ -230,6 +230,7 @@ public class Assistant implements ClipboardOwner {
                     CompletableFuture.supplyAsync(networkEngine::resolvePublicIp).thenAcceptAsync(ip -> {
                         if (ip != null) {
                             button.setText(ip);
+                            publicIp = ip;
                             publicIpItem.setText(translate("ipAddressPublic", ip));
                         } else {
                             JOptionPane.showMessageDialog(frame, translate("ipAddress.msg2"), translate("ipAddress"), JOptionPane.ERROR_MESSAGE);
@@ -585,7 +586,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void requestToken() throws IOException, InterruptedException {
-        if (publicIp.equals(activeIp)) {
+        if (publicIp != null && publicIp.equals(activeIp)) {
             boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
             getToken(closed, networkEngine.getLocalAddress(), null);
         } else {
