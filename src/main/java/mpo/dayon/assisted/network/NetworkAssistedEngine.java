@@ -376,13 +376,11 @@ public class NetworkAssistedEngine extends NetworkEngine
                         clipboardRequestHandler.handleClipboardRequest();
                         break;
                     case CLIPBOARD_TEXT:
-                        var clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-                        setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                        setClipboardContents(NetworkClipboardTextMessage.unmarshall(in).getText(), clipboardOwner);
                         sender.ping();
                         break;
                     case CLIPBOARD_GRAPHIC:
-                        var clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
-                        setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
+                        setClipboardContents(NetworkClipboardGraphicMessage.unmarshall(in).getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
                         sender.ping();
                         break;
                     case SCREENSHOT_REQUEST:
