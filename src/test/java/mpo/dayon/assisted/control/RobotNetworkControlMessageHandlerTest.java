@@ -10,8 +10,7 @@ import java.awt.event.KeyEvent;
 import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.PRESSED;
 import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.RELEASED;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class RobotNetworkControlMessageHandlerTest {
 
@@ -39,7 +38,7 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessagePressz() {
+    void testHandleMessagePressZ() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 122, 'z');
         // when
@@ -49,13 +48,24 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessageReleaseA() {
+    void testHandleMessageDoNotReleaseUnpressedA() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(RELEASED, 65, 'A');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyRelease(65);
+        verify(robot, never()).keyRelease(65);
+    }
+
+    @Test
+    void testHandleMessagePressAndReleaseB() {
+        // given
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 66, 'B');
+        controlMessageHandler.handleMessage(message);
+        // when
+        controlMessageHandler.handleMessage(new NetworkKeyControlMessage(RELEASED, 66, 'B'));
+        // then
+        verify(robot).keyRelease(66);
     }
 
     @Test
