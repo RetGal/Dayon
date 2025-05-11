@@ -10,6 +10,8 @@ import mpo.dayon.common.gui.common.Position;
 public class CaptureTile {
 	public static final CaptureTile MISSING = new CaptureTile();
 
+	private final int id;
+
 	private final long checksum;
 
 	private final Position position;
@@ -31,6 +33,7 @@ public class CaptureTile {
 	private final boolean fromCache;
 
 	private CaptureTile() {
+		this.id = -1;
 		this.checksum = -1;
 		this.position = new Position(-1, -1);
 		this.width = -1;
@@ -40,7 +43,8 @@ public class CaptureTile {
 		this.fromCache = false;
 	}
 
-	public CaptureTile(long checksum, Position position, int width, int height, byte[] capture) {
+	public CaptureTile(int id, long checksum, Position position, int width, int height, byte[] capture) {
+		this.id = id;
 		this.checksum = checksum;
 		this.position = position;
 		this.width = width;
@@ -53,7 +57,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression.
 	 */
-	public CaptureTile(XYWH xywh, MemByteBuffer capture) {
+	public CaptureTile(int id, XYWH xywh, MemByteBuffer capture) {
+		this.id = id;
 		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -66,7 +71,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (single level tile).
 	 */
-	public CaptureTile(XYWH xywh, byte singleLevel) {
+	public CaptureTile(int id, XYWH xywh, byte singleLevel) {
+		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -81,7 +87,8 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (from the cache).
 	 */
-	public CaptureTile(XYWH xywh, CaptureTile cached) {
+	public CaptureTile(int id, XYWH xywh, CaptureTile cached) {
+		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
@@ -98,6 +105,10 @@ public class CaptureTile {
 		// quite good until now ...
 		checksum.update(data, offset, len);
 		return checksum.getValue();
+	}
+
+	public int getId() {
+		return id;
 	}
 
 	public long getChecksum() {
@@ -230,6 +241,6 @@ public class CaptureTile {
 				xywh[tileId++] = new XYWH(tx, ty, tw, th);
 			}
 		}
-        return new XYWH_Cache(new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight), xywh);
+		return new XYWH_Cache(new XYWH_Configuration(captureWidth, captureHeight, tileWidth, tileHeight), xywh);
 	}
 }

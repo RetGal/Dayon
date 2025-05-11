@@ -14,7 +14,7 @@ public final class Compressor {
     /**
      * NONE. (testing only)
      */
-     private static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NullZipper());
+    private static final Compressor NULL_COMPRESSOR = new Compressor(CompressionMethod.NONE, new NullRunLengthEncoder(), new NullZipper());
 
     /**
      * ZIP (with regular run-length-encoding).
@@ -45,8 +45,8 @@ public final class Compressor {
                 return ZIP_COMPRESSOR;
             case XZ:
                 return XZ_COMPRESSOR;
-			case NONE:
-				return NULL_COMPRESSOR;
+            case NONE:
+                return NULL_COMPRESSOR;
             default:
                 throw new IllegalArgumentException("Unsupported compressor configuration [" + method + "]!");
         }
@@ -157,10 +157,10 @@ public final class Compressor {
                     final int value = in.readShort();
                     if (value >= 0 && value < 256) // single-level
                     {
-                        dirty[tidx] = new CaptureTile(xywh[tidx], (byte) value);
+                        dirty[tidx] = new CaptureTile(tidx, xywh[tidx], (byte) value);
                     } else if (value == 256) // multi-level (cached)
                     {
-                        dirty[tidx] = new CaptureTile(xywh[tidx], cache.get(in.readInt()));
+                        dirty[tidx] = new CaptureTile(tidx, xywh[tidx], cache.get(in.readInt()));
                     } else // multi-level (not cached)
                     {
                         processUncached(cache, in, xywh[tidx], dirty, tidx, value);
@@ -184,7 +184,7 @@ public final class Compressor {
         }
         final MemByteBuffer out = new MemByteBuffer();
         rle.runLengthDecode(out, new MemByteBuffer(tdata));
-        dirty[tidx] = new CaptureTile(xywh, out);
+        dirty[tidx] = new CaptureTile(tidx, xywh, out);
         cache.add(dirty[tidx]);
     }
 }
