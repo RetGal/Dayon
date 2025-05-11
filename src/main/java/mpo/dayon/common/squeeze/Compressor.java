@@ -163,7 +163,7 @@ public final class Compressor {
                         dirty[tidx] = new CaptureTile(tidx, xywh[tidx], cache.get(in.readInt()));
                     } else // multi-level (not cached)
                     {
-                        processUncached(cache, in, cId, xywh[tidx], dirty, tidx, value);
+                        processUncached(cache, in, xywh[tidx], dirty, tidx, value);
                     }
                 }
                 idx += markerCount;
@@ -175,7 +175,7 @@ public final class Compressor {
         return new Capture(cId, cReset, cSkipped, cMerged, captureDimension, tileDimension, dirty);
     }
 
-    private void processUncached(TileCache cache, DataInputStream in, int cId, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {
+    private void processUncached(TileCache cache, DataInputStream in, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {
         final byte[] tdata = new byte[-value];
         int toffset = 0;
         int tcount;
