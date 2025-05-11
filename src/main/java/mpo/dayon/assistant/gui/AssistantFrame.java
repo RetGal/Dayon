@@ -447,7 +447,6 @@ class AssistantFrame extends BaseFrame {
         actions.getNetworkConfigurationAction().setEnabled(false);
         languageSelection.setEnabled(false);
         clearFingerprints();
-        //getStatusBar().resetSessionDuration();
         getStatusBar().setMessage(translate("listening", port));
         getStatusBar().setPortStateIndicator(isPortAccessible ? Color.green : Color.red);
         getStatusBar().setPeerStateIndicator(isPortAccessible ? Color.green : Color.gray);
@@ -533,11 +532,6 @@ class AssistantFrame extends BaseFrame {
     }
 
     void onSessionInterrupted() {
-        stopSessionTimer();
-        tabbedPane.setSelectedIndex(0);
-    }
-
-    void onDisconnecting() {
         stopSessionTimer();
         tabbedPane.setSelectedIndex(0);
     }
