@@ -7,8 +7,6 @@ import java.util.Map;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
-import static java.lang.String.format;
-
 public class RegularTileCache implements TileCache {
 
     private final Map<Integer, CaptureTile> tiles = new HashMap<>();
@@ -27,20 +25,14 @@ public class RegularTileCache implements TileCache {
 
     @Override
     public int getCacheId(CaptureTile tile) {
-        final long cs = tile.getChecksum();
-        if (cs < 0L || cs > 4294967295L) {
-            Log.warn(format("CacheId %d truncated to %d", cs , (int) cs));
-        }
-        return (int) cs;
+        return (int) tile.getChecksum();
     }
 
     @Override
     public void add(CaptureTile tile) {
-        if (tiles.size() < maxSize) {
-            final Integer cacheId = getCacheId(tile);
-            tiles.put(cacheId, tile);
-            lru.addFirst(cacheId);
-        }
+        final int cacheId = getCacheId(tile);
+        tiles.put(cacheId, tile);
+        lru.addFirst(cacheId);
     }
 
     @Override
