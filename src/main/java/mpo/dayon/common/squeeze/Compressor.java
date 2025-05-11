@@ -157,10 +157,10 @@ public final class Compressor {
                     final int value = in.readShort();
                     if (value >= 0 && value < 256) // single-level
                     {
-                        dirty[tidx] = new CaptureTile(cId, tidx, xywh[tidx], (byte) value);
+                        dirty[tidx] = new CaptureTile(tidx, xywh[tidx], (byte) value);
                     } else if (value == 256) // multi-level (cached)
                     {
-                        dirty[tidx] = new CaptureTile(cId, tidx, xywh[tidx], cache.get(in.readInt()));
+                        dirty[tidx] = new CaptureTile(tidx, xywh[tidx], cache.get(in.readInt()));
                     } else // multi-level (not cached)
                     {
                         processUncached(cache, in, cId, xywh[tidx], dirty, tidx, value);
@@ -184,7 +184,7 @@ public final class Compressor {
         }
         final MemByteBuffer out = new MemByteBuffer();
         rle.runLengthDecode(out, new MemByteBuffer(tdata));
-        dirty[tidx] = new CaptureTile(cId, tidx, xywh, out);
+        dirty[tidx] = new CaptureTile(tidx, xywh, out);
         cache.add(dirty[tidx]);
     }
 }

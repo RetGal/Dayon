@@ -57,7 +57,7 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression.
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, MemByteBuffer capture) {
+	public CaptureTile(int id, XYWH xywh, MemByteBuffer capture) {
 		this.id = id;
 		this.checksum = computeChecksum(capture.getInternal(), 0, capture.size()); // cache usage (!)
 		this.position = new Position(xywh.x, xywh.y);
@@ -71,7 +71,7 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (single level tile).
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, byte singleLevel) {
+	public CaptureTile(int id, XYWH xywh, byte singleLevel) {
 		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
@@ -87,7 +87,7 @@ public class CaptureTile {
 	/**
 	 * Assisted to assistant : result of network data decompression (from the cache).
 	 */
-	public CaptureTile(int captureId, int id, XYWH xywh, CaptureTile cached) {
+	public CaptureTile(int id, XYWH xywh, CaptureTile cached) {
 		this.id = id;
 		this.checksum = -1;
 		this.position = new Position(xywh.x, xywh.y);
