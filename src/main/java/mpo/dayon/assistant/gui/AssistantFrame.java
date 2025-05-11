@@ -82,6 +82,8 @@ class AssistantFrame extends BaseFrame {
 
     Timer peerStatusTimer;
 
+    long sessionSeconds;
+
     AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
@@ -445,7 +447,6 @@ class AssistantFrame extends BaseFrame {
         actions.getNetworkConfigurationAction().setEnabled(false);
         languageSelection.setEnabled(false);
         clearFingerprints();
-        getStatusBar().resetSessionDuration();
         getStatusBar().setMessage(translate("listening", port));
         getStatusBar().setPortStateIndicator(isPortAccessible ? Color.green : Color.red);
         getStatusBar().setPeerStateIndicator(isPortAccessible ? Color.green : Color.gray);
@@ -453,6 +454,8 @@ class AssistantFrame extends BaseFrame {
 
     void onGettingReady() {
         actions.getStartAction().setEnabled(false);
+        sessionSeconds = 0;
+        getStatusBar().resetSessionDuration();
         showSpinner();
     }
 
@@ -519,16 +522,16 @@ class AssistantFrame extends BaseFrame {
             String infoMessage = format("%s%n%s%n%s", translate("keyboardlayout.msg1", inputLocale), translate("keyboardlayout.msg2"), translate("keyboardlayout.msg3"));
             JOptionPane.showMessageDialog(this,  infoMessage, "", JOptionPane.INFORMATION_MESSAGE);
         }
-        long sessionStartTime = Instant.now().getEpochSecond();
+        long sessionStartTime = Instant.now().getEpochSecond() - sessionSeconds;
         sessionTimer = new Timer(1000, e -> {
-            final long seconds = Instant.now().getEpochSecond() - sessionStartTime;
-            getStatusBar().setSessionDuration(format("%02d:%02d:%02d", seconds / 3600, (seconds % 3600) / 60, seconds % 60));
+            sessionSeconds = Instant.now().getEpochSecond() - sessionStartTime;
+            getStatusBar().setSessionDuration(format("%02d:%02d:%02d", sessionSeconds / 3600, (sessionSeconds % 3600) / 60, sessionSeconds % 60));
         });
         sessionTimer.start();
         tabbedPane.setSelectedIndex(1);
     }
 
-    void onDisconnecting() {
+    void onSessionInterrupted() {
         stopSessionTimer();
         tabbedPane.setSelectedIndex(0);
     }

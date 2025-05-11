@@ -59,4 +59,6 @@ public interface NetworkAssistantEngineListener extends Listener {
 	void onCheckingPeerStatus(boolean blink);
 
 	void onPeerIsAccessible(String address, int port, boolean isPeerAccessible);
+
+	void onSessionInterrupted();
 }

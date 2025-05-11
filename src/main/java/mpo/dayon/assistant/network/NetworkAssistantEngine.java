@@ -94,7 +94,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
-                NetworkAssistantEngine.this.receivingLoop(compatibilityMode);
+                NetworkAssistantEngine.this.getReady(compatibilityMode);
             }
         }, "NetworkReceiver");
         receiver.start();
@@ -114,8 +114,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     // right, keep streams open - forever!
-    @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
-    private void receivingLoop(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
+    private void getReady(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
         boolean introduced = false;
         boolean proceed = true;
@@ -134,7 +133,23 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             } else if (isInvertibleConnection) {
                 fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
             }
-            // receiving loop
+            receivingLoop(proceed, introduced, compatibilityMode);
+        } catch (IOException ex) {
+            handleIOException(ex);
+        } catch (CertificateEncodingException ex) {
+            Log.error(ex.getMessage());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException(e);
+        } finally {
+            closeConnections();
+            UPnP.closePortTCP(configuration.getPort());
+            fireOnReady();
+        }
+    }
+
+    private void receivingLoop(boolean proceed, boolean introduced, boolean compatibilityMode) throws ClassNotFoundException, IOException, NoSuchAlgorithmException, KeyManagementException {
+        // receiving loop
+        try {
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
@@ -146,15 +161,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 }
             }
         } catch (IOException ex) {
-            handleIOException(ex);
-        } catch (CertificateEncodingException ex) {
-            Log.error(ex.getMessage());
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        } finally {
-            closeConnections();
-            UPnP.closePortTCP(configuration.getPort());
-            fireOnReady();
+            if (introduced && !cancelling.get()) {
+                fireOnSessionInterrupted();
+                getReady(compatibilityMode);
+            } else {
+                throw ex;
+            }
         }
     }
 
@@ -540,4 +552,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private void fireOnReconfigured(NetworkAssistantEngineConfiguration configuration) {
         listeners.getListeners().forEach(listener -> listener.onReconfigured(configuration));
     }
+
+    private void fireOnSessionInterrupted() {
+        listeners.getListeners().forEach(NetworkAssistantEngineListener::onSessionInterrupted);
+    }
+
 }

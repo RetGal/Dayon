@@ -877,12 +877,17 @@ public class Assistant implements ClipboardOwner {
             frame.computeScaleFactors(width, height);
         }
 
+        @Override
+        public void onSessionInterrupted() {
+            frame.onSessionInterrupted();
+        }
+
         /**
          * Should not block as called from the network receiving thread (!)
          */
         @Override
         public void onDisconnecting() {
-            frame.onDisconnecting();
+            frame.onSessionInterrupted();
             networkConfiguration.setMonochromePeer(false);
         }
 
