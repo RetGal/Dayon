@@ -26,10 +26,36 @@ class NetworkAssistedEngineTest {
         engine.configure(configuration);
 
         // when
-        engine.connect(new Token("?token=%s"));
+        engine.connect(new Token("?token=%s"), 4000);
 
         // then
         verify(listener).onConnecting(configuration.getServerName(), configuration.getServerPort());
+    }
+
+    @Test
+    void testHostNotFound() {
+        // given
+        final NetworkAssistedEngineConfiguration configuration = new NetworkAssistedEngineConfiguration("snafu.foobar", 12345);
+        engine.configure(configuration);
+
+        // when
+        engine.connect(new Token("?token=%s"), 200);
+
+        // then
+        verify(listener).onHostNotFound(configuration.getServerName());
+    }
+
+    @Test
+    void testRefused() {
+        // given
+        final NetworkAssistedEngineConfiguration configuration = new NetworkAssistedEngineConfiguration("localhost", 12345);
+        engine.configure(configuration);
+
+        // when
+        engine.connect(new Token("?token=%s"), 200);
+
+        // then
+        verify(listener).onRefused(configuration.getServerName(), configuration.getServerPort());
     }
 
     @Test

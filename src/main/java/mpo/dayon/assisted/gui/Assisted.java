@@ -163,7 +163,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
         if (coldStart) {
             coldStart = false;
             if (autoConnect) {
-                networkEngine.connect(TOKEN);
+                // 2 minutes should be plenty of time
+                networkEngine.connect(TOKEN, 120000);
             }
             return true;
         }
@@ -322,7 +323,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         protected String doInBackground() {
             if (isConfigured() && !isCancelled()) {
                 networkEngine.configure(networkConfiguration);
-                networkEngine.connect(TOKEN);
+                networkEngine.connect(TOKEN, 7000);
             }
             return null;
         }
