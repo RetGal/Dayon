@@ -166,6 +166,9 @@ public abstract class NetworkEngine {
     protected void fireOnClipboardReceived() {
     }
 
+    /**
+     * closes all connections AND resets the cancelling flag
+     */
     protected void closeConnections() {
         if (sender != null) {
             sender.cancel();

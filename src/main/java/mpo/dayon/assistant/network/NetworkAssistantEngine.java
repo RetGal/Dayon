@@ -162,6 +162,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
         } catch (IOException ex) {
             if (introduced && !cancelling.get()) {
+                Log.warn("Session was interrupted - reconnect");
                 fireOnSessionInterrupted();
                 getReady(compatibilityMode);
             } else {
@@ -403,7 +404,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         }
     }
 
-    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
+    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
         switch (type) {
             case HELLO:
                 fireOnConnected(connection, introduce(in));
@@ -414,6 +415,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
             case CAPTURE:
             case MOUSE_LOCATION:
+                // reconnect case
+                processIntroduced(type, in);
+                return false;
+
             case CLIPBOARD_TEXT:
             case CLIPBOARD_GRAPHIC:
             case CLIPBOARD_FILES:

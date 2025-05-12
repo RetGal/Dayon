@@ -533,6 +533,10 @@ class AssistantFrame extends BaseFrame {
 
     void onSessionInterrupted() {
         stopSessionTimer();
+    }
+
+    void onDisconnecting() {
+        stopSessionTimer();
         tabbedPane.setSelectedIndex(0);
     }
 

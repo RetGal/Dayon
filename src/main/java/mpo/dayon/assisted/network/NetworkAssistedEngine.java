@@ -174,7 +174,10 @@ public class NetworkAssistedEngine extends NetworkEngine
                 isAssistantInSameNetwork = detectLocalAssistant();
             }
         }
+        establishConnection(isAssistantInSameNetwork);
+    }
 
+    private void establishConnection(boolean isAssistantInSameNetwork) throws IOException, NoSuchAlgorithmException, CertificateEncodingException {
         // preferred case, we initiate the connection
         if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork) {
             fireOnPeerIsAccessible(true);
@@ -187,6 +190,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         createInputStream();
         runReceiversIfNecessary();
         receiver.start();
+        pause(100L);
         initSender(1);
         // the first message being sent to the assistant (e.g. version identification, locale and OS).
         sender.sendHello(osId);
@@ -396,12 +400,20 @@ public class NetworkAssistedEngine extends NetworkEngine
                 }
             }
         } catch (IOException ex) {
-            handleIOException(ex);
+            if (!cancelling.get()) {
+                closeConnections();
+                pause(1500);
+                Log.warn("Session was interrupted - reconnect");
+                connect(token);
+            } else {
+                closeConnections();
+                Log.info("Stopped network receiver (cancelled)");
+                fireOnDisconnecting();
+            }
         } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        } finally {
             closeConnections();
             fireOnDisconnecting();
+            throw new IllegalArgumentException(e);
         }
     }
 
