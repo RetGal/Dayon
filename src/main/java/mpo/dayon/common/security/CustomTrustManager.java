@@ -27,18 +27,18 @@ public class CustomTrustManager implements X509TrustManager {
 	}
 
 	@Override
-	@java.lang.SuppressWarnings("squid:S4830")
+	@SuppressWarnings("squid:S4830")
 	public void checkServerTrusted(X509Certificate[] chain, String authType) {
 		// we want to trust our individually generated, self-signed certificates
 	}
 
 	@Override
-	@java.lang.SuppressWarnings("squid:S4830")
+	@SuppressWarnings("squid:S4830")
 	public void checkClientTrusted(X509Certificate[] chain, String authType) {
 		// we want to trust our individually generated, self-signed certificates
 	}
 
-	@java.lang.SuppressWarnings("squid:S6437") // pro forma password, without security relevance
+	@SuppressWarnings("squid:S6437") // pro forma password, without security relevance
 	public static SSLContext initSslContext(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException {
 		final char[] keyStorePass = "spasspass".toCharArray();
 		KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");

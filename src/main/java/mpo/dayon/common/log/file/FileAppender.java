@@ -70,7 +70,7 @@ public class FileAppender extends LogAppender {
 		count = file.length();
 	}
 
-	@java.lang.SuppressWarnings("squid:S106")
+	@SuppressWarnings("squid:S106")
 	private void rollOver() {
 		nextRolloverCount = count + MAX_FILE_SIZE;
 		boolean renameSucceeded = deleteSurplus();
@@ -107,7 +107,7 @@ public class FileAppender extends LogAppender {
 		}
 	}
 
-	@java.lang.SuppressWarnings("squid:S4042")
+	@SuppressWarnings("squid:S4042")
 	private boolean deleteSurplus() {
 		final File file = new File(filename + '.' + MAX_BACKUP_INDEX);
 		if (file.exists()) {

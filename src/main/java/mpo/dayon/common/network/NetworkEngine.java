@@ -213,7 +213,7 @@ public abstract class NetworkEngine {
 
     public String resolvePublicIp() {
         // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @java.lang.SuppressWarnings("squid:S2095")
+        @SuppressWarnings("squid:S2095")
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(WHATSMYIP_SERVER_URL))

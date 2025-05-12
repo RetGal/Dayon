@@ -331,7 +331,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     // right, keep streams open - forever!
-    @java.lang.SuppressWarnings({"squid:S2189", "squid:S2093"})
+    @SuppressWarnings({"squid:S2189", "squid:S2093"})
     private void fileReceivingLoop() {
         fileIn = null;
         Log.info(format("Dayon! file server [port:%d]", configuration.getPort()));

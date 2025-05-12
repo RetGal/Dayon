@@ -61,7 +61,7 @@ public class Version {
     public String getLatestRelease() {
         if (latestVersion == null) {
             // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-            @java.lang.SuppressWarnings("squid:S2095")
+            @SuppressWarnings("squid:S2095")
             HttpClient client = HttpClient.newHttpClient();
             try {
                 HttpRequest request = HttpRequest.newBuilder()
