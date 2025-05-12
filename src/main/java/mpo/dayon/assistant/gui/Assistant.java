@@ -887,7 +887,7 @@ public class Assistant implements ClipboardOwner {
          */
         @Override
         public void onDisconnecting() {
-            frame.onSessionInterrupted();
+            frame.onDisconnecting();
             networkConfiguration.setMonochromePeer(false);
         }
 

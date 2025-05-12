@@ -20,7 +20,6 @@ import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
-import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.version.Version;
 
@@ -206,7 +205,6 @@ public class NetworkSender {
             semaphore.release(); // unlikely as we have an unbounded queue
             // (!)
         } catch (InterruptedException ex) {
-            FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is has been interrupted!", ex);
             Thread.currentThread().interrupt();
         }
     }

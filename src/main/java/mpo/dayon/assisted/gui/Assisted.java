@@ -510,6 +510,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
         @Override
         public void onConnected(String fingerprints) {
             frame.onConnected(fingerprints);
+            // reset the capture engine in order to transmit a full capture, important in case of reconnects
+            if (captureEngine != null) {
+                captureEngine.reconfigure(captureEngineConfiguration);
+            }
         }
 
         @Override
