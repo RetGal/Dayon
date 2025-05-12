@@ -109,6 +109,7 @@ public final class SystemUtilities {
         });
     }
 
+    @SuppressWarnings("squid:S2142")
     public static Thread safeInterrupt(Thread thread) {
         if (thread != null) {
             try {
@@ -189,7 +190,7 @@ public final class SystemUtilities {
         }
     }
 
-    @java.lang.SuppressWarnings("squid:S5998") // matcher input is max 256 chars long
+    @SuppressWarnings("squid:S5998") // matcher input is max 256 chars long
     private static boolean isValidHostname(String serverName) {
         return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
                 FQ_HOSTNAME_REGEX.matcher(serverName).matches();
@@ -225,7 +226,7 @@ public final class SystemUtilities {
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
-    @java.lang.SuppressWarnings("squid:S108")
+    @SuppressWarnings("squid:S108")
     public static void pause(long ms) {
         long start = currentTimeMillis();
         while(new Date().getTime() - start < ms){}

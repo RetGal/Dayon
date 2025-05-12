@@ -36,7 +36,7 @@ public final class Babylon {
         }
     }
 
-    @java.lang.SuppressWarnings("squid:S4973")
+    @SuppressWarnings("squid:S4973")
     public static String translateEnum(Enum<?> value) {
         final String tag = format("enum.%s.%s", value.getClass().getSimpleName(), value.name());
         final String val = translate(tag);
@@ -53,7 +53,7 @@ public final class Babylon {
      * <code>toString</code> of the argument array is appended to the tag
      * value...
      */
-    @java.lang.SuppressWarnings("squid:S4973")
+    @SuppressWarnings("squid:S4973")
     private static String formatValue(Locale locale, String tagValue, String tag, Object... arguments) {
         // The identity equality is fine; that's what I want!
         if (tagValue != tag) {

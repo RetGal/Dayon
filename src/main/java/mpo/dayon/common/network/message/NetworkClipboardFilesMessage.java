@@ -28,7 +28,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         this.remainingTotalFilesSize = remainingTotalFilesSize;
     }
 
-    @java.lang.SuppressWarnings("squid:S5135") // assistant and assisted trust each other
+    @SuppressWarnings("squid:S5135") // assistant and assisted trust each other
     public static NetworkClipboardFilesHelper unmarshall(ObjectInputStream in, NetworkClipboardFilesHelper helper, String tmpDir) throws IOException {
         try {
             if (helper.getTransferId() == null) {

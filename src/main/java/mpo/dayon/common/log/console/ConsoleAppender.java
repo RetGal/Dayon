@@ -6,7 +6,7 @@ import mpo.dayon.common.log.LogLevel;
 public class ConsoleAppender extends LogAppender {
 
 	@Override
-	@java.lang.SuppressWarnings("squid:S106")
+	@SuppressWarnings("squid:S106")
     public synchronized void append(LogLevel level, String message, Throwable error) {
 		System.out.println(format(level, message));
 

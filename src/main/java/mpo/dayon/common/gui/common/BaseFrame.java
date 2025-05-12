@@ -506,7 +506,7 @@ public abstract class BaseFrame extends JFrame {
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             try {
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @java.lang.SuppressWarnings("squid:S2095")
+                @SuppressWarnings("squid:S2095")
                 HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(tokenServer))

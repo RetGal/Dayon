@@ -34,7 +34,7 @@ public class MouseEngine {
         thread.interrupt();
     }
 
-    @java.lang.SuppressWarnings("squid:S2189")
+    @SuppressWarnings("squid:S2189")
     private void mainLoop() throws InterruptedException {
         long start = System.currentTimeMillis();
         int captureCount = 0;
