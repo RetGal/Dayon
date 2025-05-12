@@ -65,6 +65,8 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private Token token;
 
+    private int connectionTimeout;
+
     private SSLSocketFactory ssf;
 
     private String publicIp;
@@ -118,8 +120,12 @@ public class NetworkAssistedEngine extends NetworkEngine
         listeners.add(listener);
     }
 
-    public void connect(Token token) {
+    /*
+     * Connect to the assistant using the given token, which may be blank. The connectionTimeout is in ms
+     */
+    public void connect(Token token, int connectionTimeout) {
         this.token = token;
+        this.connectionTimeout = connectionTimeout;
         try {
             start();
         } catch (UnknownHostException e) {
@@ -183,7 +189,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             fireOnPeerIsAccessible(true);
             Log.debug("Assistant is accessible");
             Log.info(format("Connecting to [%s:%s]...", configuration.getServerName(), configuration.getServerPort()));
-            connectToAssistant();
+            connectToAssistant(connectionTimeout);
         }
 
         // common part
@@ -293,18 +299,25 @@ public class NetworkAssistedEngine extends NetworkEngine
         return configuration.getServerPort();
     }
 
-    private void connectToAssistant() {
+    private void connectToAssistant(int connectionTimeout) throws IOException {
         try {
             connection = (SSLSocket) ssf.createSocket();
             connection.setNeedClientAuth(true);
-            // grace period of 15 seconds for the assistant to accept the connection
-            connection.setSoTimeout(15000);
-            // abort the connection attempt after 7 seconds if the assistant cannot be reached
-            connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), 7000);
+            // grace period of twice the connection timeout (default 14 seconds) for the assistant to accept the connection
+            connection.setSoTimeout(2*connectionTimeout);
+            // abort the connection attempt after connection timeout (default 7 seconds) if the assistant cannot be reached
+            connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), connectionTimeout);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
+        } catch (UnknownHostException e) {
+            Log.warn("Unable to connect to the assistant - unknown host");
+            throw e;
+        } catch (SocketTimeoutException e) {
+            Log.warn("Unable to connect to the assistant - connection timeout");
+            throw e;
         } catch (IOException e) {
             Log.warn("Unable to connect to the assistant");
+            throw e;
         }
     }
 
@@ -404,7 +417,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                 closeConnections();
                 pause(1500);
                 Log.warn("Session was interrupted - reconnect");
-                connect(token);
+                connect(token, connectionTimeout);
             } else {
                 closeConnections();
                 Log.info("Stopped network receiver (cancelled)");
