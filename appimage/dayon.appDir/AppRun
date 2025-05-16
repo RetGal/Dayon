@@ -1,0 +1,42 @@
+#!/bin/sh
+cross_realpath() {
+  if ! realpath "${1}" 2>/dev/null; then
+    [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
+  fi
+}
+
+help() {
+echo "
+ --------------------------------------------------------
+ All the Dayon! functionality inside an AppImage package.
+
+ Usage: help
+ ------ # This message
+ 
+        assistant
+        # Run the Assistant side
+         
+ 	debug
+        # Enable debug
+         
+        log=console
+        # Log to stdout
+         
+	lang=it
+	# Use the specified UI language [de,en,es,fr,it,ru,sv,tr,zh]
+         
+        ah=hostname.domainname
+        # Connect to the specified host or IP address (only for the Assisted)
+         
+        ap=1234
+        # Connect to the specified port (only for the Assisted)
+"
+}
+
+if [ "$1" = "help" -o "$1" = "--help" -o "$1" = "-h" ] ; then
+    help
+    exit 0
+fi
+
+HERE=$(dirname "$(cross_realpath "$0")")
+${HERE}/usr/bin/dayon.sh "$@"

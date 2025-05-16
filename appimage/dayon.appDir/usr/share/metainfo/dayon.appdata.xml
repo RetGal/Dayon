@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>dayon</id>
+    <launchable type="desktop-id">dayon.desktop</launchable>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>GPL-3.0</project_license>
+    <name>Dayon!</name>
+    <url type="homepage">https://retgal.github.io/Dayon/</url>
+    <url type="bugtracker">https://github.com/retgal/dayon/issues</url>
+    <summary>Remote assistance made easy!</summary>
+    <developer id="io.github.retgal">
+        <name>RetGal</name>
+    </developer>
+    <keywords>
+        <keyword>remote desktop</keyword>
+        <keyword>remote assistance</keyword>
+        <keyword>remote support</keyword>
+    </keywords>
+    <description>
+        <p>A secure, privacy respecting, easy-to-use, cross-platform remote desktop support solution for everyone.</p>
+        <p>It can be used as free alternative to various commercial remote desktop and remote assistance products.</p>
+        <p>Its key features are:</p>
+        <ul>
+            <li>No router or network configuration required on the Assisted side</li>
+            <li>Intuitive, multilingual user interface</li>
+            <li>Assistant and Assisted functionality in one package</li>
+            <li>Secure, end-to-end encrypted communication (TLS 1.3)</li>
+        </ul>
+    </description>
+    <screenshots>
+        <screenshot type="default">
+            <image>https://raw.githubusercontent.com/RetGal/Dayon/refs/heads/master/docs/dayon.screen.png</image>
+            <caption>Remote assistance made easy!</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://raw.githubusercontent.com/RetGal/Dayon/refs/heads/master/docs/dayon.screen.ms.store.png</image>
+        </screenshot>
+    </screenshots>
+    <releases>
+        <release version="" date="">
+            <description>
+                <p>Changes in </p>
+                <ul>
+                    <li></li>
+                </ul>
+            </description>
+        </release>
+    </releases>
+    <content_rating type="oars-1.1"/>
+</component>
