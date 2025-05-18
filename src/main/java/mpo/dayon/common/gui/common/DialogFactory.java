@@ -79,6 +79,7 @@ public abstract class DialogFactory {
         final Frame parent = owner instanceof Frame ? (Frame) owner : (Frame) SwingUtilities.getAncestorOfClass(Frame.class, owner);
         JPanel contentPane = createContentPane(payloadPane, bordered, buttons);
         JDialog dialog = new JDialog(parent, title, true);
+        dialog.setResizable(false);
         dialog.setContentPane(contentPane);
         dialog.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         dialog.addWindowListener(new WindowAdapter() {

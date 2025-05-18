@@ -32,7 +32,7 @@ class NetworkAssistantEngineTest {
     void testReconfigureStart() {
         // given
         engine.configure(new NetworkAssistantEngineConfiguration());
-        final NetworkAssistantEngineConfiguration configuration = new NetworkAssistantEngineConfiguration(12345, "http://localhost/");
+        final NetworkAssistantEngineConfiguration configuration = new NetworkAssistantEngineConfiguration(12345, "http://localhost/", false);
         engine.reconfigure(configuration);
 
         // when
@@ -58,7 +58,7 @@ class NetworkAssistantEngineTest {
         // given
         String publicIp = null;
         int portNumber = 12345;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
 
         // when // then
         assertFalse(engine.selfTest(publicIp, portNumber));
@@ -69,7 +69,7 @@ class NetworkAssistantEngineTest {
         // given
         String publicIp = "1.2.3.4";
         int portNumber = 5;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
 
         // when // then
         assertFalse(engine.selfTest(publicIp, portNumber));
@@ -80,7 +80,7 @@ class NetworkAssistantEngineTest {
         // given
         String publicIp = "127.0.0.1";
         int portNumber = 12345;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, ""));
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
 
         // when // then
         assertTrue(engine.selfTest(publicIp, portNumber));

@@ -336,7 +336,7 @@ public abstract class BaseFrame extends JFrame {
                     if (ASSISTED.equals(frameType)) {
                         updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
                     } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, networkAssistantEngine);
+                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, autoConnectCheckBox, networkAssistantEngine);
                     }
                 }
             }
@@ -370,8 +370,9 @@ public abstract class BaseFrame extends JFrame {
             portNumberTextField.setText(format("%d", networkConfiguration.getServerPort()));
             assistantPanel.add(portNumberLbl);
             assistantPanel.add(portNumberTextField);
-            autoConnectCheckBox.setText(translate("connection.settings.autoConnect"));
+            final JLabel autoConnectLbl = new JLabel(translate("connection.settings.autoConnect"));
             autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
+            assistantPanel.add(autoConnectLbl);
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
         } else {
@@ -387,13 +388,17 @@ public abstract class BaseFrame extends JFrame {
             upnpPanel.add(upnpStatus);
             panel.add(upnpPanel, createGridBagConstraints(gridy++));
 
-            final JPanel portPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+            final JPanel portPanel = new JPanel(new GridLayout(2, 2, 10, 0));
             portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
             final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
             portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
             portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
             portPanel.add(portNumberLbl);
             portPanel.add(portNumberTextField);
+            final JLabel autoAcceptLbl = new JLabel(translate("connection.settings.autoAccept"));
+            portPanel.add(autoAcceptLbl);
+            autoConnectCheckBox.setSelected(networkConfiguration.isAutoAccept());
+            portPanel.add(autoConnectCheckBox);
             panel.add(portPanel, createGridBagConstraints(gridy++));
         }
 
@@ -487,10 +492,10 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, NetworkAssistantEngine networkEngine) {
+    private static void updateAssistantNetworkConfiguration(JTextField portNumberTextField, String newTokenServerUrl, JCheckBox autoConnectCheckBox, NetworkAssistantEngine networkEngine) {
         final NetworkAssistantEngineConfiguration oldConfig = new NetworkAssistantEngineConfiguration();
         final NetworkAssistantEngineConfiguration newConfig = new NetworkAssistantEngineConfiguration(
-                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl);
+                Integer.parseInt(portNumberTextField.getText()), newTokenServerUrl, autoConnectCheckBox.isSelected());
 
         if (!newConfig.equals(oldConfig)) {
             manageRouterPorts(oldConfig.getPort(), newConfig.getPort(), null);

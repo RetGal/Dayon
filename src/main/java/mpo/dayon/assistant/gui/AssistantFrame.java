@@ -464,14 +464,14 @@ class AssistantFrame extends BaseFrame {
         add(center, BorderLayout.CENTER);
     }
 
-    boolean onAccepted(Socket connection) {
+    boolean onAccepted(Socket connection, boolean autoAccept) {
         if (connection == null || !connection.isConnected()) {
             Log.warn("Connection was already terminated");
             return false;
         }
-        if (JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
-            translate("connection.incoming", connection.getInetAddress().getHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
-            getOrCreateIcon(ImageNames.USERS), okCancelOptions, okCancelOptions[1]) == 0) {
+        if (!autoAccept && JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
+                translate("connection.incoming", connection.getInetAddress().getHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                getOrCreateIcon(ImageNames.USERS), okCancelOptions, okCancelOptions[1]) == 0) {
             return false;
         }
         hideSpinner();

@@ -18,6 +18,7 @@ public final class ImageNames {
 	public static final String FINGERPRINT = "fingerprint.png";
 	public static final String FIT = "fit.png";
 	public static final String FULLSCREEN = "fullscreen.png";
+	public static final String GEAR = "gear.png";
 	public static final String HELP = "help.png";
 	public static final String INFO = "info.png";
 	public static final String KEY = "key.png";
