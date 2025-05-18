@@ -9,6 +9,7 @@ import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMessageType;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import mpo.dayon.common.squeeze.CompressionMethod;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
@@ -41,6 +42,19 @@ class NetworkSenderTest {
         valueCaptor = ArgumentCaptor.forClass(int.class);
         sender = new NetworkSender(outMock);
         sender.start(1);
+    }
+
+    @AfterEach
+    void tearDown() {
+        sender.cancel();
+        try {
+            outMock.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        valueCaptor = null;
+        outMock = null;
+        sender = null;
     }
 
     static boolean isLocaleNull() {
