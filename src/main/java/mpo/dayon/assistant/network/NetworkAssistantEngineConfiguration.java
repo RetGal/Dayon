@@ -12,9 +12,13 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	private static final String PREF_TOKEN_SERVER_URL = "assistant.network.tokenServerUrl";
 
+	private static final String PREF_AUTO_ACCEPT = "assistant.network.autoAccept";
+
 	private final int port;
 
 	private final String tokenServerUrl;
+
+	private final boolean autoAccept;
 
 	private boolean monochromePeer = false;
 
@@ -26,11 +30,13 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 	public NetworkAssistantEngineConfiguration() {
 		port = Preferences.getPreferences().getIntPreference(PREF_PORT_NUMBER, 8080);
 		tokenServerUrl = Preferences.getPreferences().getStringPreference(PREF_TOKEN_SERVER_URL, DEFAULT_TOKEN_SERVER_URL);
+		autoAccept = Preferences.getPreferences().getBooleanPreference(PREF_AUTO_ACCEPT, false);
 	}
 
-	public NetworkAssistantEngineConfiguration(int port, String tokenServerUrl) {
+	public NetworkAssistantEngineConfiguration(int port, String tokenServerUrl, boolean autoAccept) {
 		this.port = port;
 		this.tokenServerUrl = tokenServerUrl;
+		this.autoAccept = autoAccept;
 	}
 
 	public int getPort() {
@@ -39,6 +45,10 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	public String getTokenServerUrl() {
 		return tokenServerUrl;
+	}
+
+	public boolean isAutoAccept() {
+		return autoAccept;
 	}
 
 	public boolean isMonochromePeer() {
@@ -68,12 +78,12 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 		final NetworkAssistantEngineConfiguration that = (NetworkAssistantEngineConfiguration) o;
 
-		return port == that.port && tokenServerUrl.equals(that.tokenServerUrl);
+		return port == that.port && tokenServerUrl.equals(that.tokenServerUrl) && autoAccept == that.autoAccept;
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(port, tokenServerUrl);
+		return Objects.hash(port, tokenServerUrl, autoAccept);
 	}
 
 	/**
@@ -86,6 +96,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 		props.set(PREF_VERSION, String.valueOf(1));
 		props.set(PREF_PORT_NUMBER, String.valueOf(port));
 		props.set(PREF_TOKEN_SERVER_URL, tokenServerUrl);
+		props.set(PREF_AUTO_ACCEPT, String.valueOf(autoAccept));
 
 		if (clear) // migration support (!)
 		{

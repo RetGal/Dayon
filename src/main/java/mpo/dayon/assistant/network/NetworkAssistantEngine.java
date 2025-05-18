@@ -218,7 +218,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 throw new IOException("Certificate error, try enabling compatibility mode!");
             }
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-        } while (!fireOnAccepted(connection) && !cancelling.get());
+        } while (!fireOnAccepted(connection, configuration.isAutoAccept()) && !cancelling.get());
         fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
 
         if (server.isBound()) {
@@ -240,7 +240,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                     Thread.currentThread().interrupt();
                 }
             }
-            hasRejected = !fireOnAccepted(connection);
+            hasRejected = !fireOnAccepted(connection, configuration.isAutoAccept());
             Log.info("Connected to the assisted");
             return true;
         }
@@ -512,8 +512,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         listeners.getListeners().forEach(listener -> listener.onCheckingPeerStatus(blink));
     }
 
-    private boolean fireOnAccepted(Socket connection) {
-        return listeners.getListeners().stream().allMatch(listener -> listener.onAccepted(connection));
+    private boolean fireOnAccepted(Socket connection, boolean autoAccept) {
+        return listeners.getListeners().stream().allMatch(listener -> listener.onAccepted(connection, autoAccept));
     }
 
     private void fireOnConnected(Socket connection, NetworkHelloMessage hello) {

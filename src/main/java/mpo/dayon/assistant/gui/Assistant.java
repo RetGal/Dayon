@@ -154,6 +154,7 @@ public class Assistant implements ClipboardOwner {
     private void initGui() {
         createCounters();
         if (frame != null) {
+            clearToken();
             frame.dispose();
         }
         frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, hasTokenServerUrlFromYaml());
@@ -813,8 +814,8 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public boolean onAccepted(Socket connection) {
-            return frame.onAccepted(connection);
+        public boolean onAccepted(Socket connection, boolean autoAccept) {
+            return frame.onAccepted(connection, autoAccept);
         }
 
         /**
@@ -906,10 +907,16 @@ public class Assistant implements ClipboardOwner {
 
         @Override
         public void onReconfigured(NetworkAssistantEngineConfiguration networkEngineConfiguration) {
+            final int oldPort = networkConfiguration.getPort();
+            final String oldTokenServerUrl = networkConfiguration.getTokenServerUrl();
             networkConfiguration = networkEngineConfiguration;
-            updateTokenServerUrl(networkConfiguration.getTokenServerUrl());
+            if (!oldTokenServerUrl.equals(networkConfiguration.getTokenServerUrl())) {
+                updateTokenServerUrl(networkConfiguration.getTokenServerUrl());
+            }
             Log.debug("Reconfigured: " + networkConfiguration);
-            clearToken();
+            if (oldPort != networkConfiguration.getPort() || !oldTokenServerUrl.equals(networkConfiguration.getTokenServerUrl())) {
+                clearToken();
+            }
         }
     }
 }
