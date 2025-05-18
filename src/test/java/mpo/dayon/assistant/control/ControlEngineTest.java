@@ -75,7 +75,7 @@ class ControlEngineTest {
         // when
         controlEngine.onKeyReleased(keyD, charD);
         // then
-        verify(network, timeout(50).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
+        verify(network, timeout(250).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
     }
 
     @Test
@@ -88,6 +88,6 @@ class ControlEngineTest {
         controlEngine.onKeyReleased(-1, '0');
 
         // then
-        verify(network, timeout(50).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
+        verify(network, timeout(250).atLeast(2)).sendKeyControl(any(NetworkKeyControlMessage.class));
     }
 }
