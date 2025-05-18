@@ -1,8 +1,11 @@
 package mpo.dayon.assisted.network;
 
 import mpo.dayon.common.network.Token;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -17,6 +20,13 @@ class NetworkAssistedEngineTest {
         engine = new NetworkAssistedEngine(null, null, null, null, null, null);
         listener = mock(NetworkAssistedEngineListener.class);
         engine.addListener(listener);
+    }
+
+    @AfterEach
+    void tearDown() {
+        engine.cancel();
+        engine = null;
+        listener = null;
     }
 
     @Test

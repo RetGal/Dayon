@@ -1,6 +1,7 @@
 package mpo.dayon.assistant.network;
 
 import mpo.dayon.common.network.Token;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +19,13 @@ class NetworkAssistantEngineTest {
         engine = new NetworkAssistantEngine(null, null, null);
         listener = mock(NetworkAssistantEngineListener.class);
         engine.addListener(listener);
+    }
+
+    @AfterEach
+    void tearDown() {
+        engine.cancel();
+        engine = null;
+        listener = null;
     }
 
     @Test
