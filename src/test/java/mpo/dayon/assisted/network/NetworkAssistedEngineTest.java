@@ -4,7 +4,9 @@ import mpo.dayon.common.network.Token;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 
+import java.awt.im.InputContext;
 import java.io.IOException;
 
 import static org.mockito.Mockito.mock;
@@ -27,6 +29,10 @@ class NetworkAssistedEngineTest {
         engine.cancel();
         engine = null;
         listener = null;
+    }
+
+    static boolean isLocaleNull() {
+        return InputContext.getInstance().getLocale() == null;
     }
 
     @Test
@@ -56,6 +62,7 @@ class NetworkAssistedEngineTest {
     }
 
     @Test
+    @DisabledIf("isLocaleNull")
     void testRefused() {
         // given
         final NetworkAssistedEngineConfiguration configuration = new NetworkAssistedEngineConfiguration("localhost", 12345);
