@@ -38,5 +38,9 @@ if [ "$1" = "help" -o "$1" = "--help" -o "$1" = "-h" ] ; then
     exit 0
 fi
 
+if [ -z "${DISPLAY}" ]; then
+  export DISPLAY=:0
+fi
+
 HERE=$(dirname "$(cross_realpath "$0")")
 ${HERE}/usr/bin/dayon.sh "$@"
