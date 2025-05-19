@@ -4,6 +4,9 @@ cross_realpath() {
     [[ $1 = /* ]] && echo "$1" || echo "$PWD/${1#./}"
   fi
 }
+if [ -z "${DISPLAY}" ]; then
+  export DISPLAY=:0
+fi
 ABS_PATH=$(dirname "$(cross_realpath "$0")")
 if [ ! -f "${ABS_PATH}/dayon.sh" ]; then
   ABS_PATH=${ABS_PATH}/dayon/dayon.sh
