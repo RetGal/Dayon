@@ -24,6 +24,8 @@ public class CaptureTile {
 
 	private final byte singleLevel;
 
+	private int referenceCount = 0;
+
 	/**
 	 * Created from a cache - testing purpose - I've to identify that kind of
 	 * tile as the Adler32 is not perfect and from time to time I've a few
@@ -144,6 +146,20 @@ public class CaptureTile {
 
 	public boolean isFromCache() {
 		return fromCache;
+	}
+
+	public synchronized void incrementReferenceCount() {
+		referenceCount++;
+	}
+
+	public synchronized void decrementReferenceCount() {
+		if (referenceCount > 0) {
+			referenceCount--;
+		}
+	}
+
+	public synchronized int getReferenceCount() {
+		return referenceCount;
 	}
 
 	private static byte computeSingleLevel(byte[] capture) {
