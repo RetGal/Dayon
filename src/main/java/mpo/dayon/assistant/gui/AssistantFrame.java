@@ -512,7 +512,7 @@ class AssistantFrame extends BaseFrame {
             windowsKeyToggleButton.setToolTipText(translate("send.cmdKey"));
         } else {
             windowsKeyToggleButton.setIcon(getOrCreateIcon(ImageNames.WIN));
-            windowsKeyToggleButton.setToolTipText(translate("send.winKey"));
+            windowsKeyToggleButton.setToolTipText(translate("send.windowsKey"));
         }
         if (Version.isOutdatedVersion(Version.get().getMajor(), assistedMajorVersion)) {
             String infoMessage = format("%s%n%s", translate("outdated.msg1"), translate("outdated.msg2"));
