@@ -3,6 +3,8 @@ package mpo.dayon.common;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,22 +85,12 @@ class RunnerTest {
         assertEquals("gain", programArgs.get("bar"), "Key 'bar' should have value 'gain'");
     }
 
-    @Test
-    void shouldSetDebug() {
+    @ParameterizedTest
+    @ValueSource(strings = {"debug", "-debug", "--debug"})
+    void shouldSetDebug(String debugArg) {
         // given
-        String[] args = {"debug"};
-        assertNull(System.getProperty("dayon.debug"));
-        // when
-        setDebug(args);
-        // then
-        assertTrue(Boolean.getBoolean("dayon.debug"), "Debug should have been activated");
-    }
-
-    @Test
-    void shouldSetDebugToo() {
-        // given
-        String[] args = {"--debug"};
-        assertNull(System.getProperty("dayon.debug"));
+        String[] args = {debugArg};
+        System.clearProperty("dayon.debug");
         // when
         setDebug(args);
         // then
