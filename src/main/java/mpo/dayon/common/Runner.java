@@ -52,6 +52,7 @@ public interface Runner {
         return Arrays.stream(args)
                 .map(arg -> arg
                 .replace(",", "")
+                .replace("-", "")
                 .trim()
                 .split("="))
                 .filter(pair -> pair.length == 2)
@@ -67,7 +68,7 @@ public interface Runner {
     }
 
     static void setDebug(String[] args) {
-        if (Arrays.stream(args).anyMatch(a -> a.equalsIgnoreCase("debug"))) {
+        if (Arrays.stream(args).anyMatch(a -> a.replace("-", "").equalsIgnoreCase("debug"))) {
             System.setProperty("dayon.debug", "true");
         }
     }
