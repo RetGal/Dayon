@@ -44,7 +44,6 @@ Icon=${INSTALL_DIR}/dayon.png
 Type=Application
 Terminal=false
 StartupNotify=true
-Encoding=UTF-8
 Categories=RemoteAccess;Network;
 EOF
 
@@ -67,7 +66,6 @@ Icon=${INSTALL_DIR}/dayon.png
 Type=Application
 Terminal=false
 StartupNotify=true
-Encoding=UTF-8
 Categories=RemoteAccess;Network;
 EOF
 
