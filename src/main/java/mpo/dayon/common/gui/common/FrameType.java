@@ -11,7 +11,7 @@ public enum FrameType {
     FrameType(String prefix, Integer minWidth, Integer minHeight) {
         this.prefix = prefix;
         this.minWidth = minWidth;
-        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+        if (System.getProperty("os.name").startsWith("Win")) {
             minHeight += 40;
         }
         this.minHeight = minHeight;
