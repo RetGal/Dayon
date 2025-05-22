@@ -2,7 +2,7 @@ package mpo.dayon.common.gui.common;
 
 public enum FrameType {
     ASSISTANT("assistant", 640, 320),
-    ASSISTED("assisted", 640, 60);
+    ASSISTED("assisted", 640, 100);
 
     private final String prefix;
     private final Integer minWidth;
