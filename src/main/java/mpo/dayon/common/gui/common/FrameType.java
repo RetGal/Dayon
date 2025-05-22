@@ -2,7 +2,7 @@ package mpo.dayon.common.gui.common;
 
 public enum FrameType {
     ASSISTANT("assistant", 640, 320),
-    ASSISTED("assisted", 640, 100);
+    ASSISTED("assisted", 640, 60);
 
     private final String prefix;
     private final Integer minWidth;
@@ -11,6 +11,9 @@ public enum FrameType {
     FrameType(String prefix, Integer minWidth, Integer minHeight) {
         this.prefix = prefix;
         this.minWidth = minWidth;
+        if (System.getProperty("os.name").toLowerCase().startsWith("windows")) {
+            minHeight += 40;
+        }
         this.minHeight = minHeight;
     }
 
