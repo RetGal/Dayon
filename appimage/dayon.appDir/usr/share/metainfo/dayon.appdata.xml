@@ -37,11 +37,17 @@
         </screenshot>
     </screenshots>
     <releases>
-        <release version="" date="">
+        <release version="17.0.0" date="2025-05-23">
             <description>
-                <p>Changes in </p>
+                <p>Changes in Furry Flamingo</p>
                 <ul>
-                    <li></li>
+                    <li>User selectable interface to be included in token</li>
+                    <li>Auto reconnect after connection drops</li>
+                    <li>Auto accept option</li>
+                    <li>Auto hide the assistants cursor</li>
+                    <li>Auto add DISPLAY environment variable</li>
+                    <li>Preserve session settings after disconnect</li>
+                    <li> Various improvements and fixes</li>
                 </ul>
             </description>
         </release>
