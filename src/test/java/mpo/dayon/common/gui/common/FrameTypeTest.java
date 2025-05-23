@@ -16,16 +16,6 @@ class FrameTypeTest {
     }
 
     @Test
-    @DisabledOnOs(WINDOWS)
-    void getMinDimensionsLinux() {
-        assertEquals(320, FrameType.ASSISTANT.getMinHeight());
-        assertEquals(640, FrameType.ASSISTANT.getMinWidth());
-        assertEquals(60, FrameType.ASSISTED.getMinHeight());
-        assertEquals(640, FrameType.ASSISTED.getMinWidth());
-    }
-
-    @Test
-    @DisabledOnOs(LINUX)
     void getMinHeightWindows() {
         assertEquals(320, FrameType.ASSISTANT.getMinHeight());
         assertEquals(640, FrameType.ASSISTANT.getMinWidth());
