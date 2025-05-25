@@ -76,6 +76,8 @@ public class Assistant implements ClipboardOwner {
 
     private CaptureCompressionCounter captureCompressionCounter;
 
+    private CaptureRateCounter captureRateCounter;
+
     private ArrayList<Counter<?>> counters;
 
     private AssistantFrame frame;
@@ -164,6 +166,8 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void createCounters() {
+        captureRateCounter = new CaptureRateCounter("captureRate", translate("framesPerSecond"));
+        captureRateCounter.start(1000);
         receivedBitCounter = new BitCounter("receivedBits", translate("networkBandwidth"));
         receivedBitCounter.start(1000);
         receivedTileCounter = new TileCounter("receivedTiles", translate("receivedTileNumber"));
@@ -174,7 +178,7 @@ public class Assistant implements ClipboardOwner {
         mergedTileCounter.start(1000);
         captureCompressionCounter = new CaptureCompressionCounter("captureCompression", translate("captureCompression"));
         captureCompressionCounter.start(1000);
-        counters = new ArrayList<>(Arrays.asList(receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
+        counters = new ArrayList<>(Arrays.asList(captureRateCounter, receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
 
     private AssistantActions createAssistantActions() {
@@ -763,6 +767,7 @@ public class Assistant implements ClipboardOwner {
             skippedTileCounter.add(capture.getSkipped());
             mergedTileCounter.add(capture.getMerged());
             captureCompressionCounter.add(capture.getDirtyTileCount(), compressionRatio);
+            captureRateCounter.add(1);
         }
 
         private BufferedImage scaleImage(BufferedImage image, int width, int height) {
