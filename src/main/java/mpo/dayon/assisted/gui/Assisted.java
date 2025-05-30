@@ -430,6 +430,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
         captureEngine.start();
     }
 
+    private void stopCaptureEngine() {
+        if (captureEngine != null) {
+            captureEngine.stop();
+        }
+    }
+
     /**
      * Should not block as called from the network incoming message thread (!)
      */
@@ -514,11 +520,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
             // reset the capture engine in order to transmit a full capture, important in case of reconnects
             if (captureEngine != null) {
                 captureEngine.reconfigure(captureEngineConfiguration);
+            } else {
+                initNewCaptureEngine(shareAllScreens.get());
             }
         }
 
         @Override
         public void onDisconnecting() {
+            stopCaptureEngine();
             frame.onDisconnecting();
         }
 
