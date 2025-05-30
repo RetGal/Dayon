@@ -85,7 +85,7 @@ class NetworkSenderTest {
         int noNewCompressionConfig = 0;
         int captureId = 1;
         // when
-        sender.sendCapture(captureId, CompressionMethod.XZ, null, new MemByteBuffer());
+        sender.sendCapture(captureId, CompressionMethod.XZ, null, MemByteBuffer.acquire());
         // then
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
         verify(outMock, timeout(250)).writeByte(NetworkMessageType.CAPTURE.ordinal());

@@ -14,9 +14,11 @@ public class ZipZipper implements Zipper {
 
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
-		final MemByteBuffer zipped = new MemByteBuffer();
+		MemByteBuffer zipped = MemByteBuffer.acquire(unzipped.size());
 		try (OutputStream zip = createZipOutputStream(zipped)) {
 			zip.write(unzipped.getInternal(), 0, unzipped.size());
+		} finally {
+			unzipped.release();
 		}
 		return zipped;
 	}
@@ -29,16 +31,17 @@ public class ZipZipper implements Zipper {
 
 	@Override
     public MemByteBuffer unzip(MemByteBuffer zipped) throws IOException {
-		try (final MemByteBuffer unzipped = new MemByteBuffer()) {
-			final InputStream unzip = createZipInputStream(zipped);
+		MemByteBuffer unzipped = MemByteBuffer.acquire();
+		try (InputStream unzip = createZipInputStream(zipped)) {
 			final byte[] buffer = new byte[4096];
 			int count;
 			while ((count = unzip.read(buffer)) > 0) {
 				unzipped.write(buffer, 0, count);
 			}
-			unzip.close();
-			return unzipped;
+        } finally {
+			zipped.release();
 		}
+		return unzipped;
 	}
 
 	private static InputStream createZipInputStream(MemByteBuffer zipped) throws IOException {

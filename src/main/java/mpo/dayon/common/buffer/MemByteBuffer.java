@@ -1,36 +1,100 @@
 package mpo.dayon.common.buffer;
 
+import mpo.dayon.common.log.Log;
+
 import java.io.OutputStream;
 import java.util.Arrays;
+
+import static java.lang.Math.max;
 
 /**
  * A mixed between a byte buffer and a byte stream ...
  */
 public class MemByteBuffer extends OutputStream {
 	private static final int DEFAULT_INITIAL_CAPACITY = 32;
+	private static final int MAX_POOL_SIZE = 16;
+	private static final ThreadLocal<MemByteBuffer[]> threadLocalPool = ThreadLocal.withInitial(() -> new MemByteBuffer[MAX_POOL_SIZE]);
 
 	private byte[] buffer;
 	private int count;
-
-	public MemByteBuffer() {
-		this(DEFAULT_INITIAL_CAPACITY);
-	}
 
 	private MemByteBuffer(int capacity) {
 		buffer = new byte[capacity];
 	}
 
+	public static MemByteBuffer[] createCustomPool(int capacity, int size) {
+		MemByteBuffer[] buffers = new MemByteBuffer[size];
+		for (int i = 0; i < size; i++) {
+			buffers[i] = new MemByteBuffer(capacity);
+		}
+		return buffers;
+	}
+
+	public static MemByteBuffer acquire() {
+		MemByteBuffer[] pool = threadLocalPool.get();
+		for (int i = 0; i < pool.length; i++) {
+			if (pool[i] != null) {
+				Log.info("Reusing MemByteBuffer from pool at index: " + i);
+				MemByteBuffer buf = pool[i];
+				pool[i] = null;
+				buf.reset();
+				return buf;
+			}
+		}
+		Log.info("Creating new MemByteBuffer with default capacity.");
+		return new MemByteBuffer(DEFAULT_INITIAL_CAPACITY);
+	}
+
 	/**
 	 * @param data
-	 *            the newly created buffer is adopting that byte array (!)
+	 *            the newly acquired buffer is adopting that byte array (!)
 	 */
-	public MemByteBuffer(byte[] data) {
-		buffer = data;
-		count = data.length;
+	public static MemByteBuffer acquire(byte[] data) {
+		MemByteBuffer buf = acquire(data.length);
+		buf.write(data, 0, data.length);
+		return buf;
+	}
+
+	public static MemByteBuffer acquire(int capacity) {
+		MemByteBuffer[] pool = threadLocalPool.get();
+		for (int i = 0; i < pool.length; i++) {
+			if (pool[i] != null && pool[i].buffer.length >= capacity) {
+				Log.info("Reusing MemByteBuffer from pool at index: " + i);
+				MemByteBuffer buf = pool[i];
+				pool[i] = null;
+				buf.reset();
+				return buf;
+			}
+		}
+		Log.info("Creating new MemByteBuffer with " + max(capacity, DEFAULT_INITIAL_CAPACITY) + " bytes capacity.");
+		return new MemByteBuffer(max(capacity, DEFAULT_INITIAL_CAPACITY));
+	}
+
+	public void release() {
+		MemByteBuffer[] pool = threadLocalPool.get();
+		for (int i = 0; i < pool.length; i++) {
+			if (pool[i] == null) {
+				pool[i] = this;
+				Log.info("Released MemByteBuffer to pool at index: " + i + " with capacity: " + buffer.length);
+				return;
+			}
+		}
+	}
+
+	public void reset() {
+		count = 0;
 	}
 
 	public int size() {
 		return count;
+	}
+
+	public int capacity() {
+		return buffer.length;
+	}
+
+	public byte[] getFullBuffer() {
+		return Arrays.copyOf(buffer, buffer.length);
 	}
 
 	public byte[] getInternal() {
@@ -114,7 +178,7 @@ public class MemByteBuffer extends OutputStream {
 
 	private void ensureCapacity(int newCount) {
 		if (newCount > buffer.length) {
-			int newCapacity = Math.max(buffer.length << 1, newCount);
+			int newCapacity = max(buffer.length << 1, newCount);
 			if (newCapacity < buffer.length * 3 / 2) {
 				newCapacity = buffer.length * 3 / 2;
 			}

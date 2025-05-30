@@ -154,6 +154,7 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 				// we have to send the whole configuration => de-compressor synchronization (!)
 				fireOnCompressed(capture.getId(), xcompressor.getMethod(), xconfiguration, compressed);
 			}
+			compressed.release();
 			cache.onCaptureProcessed();
 		}
 

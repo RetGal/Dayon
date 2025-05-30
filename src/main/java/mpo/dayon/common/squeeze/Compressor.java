@@ -58,7 +58,7 @@ public final class Compressor {
     }
 
     public MemByteBuffer compress(TileCache cache, Capture capture) throws IOException {
-        final MemByteBuffer encoded = new MemByteBuffer();
+        final MemByteBuffer encoded = MemByteBuffer.acquire();
         encoded.writeInt(capture.getId());
         encoded.write(capture.isReset() ? 1 : 0);
         encoded.write(capture.getSkipped()); // as a byte (!)
@@ -79,6 +79,7 @@ public final class Compressor {
                 encoded.write(markerCount); // non-null tile(s) count
                 for (int tidx = idx; tidx < idx + markerCount; tidx++) {
                     encodeTile(cache, rle, encoded, tiles[tidx]);
+                    tiles[tidx].dispose();
                 }
                 idx += markerCount;
             } else {
@@ -172,6 +173,7 @@ public final class Compressor {
                 idx += (-markerCount + 1);
             }
         }
+        unzipped.release();
         return new Capture(cId, cReset, cSkipped, cMerged, captureDimension, tileDimension, dirty);
     }
 
@@ -182,8 +184,10 @@ public final class Compressor {
         while ((tcount = in.read(tdata, toffset, tdata.length - toffset)) > 0) {
             toffset += tcount;
         }
-        final MemByteBuffer out = new MemByteBuffer();
-        rle.runLengthDecode(out, new MemByteBuffer(tdata));
+        final MemByteBuffer out = MemByteBuffer.acquire();
+        final MemByteBuffer encoded = MemByteBuffer.acquire(tdata);
+        rle.runLengthDecode(out, encoded);
+        encoded.release();
         dirty[tidx] = new CaptureTile(tidx, xywh, out);
         cache.add(dirty[tidx]);
     }

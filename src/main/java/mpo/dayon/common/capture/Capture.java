@@ -13,7 +13,6 @@ import java.util.AbstractMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.log.Log;
 
 import static java.util.Arrays.stream;
@@ -177,12 +176,11 @@ public class Capture {
 				.parallel()
 				.filter(Objects::nonNull)
 				.forEach(tile -> {
-					final MemByteBuffer src = tile.getCapture();
 					final int tileWidth = tile.getWidth();
 					final int srcSize = tileWidth * tile.getHeight();
 					int destPos = tile.getY() * capWidth + tile.getX();
 					for (int srcPos = 0; srcPos + tileWidth <= srcSize; srcPos += tileWidth) {
-						System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tileWidth);
+						System.arraycopy(tile.getCapture().getInternal(), srcPos, buffer, destPos, tileWidth);
 						destPos += capWidth;
 					}
 				});
@@ -205,12 +203,11 @@ public class Capture {
 				.parallel()
 				.filter(Objects::nonNull)
 				.forEach(tile -> {
-					final MemByteBuffer src = tile.getCapture();
 					final int tileWidthByteSize = tile.getWidth() * 4;
 					final int srcSize = tileWidthByteSize * tile.getHeight();
 					int destPos = tile.getY() * capWidthByteSize + tile.getX() * 4;
 					for (int srcPos = 0; srcPos + tileWidthByteSize <= srcSize; srcPos += tileWidthByteSize) {
-						System.arraycopy(src.getInternal(), srcPos, buffer, destPos, tileWidthByteSize);
+						System.arraycopy(tile.getCapture().getInternal(), srcPos, buffer, destPos, tileWidthByteSize);
 						destPos += capWidthByteSize;
 					}
 				});

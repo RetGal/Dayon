@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.CaptureTile;
@@ -22,6 +23,10 @@ import static java.lang.String.format;
 public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration> {
 
     private static final Dimension TILE_DIMENSION = new Dimension(32, 32);
+    private static final int TILE_COLOR_BUFFER_SIZE = 4096;
+    private static final int TILE_MONO_BUFFER_SIZE = 1024;
+    private static final int TILE_POOL_SIZE = 32;
+    private MemByteBuffer[] tileBufferPool;
 
     private final Dimension captureDimension;
 
@@ -127,6 +132,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                         // to handle the reset message until the assistant without having to
                         // change anything (e.g., merging mechanism in the compressor engine).
                         reset.set(true);
+                        tileBufferPool = MemByteBuffer.createCustomPool(captureColors ? TILE_COLOR_BUFFER_SIZE : TILE_MONO_BUFFER_SIZE, TILE_POOL_SIZE);
                         Log.info(format("Capture engine has been reconfigured [tile:%d]%s", captureId, configuration));
                         reconfigured = false;
                     }
@@ -230,9 +236,10 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     /**
      * Screen-rectangle buffer to tile-rectangle buffer. Use pixelSize 4 for colored and 1 for gray pixels.
      */
-    private static byte[] createTile(byte[] capture, int width, int tw, int th, int tx, int ty, int pixelSize) {
+    private byte[] createTile(byte[] capture, int width, int tw, int th, int tx, int ty, int pixelSize) {
         final int capacity = tw * th * pixelSize;
-        final byte[] tile = new byte[capacity];
+        MemByteBuffer tileBuffer = acquireTileBuffer(capacity);
+        final byte[] tile = tileBuffer.getFullBuffer();
         final int maxSrcPos = capture.length;
         int srcPos = ty * width * pixelSize + tx * pixelSize;
         int destPos = 0;
@@ -243,8 +250,50 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             srcPos += screenRowIncrement;
             destPos += tileRowIncrement;
         }
+        releaseTileBuffer(tileBuffer);
         return tile;
     }
+
+    private MemByteBuffer acquireTileBuffer(int capacity) {
+        for (int i = 0; i < tileBufferPool.length; i++) {
+            if (tileBufferPool[i] != null && tileBufferPool[i].capacity() >= capacity) {
+                Log.info("Reusing Tile MemByteBuffer from pool at index: " + i);
+                MemByteBuffer buffer = tileBufferPool[i];
+                tileBufferPool[i] = null;
+                buffer.reset();
+                return buffer;
+            }
+        }
+        Log.info("Creating new Tile MemByteBuffer with " + capacity + " bytes capacity.");
+        return MemByteBuffer.acquire(capacity);
+    }
+
+    private void releaseTileBuffer(MemByteBuffer buffer) {
+        for (int i = 0; i < tileBufferPool.length; i++) {
+            if (tileBufferPool[i] == null) {
+                tileBufferPool[i] = buffer;
+                return;
+            }
+        }
+        buffer.release(); // Wenn der Pool voll ist
+    }
+
+
+//    private static byte[] createTile(byte[] capture, int width, int tw, int th, int tx, int ty, int pixelSize) {
+//        final int capacity = tw * th * pixelSize;
+//        final byte[] tile = new byte[capacity];
+//        final int maxSrcPos = capture.length;
+//        int srcPos = ty * width * pixelSize + tx * pixelSize;
+//        int destPos = 0;
+//        final int screenRowIncrement = width * pixelSize;
+//        final int tileRowIncrement = tw * pixelSize;
+//        while (destPos < capacity && srcPos < maxSrcPos) {
+//            System.arraycopy(capture, srcPos, tile, destPos, tileRowIncrement);
+//            srcPos += screenRowIncrement;
+//            destPos += tileRowIncrement;
+//        }
+//        return tile;
+//    }
 
     private void fireOnCaptured(Capture capture) {
         listeners.getListeners().forEach(listener -> listener.onCaptured(capture));

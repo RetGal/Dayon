@@ -7,7 +7,7 @@ import java.util.zip.Checksum;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.gui.common.Position;
 
-public class CaptureTile {
+public class CaptureTile implements AutoCloseable {
 	public static final CaptureTile MISSING = new CaptureTile();
 
 	private final int id;
@@ -20,7 +20,7 @@ public class CaptureTile {
 
 	private final int height;
 
-	private final MemByteBuffer capture;
+	private volatile MemByteBuffer capture;
 
 	private final byte singleLevel;
 
@@ -51,7 +51,7 @@ public class CaptureTile {
 		this.position = position;
 		this.width = width;
 		this.height = height;
-		this.capture = new MemByteBuffer(capture);
+		this.capture = MemByteBuffer.acquire(capture);
 		this.singleLevel = computeSingleLevel(capture);
 		this.fromCache = false;
 	}
@@ -81,7 +81,7 @@ public class CaptureTile {
 		this.height = xywh.h;
 		final byte[] data = new byte[width * height * 4];
 		Arrays.fill(data, singleLevel);
-		this.capture = new MemByteBuffer(data);
+		this.capture = MemByteBuffer.acquire(data);
 		this.singleLevel = singleLevel;
 		this.fromCache = false;
 	}
@@ -95,7 +95,7 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height * 4]) // black image (!)
+		this.capture  = (cached == MISSING) ? MemByteBuffer.acquire(new byte[width * height * 4]) // black image (!)
 				: cached.getCapture(); // sharing it (!)
 		this.singleLevel = -1;
 		this.fromCache = true;
@@ -137,6 +137,17 @@ public class CaptureTile {
 		return capture;
 	}
 
+	@Override
+	public void close() {
+		dispose();
+	}
+
+	public synchronized void dispose() {
+		if (capture != null && !fromCache) {
+			capture.release();
+		}
+	}
+
 	/**
 	 * @return -1 if not applicable.
 	 */
@@ -155,6 +166,9 @@ public class CaptureTile {
 	public synchronized void decrementReferenceCount() {
 		if (referenceCount > 0) {
 			referenceCount--;
+			if (referenceCount == 0 && !fromCache) {
+				dispose();
+			}
 		}
 	}
 

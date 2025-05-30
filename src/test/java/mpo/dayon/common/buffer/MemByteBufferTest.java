@@ -11,11 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class MemByteBufferTest {
 
     private static final int BEAST = 666;
+    private static final int DEFAULT_CAPACITY = 32;
     private MemByteBuffer buffer;
 
     @BeforeEach
     void setUp() {
-        buffer = new MemByteBuffer();
+        buffer = MemByteBuffer.acquire();
     }
 
     @AfterEach
@@ -29,12 +30,24 @@ class MemByteBufferTest {
         buffer.write(val);
         assertEquals(1, buffer.size());
         assertEquals((byte) val, buffer.getInternal()[0]);
+        assertEquals(DEFAULT_CAPACITY, buffer.capacity());
     }
 
     @Test
     void writeInt() {
         buffer.writeInt(BEAST);
         assertEquals(4, buffer.size());
+        assertEquals(DEFAULT_CAPACITY, buffer.capacity());
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        buffer.writeInt(BEAST);
+        assertEquals(36, buffer.size());
+        assertEquals(DEFAULT_CAPACITY*2, buffer.capacity());
     }
 
     @Test
@@ -63,15 +76,15 @@ class MemByteBufferTest {
         buffer.writeLenAsShort(mark);
         assertEquals(0, buffer.getInternal()[mark]);
         assertEquals(12, buffer.size());
+        assertEquals(DEFAULT_CAPACITY, buffer.capacity());
     }
 
     @Test
-    void copyConstructor() throws IOException {
+    void copyConstructor() {
         int size = 42;
         buffer.fill(size, BEAST);
-        try(MemByteBuffer memBuffer = new MemByteBuffer(buffer.getInternal())) {
-            assertEquals(size, memBuffer.size());
-            assertEquals(buffer.getInternal().length, memBuffer.getInternal().length);
-        }
+        MemByteBuffer memBuffer = MemByteBuffer.acquire(buffer.getInternal());
+        assertEquals(size, memBuffer.size());
+        assertEquals(buffer.getInternal().length, memBuffer.getInternal().length);
     }
 }

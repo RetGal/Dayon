@@ -61,23 +61,27 @@ public class NetworkCaptureMessage extends NetworkMessage {
 
 	@Override
     public void marshall(ObjectOutputStream out) throws IOException {
-		marshallEnum(out, getType());
-		// debugging info - might need it before decompressing the payload (!)
-		out.writeInt(id);
-		// allows for decompressing on the other side ...
-		marshallEnum(out, compressionMethod);
-		out.writeByte(compressionConfiguration != null ? 1 : 0);
-		if (compressionConfiguration != null) {
-			new NetworkCompressorConfigurationMessage(compressionConfiguration).marshall(out);
+		try {
+			marshallEnum(out, getType());
+			// debugging info - might need it before decompressing the payload (!)
+			out.writeInt(id);
+			// allows for decompressing on the other side ...
+			marshallEnum(out, compressionMethod);
+			out.writeByte(compressionConfiguration != null ? 1 : 0);
+			if (compressionConfiguration != null) {
+				new NetworkCompressorConfigurationMessage(compressionConfiguration).marshall(out);
+			}
+			out.writeInt(payload.size());
+			out.write(payload.getInternal(), 0, payload.size());
+		} finally {
+			// always release the payload buffer to the pool
+			payload.release();
 		}
-		out.writeInt(payload.size());
-		out.write(payload.getInternal(), 0, payload.size());
 	}
 
 	public static NetworkCaptureMessage unmarshall(ObjectInputStream in) throws IOException {
 		final int id = in.readInt();
 		final CompressionMethod compressionMethod = unmarshallEnum(in, CompressionMethod.class);
-
 		final CompressorEngineConfiguration compressionConfiguration;
 
 		if (in.readByte() == 1) {
@@ -88,13 +92,21 @@ public class NetworkCaptureMessage extends NetworkMessage {
 		}
 
 		final int len = in.readInt();
-		final byte[] data = new byte[len];
-		int offset = 0;
-		int count;
-		while ((count = in.read(data, offset, len - offset)) > 0) {
-			offset += count;
+		MemByteBuffer buffer = MemByteBuffer.acquire(len);
+		try {
+			final byte[] data = new byte[len];
+			int offset = 0;
+			int count;
+			while ((count = in.read(data, offset, len - offset)) > 0) {
+				offset += count;
+			}
+			buffer.write(data);
+			return new NetworkCaptureMessage(id, compressionMethod, compressionConfiguration, buffer);
+		} catch (IOException e) {
+			// only release the buffer in case of error to avoid memory leaks
+			buffer.release();
+			throw e;
 		}
-		return new NetworkCaptureMessage(id, compressionMethod, compressionConfiguration, new MemByteBuffer(data));
 	}
 
 	public MemByteBuffer getPayload() {

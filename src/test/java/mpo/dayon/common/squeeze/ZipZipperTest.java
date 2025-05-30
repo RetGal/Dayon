@@ -14,7 +14,7 @@ class ZipZipperTest {
     void zipAndUnzip() throws IOException {
         // given
         int star = 42;
-        MemByteBuffer origin = new MemByteBuffer();
+        MemByteBuffer origin = MemByteBuffer.acquire();
         origin.write(star);
         ZipZipper zipper = new ZipZipper();
         // when
