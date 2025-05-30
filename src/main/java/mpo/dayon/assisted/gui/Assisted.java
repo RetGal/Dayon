@@ -356,14 +356,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         Log.info("Assisted stop");
         if (networkEngine != null) {
             networkEngine.farewell();
-            if (captureEngine != null) {
-                captureEngine.stop();
-                captureEngine = null;
-            }
-            if (compressorEngine != null) {
-                compressorEngine.stop();
-                compressorEngine = null;
-            }
+            stopCaCoEngines();
             if (networkEngine != null) {
                 networkEngine.cancel();
                 networkEngine = null;
@@ -428,6 +421,17 @@ public class Assisted implements Subscriber, ClipboardOwner {
             captureEngine.addListener(compressorEngine);
         }
         captureEngine.start();
+    }
+
+    private void stopCaCoEngines() {
+        if (captureEngine != null) {
+            captureEngine.stop();
+            captureEngine = null;
+        }
+        if (compressorEngine != null) {
+            compressorEngine.stop();
+            compressorEngine = null;
+        }
     }
 
     /**
@@ -514,11 +518,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
             // reset the capture engine in order to transmit a full capture, important in case of reconnects
             if (captureEngine != null) {
                 captureEngine.reconfigure(captureEngineConfiguration);
+            } else {
+                initNewCaptureEngine(shareAllScreens.get());
             }
         }
 
         @Override
         public void onDisconnecting() {
+            stopCaCoEngines();
             frame.onDisconnecting();
         }
 
