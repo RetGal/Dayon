@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static java.lang.System.currentTimeMillis;
 import static java.lang.System.getProperty;
+import static java.lang.Thread.sleep;
 import static mpo.dayon.common.utils.UnitUtilities.toByteSize;
 
 public final class SystemUtilities {
@@ -112,11 +112,7 @@ public final class SystemUtilities {
     @SuppressWarnings("squid:S2142")
     public static Thread safeInterrupt(Thread thread) {
         if (thread != null) {
-            try {
-                Thread.sleep(250); // 250ms grace period
-            } catch (InterruptedException e) {
-                // ignore
-            }
+            pause(250);
             thread.interrupt();
         }
         return null;
@@ -226,10 +222,12 @@ public final class SystemUtilities {
         return hash.substring(hash.length()-1).toUpperCase();
     }
 
-    @SuppressWarnings("squid:S108")
     public static void pause(long ms) {
-        long start = currentTimeMillis();
-        while(currentTimeMillis() - start < ms){}
+        try {
+            sleep(ms);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 
 }

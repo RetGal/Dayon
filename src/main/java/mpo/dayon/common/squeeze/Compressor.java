@@ -64,12 +64,13 @@ public final class Compressor {
         encoded.writes(capture.getMerged(), capture.getMerged()); // each as a byte (!)
         encoded.writeShorts(capture.getWidth(), capture.getHeight(), capture.getTWidth(), capture.getTHeight());
         if (capture.isReset()) {
-            Log.debug("Clear compressor cache [tile:" + capture.getId() + "]");
+            Log.debug("Clear compressor cache [capture:" + capture.getId() + "]");
             cache.clear(); // here for symmetry with the de-compressor (!)
         }
         final CaptureTile[] tiles = capture.getDirtyTiles();
         int idx = 0;
-        while (idx < tiles.length) {
+        final int tilesLength = tiles.length;
+        while (idx < tilesLength) {
             final int markerCount = computeMarkerCount(tiles, idx);
             encoded.write(markerCount);
             if (markerCount > 0) {
@@ -94,22 +95,23 @@ public final class Compressor {
      */
     private static int computeMarkerCount(CaptureTile[] tiles, int from) {
         final CaptureTile tile = tiles[from++];
+        final int tilesLength = tiles.length;
         if (tile == null) {
             int count = 0;
-            while (count < 128 && from < tiles.length && tiles[from++] == null) {
+            while (count < 128 && from < tilesLength && tiles[from++] == null) {
                 ++count;
             }
             return -count;
         }
         int count = 1;
-        while (count < 127 && from < tiles.length && tiles[from++] != null) {
+        while (count < 127 && from < tilesLength && tiles[from++] != null) {
             ++count;
         }
         return count;
     }
 
     private static void encodeTile(TileCache cache, RunLengthEncoder encoder, MemByteBuffer encoded, CaptureTile tile) {
-        // single-level tile : [ 0 .. 256 [
+        // single-level tile : [ 0 .. 256 ]
         if (tile.getSingleLevel() != -1) {
             encoded.writeShorts(tile.getSingleLevel() & 0xFF);
             return;
@@ -122,7 +124,7 @@ public final class Compressor {
             encoded.writeInt(cacheId);
             return;
         }
-        // multi-level tile (not-cached) [ -32768 .. 0 [
+        // multi-level tile (not-cached) [ -32768 .. 0 ]
         final int mark = encoded.mark();
         encoded.writeShorts(42); // dunno yet (!)
         encoder.runLengthEncode(encoded, tile.getCapture());
@@ -178,7 +180,8 @@ public final class Compressor {
         final byte[] tdata = new byte[-value];
         int toffset = 0;
         int tcount;
-        while ((tcount = in.read(tdata, toffset, tdata.length - toffset)) > 0) {
+        final int tdataLength = tdata.length;
+        while ((tcount = in.read(tdata, toffset, tdataLength - toffset)) > 0) {
             toffset += tcount;
         }
         final MemByteBuffer out = new MemByteBuffer();

@@ -48,7 +48,8 @@ public class PackBitsRunLengthEncoder implements RunLengthEncoder {
     private int encodeRun(MemByteBuffer out, byte[] in, int from) {
 		final int val = in[from];
 		int pos = from;
-		while (pos < in.length && in[pos] == val) {
+		final int inLength = in.length;
+		while (pos < inLength && in[pos] == val) {
 			++pos;
 		}
 		// [ from .. pos [

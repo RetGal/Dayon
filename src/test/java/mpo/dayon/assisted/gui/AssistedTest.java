@@ -86,7 +86,7 @@ class AssistedTest {
             // when - trigger onConnected on the first listener (MyNetworkAssistedEngineListener)
             assertFalse(listenerList.isEmpty());
             Object listener = listenerList.get(0);
-            listener.getClass().getMethod("onConnected", String.class).invoke(listener, "test-fingerprints");
+            listener.getClass().getMethod("onConnected", String.class, boolean.class).invoke(listener, "test-fingerprints", false);
             
             // then - verify that mouseEngine is now not null
             Object mouseEngine = mouseEngineField.get(assisted);

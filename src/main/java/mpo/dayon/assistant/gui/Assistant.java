@@ -31,10 +31,8 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
 import java.io.IOException;
-import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
@@ -53,14 +51,14 @@ import static javax.swing.SwingConstants.HORIZONTAL;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
-import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
+import static mpo.dayon.common.network.NetworkEngine.*;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
 
-    public static final String PORT_PARAMS = "?port=%s&closed=%d&laddr=%s&v=1.4";
+    private static final String PORT_PARAMS = "?port=%s&closed=%d&laddr=%s&v=1.5";
 
-    private static final String TOKEN_PARAMS = "?token=%s&closed=%d&laddr=%s&v=1.4";
+    private static final String TOKEN_PARAMS = "?token=%s&closed=%d&laddr=%s&v=1.5";
 
     private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
@@ -199,7 +197,7 @@ public class Assistant implements ClipboardOwner {
         return assistantActions;
     }
 
-    public void clearToken() {
+    private void clearToken() {
         TOKEN.reset();
         JButton button = (JButton) frame.getActions().getTokenAction().getValue("button");
         if (button != null) {
@@ -568,7 +566,10 @@ public class Assistant implements ClipboardOwner {
             public void actionPerformed(ActionEvent ev) {
                 final JButton button = (JButton) ev.getSource();
                 this.putValue("button", button);
-
+                button.setEnabled(false);
+                frame.getActions().getStartAction().setEnabled(false);
+                frame.getActions().getIpAddressAction().setEnabled(false);
+                frame.getActions().getToggleCompatibilityModeAction().setEnabled(false);
                 CompletableFuture.supplyAsync(() -> {
                     if (publicIp == null && activeIp == null) {
                         publicIp = networkEngine.resolvePublicIp();
@@ -589,6 +590,10 @@ public class Assistant implements ClipboardOwner {
                         button.setText(format(" %s", token.getTokenString()));
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(token.getTokenString()), null);
                     }
+                    button.setEnabled(true);
+                    frame.getActions().getStartAction().setEnabled(true);
+                    frame.getActions().getIpAddressAction().setEnabled(true);
+                    frame.getActions().getToggleCompatibilityModeAction().setEnabled(true);
                 });
             }
         };
@@ -601,16 +606,27 @@ public class Assistant implements ClipboardOwner {
     private void requestToken() throws IOException, InterruptedException, SecurityException {
         if (!compatibilityModeActive.get() && publicIp != null && (publicIp.equals(activeIp) || activeIp == null)) {
             boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
-            getToken(closed, networkEngine.getLocalAddress(), activeIp);
+            String iceInfo = null;
+            if (closed) {
+                networkEngine.initIceAgent();
+                iceInfo = networkEngine.getLocalSdpDesc();
+            }
+            Log.debug("Port is " + (closed ? "closed" : "open"));
+            getToken(closed, networkEngine.getLocalAddress(), activeIp, iceInfo);
         } else {
-            getToken(false, networkEngine.getLocalAddress(), activeIp);
+            Log.debug("Assuming port is open");
+            isOwnPortAccessible.set(true);
+            getToken(false, networkEngine.getLocalAddress(), activeIp, null);
         }
     }
 
-    private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException, SecurityException {
+    private void getToken(boolean closed, String localAddress, String activeAddress, String iceInfo) throws IOException, InterruptedException, SecurityException {
         String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
         if (activeAddress != null && !activeAddress.equals(publicIp)) {
             query += "&addr=" + activeAddress;
+        }
+        if (iceInfo != null) {
+            query += "&ice=" + iceInfo;
         }
         Log.debug("Requesting token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
@@ -618,12 +634,7 @@ public class Assistant implements ClipboardOwner {
                 .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(5))
                 .build();
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newBuilder()
-                .proxy(ProxySelector.getDefault())
-                .build();
-        TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
+        TOKEN.setTokenString(limit(HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body()));
     }
 
     private String limit(String string) {
@@ -728,7 +739,8 @@ public class Assistant implements ClipboardOwner {
             if (publicIp == null) {
                 publicIp = networkEngine.resolvePublicIp();
             }
-            if (!networkEngine.selfTest(publicIp, networkConfiguration.getPort())) {
+            // only show warning if started without token
+            if (TOKEN.getTokenString() == null && !networkEngine.selfTest(publicIp, networkConfiguration.getPort())) {
                 JOptionPane.showMessageDialog(frame, translate("port.error.msg1", networkConfiguration.getPort(), networkConfiguration.getPort()), translate("port.error"), JOptionPane.WARNING_MESSAGE);
             }
             networkEngine.start(compatibilityModeActive.get(), TOKEN);

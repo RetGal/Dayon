@@ -13,7 +13,6 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CompletableFuture;
-import java.util.regex.Pattern;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -49,7 +48,7 @@ public abstract class BaseFrame extends JFrame {
 
     protected static final String SELECTED_ICON = "SELECTED_ICON";
 
-    protected static final String PRESSED_ICON = "PRESSED_ICON";
+    private static final String PRESSED_ICON = "PRESSED_ICON";
 
     protected final transient Object[] okCancelOptions = {translate("cancel"), translate("ok")};
 
@@ -65,7 +64,13 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String CHAT_URL = "https://meet.jit.si/%s";
 
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+
     private static final String CUSTOM = "custom";
+
+    private static final JLabel FINGERPRINTS = new JLabel();
+
+    private static final MouseAdapter CHAT_MOUSE_ADAPTER = new ChatMouseAdapter();
 
     private transient FrameConfiguration configuration;
 
@@ -78,8 +83,6 @@ public abstract class BaseFrame extends JFrame {
     private ToolBar toolBar;
 
     private StatusBar statusBar;
-
-    private static final JLabel fingerprints = new JLabel();
 
     private final Cursor handCursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 
@@ -136,9 +139,9 @@ public abstract class BaseFrame extends JFrame {
         float alignmentY = frameType.equals(ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
         if (ASSISTANT.equals(frameType)) {
             // poor man's vertical align top
-            fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
+            FINGERPRINTS.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
-        toolBar.add(fingerprints);
+        toolBar.add(FINGERPRINTS);
         toolBar.addAction(createShowInfoAction(), alignmentY);
         toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
@@ -151,15 +154,17 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
+        Timer statusBarTimer;
         statusBar.add(Box.createHorizontalStrut(10));
         add(statusBar, BorderLayout.SOUTH);
         this.statusBar = statusBar;
         updateInputLocale();
         updateCapsLockState();
-        new Timer(3000, e -> {
+        statusBarTimer = new Timer(3000, e -> {
             updateInputLocale();
             updateCapsLockState();
-        }).start();
+        });
+        statusBarTimer.start();
     }
 
     private void updateInputLocale() {
@@ -222,7 +227,7 @@ public abstract class BaseFrame extends JFrame {
         button.setSelected(false);
     }
 
-    protected Action createExitAction() {
+    private Action createExitAction() {
         final Action exit = new AbstractAction() {
 
             @Override
@@ -249,16 +254,16 @@ public abstract class BaseFrame extends JFrame {
                 final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
                 info.setAlignmentX(Component.LEFT_ALIGNMENT);
                 info.setBorder(marginLeft);
-                info.addMouseListener(new HomeMouseAdapter());
+                info.addMouseListener(new UrlMouseAdapter(HTTP_HOME));
                 info.setCursor(handCursor);
                 final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
                 version.setAlignmentX(Component.LEFT_ALIGNMENT);
                 version.setBorder(marginLeft);
-                version.addMouseListener(new ReleaseMouseAdapter());
+                version.addMouseListener(new UrlMouseAdapter(Version.RELEASE_LOCATION + Version.get()));
                 version.setCursor(handCursor);
                 latestVersion.setAlignmentX(Component.LEFT_ALIGNMENT);
                 latestVersion.setBorder(marginLeft);
-                latestVersion.addMouseListener(new LatestReleaseMouseAdapter());
+                latestVersion.addMouseListener(new UrlMouseAdapter(Version.RELEASE_LOCATION + Version.get().getLatestRelease()));
                 latestVersion.setCursor(handCursor);
 
                 final JTextArea props = new JTextArea(getSystemPropertiesEx());
@@ -268,13 +273,13 @@ public abstract class BaseFrame extends JFrame {
                 spane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
                 final JButton support = new JButton(translate("support"));
-                support.addMouseListener(new SupportMouseAdapter());
+                support.addMouseListener(new UrlMouseAdapter(HTTP_SUPPORT));
                 final JButton feedback = new JButton(translate("feedback"));
-                feedback.addMouseListener(new FeedbackMouseAdapter());
+                feedback.addMouseListener(new UrlMouseAdapter(HTTP_FEEDBACK));
                 final JButton privacy = new JButton(translate("privacy"));
-                privacy.addMouseListener(new PrivacyMouseAdapter());
+                privacy.addMouseListener(new UrlMouseAdapter(HTTP_PRIVACY));
                 final JButton license = new JButton(translate("license"));
-                license.addMouseListener(new LicenseMouseAdapter());
+                license.addMouseListener(new UrlMouseAdapter(HTTP_LICENSE));
                 final JPanel buttonsPanel = new JPanel();
                 buttonsPanel.setLayout(new GridLayout(1, 4));
                 buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -316,7 +321,7 @@ public abstract class BaseFrame extends JFrame {
         return createConnectionSettingsAction(networkEngine, null, hasTokenServerUrlFromYaml);
     }
 
-    protected Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
+    private Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -460,7 +465,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private static String toUpperFirst(String text) {
-        return Pattern.compile("^.").matcher(text).replaceFirst(m -> m.group().toUpperCase());
+        return text.isEmpty() ? text : Character.toUpperCase(text.charAt(0)) + text.substring(1);
     }
 
     private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
@@ -479,11 +484,29 @@ public abstract class BaseFrame extends JFrame {
             return translate("connection.settings.invalidPortNumber");
         } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
             final String tokenServer = customTokenTextField.getText().trim();
-            if (!(isValidUrl(tokenServer) && tokenServer.endsWith("/") && isActiveTokenServer(tokenServer))) {
-                return translate("connection.settings.invalidTokenServer");
+            if ((isValidUrl(tokenServer) && tokenServer.endsWith("/"))) {
+                final String tokenServerVersion = getTokenServerVersion(tokenServer);
+                Log.debug("Token server version: " + tokenServerVersion);
+                return validateTokenServerVersion(tokenServerVersion);
             }
+            return translate("connection.settings.invalidTokenServer");
         }
         return null;
+    }
+
+    private static String validateTokenServerVersion(String tokenServerVersion) {
+        if (tokenServerVersion != null) {
+            String[] parts = tokenServerVersion.split("\\.");
+            if (parts.length == 3) {
+                int major = Integer.parseInt(parts[1]);
+                int minor = Integer.parseInt(parts[2]);
+                if (major < 1 || minor < 6) {
+                    return translate("connection.settings.outdatedTokenServer", tokenServerVersion);
+                }
+                return null;
+            }
+        }
+        return translate("connection.settings.invalidTokenServer");
     }
 
     private static void updateAssistedNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, String newTokenServerUrl, NetworkAssistedEngine networkEngine) {
@@ -516,27 +539,25 @@ public abstract class BaseFrame extends JFrame {
         return gc;
     }
 
-    private static boolean isActiveTokenServer(String tokenServer) {
-        CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
+    private static String getTokenServerVersion(String tokenServer) {
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
             try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(tokenServer))
                         .header("User-Agent", USER_AGENT)
                         .timeout(Duration.ofSeconds(5))
                         .build();
-                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @SuppressWarnings("squid:S2095")
-                HttpClient client = HttpClient.newBuilder()
-                        .proxy(ProxySelector.getDefault())
-                        .build();
-                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                return response.statusCode() == 200 && response.body().startsWith("v.");
+                HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+                if (response.statusCode() != 200 || !response.body().startsWith("v.")) {
+                    return null;
+                }
+                return response.body().trim();
             } catch (IOException | InterruptedException | SecurityException ex) {
                 Log.error(format("Error checking token server %s", tokenServer), ex);
                 if (ex instanceof InterruptedException) {
                     Thread.currentThread().interrupt();
                 }
-                return false;
+                return null;
             }
         });
         return future.join();
@@ -592,7 +613,7 @@ public abstract class BaseFrame extends JFrame {
         return showHelp;
     }
 
-    public static void browse(String url) {
+    protected static void browse(String url) {
         try {
             browse(new URI(url));
         } catch (URISyntaxException ex) {
@@ -628,22 +649,23 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected static JLabel getFingerprints() {
-        return fingerprints;
+        return FINGERPRINTS;
     }
 
     protected static void clearFingerprints() {
-        fingerprints.setText(null);
-        fingerprints.setIcon(null);
-        fingerprints.setCursor(null);
+        FINGERPRINTS.setText(null);
+        FINGERPRINTS.setIcon(null);
+        FINGERPRINTS.setCursor(null);
+        FINGERPRINTS.removeMouseListener(CHAT_MOUSE_ADAPTER);
     }
 
     public void setFingerprints(String hash) {
-        fingerprints.setIcon(getOrCreateIcon(FINGERPRINT));
-        fingerprints.setToolTipText(translate("startChat"));
-        fingerprints.setText(format("%s ", hash));
-        fingerprints.setFont(DEFAULT_FONT);
-        fingerprints.addMouseListener(new ChatMouseAdapter());
-        fingerprints.setCursor(handCursor);
+        FINGERPRINTS.setIcon(getOrCreateIcon(FINGERPRINT));
+        FINGERPRINTS.setToolTipText(translate("startChat"));
+        FINGERPRINTS.setText(format("%s ", hash));
+        FINGERPRINTS.setFont(DEFAULT_FONT);
+        FINGERPRINTS.addMouseListener(CHAT_MOUSE_ADAPTER);
+        FINGERPRINTS.setCursor(handCursor);
     }
 
     protected void setPreExistAction(Action stopAction) {
@@ -676,59 +698,23 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private static class FeedbackMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(HTTP_FEEDBACK);
-        }
-    }
+    private static class UrlMouseAdapter extends MouseAdapter {
+        private final String url;
 
-    private static class LicenseMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(HTTP_LICENSE);
+        UrlMouseAdapter(String url) {
+            this.url = url;
         }
-    }
 
-    private static class PrivacyMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse(HTTP_PRIVACY);
-        }
-    }
-
-    private static class HomeMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(HTTP_HOME);
-        }
-    }
-
-    private static class ReleaseMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(Version.RELEASE_LOCATION + Version.get());
-        }
-    }
-
-    private static class LatestReleaseMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(Version.RELEASE_LOCATION + Version.get().getLatestRelease());
-        }
-    }
-
-    private static class SupportMouseAdapter extends MouseAdapter {
-        @Override
-        public void mouseClicked(MouseEvent e) {
-            browse(HTTP_SUPPORT);
+            browse(url);
         }
     }
 
     private static class ChatMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse(format(CHAT_URL, fingerprints.getText().trim().replace(":", "-")));
+            browse(format(CHAT_URL, FINGERPRINTS.getText().trim().replace(":", "-")));
         }
     }
 

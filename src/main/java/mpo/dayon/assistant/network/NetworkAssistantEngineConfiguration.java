@@ -14,9 +14,13 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	private static final String PREF_AUTO_ACCEPT = "assistant.network.autoAccept";
 
+	private static final String PREF_ICE_TURN_SERVERS = "ice.turn.servers";
+
 	private final int port;
 
 	private final String tokenServerUrl;
+
+	private final String iceTurnServers;
 
 	private final boolean autoAccept;
 
@@ -28,15 +32,18 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 	 * Default : takes its values from the current preferences.
 	 */
 	public NetworkAssistantEngineConfiguration() {
-		port = Preferences.getPreferences().getIntPreference(PREF_PORT_NUMBER, 8080);
-		tokenServerUrl = Preferences.getPreferences().getStringPreference(PREF_TOKEN_SERVER_URL, DEFAULT_TOKEN_SERVER_URL);
-		autoAccept = Preferences.getPreferences().getBooleanPreference(PREF_AUTO_ACCEPT, false);
+		final Preferences prefs = Preferences.getPreferences();
+		port = prefs.getIntPreference(PREF_PORT_NUMBER, 8080);
+		tokenServerUrl = prefs.getStringPreference(PREF_TOKEN_SERVER_URL, DEFAULT_TOKEN_SERVER_URL);
+		autoAccept = prefs.getBooleanPreference(PREF_AUTO_ACCEPT, false);
+		iceTurnServers = prefs.getStringPreference(PREF_ICE_TURN_SERVERS, "");
 	}
 
 	public NetworkAssistantEngineConfiguration(int port, String tokenServerUrl, boolean autoAccept) {
 		this.port = port;
 		this.tokenServerUrl = tokenServerUrl;
 		this.autoAccept = autoAccept;
+		iceTurnServers = Preferences.getPreferences().getStringPreference(PREF_ICE_TURN_SERVERS, "");
 	}
 
 	public int getPort() {
@@ -45,6 +52,10 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 	public String getTokenServerUrl() {
 		return tokenServerUrl;
+	}
+
+	public String getIceTurnServers() {
+		return iceTurnServers;
 	}
 
 	public boolean isAutoAccept() {
@@ -78,12 +89,12 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 
 		final NetworkAssistantEngineConfiguration that = (NetworkAssistantEngineConfiguration) o;
 
-		return port == that.port && tokenServerUrl.equals(that.tokenServerUrl) && autoAccept == that.autoAccept;
+		return port == that.port && tokenServerUrl.equals(that.tokenServerUrl) && autoAccept == that.autoAccept && iceTurnServers.equals(that.iceTurnServers);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(port, tokenServerUrl, autoAccept);
+		return Objects.hash(port, tokenServerUrl, autoAccept, iceTurnServers);
 	}
 
 	/**
@@ -97,6 +108,7 @@ public class NetworkAssistantEngineConfiguration extends Configuration {
 		props.set(PREF_PORT_NUMBER, String.valueOf(port));
 		props.set(PREF_TOKEN_SERVER_URL, tokenServerUrl);
 		props.set(PREF_AUTO_ACCEPT, String.valueOf(autoAccept));
+		props.set(PREF_ICE_TURN_SERVERS, iceTurnServers);
 
 		if (clear) // migration support (!)
 		{

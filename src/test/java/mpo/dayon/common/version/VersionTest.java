@@ -38,6 +38,19 @@ class VersionTest {
     }
 
     @Test
+    void shouldParseShortVersion() {
+        // given
+        String versionString = "2.42";
+
+        // when
+        Version version = new Version(versionString);
+
+        // then
+        assertEquals(2, version.getMajor());
+        assertEquals(42, version.getMinor());
+    }
+
+    @Test
     void isProdShouldReturnFalseForDevVersion() {
         // given when then
         assertFalse(isProd(0,0));

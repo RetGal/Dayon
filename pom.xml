@@ -17,7 +17,7 @@
             <email>reto@galante.ch</email>
         </developer>
     </developers>
-    <inceptionYear>2016-2025</inceptionYear>
+    <inceptionYear>2016-2026</inceptionYear>
     <licenses>
         <license>
             <name>GPL-3</name>
@@ -56,6 +56,11 @@
             <groupId>org.tukaani</groupId>
             <artifactId>xz</artifactId>
             <version>${xz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jitsi</groupId>
+            <artifactId>ice4j</artifactId>
+            <version>3.2-15-g6da2b08</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -211,18 +216,38 @@
                                     <goal>shade</goal>
                                 </goals>
                                 <configuration>
-                                    <minimizeJar>true</minimizeJar>
+                                    <minimizeJar>false</minimizeJar>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>mpo.dayon.common.Runner</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                    <artifactSet>
+                                        <excludes>
+                                            <exclude>net.java.dev.jna:*</exclude>
+                                            <exclude>com.googlecode.json-simple:*</exclude>
+                                        </excludes>
+                                    </artifactSet>
                                     <filters>
                                         <filter>
-                                            <artifact>org.tukaani:xz</artifact>
+                                            <artifact>*</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
+                                                <exclude>gov/nist/core/net/**</exclude>
+                                                <exclude>gov/nist/javax/sip/**</exclude>
+                                                <exclude>org/bitlet/**</exclude>
+                                                <exclude>org/intellij/**</exclude>
+                                                <exclude>org/jetbrains/**</exclude>
+                                                <exclude>kotlin/**/*metadata</exclude>
+                                                <exclude>kotlin/coroutines/**</exclude>
+                                                <exclude>kotlin/comparisons/**</exclude>
+                                                <exclude>kotlin/io/encoding/**</exclude>
+                                                <exclude>kotlin/io/path/**</exclude>
+                                                <exclude>kotlin/math/**</exclude>
+                                                <exclude>kotlin/random/**</exclude>
+                                                <exclude>kotlin/reflect/jvm/internal/calls/**</exclude>
+                                                <exclude>kotlin/streams/**</exclude>
+                                                <exclude>kotlin/time/**</exclude>
                                             </excludes>
                                         </filter>
                                     </filters>
@@ -383,18 +408,38 @@
                                     <goal>shade</goal>
                                 </goals>
                                 <configuration>
-                                    <minimizeJar>true</minimizeJar>
+                                    <minimizeJar>false</minimizeJar>
+                                    <transformers>
+                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                            <mainClass>mpo.dayon.common.Runner</mainClass>
+                                        </transformer>
+                                    </transformers>
+                                    <artifactSet>
+                                        <excludes>
+                                            <exclude>net.java.dev.jna:*</exclude>
+                                            <exclude>com.googlecode.json-simple:*</exclude>
+                                        </excludes>
+                                    </artifactSet>
                                     <filters>
                                         <filter>
-                                            <artifact>org.tukaani:xz</artifact>
+                                            <artifact>*</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>com.dosse.upnp:WaifUPnP</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
+                                                <exclude>gov/nist/core/net/**</exclude>
+                                                <exclude>gov/nist/javax/sip/**</exclude>
+                                                <exclude>org/bitlet/**</exclude>
+                                                <exclude>org/intellij/**</exclude>
+                                                <exclude>org/jetbrains/**</exclude>
+                                                <exclude>kotlin/**/*metadata</exclude>
+                                                <exclude>kotlin/coroutines/**</exclude>
+                                                <exclude>kotlin/comparisons/**</exclude>
+                                                <exclude>kotlin/io/encoding/**</exclude>
+                                                <exclude>kotlin/io/path/**</exclude>
+                                                <exclude>kotlin/math/**</exclude>
+                                                <exclude>kotlin/random/**</exclude>
+                                                <exclude>kotlin/reflect/jvm/internal/calls/**</exclude>
+                                                <exclude>kotlin/streams/**</exclude>
+                                                <exclude>kotlin/time/**</exclude>
                                             </excludes>
                                         </filter>
                                     </filters>
@@ -553,7 +598,7 @@
             </build>
         </profile>
         <profile>
-            <id>mac_assisted</id>
+            <id>mac</id>
             <build>
                 <plugins>
                     <plugin>
@@ -586,6 +631,13 @@
                             </execution>
                         </executions>
                     </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>assisted</id>
+            <build>
+                <plugins>
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>
@@ -610,42 +662,9 @@
             </build>
         </profile>
         <profile>
-            <id>mac_assistant</id>
-            <properties>
-                <dayon.mainClass>mpo.dayon.assistant.AssistantRunner</dayon.mainClass>
-            </properties>
+            <id>assistant</id>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*.sh</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                     <plugin>
                         <groupId>com.github.hazendaz.maven</groupId>
                         <artifactId>makeself-maven-plugin</artifactId>

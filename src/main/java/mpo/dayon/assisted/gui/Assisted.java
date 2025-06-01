@@ -30,6 +30,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,7 +46,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assisted implements Subscriber, ClipboardOwner {
 
-    private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&laddr=%s&v=1.4";
+    private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&laddr=%s&v=1.5";
 
     private static final Token TOKEN = new Token(TOKEN_PARAMS);
 
@@ -188,10 +189,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                     return validationErrorMessage;
                 }
                 validationErrorMessage = validatePortNumber(connectionSettingsDialog.getPortNumber());
-                if (validationErrorMessage == null) {
-                    TOKEN.reset();
-                    connectionSettingsDialog.clearToken();
-                }
                 return validationErrorMessage;
             }
         });
@@ -224,9 +221,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
             final NetworkAssistedEngineConfiguration newConfiguration;
             String tokenString = connectionSettingsDialog.getToken().trim();
             if (!tokenString.isEmpty() && !tokenString.equals(TOKEN.getTokenString())) {
+                Log.debug("Applying new token: " + tokenString);
                 TOKEN.setTokenString(tokenString);
+                frame.disableStartButton();
                 String connectionParams = obtainConnectionParamsFromTokenServer();
                 newConfiguration = extractNetworkConfigurationFromConnectionParams(connectionParams);
+                Log.debug("Received: %s", () -> new String(Base64.getDecoder().decode(TOKEN.getIceInfo())));
             } else {
                 newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
                         Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
@@ -235,6 +235,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }).thenAcceptAsync(newConfiguration -> {
             if (newConfiguration != null && !newConfiguration.getServerName().equals(networkConfiguration.getServerName())
                     || newConfiguration.getServerPort() != networkConfiguration.getServerPort()) {
+                Log.debug("Applying new configuration: " + newConfiguration);
                 networkConfiguration = newConfiguration;
                 networkConfiguration.persist();
                 if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPeerPort()) {
@@ -243,6 +244,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 networkEngine.configure(networkConfiguration);
                 frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
             }
+            frame.enableStartButton();
             Log.info("NetworkConfiguration " + networkConfiguration);
         });
     }
@@ -349,6 +351,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 }
             } catch (InterruptedException | ExecutionException ie) {
                 Log.info("NetWorker was cancelled");
+                Log.error(ie.getCause().getMessage(), ie);
                 Thread.currentThread().interrupt();
             }
         }
@@ -379,10 +382,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 String assistantAddress = parts[0];
                 String port = parts[1];
                 // maybe extract timestamps of open and closed as well?
-                if (parts.length > 7) {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[5]));
+                if (parts.length > 4) {
+                    // 0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assistant_ice
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[4]), parts[5]);
                 } else {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0);
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "", null, 0, null);
                 }
                 Log.debug(TOKEN.toString());
                 return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));
@@ -497,6 +501,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         @Override
+        public void onIceConnecting() {
+            frame.disableStopButton();
+        }
+
+        @Override
         public void onPeerIsAccessible(boolean isPeerAccessible) {
             frame.onPeerIsAccessible(isPeerAccessible);
         }
@@ -520,8 +529,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         @Override
-        public void onConnected(String fingerprints) {
-            frame.onConnected(fingerprints);
+        public void onConnected(String fingerprints, boolean isRevertedConnection) {
+            frame.onConnected(fingerprints, isRevertedConnection);
             // reset the capture engine in order to transmit a full capture, important in case of reconnects
             if (captureEngine != null) {
                 captureEngine.reconfigure(captureEngineConfiguration);

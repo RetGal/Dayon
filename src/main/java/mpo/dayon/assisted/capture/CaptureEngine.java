@@ -30,7 +30,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     private final Listeners<CaptureEngineListener> listeners = new Listeners<>();
 
     /**
-     * I keep only the checksum as I do not want to keep the referenceS to the
+     * I keep only the checksum as I do not want to keep the references to the
      * byte[] of the previous captureS.
      */
     private long[] previousCapture;
@@ -76,13 +76,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public void addListener(CaptureEngineListener listener) {
         listeners.add(listener);
-        // We're keeping locally a previous state, so we must be sure to send at
-        // least once the previous capture state to the new listener.
-        synchronized (reconfigurationLOCK) {
-            if (configuration != null) {
-                this.reconfigured.set(true);
-            }
-        }
     }
 
     public void start() {
@@ -131,11 +124,11 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
                     // to handle the reset message until the assistant without having to
                     // change anything (e.g., merging mechanism in the compressor engine).
                     reset.set(true);
-                    Log.info(format("Capture engine has been reconfigured [tile:%d]%s", captureId, configuration));
+                    Log.info(format("Capture engine has been reconfigured [capture:%d]%s", captureId, configuration));
                 }
             }
 
-            final byte[] pixels = captureColors ? captureFactory.captureScreen(null) : captureFactory.captureScreen(quantization);
+            final byte[] pixels = captureFactory.captureScreen(captureColors ? null : quantization);
             if (pixels == null) {
                 // testing purpose (!)
                 Log.info("CaptureFactory has finished!");
@@ -190,7 +183,8 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private void updatePreviousCapture(Capture capture) {
         final CaptureTile[] dirtyTiles = capture.getDirtyTiles();
-        for (int idx = 0; idx < dirtyTiles.length; idx++) {
+        final int dirtyLength = dirtyTiles.length;
+        for (int idx = 0; idx < dirtyLength; idx++) {
             final CaptureTile dirtyTile = dirtyTiles[idx];
             if (dirtyTile != null) {
                 previousCapture[idx] = dirtyTile.getChecksum();

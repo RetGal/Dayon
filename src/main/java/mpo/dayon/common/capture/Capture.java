@@ -145,12 +145,13 @@ public class Capture {
 		// has been re-configured.
 		// In that case (for the sake of simplicity) a FULL capture will be
 		// sent.
-		if (dirty.length != older.getDirty().length) {
+		final int dirtyLength = dirty.length;
+		if (dirtyLength != older.getDirty().length) {
 			return; // we're keeping the newest (FULL capture anyway)
 		}
 
 		CaptureTile[] olderDirty = older.getDirty();
-		for (int idx = 0; idx < dirty.length; idx++) {
+		for (int idx = 0; idx < dirtyLength; idx++) {
 			if (olderDirty[idx] != null && dirty[idx] == null) {
 				dirty[idx] = olderDirty[idx];
 			}

@@ -3,9 +3,16 @@ package mpo.dayon.common.network;
 import com.dosse.upnp.UPnP;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
+import org.ice4j.Transport;
+import org.ice4j.TransportAddress;
+import org.ice4j.ice.Agent;
+import org.ice4j.ice.harvest.StunCandidateHarvester;
+import org.ice4j.ice.harvest.TurnCandidateHarvester;
+import org.ice4j.security.LongTermCredential;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
+import javax.sdp.SdpException;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
@@ -19,11 +26,14 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -40,7 +50,7 @@ public abstract class NetworkEngine {
 
     public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0";
 
-    protected static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+    public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
@@ -50,7 +60,7 @@ public abstract class NetworkEngine {
 
     protected NetworkSender sender; // out
 
-    protected NetworkSender fileSender; // file out
+    private NetworkSender fileSender; // file out
 
     protected Thread receiver; // in
 
@@ -66,13 +76,15 @@ public abstract class NetworkEngine {
 
     protected SSLSocket fileConnection;
 
+    protected Agent iceAgent;
+
     protected final AtomicBoolean cancelling = new AtomicBoolean(false);
 
     private final Object upnpEnabledLOCK = new Object();
 
     private Boolean upnpEnabled;
 
-    protected static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
+    public static AtomicReference<Boolean> isOwnPortAccessible = new AtomicReference<>();
 
     private String localAddress = null;
 
@@ -190,6 +202,9 @@ public abstract class NetworkEngine {
     }
 
     protected void createInputStream() throws IOException {
+        if (connection == null) {
+            throw new IOException("Connection not established");
+        }
         try {
             in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
         } catch (StreamCorruptedException ex) {
@@ -233,7 +248,7 @@ public abstract class NetworkEngine {
         return null;
     }
 
-    public boolean isPortAccessible(int portNumber) {
+    private boolean isPortAccessible(int portNumber) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(format("%s/?p=%d", WHATSMYIP_SERVER_URL, portNumber)))
@@ -256,14 +271,14 @@ public abstract class NetworkEngine {
     }
 
     // creates port forwarding for the specific remote host only
-    public boolean selfTest(String publicIp, int portNumber, String remoteHost) {
+    protected boolean selfTest(String publicIp, int portNumber, String remoteHost) {
         if (publicIp == null) {
             isOwnPortAccessible.set(false);
             return false;
         }
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
             boolean accessible;
-            try (ServerSocket listener = new ServerSocket(portNumber)) {
+            try (ServerSocket ignored = new ServerSocket(portNumber)) {
                 accessible = isPortAccessible(portNumber);
             } catch (IOException e) {
                 accessible = false;
@@ -344,4 +359,66 @@ public abstract class NetworkEngine {
         }
     }
 
+    protected void initializeIceAgent() {
+        if (iceAgent == null) {
+            Log.debug("Initializing new ICE agent");
+            iceAgent = new Agent();
+            iceAgent.setLoggingLevel(Level.FINEST);
+            Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());
+            String[] stunServers = {
+                    "jitsi.org:3478",
+                    "stun.fbsbx.com:3478",
+                    "stun.l.google.com:19302",
+                    "stun.cloudflare.com:3478"
+            };
+            for (String sts : stunServers) {
+                try {
+                    String[] parts = sts.split(":");
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(parts[0], Integer.parseInt(parts[1])), Transport.UDP);
+                    iceAgent.addCandidateHarvester(new StunCandidateHarvester(ta));
+                    Log.debug("Added STUN harvester: " + sts);
+                } catch (Exception e) {
+                    Log.warn("Failed to add STUN harvester: " + sts, e);
+                }
+            }
+            Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());
+            addTurnServers();
+        }
+    }
+
+    private void addTurnServers() {
+        // optional: read TURN servers from preferences (format: host:port[:username:password],comma-separated)
+        final String turns = mpo.dayon.common.preference.Preferences.getPreferences().getStringPreference("ice.turn.servers", "");
+        if (turns.isEmpty()) {
+            return;
+        }
+        Log.info("Configuring TURN servers from preferences");
+        String[] entries = turns.split(",");
+        for (String entry : entries) {
+            try {
+                String[] parts = entry.split(":");
+                if (parts.length >= 2) {
+                    String host = parts[0];
+                    int port = Integer.parseInt(parts[1]);
+                    String user = parts.length > 2 ? parts[2] : null;
+                    String pass = parts.length > 3 ? parts[3] : null;
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(host, port), Transport.UDP);
+                    LongTermCredential credential = new LongTermCredential(user, pass);
+                    iceAgent.addCandidateHarvester(new TurnCandidateHarvester(ta, credential));
+                    Log.info("Added TURN harvester: " + host + ":" + port);
+                }
+            } catch (Exception ex) {
+                Log.warn("Failed to parse/add TURN entry: " + entry, ex);
+            }
+        }
+    }
+
+    public String getLocalSdpDesc() {
+        try {
+            return Base64.getEncoder().encodeToString(SdpUtils.createSDPDescription(iceAgent).getBytes(StandardCharsets.UTF_8));
+        } catch (SdpException e) {
+            Log.error("Failed to create local SDP", e);
+            return null;
+        }
+    }
 }

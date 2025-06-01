@@ -25,7 +25,7 @@ public class Version {
         final int lastDotPos = this.numericVersion.lastIndexOf('.');
 
         this.major = Integer.parseInt(this.numericVersion.substring(0, firstDotPos));
-        this.minor = Integer.parseInt(this.numericVersion.substring(firstDotPos + 1, lastDotPos));
+        this.minor = Integer.parseInt(this.numericVersion.substring(firstDotPos + 1, firstDotPos == lastDotPos ? this.numericVersion.length() : lastDotPos));
     }
 
     public static Version get() {
