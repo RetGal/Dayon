@@ -12,6 +12,7 @@ public class Token {
     private final AtomicReference<String> peerLocalAddress = new AtomicReference<>();
     private final AtomicReference<Boolean> peerAccessible = new AtomicReference<>();
     private final AtomicInteger localPort = new AtomicInteger();
+    private final AtomicReference<String> iceInfo = new AtomicReference<>();
     private final String queryParams;
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -28,7 +29,7 @@ public class Token {
         }
     }
 
-    public void updateToken(String peerAddress, int peerPort, String peerLocalAddress, Boolean peerAccessible, int localPort) {
+    public void updateToken(String peerAddress, int peerPort, String peerLocalAddress, Boolean peerAccessible, int localPort, String iceInfo) {
         lock.lock();
         try {
             this.peerPort.set(peerPort);
@@ -36,6 +37,7 @@ public class Token {
             this.peerLocalAddress.set(peerLocalAddress);
             this.peerAccessible.set(peerAccessible);
             this.localPort.set(localPort);
+            this.iceInfo.set(iceInfo);
         } finally {
             lock.unlock();
         }
@@ -95,6 +97,15 @@ public class Token {
         }
     }
 
+    public String getIceInfo() {
+        lock.lock();
+        try {
+            return iceInfo.get();
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public String getQueryParams() {
         return queryParams;
     }
@@ -115,6 +126,7 @@ public class Token {
         peerLocalAddress.set(null);
         peerAccessible.set(null);
         localPort.set(0);
+        iceInfo.set(null);
     }
 
     @Override

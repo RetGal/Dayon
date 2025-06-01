@@ -164,7 +164,8 @@ public class CaptureTile {
 
 	private static byte computeSingleLevel(byte[] capture) {
 		final byte level = capture[0];
-		for (int idx = 1; idx < capture.length; idx++) {
+		final int captureLength = capture.length;
+		for (int idx = 1; idx < captureLength; idx++) {
 			if (capture[idx] != level) {
 				return -1; // multi-level
 			}

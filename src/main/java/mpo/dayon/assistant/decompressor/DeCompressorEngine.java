@@ -40,7 +40,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 		//
 		// The parallel processing is within the de-compressor itself - here we
 		// want
-		// to ensure a certain order of processing - if need more than one
+		// to ensure a certain order of processing - if you need more than one
 		// thread then
 		// have a look how the de-compressed data are sent to the GUI (!)
 
@@ -58,8 +58,8 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 		//
 		// Having our queue full is quite unlikely; I would say the network will
 		// limit the number of capture/tiles
-		// being sent and I guess that decompressing is much faster then
-		// compressing (unless our PC is quite weak
+		// being sent and I guess that decompressing is much faster than
+		// compressing (unless our PC is quite weak)
 		// compared to the assisted one; let's not forget the JAVA capture is
 		// awful regarding the performance as
 		// well => should be fine here.
@@ -103,7 +103,7 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 					cache = configuration.useCache() ? new RegularTileCache(configuration.getCacheMaxSize(), configuration.getCachePurgeSize())
 							: new NullTileCache();
 
-					Log.info("De-Compressor engine has been reconfigured [tile:" + message.getId() + "]" + configuration);
+					Log.info("De-Compressor engine has been reconfigured [capture:" + message.getId() + "]" + configuration);
 				}
 
 				cache.clearHits();

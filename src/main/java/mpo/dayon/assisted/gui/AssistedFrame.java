@@ -123,20 +123,46 @@ class AssistedFrame extends BaseFrame {
         stopButton.setVisible(!enable);
     }
 
+    void enableStartButton() {
+        startButton.setEnabled(true);
+    }
+
+    void disableStartButton() {
+        startButton.setEnabled(false);
+    }
+
+    void enableStopButton() {
+        stopButton.setEnabled(true);
+    }
+
+    void disableStopButton() {
+        stopButton.setEnabled(false);
+    }
+
     void onConnecting(String serverName, int serverPort) {
         toggleStartButton(false);
         connectionSettingsButton.setEnabled(false);
         getStatusBar().setMessage(translate("connecting", serverName, serverPort));
         connected = false;
-    }
-
-    void onConnected(String fingerprints) {
-        // must be an inverted connection -> peer status always red
         if (peerStatusTimer != null) {
             peerStatusTimer.stop();
-            getStatusBar().setPeerStateIndicator(Color.red);
+        }
+        final boolean[] dimm = {false};
+        peerStatusTimer = new Timer(1000, e -> {
+            getStatusBar().setPeerStateIndicator(dimm[0] ? Color.gray : Color.darkGray);
+            dimm[0] = !dimm[0];
+        });
+        peerStatusTimer.start();
+    }
+
+    void onConnected(String fingerprints, boolean isRevertedConnection) {
+        // if reverted connection -> peer status red else green
+        if (peerStatusTimer != null) {
+            peerStatusTimer.stop();
+            getStatusBar().setPeerStateIndicator(isRevertedConnection ? Color.red : Color.green);
         }
         this.setCursor(mouseCursor);
+        enableStopButton();
         toggleStartButton(false);
         setFingerprints(fingerprints);
         getStatusBar().setMessage(translate("connected"));
@@ -180,6 +206,9 @@ class AssistedFrame extends BaseFrame {
     public void onAccepting(int port) {
         getStatusBar().setPortStateIndicator(Color.orange);
         getStatusBar().setMessage(translate("accepting", port));
+        if (peerStatusTimer != null) {
+            peerStatusTimer.stop();
+        }
         final boolean[] dimm = {false};
         peerStatusTimer = new Timer(1000, e -> {
             getStatusBar().setPeerStateIndicator(dimm[0] ? Color.red : Color.gray);

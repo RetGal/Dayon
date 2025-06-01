@@ -80,9 +80,9 @@ class AssistantFrame extends BaseFrame {
 
     private char osId;
 
-    Timer peerStatusTimer;
+    private Timer peerStatusTimer;
 
-    long sessionSeconds;
+    private long sessionSeconds;
 
     AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
         RepeatingReleasedEventsFixer.install();
@@ -454,6 +454,9 @@ class AssistantFrame extends BaseFrame {
 
     void onGettingReady() {
         actions.getStartAction().setEnabled(false);
+        actions.getTokenAction().setEnabled(false);
+        actions.getIpAddressAction().setEnabled(false);
+        actions.getToggleCompatibilityModeAction().setEnabled(false);
         sessionSeconds = 0;
         getStatusBar().resetSessionDuration();
         showSpinner();
@@ -554,7 +557,7 @@ class AssistantFrame extends BaseFrame {
         hideSpinner();
         validate();
         repaint();
-        String errorMessage = error.getMessage() != null ? translate("comm.error.msg1", translate(error.getMessage())) : translate("comm.error.msg1", "!");
+        String errorMessage = translate("comm.error.msg1", error.getMessage() != null ? translate(error.getMessage()) : "!");
         JOptionPane.showMessageDialog(this, errorMessage, translate("comm.error"), JOptionPane.ERROR_MESSAGE);
     }
 

@@ -1,8 +1,8 @@
 package mpo.dayon.assistant.network;
 
 import com.dosse.upnp.UPnP;
-import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.event.Listeners;
@@ -12,6 +12,8 @@ import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
+import org.ice4j.ice.IceMediaStream;
+import org.ice4j.ice.KeepAliveStrategy;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -20,12 +22,12 @@ import javax.net.ssl.SSLSocketFactory;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.InetSocketAddress;
-import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
@@ -34,8 +36,8 @@ import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 
 import static java.lang.String.format;
-import static java.lang.Thread.sleep;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
+import static mpo.dayon.common.utils.SystemUtilities.pause;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
 import static mpo.dayon.common.version.Version.*;
 
@@ -52,6 +54,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private NetworkAssistantEngineConfiguration configuration;
 
     private SSLServerSocketFactory sssf;
+
+    private IceMediaStream mediaStream;
 
     private SSLSocketFactory ssf;
 
@@ -195,6 +199,24 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         startClassicMode(compatibilityMode);
     }
 
+    public void initIceAgent() {
+        super.initializeIceAgent();
+        createMediaStream();
+    }
+
+    private void createMediaStream() {
+        if (mediaStream != null) {
+            iceAgent.removeStream(mediaStream);
+        }
+        int port = configuration.getPort();
+        mediaStream = iceAgent.createMediaStream("dayon");
+        try {
+            iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
+        } catch (IOException e) {
+            Log.error("Failed to initialize ICE agent", e);
+        }
+    }
+
     private void startClassicMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
         sssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
@@ -235,11 +257,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             Log.info("Trying to connect to the assisted");
             ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
             while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
-                try {
-                    sleep(2000);
-                } catch (InterruptedException ex) {
-                    Thread.currentThread().interrupt();
-                }
+                pause(2000);
             }
             hasRejected = !fireOnAccepted(connection, configuration.isAutoAccept());
             Log.info("Connected to the assisted");
@@ -257,7 +275,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (token.getPeerAddress() == null && !cancelling.get()) {
                 obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get());
                 if (token.isPeerAccessible() == null) {
-                    sleep(4000);
+                    pause(4000);
                 }
             }
         } catch (IOException | InterruptedException ex) {
@@ -311,18 +329,20 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(4))
                 .build();
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newBuilder()
-                .proxy(ProxySelector.getDefault())
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         Log.debug("Got %s", () -> response.body().trim());
         String[] parts = response.body().trim().split("\\*");
-        // ignore unknown closed status "-1"
-        if (parts.length > 7 && !parts[4].isEmpty() && !parts[7].equals("-1")) {
-            token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]));
+        Log.debug("Length " + parts.length);
+        if (isProcessableResponse(parts)) {
+            String iceInfo = parts.length > 5 ? parts[5] : null;
+            //   0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assisted_ice
+            token.updateToken(parts[0], Integer.parseInt(parts[1]), parts[2], !parts[3].equals("0"), Integer.parseInt(parts[4]), iceInfo);
         }
+    }
+
+    // ignore incomplete responses and those with unknown closed status "-1"
+    private boolean isProcessableResponse(String[] parts) {
+        return parts.length > 4 && !parts[1].isEmpty() && !parts[4].isEmpty() && !parts[3].isEmpty() && !parts[3].equals("-1");
     }
 
     private void startFileReceiver() {
