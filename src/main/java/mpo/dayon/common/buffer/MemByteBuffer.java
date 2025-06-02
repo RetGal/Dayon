@@ -57,6 +57,19 @@ public class MemByteBuffer extends OutputStream {
 		buffer[count++] = (byte) val;
 	}
 
+	/**
+	 * Writes the specified bytes to this output stream. The general contract for
+	 * <code>writes</code> is that <code>len</code> bytes are written to the output
+	 * stream. The bytes to be written are the eight low-order bits of each element
+	 * of the array <code>b</code>.
+	 */
+	public void writes(int ...vals) {
+		ensureCapacity(count + vals.length);
+		for (int val : vals) {
+			buffer[count++] = (byte) val;
+		}
+	}
+
 	@Override
 	public void write(byte[] buffer) {
 		write(buffer, 0, buffer.length);
@@ -86,17 +99,19 @@ public class MemByteBuffer extends OutputStream {
 	/**
 	 * Equivalent to the DataOutputStream version (!)
 	 */
-	public final void writeShort(int val) {
-		ensureCapacity(count + 2);
-		buffer[count++] = (byte) ((val >>> 8) & 0xFF);
-		buffer[count++] = (byte) (val & 0xFF);
+	public final void writeShorts(int ...vals) {
+		ensureCapacity(count + (vals.length * 2));
+		for (int val : vals) {
+			buffer[count++] = (byte) ((val >>> 8) & 0xFF);
+			buffer[count++] = (byte) (val & 0xFF);
+		}
 	}
 
 	public void writeLenAsShort(int mark) {
 		final int end = mark();
 		final int len = end - mark - 2; // -2: the len (as short) itself (!)
 		resetToMark(mark);
-		writeShort(-len);
+		writeShorts(-len);
 		resetToMark(end);
 	}
 

@@ -61,28 +61,25 @@ public final class Compressor {
         final MemByteBuffer encoded = new MemByteBuffer();
         encoded.writeInt(capture.getId());
         encoded.write(capture.isReset() ? 1 : 0);
-        encoded.write(capture.getSkipped()); // as a byte (!)
-        encoded.write(capture.getMerged()); // as a byte (!)
+        encoded.writes(capture.getMerged(), capture.getMerged()); // each as a byte (!)
+        encoded.writeShorts(capture.getWidth(), capture.getHeight(), capture.getTWidth(), capture.getTHeight());
         if (capture.isReset()) {
             Log.debug("Clear compressor cache [tile:" + capture.getId() + "]");
             cache.clear(); // here for symmetry with the de-compressor (!)
         }
-        encoded.writeShort(capture.getWidth());
-        encoded.writeShort(capture.getHeight());
-        encoded.writeShort(capture.getTWidth());
-        encoded.writeShort(capture.getTHeight());
         final CaptureTile[] tiles = capture.getDirtyTiles();
         int idx = 0;
         while (idx < tiles.length) {
             final int markerCount = computeMarkerCount(tiles, idx);
+            encoded.write(markerCount);
             if (markerCount > 0) {
-                encoded.write(markerCount); // non-null tile(s) count
+                // non-null tile(s) count
                 for (int tidx = idx; tidx < idx + markerCount; tidx++) {
                     encodeTile(cache, rle, encoded, tiles[tidx]);
                 }
                 idx += markerCount;
             } else {
-                encoded.write(markerCount); // null tile(s) count
+                // null tile(s) count
                 idx += (-markerCount + 1);
             }
         }
@@ -114,20 +111,20 @@ public final class Compressor {
     private static void encodeTile(TileCache cache, RunLengthEncoder encoder, MemByteBuffer encoded, CaptureTile tile) {
         // single-level tile : [ 0 .. 256 [
         if (tile.getSingleLevel() != -1) {
-            encoded.writeShort(tile.getSingleLevel() & 0xFF);
+            encoded.writeShorts(tile.getSingleLevel() & 0xFF);
             return;
         }
         // multi-level tile : cached [256]
         final int cacheId = cache.getCacheId(tile);
         if (cache.get(cacheId) != CaptureTile.MISSING) // LRU usage (!)
         {
-            encoded.writeShort(256);
+            encoded.writeShorts(256);
             encoded.writeInt(cacheId);
             return;
         }
         // multi-level tile (not-cached) [ -32768 .. 0 [
         final int mark = encoded.mark();
-        encoded.writeShort(42); // dunno yet (!)
+        encoded.writeShorts(42); // dunno yet (!)
         encoder.runLengthEncode(encoded, tile.getCapture());
         encoded.writeLenAsShort(mark);
         cache.add(tile);

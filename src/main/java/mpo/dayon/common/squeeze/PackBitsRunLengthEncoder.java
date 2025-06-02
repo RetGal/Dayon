@@ -55,13 +55,11 @@ public class PackBitsRunLengthEncoder implements RunLengthEncoder {
         int runMax = 130;
         final int d = (pos - from) / runMax;
 		for (int idx = 0; idx < d; idx++) {
-			out.write(2 - runMax);
-			out.write(val);
+			out.writes(2 - runMax, val);
 		}
 		final int m = (pos - from) % runMax;
 		if (m > 2) {
-			out.write(2 - m);
-			out.write(val);
+			out.writes(2 - m, val);
 		} else if (m > 0) // we've 2 elements that cannot be included in that run
 		{
 			pos -= m;
