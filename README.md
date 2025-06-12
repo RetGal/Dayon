@@ -32,14 +32,14 @@ I also moved the code base to GitHub, where it can easier be maintained.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v16.0.0 (Eager Eagle) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v17.0.0 (Furry Flamingo) - released more than ten years after the initial release.
 
-While v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, 
-this one comes with the ability of automatically reversing the connection establishment in cases the assistant side is blocked by a NAT or firewall.
+v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, 
+v16.0.0 came with the ability of automatically reversing the connection establishment in cases the assistant side is blocked by a NAT or firewall.
+v17.0.0 is the first version which is also vailable as AppImage.
 
-A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v16.0.0)
+A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v17.0.0)
  and an overview of the changes between the major versions can be found at: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
-
 
 The app is available directly from the [Microsoft Store](https://apps.microsoft.com/detail/9PBM5KW0C790):
 
