@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import com.dosse.upnp.UPnP;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
@@ -35,6 +36,7 @@ import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
+import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -109,15 +111,15 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private void setupWindow() {
-        this.configuration = new FrameConfiguration(frameType);
-        this.dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
-                Math.max(configuration.getHeight(), frameType.getMinHeight()));
+        configuration = new FrameConfiguration(frameType);
+        dimension = new Dimension(frameType.getMinWidth(), frameType.getMinHeight());
+        setResizable(false);
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
-        this.setSize(dimension.width, dimension.height);
+        setSize(dimension.width, dimension.height);
         setTitle(format("Fensterkitt Support App %s", Version.get()));
-        this.setLocation(position.getX(), position.getY());
+        setLocation(position.getX(), position.getY());
     }
 
     protected void setupToolBar(ToolBar toolBar) {
@@ -127,8 +129,6 @@ public abstract class BaseFrame extends JFrame {
             fingerprints.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
         }
         toolBar.add(fingerprints);
-        //toolBar.addAction(createShowInfoAction(), alignmentY);
-        //toolBar.addAction(createShowHelpAction(), alignmentY);
         toolBar.addAction(createExitAction(), alignmentY);
         if (ASSISTANT.equals(frameType)) {
             toolBar.add(DEFAULT_SPACER);
@@ -202,7 +202,6 @@ public abstract class BaseFrame extends JFrame {
         button.setHideActionText(true);
         button.setAction(action);
         button.setFont(DEFAULT_FONT);
-        button.setText((String) action.getValue(DISPLAY_NAME));
         button.setRolloverIcon((Icon) action.getValue(ROLLOVER_ICON));
         button.setPressedIcon((Icon) action.getValue(PRESSED_ICON));
         button.setSelectedIcon((Icon) action.getValue(SELECTED_ICON));
@@ -312,7 +311,7 @@ public abstract class BaseFrame extends JFrame {
                 final JCheckBox autoConnectCheckBox = new JCheckBox();
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
-                CompletableFuture<Boolean> upnpActive =  networkAssistedEngine.isUpnpEnabled();
+                CompletableFuture<Boolean> upnpActive = networkAssistedEngine.isUpnpEnabled();
 
                 JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive, hasTokenServerUrlFromYaml);
 
@@ -322,9 +321,7 @@ public abstract class BaseFrame extends JFrame {
                 if (ok) {
                     final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
                             isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    if (ASSISTED.equals(frameType)) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
-                    }
+                    updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
                 }
             }
         };
@@ -338,7 +335,7 @@ public abstract class BaseFrame extends JFrame {
         final JPanel panel = new JPanel();
         panel.setLayout(new GridBagLayout());
         int gridy = 0;
-        String currentTokenServer = "";
+        String currentTokenServer;
 
         if (ASSISTED.equals(frameType)) {
             final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
@@ -363,56 +360,6 @@ public abstract class BaseFrame extends JFrame {
             assistantPanel.add(autoConnectCheckBox);
             panel.add(assistantPanel, createGridBagConstraints(gridy++));
         }
-
-        if (hasTokenServerUrlFromYaml) {
-            final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-            tokenServerLbl.setFont(titleFont);
-            panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-            final JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-            final JLabel preconfiguredLbl = new JLabel(translate("token.server.preconfigured"));
-            tokenPanel.add(preconfiguredLbl);
-            panel.add(tokenPanel, createGridBagConstraints(gridy));
-            return panel;
-        }
-
-        final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-        tokenServerLbl.setFont(titleFont);
-        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-
-        final JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-
-        final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
-        defaultTokenRadio.setActionCommand("default");
-        final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
-        customTokenRadio.setActionCommand(CUSTOM);
-        tokenRadioGroup.add(defaultTokenRadio);
-        tokenRadioGroup.add(customTokenRadio);
-        boolean customTextFieldEditable = false;
-        if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-            currentTokenServer = "";
-            defaultTokenRadio.setSelected(true);
-        } else {
-            customTokenRadio.setSelected(true);
-            customTextFieldEditable = true;
-        }
-
-        final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
-        defaultTokenTextField.setEditable(false);
-        defaultTokenTextField.setFocusable(false);
-        customTokenTextField.setText(currentTokenServer);
-        customTokenTextField.setEditable(customTextFieldEditable);
-
-        defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
-        customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
-
-        tokenPanel.add(defaultTokenRadio);
-        tokenPanel.add(defaultTokenTextField);
-
-        tokenPanel.add(customTokenRadio);
-        tokenPanel.add(customTokenTextField);
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
 
         return panel;
     }

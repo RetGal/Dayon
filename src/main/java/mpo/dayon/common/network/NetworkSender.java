@@ -188,9 +188,6 @@ public class NetworkSender {
         send(false, new NetworkGoodbyeMessage());
     }
 
-    /**
-     * Assisted 2 assistant.
-     */
     public void ping() {
         send(false, new NetworkPingMessage());
     }
