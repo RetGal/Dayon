@@ -25,13 +25,15 @@ public interface Runner {
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         String language = Runner.overrideLocale(programArgs.get("lang"));
-        Runner.logAppInfo("dayon_assisted");
-        try {
-            SwingUtilities.invokeLater(() -> AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap")));
-        } catch (Exception ex) {
-            FatalErrorHandler.bye("The assisted is dead!", ex);
-        }
-        prepareKeystore(appHomeDir);
+        SwingUtilities.invokeLater(() -> {
+            Runner.logAppInfo("dayon_assisted");
+            try {
+                AssistedRunner.launchAssisted(programArgs.get("ah"), programArgs.get("ap"));
+            } catch (Exception ex) {
+                FatalErrorHandler.bye("The assisted is dead!", ex);
+            }
+        });
+        new Thread(() -> prepareKeystore(appHomeDir)).start();
     }
 
     static void logAppInfo(String appName) {

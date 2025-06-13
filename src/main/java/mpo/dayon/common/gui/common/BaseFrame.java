@@ -36,7 +36,6 @@ import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
 import static mpo.dayon.common.log.LogAppender.cleanup;
 import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
-import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public abstract class BaseFrame extends JFrame {
@@ -323,10 +322,10 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
-        return createConnectionSettingsAction(null, networkEngine, hasTokenServerUrlFromYaml);
+        return createConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml);
     }
 
-    private Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
+    private Action createConnectionSettingsAction(NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -384,10 +383,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String getCurrentTokenServer() {
-        if (ASSISTED.equals(frameType)) {
-            return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
-        }
-        return new NetworkAssistantEngineConfiguration().getTokenServerUrl();
+        return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
     }
 
     private int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
