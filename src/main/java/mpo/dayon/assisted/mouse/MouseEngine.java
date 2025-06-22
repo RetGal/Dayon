@@ -5,6 +5,7 @@ import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 
 import java.awt.*;
+import java.util.Random;
 
 public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
@@ -37,6 +38,7 @@ public class MouseEngine {
     @SuppressWarnings("squid:S2189")
     private void mainLoop() throws InterruptedException {
         long start = System.currentTimeMillis();
+        long lastMovement = start;
         int captureCount = 0;
         Point previous = new Point(-1, -1);
 
@@ -46,8 +48,12 @@ public class MouseEngine {
             // can happen if windows the ctrl + alt + delete screen is active
             if (pointerInfo != null) {
                 final Point current = pointerInfo.getLocation();
+                if (current.equals(previous) && System.currentTimeMillis() - lastMovement > 59000) {
+                    moveMouse(current);
+                }
                 if (!current.equals(previous) && fireOnLocationUpdated(current)) {
                     previous = current;
+                    lastMovement = System.currentTimeMillis();
                 }
             }
             ++captureCount;
@@ -66,6 +72,17 @@ public class MouseEngine {
                 Thread.sleep(capturePause);
                 return delayedCaptureCount;
             }
+        }
+    }
+
+    private void moveMouse(Point current) {
+        int randX = new Random().nextInt(5) - 2;
+        int randY = new Random().nextInt(3) - 1;
+        current.translate(randX, randY);
+        try {
+            new Robot().mouseMove(current.x, current.y);
+        } catch (AWTException e) {
+            Log.error("Failed to move mouse", e);
         }
     }
 
