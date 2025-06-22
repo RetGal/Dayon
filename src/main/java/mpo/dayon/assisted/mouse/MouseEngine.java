@@ -10,6 +10,7 @@ import java.util.Random;
 public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
     private final Thread thread;
+    private final Random random = new Random();
 
     public MouseEngine(MouseEngineListener listener) {
         listeners.add(listener);
@@ -76,9 +77,7 @@ public class MouseEngine {
     }
 
     private void moveMouse(Point current) {
-        int randX = new Random().nextInt(5) - 2;
-        int randY = new Random().nextInt(3) - 1;
-        current.translate(randX, randY);
+        current.translate(random.nextInt(5) - 2, random.nextInt(3) - 1);
         try {
             new Robot().mouseMove(current.x, current.y);
         } catch (AWTException e) {
