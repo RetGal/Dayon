@@ -1,5 +1,5 @@
 <?php
-define('VERSION', "v.1.5");
+define('VERSION', "v.1.6");
 // name of the database file (may also be a path)
 define('DB_NAME', "dayon.db");
 // minimal length of the tokens to be generated (33^N-1 variants)
@@ -19,7 +19,8 @@ if (isset($_GET['port'])) {
         $localAddress = isset($_GET['laddr']) ? clean($_GET['laddr'], 45) : 0;
         $pdo = new PDO('sqlite:'.DB_NAME);
         createDatabase($pdo);
-        echo createToken($pdo, $address, $port, $localAddress, $closed),"\n";
+        $ice = isset($_GET['ice']) ? clean($_GET['ice']) : '';
+        echo createToken($pdo, $address, $port, $localAddress, $closed, $ice),"\n";
         if (rand(0, 5) == 5) {
             removeOldTokens($pdo);
         }
@@ -33,13 +34,14 @@ if (isset($_GET['port'])) {
         updateAssisted($pdo, $token, 0, $_SERVER['REMOTE_ADDR'], 0, 0);
     } else {
         $localAddress = isset($_GET['laddr']) ? clean($_GET['laddr'], 45) : 0;
+        $ice = isset($_GET['ice']) ? clean($_GET['ice']) : '';
         if (isset($_GET['closed'])) {
             $closed = isset($_GET['closed']) ? clean($_GET['closed'], 2) : 0;
             updateAssistant($pdo, $token, $closed, $localAddress);
         } else {
             $open = isset($_GET['open']) ? clean($_GET['open'], 2) : 0;
             $rport = isset($_GET['rport']) ? clean($_GET['rport'], 6) : 0;
-            updateAssisted($pdo, $token, $open, $_SERVER['REMOTE_ADDR'], $rport, $localAddress);
+            updateAssisted($pdo, $token, $open, $_SERVER['REMOTE_ADDR'], $rport, $localAddress, $ice);
         }
         $version = clean($_GET['v'], 3);
         echo readToken($pdo, $token, $version),"\n";
@@ -60,13 +62,13 @@ function isValidPort($port) {
     return is_numeric($port) && $port > 0 && $port < 65536;
 }
 
-function createToken($pdo, $address, $port, $localAddress, $closed) {
+function createToken($pdo, $address, $port, $localAddress, $closed, $assistantIce) {
     if (checkAvailable($pdo, $address) <= 0) {
        return substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, rand(4, 12))."\n";
     }
     $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
-    while (!insertToken($pdo, $token, $address, $port, $localAddress, $closed) && $attempt < 10) {
+    while (!insertToken($pdo, $token, $address, $port, $localAddress, $closed, $assistantIce) && $attempt < 10) {
         $length = $attempt < TOKEN_MIN_LENGTH ? TOKEN_MIN_LENGTH : round(TOKEN_MIN_LENGTH+$attempt/2);
         $token = computeToken($length);
         $attempt++;
@@ -90,8 +92,8 @@ function computeToken($length) {
     return $token;
 }
 
-function insertToken($pdo, $token, $address, $port, $localAddress, $closed) {
-    $sql = "INSERT INTO tokens (token,assistant,port,assistant_local,ts,closed) VALUES (:token,:address,:port,:laddr,:ts,:closed)";
+function insertToken($pdo, $token, $address, $port, $localAddress, $closed, $assistantIce) {
+    $sql = "INSERT INTO tokens (token,assistant,port,assistant_local,ts,closed,assistant_ice) VALUES (:token,:address,:port,:laddr,:ts,:closed,:assistant_ice)";
     $ts = time();
     // assistant 0 not closed, 1 closed -> ts
     $closed = $closed == 1 ? $ts : 0;
@@ -102,6 +104,7 @@ function insertToken($pdo, $token, $address, $port, $localAddress, $closed) {
     $stmt->bindParam(':laddr', $localAddress, PDO::PARAM_STR);
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $stmt->bindParam(':closed', $closed, PDO::PARAM_INT);
+    $stmt->bindParam(':assistant_ice', $assistantIce, PDO::PARAM_STR);
     $success = $stmt->execute();
     if (!$success) {
         // print_r($stmt->errorInfo());
@@ -131,7 +134,7 @@ function readBasicToken($pdo, $token) {
 }
 
 function readToken($pdo, $token, $version) {
-    $sql = "SELECT assistant,port,assistant_local,closed,assisted,rport,assisted_local,open FROM tokens WHERE token = :token";
+    $sql = "SELECT assistant,port,assistant_local,closed,assisted,rport,assisted_local,open,assistant_ice,assisted_ice FROM tokens WHERE token = :token";
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([":token" => $token])) {
         $stmt->bindColumn(1, $assistant);
@@ -142,17 +145,19 @@ function readToken($pdo, $token, $version) {
         $stmt->bindColumn(6, $rport);
         $stmt->bindColumn(7, $assisted_local);
         $stmt->bindColumn(8, $open);
+        $stmt->bindColumn(9, $assistant_ice);
+        $stmt->bindColumn(10, $assisted_ice);
         if ($version == "1.3") {
             return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$closed*$assisted*$rport*$open" : ""; 
         }
-        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$assisted*$rport*$assisted_local*$open" : "";
+        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$assisted*$rport*$assisted_local*$open*$assistant_ice*$assisted_ice" : "";
     } else {
         return "";
     }
 }
 
-function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress) {
-    $sql = "UPDATE tokens SET assisted = :address, rport = :rport, assisted_local = :laddr, open = :open, ts = :ts WHERE token = :token";
+function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress, $ice) {
+    $sql = "UPDATE tokens SET assisted = :address, rport = :rport, assisted_local = :laddr, open = :open, ts = :ts, assisted_ice = :assisted_ice WHERE token = :token";
     $ts = time();
     // assisted -1 unknown, 0 not open, 1 open -> ts
     $open = $open == 1 ? $ts : $open;
@@ -163,6 +168,7 @@ function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress) {
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->bindParam(':laddr', $localAddress, PDO::PARAM_STR);
+    $stmt->bindParam(':assisted_ice', $ice, PDO::PARAM_STR);
     $stmt->execute();
 }
 
@@ -179,7 +185,7 @@ function updateAssistant($pdo, $token, $closed, $localAddress)  {
 }
 
 function createDatabase($pdo) {
-    $sql = "CREATE TABLE IF NOT EXISTS `tokens` (`token` TEXT,`assistant` TEXT,`port` INTEGER,`assistant_local` TEXT,`closed` INTEGER,`assisted` TEXT,`rport` INTEGER,`assisted_local` TEXT,`open` INTEGER,`ts` INTEGER, PRIMARY KEY(`token`));";
+    $sql = "CREATE TABLE IF NOT EXISTS `tokens` (`token` TEXT,`assistant` TEXT,`port` INTEGER,`assistant_local` TEXT,`closed` INTEGER,`assisted` TEXT,`rport` INTEGER,`assisted_local` TEXT,`open` INTEGER,`ts` INTEGER,`assistant_ice` TEXT, `assisted_ice` TEXT, CONSTRAINT `tokens` PRIMARY KEY(`token`));";
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     // print_r($stmt->errorInfo());
