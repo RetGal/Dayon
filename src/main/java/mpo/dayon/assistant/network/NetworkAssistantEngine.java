@@ -1,6 +1,8 @@
 package mpo.dayon.assistant.network;
 
 import com.dosse.upnp.UPnP;
+import mpo.dayon.common.IceTest;
+import mpo.dayon.common.SdpUtils;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.concurrent.RunnableEx;
@@ -12,6 +14,12 @@ import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
+import org.ice4j.Transport;
+import org.ice4j.TransportAddress;
+import org.ice4j.ice.Agent;
+import org.ice4j.ice.IceMediaStream;
+import org.ice4j.ice.KeepAliveStrategy;
+import org.ice4j.ice.harvest.StunCandidateHarvester;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -21,16 +29,16 @@ import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
-import java.net.URI;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
+import java.util.Base64;
 
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -176,12 +184,101 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         // if we can not expose our port, we check if the public ip of the assisted is available and if its port is accessible
         if (Boolean.FALSE.equals(isOwnPortAccessible.get()) && !compatibilityMode && token.getTokenString() != null) {
             fireOnCheckingPeerStatus(true);
-            queryPeerStatus();
+
+            // DO ICE STUFF
+
+
+            Agent agent = new Agent(); // A simple ICE Agent
+
+            /*** Setup the STUN servers: ***/
+            String[] hostnames = new String[]{"jitsi.org", "stun.ekiga.net"};
+            // Look online for actively working public STUN Servers. You can find
+            // free servers.
+            // Now add these URLS as Stun Servers with standard 3478 port for STUN
+            // servrs.
+            for (String hostname : hostnames) {
+                try {
+                    // InetAddress qualifies a url to an IP Address, if you have an
+                    // error here, make sure the url is reachable and correct
+                    TransportAddress ta = new TransportAddress(InetAddress.getByName(hostname), 3478, Transport.UDP);
+                    // Currently Ice4J only supports UDP and will throw an Error
+                    // otherwise
+                    agent.addCandidateHarvester(new StunCandidateHarvester(ta));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            /*
+             * Now you have your Agent setup. The agent will now be able to know its
+             * IP Address and Port once you attempt to connect. You do need to setup
+             * Streams on the Agent to open a flow of information on a specific
+             * port.
+             */
+            IceMediaStream stream = agent.createMediaStream("stream");
+            int port = 5000; // Choose any port
+            try {
+                //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
+                agent.createComponent(stream, port, port, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
+                // The three last arguments are: preferredPort, minPort, maxPort
+            } catch (BindException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            /*
+             * Now we have our port and we have our stream to allow for information
+             * to flow. The issue is that once we have all the information we need
+             * each computer to get the remote computer's information. Of course how
+             * do you get that information if you can't connect? There might be a
+             * few ways, but the easiest with just ICE4J is to POST the information
+             * to your public sever and retrieve the information. I even use a
+             * simple PHP server I wrote to store and spit out information.
+             */
+            String toSend = null;
+            try {
+                toSend = SdpUtils.createSDPDescription(agent);
+                toSend = Base64.getEncoder().encodeToString(toSend.getBytes(StandardCharsets.UTF_8));
+                // Each computersends this information
+                // This information describes all the possible IP addresses and
+                // ports
+            } catch (Throwable e) {
+                e.printStackTrace();
+            }
+            queryPeerStatus(toSend);
             fireOnCheckingPeerStatus(false);
             isInvertibleConnection = isReverseConnectionPossible();
             if (isInvertibleConnection) {
                 return;
             }
+
+            if (token.getIceInfo() != null) {
+                // ICE
+                Log.info("ICE");
+
+                String remoteReceived = new String(Base64.getDecoder().decode(token.getIceInfo()));
+
+                try {
+                    SdpUtils.parseSDP(agent, remoteReceived); // This will add the remote information to the agent.
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                //Hopefully now your Agent is totally setup. Now we need to start the connections:
+
+                agent.addStateChangeListener(new IceTest.StateListener()); // We will define this class soon
+                // You need to listen for state change so that once connected you can then use the socket.
+                agent.startConnectivityEstablishment(); // This will do all the work for you to connect
+            }
+
+
+
+
         } else if (Boolean.FALSE.equals(isOwnPortAccessible.get()) && (compatibilityMode || token.getTokenString() == null)) {
             Log.warn("Port not accessible from the outside, starting as server anyway");
             fireOnPeerIsAccessible(null, configuration.getPort(),false);
@@ -249,12 +346,13 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return false;
     }
 
-    private void queryPeerStatus() {
+    private void queryPeerStatus(String iceInfo) {
         String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
         try {
             Log.info("Trying to obtain the assisted address");
+
             while (token.getPeerAddress() == null && !cancelling.get()) {
-                obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get());
+                obtainPeerAddressAndStatus(tokenServerUrl + token.getQueryParams(), !isOwnPortAccessible.get(), iceInfo);
                 if (token.isPeerAccessible() == null) {
                     sleep(4000);
                 }
@@ -302,9 +400,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         return true;
     }
 
-    private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
+    private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed, String iceInfo) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newBuilder().build();
         String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, getLocalAddress());
+        if (iceInfo != null) {
+            query += "&ice=" + iceInfo;
+        }
         Log.debug("Querying token server " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
@@ -315,7 +416,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         String[] parts = response.body().trim().split("\\*");
         // ignore unknown closed status "-1"
         if (parts.length > 7 && !parts[4].isEmpty() && !parts[7].equals("-1")) {
-            token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]));
+            if (parts.length > 8) {
+                token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]), parts[9]);
+            }
+            token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]), null);
         }
     }
 

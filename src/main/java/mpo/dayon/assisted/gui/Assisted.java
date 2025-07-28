@@ -9,6 +9,7 @@ import mpo.dayon.assisted.network.NetworkAssistedEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.assisted.network.NetworkAssistedEngineListener;
 import mpo.dayon.assisted.utils.ScreenUtilities;
+import mpo.dayon.common.SdpUtils;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngine;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
@@ -22,6 +23,12 @@ import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.NetworkEngine;
 import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
+import org.ice4j.Transport;
+import org.ice4j.TransportAddress;
+import org.ice4j.ice.Agent;
+import org.ice4j.ice.IceMediaStream;
+import org.ice4j.ice.KeepAliveStrategy;
+import org.ice4j.ice.harvest.StunCandidateHarvester;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +37,10 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.net.BindException;
+import java.net.InetAddress;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -218,7 +229,79 @@ public class Assisted implements Subscriber, ClipboardOwner {
             String tokenString = connectionSettingsDialog.getToken().trim();
             if (!tokenString.isEmpty() && !tokenString.equals(TOKEN.getTokenString())) {
                 TOKEN.setTokenString(tokenString);
-                String connectionParams = obtainConnectionParamsFromTokenServer();
+
+
+                // DO ICE STUFF
+
+
+                Agent agent = new Agent(); // A simple ICE Agent
+
+                /*** Setup the STUN servers: ***/
+                String[] hostnames = new String[]{"jitsi.org", "stun.ekiga.net"};
+                // Look online for actively working public STUN Servers. You can find
+                // free servers.
+                // Now add these URLS as Stun Servers with standard 3478 port for STUN
+                // servrs.
+                for (String hostname : hostnames) {
+                    try {
+                        // InetAddress qualifies a url to an IP Address, if you have an
+                        // error here, make sure the url is reachable and correct
+                        TransportAddress ta = new TransportAddress(InetAddress.getByName(hostname), 3478, Transport.UDP);
+                        // Currently Ice4J only supports UDP and will throw an Error
+                        // otherwise
+                        agent.addCandidateHarvester(new StunCandidateHarvester(ta));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                /*
+                 * Now you have your Agent setup. The agent will now be able to know its
+                 * IP Address and Port once you attempt to connect. You do need to setup
+                 * Streams on the Agent to open a flow of information on a specific
+                 * port.
+                 */
+                IceMediaStream stream = agent.createMediaStream("stream");
+                int port = 5000; // Choose any port
+                try {
+                    //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
+                    agent.createComponent(stream, port, port, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
+                    // The three last arguments are: preferredPort, minPort, maxPort
+                } catch (BindException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IllegalArgumentException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+
+                /*
+                 * Now we have our port and we have our stream to allow for information
+                 * to flow. The issue is that once we have all the information we need
+                 * each computer to get the remote computer's information. Of course how
+                 * do you get that information if you can't connect? There might be a
+                 * few ways, but the easiest with just ICE4J is to POST the information
+                 * to your public sever and retrieve the information. I even use a
+                 * simple PHP server I wrote to store and spit out information.
+                 */
+                String toSend = null;
+                try {
+                    toSend = SdpUtils.createSDPDescription(agent);
+                    toSend = Base64.getEncoder().encodeToString(toSend.getBytes(StandardCharsets.UTF_8));
+                    // Each computersends this information
+                    // This information describes all the possible IP addresses and
+                    // ports
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+
+
+
+
+                String connectionParams = obtainConnectionParamsFromTokenServer(toSend);
                 newConfiguration = extractNetworkConfigurationFromConnectionParams(connectionParams);
             } else {
                 newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
@@ -256,13 +339,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return newConfiguration;
     }
 
-    private String obtainConnectionParamsFromTokenServer() {
+    private String obtainConnectionParamsFromTokenServer(String iceInfo) {
         final Cursor cursor = frame.getCursor();
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String connectionParams = null;
         try {
             // using 0 as port and null for open as both are not known at this point
-            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null, networkEngine.getLocalAddress());
+            connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null, networkEngine.getLocalAddress(), iceInfo);
         } catch (IOException | InterruptedException ex) {
             Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {
@@ -373,9 +456,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 String port = parts[1];
                 // maybe extract timestamps of open and closed as well?
                 if (parts.length > 7) {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[5]));
+                    // TODO ice?
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[5]), null);
                 } else {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0);
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0, null);
                 }
                 Log.debug(TOKEN.toString());
                 return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));

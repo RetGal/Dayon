@@ -180,7 +180,9 @@ public class NetworkAssistedEngine extends NetworkEngine
                 isAssistantInSameNetwork = detectLocalAssistant();
             }
         }
-        establishConnection(isAssistantInSameNetwork);
+        // TODO REVERT
+        //establishConnection(isAssistantInSameNetwork);
+        establishConnection(false);
     }
 
     private void establishConnection(boolean isAssistantInSameNetwork) throws IOException, NoSuchAlgorithmException, CertificateEncodingException {
@@ -265,15 +267,16 @@ public class NetworkAssistedEngine extends NetworkEngine
         try {
             String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
             String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
+            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress(), null);
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
                 String port = parts[1];
                 if (parts.length > 7) {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort);
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, null);
+                    // TODO lenght > 8 iceInfo
                 } else {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0);
+                    token.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0, null);
                 }
             }
         } catch (InterruptedException e) {
@@ -332,12 +335,15 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open, String localAddress) throws IOException, InterruptedException {
+    public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open, String localAddress, String iceInfo) throws IOException, InterruptedException {
         if (open == null) {
             isOwnPortAccessible.set(null);
         }
         // null = unknown = -1, true = open = 1, false = closed = 0
         String query = format(tokenServerUrl, token, port, toInt(open), localAddress);
+        if (iceInfo != null) {
+            query += "&ice=" + iceInfo;
+        }
         Log.debug("Resolving token using: " + query);
         HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
