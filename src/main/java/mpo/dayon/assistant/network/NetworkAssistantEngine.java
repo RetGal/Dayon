@@ -263,6 +263,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 Log.info("ICE");
 
                 String remoteReceived = new String(Base64.getDecoder().decode(token.getIceInfo()));
+                Log.info(remoteReceived);
 
                 try {
                     SdpUtils.parseSDP(agent, remoteReceived); // This will add the remote information to the agent.
@@ -415,11 +416,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.debug("Got %s", () -> response.body().trim());
         String[] parts = response.body().trim().split("\\*");
         // ignore unknown closed status "-1"
-        if (parts.length > 7 && !parts[4].isEmpty() && !parts[7].equals("-1")) {
-            if (parts.length > 8) {
-                token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]), parts[9]);
-            }
-            token.updateToken(parts[4], Integer.parseInt(parts[5]), parts[6], !parts[7].equals("0"), Integer.parseInt(parts[1]), null);
+        if (parts.length > 5 && !parts[4].isEmpty() && !parts[3].equals("-1")) {
+            //   0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assistant_ice
+            token.updateToken(parts[0], Integer.parseInt(parts[1]), parts[2], !parts[3].equals("0"), Integer.parseInt(parts[4]), parts[5]);
         }
     }
 

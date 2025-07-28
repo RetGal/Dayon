@@ -35,16 +35,17 @@ if (isset($_GET['port'])) {
     } else {
         $localAddress = isset($_GET['laddr']) ? clean($_GET['laddr'], 45) : 0;
         $ice = isset($_GET['ice']) ? clean($_GET['ice']) : '';
-        if (isset($_GET['closed'])) {
+        $side = isset($_GET['closed']) ? 'assistant' : 'assisted';
+        if ($side == 'assistant') {
             $closed = isset($_GET['closed']) ? clean($_GET['closed'], 2) : 0;
-            updateAssistant($pdo, $token, $closed, $localAddress);
+            updateAssistant($pdo, $token, $closed, $localAddress, $ice);
         } else {
             $open = isset($_GET['open']) ? clean($_GET['open'], 2) : 0;
             $rport = isset($_GET['rport']) ? clean($_GET['rport'], 6) : 0;
             updateAssisted($pdo, $token, $open, $_SERVER['REMOTE_ADDR'], $rport, $localAddress, $ice);
         }
         $version = clean($_GET['v'], 3);
-        echo readToken($pdo, $token, $version),"\n";
+        echo readToken($pdo, $token, $version, $side),"\n";
     }
 } else {
     echo VERSION,"\n";
@@ -133,7 +134,7 @@ function readBasicToken($pdo, $token) {
     }
 }
 
-function readToken($pdo, $token, $version) {
+function readToken($pdo, $token, $version, $side) {
     $sql = "SELECT assistant,port,assistant_local,closed,assisted,rport,assisted_local,open,assistant_ice,assisted_ice FROM tokens WHERE token = :token";
     $stmt = $pdo->prepare($sql);
     if ($stmt->execute([":token" => $token])) {
@@ -148,9 +149,13 @@ function readToken($pdo, $token, $version) {
         $stmt->bindColumn(9, $assistant_ice);
         $stmt->bindColumn(10, $assisted_ice);
         if ($version == "1.3") {
-            return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$closed*$assisted*$rport*$open" : ""; 
+            return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$closed*$assisted*$rport*$open" : "";
         }
-        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$assisted*$rport*$assisted_local*$open*$assistant_ice*$assisted_ice" : "";
+        if ($side == 'assistant') {
+            return $stmt->fetch(PDO::FETCH_BOUND) ? "$assisted*$rport*$assisted_local*$open*$port*$assisted_ice" : "";
+        }
+        return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$rport*$assistant_ice" : "";
+        //return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$assisted*$rport*$assisted_local*$open*$assistant_ice*$assisted_ice" : "";
     } else {
         return "";
     }
@@ -172,8 +177,8 @@ function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress, $i
     $stmt->execute();
 }
 
-function updateAssistant($pdo, $token, $closed, $localAddress)  {
-    $sql = "UPDATE tokens SET assistant_local = :laddr, closed = :closed,ts = :ts WHERE token = :token";
+function updateAssistant($pdo, $token, $closed, $localAddress, $ice)  {
+    $sql = "UPDATE tokens SET assistant_local = :laddr, closed = :closed,ts = :ts, assistant_ice = :assistant_ice WHERE token = :token";
     $ts = time();
     $closed = $closed == 0 ? 0 : $ts;
     $stmt = $pdo->prepare($sql);
@@ -181,6 +186,8 @@ function updateAssistant($pdo, $token, $closed, $localAddress)  {
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->bindParam(':laddr', $localAddress, PDO::PARAM_STR);
+    // TODO check if required
+    $stmt->bindParam(':assistant_ice', $ice, PDO::PARAM_STR);
     $stmt->execute();
 }
 

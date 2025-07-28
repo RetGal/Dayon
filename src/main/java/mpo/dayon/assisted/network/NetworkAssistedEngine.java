@@ -1,6 +1,8 @@
 package mpo.dayon.assisted.network;
 
 import com.dosse.upnp.UPnP;
+import mpo.dayon.common.IceTest;
+import mpo.dayon.common.SdpUtils;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
@@ -16,16 +18,19 @@ import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
+import org.ice4j.Transport;
+import org.ice4j.TransportAddress;
+import org.ice4j.ice.Agent;
+import org.ice4j.ice.IceMediaStream;
+import org.ice4j.ice.KeepAliveStrategy;
+import org.ice4j.ice.harvest.StunCandidateHarvester;
 
 import javax.net.ssl.*;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -34,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
+import java.util.Base64;
 
 import static java.lang.String.format;
 
@@ -71,17 +77,20 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private String publicIp;
 
+    private Agent agent;
+
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
                                  NetworkControlMessageHandler controlHandler,
                                  NetworkClipboardRequestMessageHandler clipboardRequestHandler,
-                                 NetworkScreenshotRequestMessageHandler screenshotRequestHandler, ClipboardOwner clipboardOwner) {
+                                 NetworkScreenshotRequestMessageHandler screenshotRequestHandler, ClipboardOwner clipboardOwner, Agent agent) {
         this.captureConfigurationHandler = captureConfigurationHandler;
         this.compressorConfigurationHandler = compressorConfigurationHandler;
         this.controlHandler = controlHandler;
         this.clipboardRequestHandler = clipboardRequestHandler;
         this.screenshotRequestHandler = screenshotRequestHandler;
         this.clipboardOwner = clipboardOwner;
+        this.agent = agent;
     }
 
     public NetworkAssistedEngineConfiguration getConfiguration() {
@@ -194,6 +203,25 @@ public class NetworkAssistedEngine extends NetworkEngine
             connectToAssistant(connectionTimeout);
         }
 
+        if (token.getIceInfo() != null) {
+            // ICE
+            Log.info("ICE");
+
+            String remoteReceived = new String(Base64.getDecoder().decode(token.getIceInfo()));
+            Log.info(remoteReceived);
+
+            try {
+                SdpUtils.parseSDP(agent, remoteReceived); // This will add the remote information to the agent.
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            //Hopefully now your Agent is totally setup. Now we need to start the connections:
+
+            agent.addStateChangeListener(new IceTest.StateListener()); // We will define this class soon
+            // You need to listen for state change so that once connected you can then use the socket.
+            agent.startConnectivityEstablishment(); // This will do all the work for you to connect
+        }
+
         // common part
         createInputStream();
         runReceiversIfNecessary();
@@ -272,10 +300,12 @@ public class NetworkAssistedEngine extends NetworkEngine
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
                 String port = parts[1];
-                if (parts.length > 7) {
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, null);
-                    // TODO lenght > 8 iceInfo
+                if (parts.length > 4) {
+                    // got ICE info
+                    Log.info("ICE");
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, parts[5]);
                 } else {
+                    Log.info("N-ICE");
                     token.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0, null);
                 }
             }

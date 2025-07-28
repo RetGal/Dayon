@@ -3,10 +3,10 @@ package mpo.dayon.common;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.net.BindException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
 import org.ice4j.ice.*;
@@ -42,7 +42,6 @@ public class IceTest {
          * Streams on the Agent to open a flow of information on a specific
          * port.
          */
-
         IceMediaStream stream = agent.createMediaStream("audio");
         int port = 5000; // Choose any port
         try {
@@ -94,6 +93,10 @@ public class IceTest {
         agent.startConnectivityEstablishment(); // This will do all the work for you to connect
     }
 
+    private static String toBase64(String toSend) {
+        return Base64.getEncoder().encodeToString(toSend.getBytes(StandardCharsets.UTF_8));
+    }
+
     public static class StateListener implements PropertyChangeListener {
 
         private InetAddress hostname;
@@ -113,6 +116,7 @@ public class IceTest {
                             // The advantage is that you can change the protocol from UDP to TCP easily
                             // Currently only UDP exists so you might not need to use the UDP_socket.
                             DatagramSocket UDP_socket = rtpPair.getIceSocketWrapper().getUDPSocket();
+                            //Socket tcpSocket = rtpPair.getIceSocketWrapper().getTCPSocket();
                             // Get information about remote address for packet settings
                             TransportAddress transport_address = rtpPair.getRemoteCandidate().getTransportAddress();
                             hostname = transport_address.getAddress();
@@ -125,6 +129,7 @@ public class IceTest {
                                 packet.setAddress(hostname);
                                 packet.setPort(port);
                                 UDP_socket.send(packet);
+                                //tcpSocket.connect(transport_address);
 
                                 // Receiving information is easier, no address or port information is needed:
                                 DatagramPacket receiving_packet = new DatagramPacket(new byte[10000], 10000);
@@ -138,7 +143,8 @@ public class IceTest {
                                  missing than the whole packet will be discarded.
                                  */
                             } catch (IOException e) {
-                                Application.check(false);
+                                // TODO
+                                //Application.check(false);
                             }
                         }
                     }

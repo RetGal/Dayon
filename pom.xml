@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.jitsi</groupId>
             <artifactId>ice4j</artifactId>
-            <version>3.2-8-gfa5f931</version>
+            <version>3.2-9-gb64c86f</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

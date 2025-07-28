@@ -82,6 +82,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private static boolean isWayland = false;
 
+    Agent agent;
+
     public Assisted(String tokenServerUrl) {
         tokenServerUrlFromYaml = tokenServerUrl;
         networkConfiguration = new NetworkAssistedEngineConfiguration();
@@ -139,9 +141,13 @@ public class Assisted implements Subscriber, ClipboardOwner {
         final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
         controlHandler.subscribe(this);
 
+        agent = new Agent(); // A simple ICE Agent
+
         networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler,
-                controlHandler, clipboardRequestHandler, screenshotRequestHandler, this);
+                controlHandler, clipboardRequestHandler, screenshotRequestHandler, this, agent);
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
+
+
 
         if (frame == null) {
             networkEngine.initUpnp();
@@ -152,10 +158,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             Log.info("Assisted start");
         }
 
-        return configureConnection(serverName, portNumber, autoConnect);
+        return configureConnection(serverName, portNumber, autoConnect, agent);
     }
 
-    private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
+    private boolean configureConnection(String serverName, String portNumber, boolean autoConnect, Agent agent) {
         if (isValidIpAddressOrHostName(serverName) && isValidPortNumber(portNumber)) {
             networkConfiguration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber), autoConnect);
             Log.info("Autoconfigured " + networkConfiguration);
@@ -179,10 +185,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             }
             return true;
         }
-        return requestConnectionSettings();
+        return requestConnectionSettings(agent);
     }
 
-    private boolean requestConnectionSettings() {
+    private boolean requestConnectionSettings(Agent agent) {
         networkConfiguration = new NetworkAssistedEngineConfiguration();
         ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
 
@@ -201,7 +207,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         });
 
         if (ok) {
-            applyConnectionSettings(connectionSettingsDialog);
+            applyConnectionSettings(connectionSettingsDialog, agent);
         } else {
             // cancel
             frame.onReady();
@@ -223,7 +229,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
     }
 
-    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
+    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog, Agent agent) {
         CompletableFuture.supplyAsync(() -> {
             final NetworkAssistedEngineConfiguration newConfiguration;
             String tokenString = connectionSettingsDialog.getToken().trim();
@@ -234,7 +240,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 // DO ICE STUFF
 
 
-                Agent agent = new Agent(); // A simple ICE Agent
+                //Agent agent = new Agent(); // A simple ICE Agent
 
                 /*** Setup the STUN servers: ***/
                 String[] hostnames = new String[]{"jitsi.org", "stun.ekiga.net"};
@@ -299,8 +305,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 }
 
 
-
-
                 String connectionParams = obtainConnectionParamsFromTokenServer(toSend);
                 newConfiguration = extractNetworkConfigurationFromConnectionParams(connectionParams);
             } else {
@@ -345,7 +349,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
         String connectionParams = null;
         try {
             // using 0 as port and null for open as both are not known at this point
+            Log.info(iceInfo);
             connectionParams = resolveToken(tokenServerUrl, TOKEN.getTokenString(), 0, null, networkEngine.getLocalAddress(), iceInfo);
+            Log.info(connectionParams);
         } catch (IOException | InterruptedException ex) {
             Log.warn("Could not resolve token " + TOKEN.getTokenString());
             if (ex instanceof InterruptedException) {
@@ -453,11 +459,11 @@ public class Assisted implements Subscriber, ClipboardOwner {
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
                 String assistantAddress = parts[0];
-                String port = parts[1];
+                String port = parts[1];     
                 // maybe extract timestamps of open and closed as well?
-                if (parts.length > 7) {
-                    // TODO ice?
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[5]), null);
+                if (parts.length > 4) {
+                    // TODO ice? // 0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assistant_ice
+                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[4]), parts[5]);
                 } else {
                     TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0, null);
                 }

@@ -1,5 +1,3 @@
-package mpo.dayon.common;
-
 /*
  * ice4j, the OpenSource Java Solution for NAT and Firewall Traversal.
  *
@@ -17,6 +15,7 @@ package mpo.dayon.common;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package mpo.dayon.common;
 
 import java.util.*;
 
@@ -75,7 +74,7 @@ public class SdpUtils
      */
     @SuppressWarnings("unchecked") // jain-sdp legacy code.
     public static void parseSDP(Agent localAgent, String sdp)
-            throws Exception
+        throws Exception
     {
         SdpFactory factory = new NistSdpFactory();
         SessionDescription sdess = factory.createSessionDescription(sdp);
@@ -120,7 +119,7 @@ public class SdpUtils
             int port = desc.getMedia().getMediaPort();
 
             TransportAddress defaultRtpAddress =
-                    new TransportAddress(streamConnAddr, port, Transport.UDP);
+                new TransportAddress(streamConnAddr, port, Transport.UDP);
 
             int rtcpPort = port + 1;
             String rtcpAttributeValue = desc.getAttribute("rtcp");
@@ -129,19 +128,19 @@ public class SdpUtils
                 rtcpPort = Integer.parseInt(rtcpAttributeValue);
 
             TransportAddress defaultRtcpAddress =
-                    new TransportAddress(streamConnAddr, rtcpPort, Transport.UDP);
+                new TransportAddress(streamConnAddr, rtcpPort, Transport.UDP);
 
             Component rtpComponent = stream.getComponent(Component.RTP);
             Component rtcpComponent = stream.getComponent(Component.RTCP);
 
             Candidate<?> defaultRtpCandidate
-                    = rtpComponent.findRemoteCandidate(defaultRtpAddress);
+                = rtpComponent.findRemoteCandidate(defaultRtpAddress);
             rtpComponent.setDefaultRemoteCandidate(defaultRtpCandidate);
 
             if(rtcpComponent != null)
             {
                 Candidate<?> defaultRtcpCandidate
-                        = rtcpComponent.findRemoteCandidate(defaultRtcpAddress);
+                    = rtcpComponent.findRemoteCandidate(defaultRtcpAddress);
                 rtcpComponent.setDefaultRemoteCandidate(defaultRtcpCandidate);
             }
         }
@@ -178,7 +177,7 @@ public class SdpUtils
         int port = Integer.parseInt(tokenizer.nextToken());
 
         TransportAddress transAddr
-                = new TransportAddress(address, port, transport);
+            = new TransportAddress(address, port, transport);
 
         tokenizer.nextToken(); //skip the "typ" String
         CandidateType type = CandidateType.parse(tokenizer.nextToken());
@@ -199,13 +198,13 @@ public class SdpUtils
             int relatedPort = Integer.parseInt(tokenizer.nextToken());
 
             TransportAddress raddr = new TransportAddress(
-                    relatedAddr, relatedPort, Transport.UDP);
+                            relatedAddr, relatedPort, Transport.UDP);
 
             relatedCandidate = component.findRemoteCandidate(raddr);
         }
 
         RemoteCandidate cand = new RemoteCandidate(transAddr, component, type,
-                foundation, priority, relatedCandidate);
+                        foundation, priority, relatedCandidate);
 
         component.addRemoteCandidate(cand);
 
