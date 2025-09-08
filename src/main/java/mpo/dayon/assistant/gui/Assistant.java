@@ -31,6 +31,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -605,14 +606,23 @@ public class Assistant implements ClipboardOwner {
             query += "&addr=" + activeAddress;
         }
         Log.debug("Requesting token using: " + query);
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(query))
-                .timeout(Duration.ofSeconds(5))
-                .build();
-        TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(query))
+                    .timeout(Duration.ofSeconds(5))
+                    .build();
+            // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+            @SuppressWarnings("squid:S2095")
+            HttpClient client = HttpClient.newBuilder()
+                    .proxy(ProxySelector.getDefault())
+                    .build();
+            TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
+        } catch (IOException | InterruptedException | SecurityException ex) {
+            Log.error("Could not obtain token", ex);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
     }
 
     private String limit(String string) {

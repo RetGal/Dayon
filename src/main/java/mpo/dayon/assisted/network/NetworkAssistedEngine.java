@@ -23,6 +23,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.UnknownHostException;
@@ -339,10 +340,14 @@ public class NetworkAssistedEngine extends NetworkEngine
         // null = unknown = -1, true = open = 1, false = closed = 0
         String query = format(tokenServerUrl, token, port, toInt(open), localAddress);
         Log.debug("Resolving token using: " + query);
-        HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
                 .timeout(Duration.ofSeconds(5))
+                .build();
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newBuilder()
+                .proxy(ProxySelector.getDefault())
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         final String responseString = response.body().trim();

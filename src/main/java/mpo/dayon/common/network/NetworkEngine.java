@@ -12,6 +12,7 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URI;
@@ -212,16 +213,18 @@ public abstract class NetworkEngine {
     }
 
     public String resolvePublicIp() {
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(WHATSMYIP_SERVER_URL))
-                .timeout(Duration.ofSeconds(5))
-                .build();
         try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(WHATSMYIP_SERVER_URL))
+                    .timeout(Duration.ofSeconds(5))
+                    .build();
+            // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+            @SuppressWarnings("squid:S2095")
+            HttpClient client = HttpClient.newBuilder()
+                    .proxy(ProxySelector.getDefault())
+                    .build();
             return client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
-        } catch (IOException | InterruptedException ex) {
+        } catch (IOException | InterruptedException | SecurityException ex) {
             Log.error("Could not determine public IP", ex);
             if (ex instanceof InterruptedException) {
                 Thread.currentThread().interrupt();

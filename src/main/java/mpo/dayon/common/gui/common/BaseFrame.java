@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
@@ -515,16 +516,18 @@ public abstract class BaseFrame extends JFrame {
     private static boolean isActiveTokenServer(String tokenServer) {
         CompletableFuture<Boolean> future = CompletableFuture.supplyAsync(() -> {
             try {
-                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-                @SuppressWarnings("squid:S2095")
-                HttpClient client = HttpClient.newBuilder().build();
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(tokenServer))
                         .timeout(Duration.ofSeconds(5))
                         .build();
+                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+                @SuppressWarnings("squid:S2095")
+                HttpClient client = HttpClient.newBuilder()
+                        .proxy(ProxySelector.getDefault())
+                        .build();
                 HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                 return response.statusCode() == 200 && response.body().startsWith("v.");
-            } catch (IOException | InterruptedException ex) {
+            } catch (IOException | InterruptedException | SecurityException ex) {
                 Log.error(format("Error checking token server %s", tokenServer), ex);
                 if (ex instanceof InterruptedException) {
                     Thread.currentThread().interrupt();

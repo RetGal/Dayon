@@ -22,6 +22,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.io.*;
 import java.net.InetSocketAddress;
+import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -303,12 +304,16 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newBuilder().build();
         String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, getLocalAddress());
         Log.debug("Querying token server " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
                 .timeout(Duration.ofSeconds(4))
+                .build();
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newBuilder()
+                .proxy(ProxySelector.getDefault())
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         Log.debug("Got %s", () -> response.body().trim());
