@@ -51,7 +51,7 @@ as snap:
 
 as flatpak:
 
-[<img src="https://flathub.org/assets/badges/flathub-badge-en.svg" width="180"/>](https://flathub.org/apps/details/io.github.retgal.Dayon)
+[<img src="https://flathub.org/api/badge?svg" width="180"/>](https://flathub.org/apps/details/io.github.retgal.Dayon)
 
 as nix:
 
