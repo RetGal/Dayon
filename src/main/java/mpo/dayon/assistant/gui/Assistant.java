@@ -31,6 +31,7 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -269,8 +270,10 @@ public class Assistant implements ClipboardOwner {
 
             private void setActiveIp(String address) {
                 if (!address.equals(activeIp)) {
+                    if (activeIp != null || !address.equals(publicIp)) {
+                        clearToken();
+                    }
                     activeIp = address;
-                    clearToken();
                 }
             }
         };
@@ -567,7 +570,7 @@ public class Assistant implements ClipboardOwner {
                     }
                     try {
                         requestToken();
-                    } catch (IOException | InterruptedException ex) {
+                    } catch (IOException | InterruptedException | SecurityException ex) {
                         Log.error("Could not obtain token", ex);
                         JOptionPane.showMessageDialog(frame, translate("token.create.error.msg"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
                         if (ex instanceof InterruptedException) {
@@ -590,27 +593,29 @@ public class Assistant implements ClipboardOwner {
         return tokenAction;
     }
 
-    private void requestToken() throws IOException, InterruptedException {
-        if (publicIp != null && publicIp.equals(activeIp)) {
+    private void requestToken() throws IOException, InterruptedException, SecurityException {
+        if (publicIp != null && (publicIp.equals(activeIp) || activeIp == null)) {
             boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
-            getToken(closed, networkEngine.getLocalAddress(), null);
+            getToken(closed, networkEngine.getLocalAddress(), activeIp);
         } else {
             getToken(false, networkEngine.getLocalAddress(), activeIp);
         }
     }
 
-    private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException {
+    private void getToken(boolean closed, String localAddress, String activeAddress) throws IOException, InterruptedException, SecurityException {
         String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
-        if (activeAddress != null) {
+        if (activeAddress != null && !activeAddress.equals(publicIp)) {
             query += "&addr=" + activeAddress;
         }
         Log.debug("Requesting token using: " + query);
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newBuilder().build();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
                 .timeout(Duration.ofSeconds(5))
+                .build();
+        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+        @SuppressWarnings("squid:S2095")
+        HttpClient client = HttpClient.newBuilder()
+                .proxy(ProxySelector.getDefault())
                 .build();
         TOKEN.setTokenString(limit(client.send(request, HttpResponse.BodyHandlers.ofString()).body()));
     }

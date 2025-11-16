@@ -3,6 +3,7 @@ package mpo.dayon.common.version;
 import mpo.dayon.common.log.Log;
 
 import java.io.IOException;
+import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.*;
 import java.time.Duration;
@@ -60,14 +61,16 @@ public class Version {
 
     public String getLatestRelease() {
         if (latestVersion == null) {
-            // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-            @SuppressWarnings("squid:S2095")
-            HttpClient client = HttpClient.newHttpClient();
             try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(RELEASE_LOCATION + "latest"))
                         .timeout(Duration.ofSeconds(5))
                         .method("HEAD", HttpRequest.BodyPublishers.noBody())
+                        .build();
+                // HttpClient doesn't implement AutoCloseable nor close before Java 21!
+                @SuppressWarnings("squid:S2095")
+                HttpClient client = HttpClient.newBuilder()
+                        .proxy(ProxySelector.getDefault())
                         .build();
                 HttpHeaders responseHeaders = client.send(request, HttpResponse.BodyHandlers.discarding()).headers();
                 String latestLocation = responseHeaders.firstValue("Location").orElse(null);
@@ -76,7 +79,7 @@ public class Version {
                 } else {
                     Log.warn("Failed to read latest version");
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException | InterruptedException | SecurityException e) {
                 Log.error("Exception", e);
                 if (e instanceof InterruptedException) {
                     Thread.currentThread().interrupt();

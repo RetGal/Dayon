@@ -29,8 +29,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private final Listeners<CaptureEngineListener> listeners = new Listeners<>();
 
-    private final Thread thread;
-
     /**
      * I keep only the checksum as I do not want to keep the referenceS to the
      * byte[] of the previous captureS.
@@ -43,7 +41,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private volatile boolean reconfigured;
 
-    private boolean running;
+    private final Thread thread;
+
+    private final AtomicBoolean running = new AtomicBoolean();
 
     public CaptureEngine(CaptureFactory captureFactory) {
         this.captureFactory = captureFactory;
@@ -52,7 +52,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         final int y = (captureDimension.height + TILE_DIMENSION.height -1) / TILE_DIMENSION.height;
         this.previousCapture = new long[x * y];
         resetPreviousCapture();
-        running = true;
 
         this.thread = new Thread(new RunnableEx() {
             @Override
@@ -86,14 +85,16 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public void start() {
         Log.debug("CaptureEngine start");
-        running = true;
+        running.set(true);
         thread.start();
     }
 
     public void stop() {
         Log.debug("CaptureEngine stop");
-        running = false;
-        thread.interrupt();
+        running.set(false);
+        if (thread != null) {
+            thread.interrupt();
+        }
         try {
             thread.join();
         } catch (InterruptedException e) {
@@ -111,7 +112,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         int skipped = 0;
         AtomicBoolean reset = new AtomicBoolean(false);
 
-        while (running) {
+        while (running.get()) {
             if (reconfigured) {
                 synchronized (reconfigurationLOCK) {
                     if (reconfigured) {
