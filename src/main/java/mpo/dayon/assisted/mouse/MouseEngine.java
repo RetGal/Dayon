@@ -6,10 +6,12 @@ import mpo.dayon.common.log.Log;
 
 import java.awt.*;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MouseEngine {
     private final Listeners<MouseEngineListener> listeners = new Listeners<>();
     private final Thread thread;
+    private final AtomicBoolean running = new AtomicBoolean();
     private final Random random = new Random();
 
     public MouseEngine(MouseEngineListener listener) {
@@ -28,12 +30,16 @@ public class MouseEngine {
 
     public void start() {
         Log.debug("MouseEngine start");
+        running.set(true);
         thread.start();
     }
 
     public void stop() {
         Log.debug("MouseEngine stop");
-        thread.interrupt();
+        running.set(false);
+        if (thread != null) {
+            thread.interrupt();
+        }
     }
 
     @SuppressWarnings("squid:S2189")
@@ -43,8 +49,7 @@ public class MouseEngine {
         int captureCount = 0;
         Point previous = new Point(-1, -1);
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
+        while (running.get()) {
             final PointerInfo pointerInfo = MouseInfo.getPointerInfo();
             // can happen if windows the ctrl + alt + delete screen is active
             if (pointerInfo != null) {
