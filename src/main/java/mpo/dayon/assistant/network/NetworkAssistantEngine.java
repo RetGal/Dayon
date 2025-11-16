@@ -253,10 +253,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
             queryPeerStatus(toSend);
             fireOnCheckingPeerStatus(false);
-            isInvertibleConnection = isReverseConnectionPossible();
-            if (isInvertibleConnection) {
-                return;
-            }
+// ICE - ignore
+//            isInvertibleConnection = isReverseConnectionPossible();
+//            if (isInvertibleConnection) {
+//                return;
+//            }
 
             if (token.getIceInfo() != null) {
                 // ICE

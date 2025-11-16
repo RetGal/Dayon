@@ -151,7 +151,7 @@ function readToken($pdo, $token, $version, $side) {
         if ($version == "1.3") {
             return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$closed*$assisted*$rport*$open" : "";
         }
-        if ($side == 'assistant') {
+        if ($side == "assistant") {
             return $stmt->fetch(PDO::FETCH_BOUND) ? "$assisted*$rport*$assisted_local*$open*$port*$assisted_ice" : "";
         }
         return $stmt->fetch(PDO::FETCH_BOUND) ? "$assistant*$port*$assistant_local*$closed*$rport*$assistant_ice" : "";
@@ -162,7 +162,11 @@ function readToken($pdo, $token, $version, $side) {
 }
 
 function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress, $ice) {
-    $sql = "UPDATE tokens SET assisted = :address, rport = :rport, assisted_local = :laddr, open = :open, ts = :ts, assisted_ice = :assisted_ice WHERE token = :token";
+    if (!empty($ice)) {
+        $sql = "UPDATE tokens SET assisted = :address, rport = :rport, assisted_local = :laddr, open = :open, ts = :ts, assisted_ice = :assisted_ice WHERE token = :token";
+    } else {
+        $sql = "UPDATE tokens SET assisted = :address, rport = :rport, assisted_local = :laddr, open = :open, ts = :ts WHERE token = :token";
+    }
     $ts = time();
     // assisted -1 unknown, 0 not open, 1 open -> ts
     $open = $open == 1 ? $ts : $open;
@@ -173,12 +177,18 @@ function updateAssisted($pdo, $token, $open, $address, $rport, $localAddress, $i
     $stmt->bindParam(':ts', $ts, PDO::PARAM_INT);
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->bindParam(':laddr', $localAddress, PDO::PARAM_STR);
-    $stmt->bindParam(':assisted_ice', $ice, PDO::PARAM_STR);
+    if (!empty($ice)) {
+        $stmt->bindParam(':assisted_ice', $ice, PDO::PARAM_STR);
+    }
     $stmt->execute();
 }
 
 function updateAssistant($pdo, $token, $closed, $localAddress, $ice)  {
-    $sql = "UPDATE tokens SET assistant_local = :laddr, closed = :closed,ts = :ts, assistant_ice = :assistant_ice WHERE token = :token";
+    if (!empty($ice)) {
+        $sql = "UPDATE tokens SET assistant_local = :laddr, closed = :closed,ts = :ts, assistant_ice = :assistant_ice WHERE token = :token";
+    } else {
+        $sql = "UPDATE tokens SET assistant_local = :laddr, closed = :closed,ts = :ts WHERE token = :token";
+    }
     $ts = time();
     $closed = $closed == 0 ? 0 : $ts;
     $stmt = $pdo->prepare($sql);
@@ -187,7 +197,9 @@ function updateAssistant($pdo, $token, $closed, $localAddress, $ice)  {
     $stmt->bindParam(':token', $token, PDO::PARAM_STR, 7);
     $stmt->bindParam(':laddr', $localAddress, PDO::PARAM_STR);
     // TODO check if required
-    $stmt->bindParam(':assistant_ice', $ice, PDO::PARAM_STR);
+    if (!empty($ice)) {
+        $stmt->bindParam(':assistant_ice', $ice, PDO::PARAM_STR);
+    }
     $stmt->execute();
 }
 
