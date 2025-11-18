@@ -219,7 +219,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             int port = 5000; // Choose any port
             try {
                 //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
-                agent.createComponent(stream, port, port, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
+                agent.createComponent(stream, port, port - 100, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
                 // The three last arguments are: preferredPort, minPort, maxPort
             } catch (BindException e) {
                 // TODO Auto-generated catch block

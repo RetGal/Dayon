@@ -82,7 +82,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private static boolean isWayland = false;
 
-    Agent agent;
+    private Agent agent;
 
     public Assisted(String tokenServerUrl) {
         tokenServerUrlFromYaml = tokenServerUrl;
@@ -158,10 +158,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             Log.info("Assisted start");
         }
 
-        return configureConnection(serverName, portNumber, autoConnect, agent);
+        return configureConnection(serverName, portNumber, autoConnect);
     }
 
-    private boolean configureConnection(String serverName, String portNumber, boolean autoConnect, Agent agent) {
+    private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
         if (isValidIpAddressOrHostName(serverName) && isValidPortNumber(portNumber)) {
             networkConfiguration = new NetworkAssistedEngineConfiguration(serverName, Integer.parseInt(portNumber), autoConnect);
             Log.info("Autoconfigured " + networkConfiguration);
@@ -207,7 +207,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         });
 
         if (ok) {
-            applyConnectionSettings(connectionSettingsDialog, agent);
+            applyConnectionSettings(connectionSettingsDialog);
         } else {
             // cancel
             frame.onReady();
@@ -229,7 +229,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
     }
 
-    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog, Agent agent) {
+    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
         CompletableFuture.supplyAsync(() -> {
             final NetworkAssistedEngineConfiguration newConfiguration;
             String tokenString = connectionSettingsDialog.getToken().trim();
@@ -271,7 +271,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 int port = 5000; // Choose any port
                 try {
                     //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
-                    agent.createComponent(stream, port, port, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
+                    agent.createComponent(stream, port, port - 100, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
                     // The three last arguments are: preferredPort, minPort, maxPort
                 } catch (BindException e) {
                     // TODO Auto-generated catch block
