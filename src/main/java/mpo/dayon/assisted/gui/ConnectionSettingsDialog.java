@@ -74,6 +74,10 @@ class ConnectionSettingsDialog {
         return this.assistantTokenTextField.getText();
     }
 
+    public void clearToken() {
+        this.assistantTokenTextField.setText("");
+    }
+
     JTabbedPane getTabbedPane() {
         return tabbedPane;
     }

@@ -177,7 +177,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, true, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
-            if (!token.isEmpty()) {
+            if (!token.isEmpty() && !token.equals(TOKEN.getTokenString())) {
                 return isValidToken(token) ? null : translate("connection.settings.invalidToken");
             } else {
                 String validationErrorMessage = validateIpAddress(connectionSettingsDialog.getIpAddress());
@@ -185,7 +185,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
                     connectionSettingsDialog.getTabbedPane().setSelectedIndex(1);
                     return validationErrorMessage;
                 }
-                return validatePortNumber(connectionSettingsDialog.getPortNumber());
+                validationErrorMessage = validatePortNumber(connectionSettingsDialog.getPortNumber());
+                if (validationErrorMessage == null) {
+                    TOKEN.reset();
+                    connectionSettingsDialog.clearToken();
+                }
+                return validationErrorMessage;
             }
         });
 
@@ -542,6 +547,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onReconfigured(NetworkAssistedEngineConfiguration configuration) {
+            if (!networkConfiguration.getServerName().equals(configuration.getServerName()) || networkConfiguration.getServerPort() != configuration.getServerPort()) {
+                TOKEN.reset();
+            }
             networkConfiguration = configuration;
             updateTokenServerUrl(configuration.getTokenServerUrl());
             frame.resetConnectionIndicators();
