@@ -594,7 +594,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void requestToken() throws IOException, InterruptedException, SecurityException {
-        if (publicIp != null && (publicIp.equals(activeIp) || activeIp == null)) {
+        if (!compatibilityModeActive.get() && publicIp != null && (publicIp.equals(activeIp) || activeIp == null)) {
             boolean closed = !networkEngine.selfTest(publicIp, networkConfiguration.getPort());
             getToken(closed, networkEngine.getLocalAddress(), activeIp);
         } else {
@@ -655,6 +655,7 @@ public class Assistant implements ClipboardOwner {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 compatibilityModeActive.set(!compatibilityModeActive.get());
+                clearToken();
                 if (compatibilityModeActive.get()) {
                     JOptionPane.showMessageDialog(frame, translate("compatibility.mode.info"),
                             translate("compatibility.mode.active"), JOptionPane.WARNING_MESSAGE);
