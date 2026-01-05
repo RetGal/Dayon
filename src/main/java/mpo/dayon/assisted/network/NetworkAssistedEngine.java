@@ -342,6 +342,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         Log.debug("Resolving token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
+                .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(5))
                 .build();
         // HttpClient doesn't implement AutoCloseable nor close before Java 21!

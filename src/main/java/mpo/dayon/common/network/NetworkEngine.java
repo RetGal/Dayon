@@ -38,6 +38,8 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
  */
 public abstract class NetworkEngine {
 
+    public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0";
+
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
     private static final String CLIPBOARD_DEBUG = "setClipboardContents %s";
@@ -216,6 +218,7 @@ public abstract class NetworkEngine {
         try {
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(WHATSMYIP_SERVER_URL))
+                    .header("User-Agent", USER_AGENT)
                     .timeout(Duration.ofSeconds(5))
                     .build();
             // HttpClient doesn't implement AutoCloseable nor close before Java 21!

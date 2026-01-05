@@ -38,6 +38,7 @@ import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
+import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
 import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -518,6 +519,7 @@ public abstract class BaseFrame extends JFrame {
             try {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(tokenServer))
+                        .header("User-Agent", USER_AGENT)
                         .timeout(Duration.ofSeconds(5))
                         .build();
                 // HttpClient doesn't implement AutoCloseable nor close before Java 21!

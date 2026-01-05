@@ -53,6 +53,7 @@ import static javax.swing.SwingConstants.HORIZONTAL;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
+import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class Assistant implements ClipboardOwner {
@@ -610,6 +611,7 @@ public class Assistant implements ClipboardOwner {
         Log.debug("Requesting token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
+                .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(5))
                 .build();
         // HttpClient doesn't implement AutoCloseable nor close before Java 21!
