@@ -26,5 +26,7 @@ Would you like to contribute and add your RVS to the list? [let me know](https:/
 
 Check the availability of a token server by clicking on its link. If a version number is displayed directly, it is active.
 * https://fensterkitt.ch/dayon/
-* https://dayon.helioho.st/rvs/
 * https://theater-courage.com/rvs/
+* https://dayon.helioho.st/rvs/
+* https://dayon.alwaysdata.net/rvs/
+      
