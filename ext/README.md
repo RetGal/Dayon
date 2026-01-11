@@ -25,6 +25,7 @@ Below you find a list of available public token servers that are free to use.
 Would you like to contribute and add your RVS to the list? [let me know](https://github.com/retgal/dayon/issues)!
 
 Check the availability of a token server by clicking on its link. If a version number is displayed directly, it is active.
-* https://fensterkitt.ch/dayon/
-* https://dayon.helioho.st/rvs/
-* https://theater-courage.com/rvs/
+* [CH] https://fensterkitt.ch/dayon/
+* [CH] https://theater-courage.com/rvs/
+* [US] https://dayon.helioho.st/rvs/
+* [FR] https://dayon.alwaysdata.net/rvs/
