@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Dayon!
+Name=Dayon! Assisted
 Version=1.0
 Exec=dayon
 Comment=Remote assistance
@@ -17,3 +17,4 @@ Type=Application
 Terminal=false
 StartupNotify=true
 Categories=RemoteAccess;Network;
+X-AppImage-Version=17.0.0

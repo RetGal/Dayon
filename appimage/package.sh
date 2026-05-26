@@ -19,6 +19,8 @@ if [ ! -f "../dist/dayon.jar" ]; then
   cd -
 fi
 
+echo "Updating desktop entries"
+sed -i "s/X-AppImage-Version=.*/X-AppImage-Version=${VERSION}/" dayon.appDir/*.desktop
 echo "Cleaning appDir"
 mkdir -p ./dayon.appDir/usr/lib
 rm -rf ./dayon.appDir/usr/lib/jrex
