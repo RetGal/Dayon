@@ -316,6 +316,9 @@
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.5.6</version>
+                        <configuration>
+                            <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.core.version}/mockito-core-${mockito.core.version}.jar</argLine>
+                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
