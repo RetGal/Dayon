@@ -345,12 +345,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                 .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(5))
                 .build();
-        // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-        @SuppressWarnings("squid:S2095")
-        HttpClient client = HttpClient.newBuilder()
-                .proxy(ProxySelector.getDefault())
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         final String responseString = response.body().trim();
         Log.debug("Token resolved: " + responseString);
         return responseString;

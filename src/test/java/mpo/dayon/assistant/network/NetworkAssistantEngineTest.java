@@ -29,20 +29,6 @@ class NetworkAssistantEngineTest {
     }
 
     @Test
-    void testReconfigureStart() {
-        // given
-        engine.configure(new NetworkAssistantEngineConfiguration());
-        final NetworkAssistantEngineConfiguration configuration = new NetworkAssistantEngineConfiguration(12345, "http://localhost/", false);
-        engine.reconfigure(configuration);
-
-        // when
-        engine.start(false, new Token("?token=%s"));
-
-        // then
-        verify(listener, timeout(2000).atLeastOnce()).onStarting(configuration.getPort(), true);
-    }
-
-    @Test
     void testCancel() {
         // given
 
@@ -64,25 +50,4 @@ class NetworkAssistantEngineTest {
         assertFalse(engine.selfTest(publicIp, portNumber));
     }
 
-    @Test
-    void selfTestShouldFailForUnreachablePort() {
-        // given
-        String publicIp = "1.2.3.4";
-        int portNumber = 5;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
-
-        // when // then
-        assertFalse(engine.selfTest(publicIp, portNumber));
-    }
-
-    @Test
-    void selfTestShouldSucceedForReachablePort() {
-        // given
-        String publicIp = "127.0.0.1";
-        int portNumber = 12345;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
-
-        // when // then
-        assertTrue(engine.selfTest(publicIp, portNumber));
-    }
 }

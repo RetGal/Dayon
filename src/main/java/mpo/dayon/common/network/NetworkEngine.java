@@ -40,6 +40,8 @@ public abstract class NetworkEngine {
 
     public static final String USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0";
 
+    protected static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
+
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
     private static final String CLIPBOARD_DEBUG = "setClipboardContents %s";
@@ -221,12 +223,7 @@ public abstract class NetworkEngine {
                     .header("User-Agent", USER_AGENT)
                     .timeout(Duration.ofSeconds(5))
                     .build();
-            // HttpClient doesn't implement AutoCloseable nor close before Java 21!
-            @SuppressWarnings("squid:S2095")
-            HttpClient client = HttpClient.newBuilder()
-                    .proxy(ProxySelector.getDefault())
-                    .build();
-            return client.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
+            return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body().trim();
         } catch (IOException | InterruptedException | SecurityException ex) {
             Log.error("Could not determine public IP", ex);
             if (ex instanceof InterruptedException) {
@@ -234,6 +231,23 @@ public abstract class NetworkEngine {
             }
         }
         return null;
+    }
+
+    public boolean isPortAccessible(int portNumber) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(format("%s/?p=%d", WHATSMYIP_SERVER_URL, portNumber)))
+                    .header("User-Agent", USER_AGENT)
+                    .timeout(Duration.ofSeconds(5))
+                    .build();
+            return HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body().trim().equals("1");
+        } catch (IOException | InterruptedException | SecurityException ex) {
+            Log.error("Could not determine port status", ex);
+            if (ex instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        return false;
     }
 
     // creates unrestricted port forwarding
@@ -248,11 +262,13 @@ public abstract class NetworkEngine {
             return false;
         }
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
+            boolean accessible;
             try (ServerSocket listener = new ServerSocket(portNumber)) {
-                try (Socket socket = new Socket()) {
-                    socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
-                }
+                accessible = isPortAccessible(portNumber);
             } catch (IOException e) {
+                accessible = false;
+            }
+            if (!accessible) {
                 Log.warn("Port " + portNumber + " is not reachable from the outside");
                 isOwnPortAccessible.set(false);
                 localAddress = obtainLocalAddress();
