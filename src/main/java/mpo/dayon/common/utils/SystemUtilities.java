@@ -229,7 +229,7 @@ public final class SystemUtilities {
     @SuppressWarnings("squid:S108")
     public static void pause(long ms) {
         long start = currentTimeMillis();
-        while(new Date().getTime() - start < ms){}
+        while(currentTimeMillis() - start < ms){}
     }
 
 }
