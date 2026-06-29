@@ -20,10 +20,10 @@ import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
-import org.ice4j.ice.Agent;
-import org.ice4j.ice.IceMediaStream;
-import org.ice4j.ice.KeepAliveStrategy;
+import org.ice4j.ice.*;
+import org.ice4j.ice.Component;
 import org.ice4j.ice.harvest.StunCandidateHarvester;
+import org.ice4j.socket.IceSocketWrapper;
 
 import javax.net.ssl.*;
 import java.awt.*;
@@ -40,6 +40,8 @@ import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.SplittableRandom;
+import java.util.logging.Level;
 
 import static java.lang.String.format;
 
@@ -77,20 +79,23 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private String publicIp;
 
-    private Agent agent;
+    private Agent iceAgent;
+
+    private boolean iceConnected;
+
+    private IceSocketWrapper iceSocketWrapper;
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
                                  NetworkControlMessageHandler controlHandler,
                                  NetworkClipboardRequestMessageHandler clipboardRequestHandler,
-                                 NetworkScreenshotRequestMessageHandler screenshotRequestHandler, ClipboardOwner clipboardOwner, Agent agent) {
+                                 NetworkScreenshotRequestMessageHandler screenshotRequestHandler, ClipboardOwner clipboardOwner) {
         this.captureConfigurationHandler = captureConfigurationHandler;
         this.compressorConfigurationHandler = compressorConfigurationHandler;
         this.controlHandler = controlHandler;
         this.clipboardRequestHandler = clipboardRequestHandler;
         this.screenshotRequestHandler = screenshotRequestHandler;
         this.clipboardOwner = clipboardOwner;
-        this.agent = agent;
     }
 
     public NetworkAssistedEngineConfiguration getConfiguration() {
@@ -165,13 +170,17 @@ public class NetworkAssistedEngine extends NetworkEngine
             // got public ip and able to expose a port?
             localPort = detectEnvironment();
             checkAndUpdateRVS(localPort, true);
+            // TODO workaround
+//            Log.debug("Updating configuration ServerName and ServerPort with Token values");
+//            configuration.setServerName(token.getPeerAddress());
+//            configuration.setServerPort(token.getPeerPort());
         }
         fireOnConnecting(configuration);
 
         // the assistant is not accessible check if reverting the connection initialisation is an option
         if (token.getTokenString() != null && Boolean.FALSE.equals(token.isPeerAccessible())) {
             fireOnPeerIsAccessible(false);
-            Log.info("Assistant is not accessible");
+            Log.info("Assistant might not be accessible");
             if (token.getLocalPort() == 0) {
                 // got public ip and able to expose a port?
                 localPort = detectEnvironment();
@@ -179,15 +188,15 @@ public class NetworkAssistedEngine extends NetworkEngine
                 checkAndUpdateRVS(localPort, false);
             }
             Log.debug(String.valueOf(token));
-            // revert the connection and start server if necessary and possible
-            if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
-                localPort = token.getLocalPort();
-                fireOnAccepting(localPort);
-                startServer(localPort);
-                Log.debug("Connected");
-            } else {
-                isAssistantInSameNetwork = detectLocalAssistant();
-            }
+//            // revert the connection and start server if necessary and possible
+//            if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
+//                localPort = token.getLocalPort();
+//                fireOnAccepting(localPort);
+//                startServer(localPort);
+//                Log.debug("Connected");
+//            } else {
+//                isAssistantInSameNetwork = false; // TODO revert detectLocalAssistant();
+//            }
         }
         // TODO REVERT
         //establishConnection(isAssistantInSameNetwork);
@@ -207,20 +216,94 @@ public class NetworkAssistedEngine extends NetworkEngine
             // ICE
             Log.info("ICE");
 
+            initializeIceAgent();
+
+            // Add state change listener
+            iceAgent.addStateChangeListener(evt -> {
+                IceProcessingState newState = (IceProcessingState) evt.getNewValue();
+                Log.info("ICE state changed: " + newState);
+                if (newState == IceProcessingState.TERMINATED) {
+                    Log.info("ICE processing terminated");
+                    Agent agent = (Agent) evt.getSource();
+                    for (IceMediaStream stream: agent.getStreams()) {
+                        if (stream.getName().contains("dayon")) {
+                            Component rtpComponent = stream.getComponent(org.ice4j.ice.Component.RTP);
+                            CandidatePair rtpPair = rtpComponent.getSelectedPair();
+                            // We use IceSocketWrapper, but you can just use the UDP socket
+                            // The advantage is that you can change the protocol from UDP to TCP easily
+                            // Currently only UDP exists so you might not need to use the wrapper.
+                            iceSocketWrapper = rtpPair.getIceSocketWrapper();
+                            //IceSocketWrapper wrapper  = iceSocketWrapper;
+                            // Get information about remote address for packet settings
+                            TransportAddress ta = rtpPair.getRemoteCandidate().getTransportAddress();
+                            Log.info("remote hostname: " + ta.getAddress());
+                            Log.info("remote port: " + ta.getPort());
+                            configuration.setServerName(ta.getHostName());
+                            configuration.setServerPort(ta.getPort());
+
+                            fireOnConnecting(configuration);
+                            try {
+                                connectToAssistant(3000);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+                            iceConnected = true;
+/*
+
+
+                                DatagramPacket packet = new DatagramPacket(new byte[10000],10000);
+                                packet.setAddress(ta.getAddress());
+                                packet.setPort(ta.getPort());
+                                try {
+                                    Log.info("wrapper.send >>>>>>>>>>>> ");
+                                    wrapper.send(packet);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+*/
+
+
+                        }
+                    }
+
+                } else if (newState == IceProcessingState.FAILED) {
+                    Log.error("ICE processing failed");
+                    //fireOnError("ICE connection failed");
+                }
+            });
+
             String remoteReceived = new String(Base64.getDecoder().decode(token.getIceInfo()));
-            Log.info(remoteReceived);
+            Log.debug(remoteReceived);
+            processRemoteSdp(remoteReceived);
 
-            try {
-                SdpUtils.parseSDP(agent, remoteReceived); // This will add the remote information to the agent.
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            //Hopefully now your Agent is totally setup. Now we need to start the connections:
-
-            agent.addStateChangeListener(new IceTest.StateListener()); // We will define this class soon
-            // You need to listen for state change so that once connected you can then use the socket.
-            agent.startConnectivityEstablishment(); // This will do all the work for you to connect
         }
+
+        int i = 0;
+        while (this.connection == null && i < 20) {
+            Log.info(iceAgent.getState().toString()+ "Waiting for ICE " +i);
+            pause(300L);
+            i++;
+        }
+        if (this.connection == null) {
+            Log.info("ICE failed - try revert connection");
+            // revert the connection and start server if necessary and possible
+            if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
+                int localPort = token.getLocalPort();
+                fireOnAccepting(localPort);
+                try {
+                    startServer(localPort);
+                } catch (KeyManagementException e) {
+                    throw new RuntimeException(e);
+                }
+                Log.debug("Connected");
+            }
+            //fireOnConnecting(configuration);
+            //connectToAssistant(5000);
+        } else {
+            Log.info("ICE succeeded");
+            Log.debug("ICE connection: " + connection + configuration);
+        }
+        //connectToAssistant(5000);
 
         // common part
         createInputStream();
@@ -232,7 +315,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         sender.sendHello(osId);
 
         // only if we initiated the connection, we also need to establish a file connection
-        if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork) {
+        if (token.getTokenString() == null || token.isPeerAccessible() || isAssistantInSameNetwork || iceConnected) {
             fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
             Log.debug("File connection established");
         }
@@ -243,6 +326,65 @@ public class NetworkAssistedEngine extends NetworkEngine
         initFileSender();
         createFileInputStream();
         fileReceiver.start();
+    }
+
+    private void processRemoteSdp(String remoteSdp) {
+        try {
+            SdpUtils.parseSDP(iceAgent, remoteSdp);
+            iceAgent.startConnectivityEstablishment();
+        } catch (Exception e) {
+            Log.error("Failed to process remote SDP", e);
+            //fireOnError("Failed to process remote connection details: " + e.getMessage());
+        }
+    }
+
+    private void initializeIceAgent() {
+        try {
+            iceAgent = new Agent();
+            iceAgent.setLoggingLevel(Level.INFO);
+
+            // Add STUN servers
+            String[] stunServers = {
+                    "jitsi.org:3478",
+                    "stun.ekiga.net:3478",
+                    "stun.l.google.com:19302",
+                    "stun1.l.google.com:19302",
+                    "stun2.l.google.com:19302",
+                    "stun3.l.google.com:19302",
+                    "stun4.l.google.com:19302"
+            };
+
+            for (String server : stunServers) {
+                try {
+                    String[] parts = server.split(":");
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(parts[0], Integer.parseInt(parts[1])), Transport.UDP);
+                    iceAgent.addCandidateHarvester(new StunCandidateHarvester(ta));
+                } catch (Exception e) {
+                    Log.warn("Failed to add STUN server: " + server, e);
+                }
+            }
+
+            // Add UPnP harvester if available
+//            try {
+//                iceAgent.addCandidateHarvester(Harvesters.getUPnPHarvester());
+//            } catch (Exception e) {
+//                Log.warn("UPnP harvester not available", e);
+//            }
+
+
+            // Component component = iceAgent.createComponent(Transport.UDP, 10000); // Local port
+
+
+            // Create media stream
+            int port = new SplittableRandom().nextInt(8000, 9000);
+
+            IceMediaStream mediaStream = iceAgent.createMediaStream("dayon");
+            iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
+
+        } catch (Exception e) {
+            Log.error("Failed to initialize ICE agent", e);
+            //fireOnError("Failed to initialize ICE: " + e.getMessage());
+        }
     }
 
     private boolean detectLocalAssistant() {
@@ -298,15 +440,17 @@ public class NetworkAssistedEngine extends NetworkEngine
             final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress(), null);
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
+                Log.debug("Length: " + parts.length);
                 String assistantAddress = parts[0];
                 String port = parts[1];
-                if (parts.length > 4) {
+                if (parts.length > 5) {
                     // got ICE info
                     Log.info("ICE");
                     token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, parts[5]);
                 } else {
                     Log.info("N-ICE");
-                    token.updateToken(assistantAddress, Integer.parseInt(port), "",null, 0, null);
+                    // assuming peerAccessible is true
+                    token.updateToken(assistantAddress, Integer.parseInt(port), "",true, 0, null);
                 }
             }
         } catch (InterruptedException e) {
@@ -334,6 +478,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void connectToAssistant(int connectionTimeout) throws IOException {
         try {
+            Log.info("Connecting to assistant " + configuration.getServerName() + ":" + configuration.getServerPort());
             connection = (SSLSocket) ssf.createSocket();
             connection.setNeedClientAuth(true);
             // grace period of twice the connection timeout (default 14 seconds) for the assistant to accept the connection
@@ -351,6 +496,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (IOException e) {
             Log.warn("Unable to connect to the assistant");
             throw e;
+        }
+        
+        // Final check to ensure connection is not null
+        if (connection == null) {
+            throw new IOException("Connection is null after connectToAssistant");
         }
     }
 

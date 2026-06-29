@@ -18,7 +18,7 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 
     private String serverName;
 
-    private final int serverPort;
+    private int serverPort;
 
     private final String tokenServerUrl;
 
@@ -68,6 +68,10 @@ public class NetworkAssistedEngineConfiguration extends Configuration {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
+    }
+
+    public void setServerPort(int port) {
+        this.serverPort = port;
     }
 
     public String getTokenServerUrl() {

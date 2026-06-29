@@ -16,10 +16,13 @@ import mpo.dayon.common.security.CustomTrustManager;
 import mpo.dayon.common.version.Version;
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
-import org.ice4j.ice.Agent;
-import org.ice4j.ice.IceMediaStream;
-import org.ice4j.ice.KeepAliveStrategy;
+import org.ice4j.ice.Component;
+import org.ice4j.ice.*;
 import org.ice4j.ice.harvest.StunCandidateHarvester;
+import org.ice4j.ice.harvest.TurnCandidateHarvester;
+import org.ice4j.ice.harvest.MappingCandidateHarvester;
+import org.ice4j.ice.harvest.TcpHarvester;
+import org.ice4j.socket.IceSocketWrapper;
 
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLServerSocketFactory;
@@ -39,6 +42,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.SplittableRandom;
+import java.util.logging.Level;
 
 import static java.lang.String.format;
 import static java.lang.Thread.sleep;
@@ -59,6 +64,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     private NetworkAssistantEngineConfiguration configuration;
 
     private SSLServerSocketFactory sssf;
+    private Agent iceAgent;
+    private IceMediaStream mediaStream;
 
     private SSLSocketFactory ssf;
 
@@ -98,6 +105,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             return;
         }
         this.token = token;
+        
+        // Initialize ICE agent if not already done
+//        if (iceAgent == null) {
+//            initializeIceAgent();
+//        }
 
         receiver = new Thread(new RunnableEx() {
             @Override
@@ -188,49 +200,55 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             // DO ICE STUFF
 
 
-            Agent agent = new Agent(); // A simple ICE Agent
+            // Initialize ICE agent if not already done
+            if (iceAgent == null) {
+                initializeIceAgent();
+            }
+
+
+                //Agent agent = new Agent(); // A simple ICE Agent
 
             /*** Setup the STUN servers: ***/
             String[] hostnames = new String[]{"jitsi.org", "stun.ekiga.net"};
-            // Look online for actively working public STUN Servers. You can find
-            // free servers.
-            // Now add these URLS as Stun Servers with standard 3478 port for STUN
-            // servrs.
-            for (String hostname : hostnames) {
-                try {
-                    // InetAddress qualifies a url to an IP Address, if you have an
-                    // error here, make sure the url is reachable and correct
-                    TransportAddress ta = new TransportAddress(InetAddress.getByName(hostname), 3478, Transport.UDP);
-                    // Currently Ice4J only supports UDP and will throw an Error
-                    // otherwise
-                    agent.addCandidateHarvester(new StunCandidateHarvester(ta));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            /*
-             * Now you have your Agent setup. The agent will now be able to know its
-             * IP Address and Port once you attempt to connect. You do need to setup
-             * Streams on the Agent to open a flow of information on a specific
-             * port.
-             */
-            IceMediaStream stream = agent.createMediaStream("stream");
-            int port = 5000; // Choose any port
-            try {
-                //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
-                agent.createComponent(stream, port, port - 100, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
-                // The three last arguments are: preferredPort, minPort, maxPort
-            } catch (BindException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+//            // Look online for actively working public STUN Servers. You can find
+//            // free servers.
+//            // Now add these URLS as Stun Servers with standard 3478 port for STUN
+//            // servrs.
+//            for (String hostname : hostnames) {
+//                try {
+//                    // InetAddress qualifies a url to an IP Address, if you have an
+//                    // error here, make sure the url is reachable and correct
+//                    TransportAddress ta = new TransportAddress(InetAddress.getByName(hostname), 3478, Transport.UDP);
+//                    // Currently Ice4J only supports UDP and will throw an Error
+//                    // otherwise
+//                    agent.addCandidateHarvester(new StunCandidateHarvester(ta));
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//
+//            /*
+//             * Now you have your Agent setup. The agent will now be able to know its
+//             * IP Address and Port once you attempt to connect. You do need to setup
+//             * Streams on the Agent to open a flow of information on a specific
+//             * port.
+//             */
+//            IceMediaStream stream = agent.createMediaStream("stream");
+//            int port = 5000; // Choose any port
+//            try {
+//                //agent.createComponent(stream, Transport.UDP, port, port, port + 100);
+//                agent.createComponent(stream, port, port - 100, port + 100, KeepAliveStrategy.SELECTED_AND_TCP);
+//                // The three last arguments are: preferredPort, minPort, maxPort
+//            } catch (BindException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (IllegalArgumentException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            } catch (IOException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
 
             /*
              * Now we have our port and we have our stream to allow for information
@@ -241,16 +259,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
              * to your public sever and retrieve the information. I even use a
              * simple PHP server I wrote to store and spit out information.
              */
-            String toSend = null;
-            try {
-                toSend = SdpUtils.createSDPDescription(agent);
-                toSend = Base64.getEncoder().encodeToString(toSend.getBytes(StandardCharsets.UTF_8));
-                // Each computersends this information
-                // This information describes all the possible IP addresses and
-                // ports
-            } catch (Throwable e) {
-                e.printStackTrace();
-            }
+            String toSend = getLocalSdp();
             queryPeerStatus(toSend);
             fireOnCheckingPeerStatus(false);
 // ICE - ignore
@@ -266,16 +275,69 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 String remoteReceived = new String(Base64.getDecoder().decode(token.getIceInfo()));
                 Log.info(remoteReceived);
 
-                try {
-                    SdpUtils.parseSDP(agent, remoteReceived); // This will add the remote information to the agent.
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+                // processRemoteSdp(remoteReceived);
+/*
+
+                // Add state change listener
+                iceAgent.addStateChangeListener(evt -> {
+                    IceProcessingState newState = (IceProcessingState) evt.getNewValue();
+                    Log.info("ICE state changed: " + newState);
+                    if (newState == IceProcessingState.TERMINATED) {
+                        Log.info("ICE processing terminated");
+                        Agent agent = (Agent) evt.getSource();
+                        for (IceMediaStream stream: agent.getStreams()) {
+                            if (stream.getName().contains("dayon")) {
+                                Component rtpComponent = stream.getComponent(org.ice4j.ice.Component.RTP);
+                                CandidatePair rtpPair = rtpComponent.getSelectedPair();
+                                // We use IceSocketWrapper, but you can just use the UDP socket
+                                // The advantage is that you can change the protocol from UDP to TCP easily
+                                // Currently only UDP exists so you might not need to use the wrapper.
+                                IceSocketWrapper wrapper  = rtpPair.getIceSocketWrapper();
+                                // Get information about remote address for packet settings
+                                TransportAddress ta = rtpPair.getRemoteCandidate().getTransportAddress();
+                                Log.info("remote hostname: " + ta.getAddress());
+                                Log.info("remote port: " + ta.getPort());
+
+
+
+                                DatagramPacket packet = new DatagramPacket(new byte[10000],10000);
+                                packet.setAddress(ta.getAddress());
+                                packet.setPort(ta.getPort());
+                                try {
+                                    Log.info("wrapper.send >>>>>>>>>>>> ");
+                                    wrapper.send(packet);
+                                } catch (IOException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+
+
+                            }
+                        }
+
+                    } else if (newState == IceProcessingState.FAILED) {
+                        Log.error("ICE processing failed");
+                        //fireOnError("ICE connection failed");
+                    }
+                });
+
+
+
+*/
+
+
+//                try {
+//                    SdpUtils.parseSDP(iceAgent, remoteReceived); // This will add the remote information to the agent.
+//                } catch (Exception e) {
+//                    throw new RuntimeException(e);
+//                }
                 //Hopefully now your Agent is totally setup. Now we need to start the connections:
 
-                agent.addStateChangeListener(new IceTest.StateListener()); // We will define this class soon
+                //iceAgent.addStateChangeListener(new IceTest.StateListener()); // We will define this class soon
                 // You need to listen for state change so that once connected you can then use the socket.
-                agent.startConnectivityEstablishment(); // This will do all the work for you to connect
+                //iceAgent.startConnectivityEstablishment(); // This will do all the work for you to connect
+
+
             }
 
 
@@ -290,9 +352,121 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             throw new IOException("Cancelled");
         }
         // if we can expose our port, we start as server, wait for the assisted to connect and the assistant to accept
+        Log.info("STARTING CLASSIC MODE");
         startClassicMode(compatibilityMode);
     }
 
+    private void initializeIceAgent() {
+        try {
+            iceAgent = new Agent();
+            iceAgent.setLoggingLevel(Level.INFO);
+            
+            // Add STUN servers
+            String[] stunServers = {
+                "jitsi.org:3478",
+                "stun.ekiga.net:3478",
+                "stun.l.google.com:19302",
+                "stun1.l.google.com:19302",
+                "stun2.l.google.com:19302",
+                "stun3.l.google.com:19302",
+                "stun4.l.google.com:19302"
+            };
+            
+            for (String server : stunServers) {
+                try {
+                    String[] parts= server.split(":");
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(parts[0], Integer.parseInt(parts[1])), Transport.UDP);
+                    iceAgent.addCandidateHarvester(new StunCandidateHarvester(ta));
+                } catch (Exception e) {
+                    Log.warn("Failed to add STUN server: " + server, e);
+                }
+            }
+            
+            // Add UPnP harvester if available
+//            try {
+//                iceAgent.addCandidateHarvester(Harvesters.getUPnPHarvester());
+//            } catch (Exception e) {
+//                Log.warn("UPnP harvester not available", e);
+//            }
+
+
+            // Component component = iceAgent.createComponent(Transport.UDP, 10000); // Local port
+
+
+            // Create media stream
+            int port = configuration.getPort();
+            //port = new SplittableRandom().nextInt(8000, 9000);
+
+            mediaStream = iceAgent.createMediaStream("dayon");
+            Component component = iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
+            
+            // Add state change listener
+/*            iceAgent.addStateChangeListener(evt -> {
+                IceProcessingState newState = (IceProcessingState) evt.getNewValue();
+                Log.info("ICE state changed: " + newState);
+                if (newState == IceProcessingState.TERMINATED) {
+                    Log.info("ICE processing terminated");
+                    Agent agent = (Agent) evt.getSource();
+                    for (IceMediaStream stream: agent.getStreams()) {
+                        if (stream.getName().contains("dayon")) {
+                            Component rtpComponent = stream.getComponent(org.ice4j.ice.Component.RTP);
+                            CandidatePair rtpPair = rtpComponent.getSelectedPair();
+                            // We use IceSocketWrapper, but you can just use the UDP socket
+                            // The advantage is that you can change the protocol from UDP to TCP easily
+                            // Currently only UDP exists so you might not need to use the wrapper.
+                            IceSocketWrapper wrapper  = rtpPair.getIceSocketWrapper();
+                            // Get information about remote address for packet settings
+                            TransportAddress ta = rtpPair.getRemoteCandidate().getTransportAddress();
+                            Log.info("remote hostname: " + ta.getAddress());
+                            Log.info("remote port: " + ta.getPort());
+
+                            DatagramPacket packet = new DatagramPacket(new byte[10000],10000);
+                            packet.setAddress(ta.getAddress());
+                            packet.setPort(ta.getPort());
+                            try {
+                                Log.info("wrapper.send >>>>>>>>>>>> ");
+                                wrapper.send(packet);
+                            } catch (IOException e) {
+                                throw new RuntimeException(e);
+                            }
+
+
+                        }
+                    }
+
+                } else if (newState == IceProcessingState.FAILED) {
+                    Log.error("ICE processing failed");
+                    //fireOnError("ICE connection failed");
+                }
+            });
+
+ */
+            
+        } catch (Exception e) {
+            Log.error("Failed to initialize ICE agent", e);
+            //fireOnError("Failed to initialize ICE: " + e.getMessage());
+        }
+    }
+    
+    private String getLocalSdp() {
+        try {
+            return Base64.getEncoder().encodeToString(SdpUtils.createSDPDescription(iceAgent).getBytes(StandardCharsets.UTF_8));
+        } catch (Throwable e) {
+            Log.error("Failed to create local SDP", e);
+            return null;
+        }
+    }
+    
+    private void processRemoteSdp(String remoteSdp) {
+        try {
+            SdpUtils.parseSDP(iceAgent, remoteSdp);
+            iceAgent.startConnectivityEstablishment();
+        } catch (Exception e) {
+            Log.error("Failed to process remote SDP", e);
+            //fireOnError("Failed to process remote connection details: " + e.getMessage());
+        }
+    }
+    
     private void startClassicMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
         sssf = CustomTrustManager.initSslContext(compatibilityMode).getServerSocketFactory();
         Log.info(format("Dayon! server [port:%d]", configuration.getPort()));
