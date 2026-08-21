@@ -59,6 +59,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private CompressorEngine compressorEngine;
 
+    private MouseEngine mouseEngine;
+
     private NetworkAssistedEngine networkEngine;
 
     private boolean coldStart = true;
@@ -361,7 +363,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         Log.info("Assisted stop");
         if (networkEngine != null) {
             networkEngine.farewell();
-            stopCaCoEngines();
+            stopCaCoMoEngines();
             if (networkEngine != null) {
                 networkEngine.cancel();
                 networkEngine = null;
@@ -405,10 +407,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
             captureEngine.reconfigure(captureEngineConfiguration);
             return;
         }
-
-        final MouseEngine mouseEngine = new MouseEngine(networkEngine);
-        mouseEngine.start();
-
         initNewCaptureEngine(shareAllScreens.get());
     }
 
@@ -428,7 +426,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         captureEngine.start();
     }
 
-    private void stopCaCoEngines() {
+    private void stopCaCoMoEngines() {
         if (captureEngine != null) {
             captureEngine.stop();
             captureEngine = null;
@@ -436,6 +434,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
         if (compressorEngine != null) {
             compressorEngine.stop();
             compressorEngine = null;
+        }
+        if (mouseEngine != null) {
+            mouseEngine.stop();
+            mouseEngine = null;
         }
     }
 
@@ -526,11 +528,15 @@ public class Assisted implements Subscriber, ClipboardOwner {
             } else {
                 initNewCaptureEngine(shareAllScreens.get());
             }
+            if (mouseEngine == null) {
+                mouseEngine = new MouseEngine(networkEngine);
+            }
+            mouseEngine.start();
         }
 
         @Override
         public void onDisconnecting() {
-            stopCaCoEngines();
+            stopCaCoMoEngines();
             frame.onDisconnecting();
         }
 
