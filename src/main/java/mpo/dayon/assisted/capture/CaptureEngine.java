@@ -96,7 +96,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             thread.interrupt();
         }
         try {
-            thread.join();
+            if (thread != null) {
+                thread.join();
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
