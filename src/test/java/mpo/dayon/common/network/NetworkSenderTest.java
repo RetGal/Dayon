@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 
 import java.awt.*;
 import java.awt.im.InputContext;
@@ -38,7 +37,7 @@ class NetworkSenderTest {
 
     @BeforeEach
     void init() {
-        outMock = Mockito.mock(ObjectOutputStream.class);
+        outMock = mock(ObjectOutputStream.class);
         valueCaptor = ArgumentCaptor.forClass(int.class);
         sender = new NetworkSender(outMock);
         sender.start(1);

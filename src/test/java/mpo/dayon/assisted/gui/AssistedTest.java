@@ -6,14 +6,12 @@ import mpo.dayon.common.log.LogLevel;
 import mpo.dayon.common.log.console.ConsoleAppender;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.awt.*;
 import java.lang.reflect.Field;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class AssistedTest {
 
@@ -25,7 +23,7 @@ class AssistedTest {
         final Field out = Log.class.getDeclaredField("out");
         out.setAccessible(true);
         assisted = new Assisted(null);
-        logApp = Mockito.spy(new ConsoleAppender());
+        logApp = spy(new ConsoleAppender());
         out.set("out", logApp);
     }
 
@@ -86,13 +84,13 @@ class AssistedTest {
             java.util.List<Object> listenerList = (java.util.List<Object>) listeners.getClass().getMethod("getListeners").invoke(listeners);
             
             // when - trigger onConnected on the first listener (MyNetworkAssistedEngineListener)
-            assertTrue(!listenerList.isEmpty());
+            assertFalse(listenerList.isEmpty());
             Object listener = listenerList.get(0);
             listener.getClass().getMethod("onConnected", String.class).invoke(listener, "test-fingerprints");
             
             // then - verify that mouseEngine is now not null
             Object mouseEngine = mouseEngineField.get(assisted);
-            assertTrue(mouseEngine != null, "MouseEngine should be created onConnected");
+            assertNotNull(mouseEngine, "MouseEngine should be created onConnected");
         }
     }
 }
