@@ -382,6 +382,7 @@ public class Assistant implements ClipboardOwner {
                 pane.add(colorsLbl).setEnabled(!networkConfiguration.isMonochromePeer());
                 pane.add(colorsCb).setEnabled(!networkConfiguration.isMonochromePeer());
 
+                final AtomicBoolean dirty = new AtomicBoolean(false);
                 tickMillisSlider.addChangeListener(e -> {
                     actualTick.setText(tickMillisSlider.getValue() < 1000 ? format("%dms", tickMillisSlider.getValue()) : "1s");
                     if (!tickMillisSlider.getValueIsAdjusting()) {
@@ -399,6 +400,7 @@ public class Assistant implements ClipboardOwner {
                 colorsCb.addActionListener(e -> {
                     grayLevelsLbl.setEnabled(!colorsCb.isSelected());
                     grayLevelsSlider.setEnabled(!colorsCb.isSelected());
+                    dirty.set(true); // colors changed, will need to send new configuration to the assisted after ok has been clicked
                 });
 
                 final boolean ok = DialogFactory.showOkCancel(captureFrame, translate("capture"), pane, true, null);
@@ -406,7 +408,7 @@ public class Assistant implements ClipboardOwner {
                 if (ok) {
                     final CaptureEngineConfiguration newCaptureEngineConfiguration = new CaptureEngineConfiguration(tickMillisSlider.getValue(),
                             toGrayLevel(grayLevelsSlider.getValue()), colorsCb.isSelected());
-                    updateCaptureConfiguration(newCaptureEngineConfiguration);
+                    updateCaptureConfiguration(newCaptureEngineConfiguration, dirty.get());
                 }
             }
         };
@@ -415,11 +417,13 @@ public class Assistant implements ClipboardOwner {
         return configure;
     }
 
-    private void updateCaptureConfiguration(CaptureEngineConfiguration newCaptureEngineConfiguration) {
+    private void updateCaptureConfiguration(CaptureEngineConfiguration newCaptureEngineConfiguration, boolean isDirty) {
         if (!newCaptureEngineConfiguration.equals(captureEngineConfiguration)) {
             captureEngineConfiguration = newCaptureEngineConfiguration;
             captureEngineConfiguration.persist();
-            sendCaptureConfiguration(captureEngineConfiguration);
+            if (isDirty) {
+                sendCaptureConfiguration(captureEngineConfiguration);
+            }
         }
     }
 

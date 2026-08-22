@@ -39,7 +39,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     private CaptureEngineConfiguration configuration;
 
-    private volatile boolean reconfigured;
+    private final AtomicBoolean reconfigured = new AtomicBoolean();
 
     private final Thread thread;
 
@@ -65,7 +65,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
     public void configure(CaptureEngineConfiguration configuration) {
         synchronized (reconfigurationLOCK) {
             this.configuration = configuration;
-            this.reconfigured = true;
+            this.reconfigured.set(true);
         }
     }
 
@@ -79,7 +79,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         // We're keeping locally a previous state, so we must be sure to send at
         // least once the previous capture state to the new listener.
         synchronized (reconfigurationLOCK) {
-            this.reconfigured = true;
+            if (configuration != null) {
+                this.reconfigured.set(true);
+            }
         }
     }
 
@@ -115,24 +117,21 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         AtomicBoolean reset = new AtomicBoolean(false);
 
         while (running.get()) {
-            if (reconfigured) {
+            if (reconfigured.compareAndSet(true, false)) {
                 synchronized (reconfigurationLOCK) {
-                    if (reconfigured) {
-                        // assuming everything has changed (!)
-                        quantization = configuration.getCaptureQuantization();
-                        captureColors = configuration.isCaptureColors();
-                        tick = configuration.getCaptureTick();
-                        start = System.currentTimeMillis();
-                        captureCount = 0;
-                        skipped = 0;
-                        resetPreviousCapture();
-                        // I'm using a flag to tag the capture as a RESET - it is then easier
-                        // to handle the reset message until the assistant without having to
-                        // change anything (e.g., merging mechanism in the compressor engine).
-                        reset.set(true);
-                        Log.info(format("Capture engine has been reconfigured [tile:%d]%s", captureId, configuration));
-                        reconfigured = false;
-                    }
+                    // assuming everything has changed (!)
+                    quantization = configuration.getCaptureQuantization();
+                    captureColors = configuration.isCaptureColors();
+                    tick = configuration.getCaptureTick();
+                    start = System.currentTimeMillis();
+                    captureCount = 0;
+                    skipped = 0;
+                    resetPreviousCapture();
+                    // I'm using a flag to tag the capture as a RESET - it is then easier
+                    // to handle the reset message until the assistant without having to
+                    // change anything (e.g., merging mechanism in the compressor engine).
+                    reset.set(true);
+                    Log.info(format("Capture engine has been reconfigured [tile:%d]%s", captureId, configuration));
                 }
             }
 
