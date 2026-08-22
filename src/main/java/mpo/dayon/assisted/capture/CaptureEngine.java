@@ -149,10 +149,9 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             final CaptureTile[] dirty = computeDirtyTiles(pixels);
 
             if (dirty != null) {
-                final Capture capture = new Capture(captureId, reset.get(), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
+                final Capture capture = new Capture(captureId, reset.getAndSet(false), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
                 fireOnCaptured(capture); // might update the capture (i.e., merging with previous not sent yet)
                 updatePreviousCapture(capture);
-                reset.set(false);
             }
 
             skipped = syncOnTick(start, captureCount, captureId, tick);
