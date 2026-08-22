@@ -146,13 +146,15 @@ public final class Compressor {
         final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(captureDimension.width, captureDimension.height, tileDimension.width, tileDimension.height);
         final CaptureTile[] dirty = new CaptureTile[xywh.length];
         int idx = 0;
-        while (idx < dirty.length) {
+        final int dirtyLen = dirty.length;
+        while (idx < dirtyLen) {
             final int markerCount = in.readByte();
             if (markerCount > 0) // non-null tile(s)
             {
-                for (int tidx = idx; tidx < idx + markerCount; tidx++) {
+                final int endIdx = idx + markerCount;
+                for (int tidx = idx; tidx < endIdx; tidx++) {
                     final int value = in.readShort();
-                    if (value >= 0 && value < 256) // single-level
+                    if (value >= 0 && value < 256) // single-level (most common case)
                     {
                         dirty[tidx] = new CaptureTile(tidx, xywh[tidx], (byte) value);
                     } else if (value == 256) // multi-level (cached)
@@ -163,7 +165,7 @@ public final class Compressor {
                         processUncached(cache, in, xywh[tidx], dirty, tidx, value);
                     }
                 }
-                idx += markerCount;
+                idx = endIdx;
             } else // null tile(s)
             {
                 idx += (-markerCount + 1);
