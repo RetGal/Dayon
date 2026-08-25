@@ -1,13 +1,12 @@
 package mpo.dayon.common.log;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 
 public abstract class LogAppender {
-	// SimpleDateFormat used instead of java.time for performance in hot logging path
-	@SuppressWarnings("java:S2143")
-	private static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() ->
-			new SimpleDateFormat("HH:mm:ss.SSS"));
+	private static final ThreadLocal<DateTimeFormatter> dateFormat = ThreadLocal.withInitial(() ->
+			DateTimeFormatter.ofPattern("HH:mm:ss.SSS").withZone(ZoneId.systemDefault()));
 	private static final ThreadLocal<StringBuilder> builder = ThreadLocal.withInitial(StringBuilder::new);
 
 	protected String format(LogLevel level, String message) {
@@ -18,7 +17,7 @@ public abstract class LogAppender {
 		sb.append(String.format("[%20.20s]", threadName));
 		sb.append(String.format(" [%5.5s]", level));
 		sb.append(" (");
-		sb.append(dateFormat.get().format(new Date()));
+		sb.append(dateFormat.get().format(Instant.now()));
 		sb.append(") ");
 		if (message != null) {
 			sb.append(message);
