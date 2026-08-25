@@ -38,6 +38,7 @@ import static mpo.dayon.common.gui.common.FrameType.ASSISTED;
 import static mpo.dayon.common.gui.common.ImageNames.FINGERPRINT;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 import static mpo.dayon.common.gui.toolbar.ToolBar.*;
+import static mpo.dayon.common.log.LogAppender.cleanup;
 import static mpo.dayon.common.network.NetworkEngine.USER_AGENT;
 import static mpo.dayon.common.network.NetworkEngine.manageRouterPorts;
 import static mpo.dayon.common.utils.SystemUtilities.*;
@@ -104,6 +105,7 @@ public abstract class BaseFrame extends JFrame {
                 preExitAction.actionPerformed(new ActionEvent(this, ActionEvent.ACTION_PERFORMED, ""));
             }
             Log.info("Bye!");
+            cleanup();
             System.exit(0);
         }
     }

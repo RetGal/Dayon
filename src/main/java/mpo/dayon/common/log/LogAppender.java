@@ -4,8 +4,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public abstract class LogAppender {
+	// SimpleDateFormat used instead of java.time for performance in hot logging path
+	@SuppressWarnings("java:S2114")
 	private static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() ->
-		new SimpleDateFormat("HH:mm:ss.SSS"));
+			new SimpleDateFormat("HH:mm:ss.SSS"));
 	private static final ThreadLocal<StringBuilder> builder = ThreadLocal.withInitial(StringBuilder::new);
 
 	protected String format(LogLevel level, String message) {
@@ -29,5 +31,11 @@ public abstract class LogAppender {
 	}
 
 	public abstract void append(LogLevel level, String message, Throwable error);
+
+	// Cleanup ThreadLocal resources. Should be called on application shutdown.
+	public static void cleanup() {
+		dateFormat.remove();
+		builder.remove();
+	}
 
 }
