@@ -5,7 +5,7 @@ import java.util.Date;
 
 public abstract class LogAppender {
 	// SimpleDateFormat used instead of java.time for performance in hot logging path
-	@SuppressWarnings("java:S2114")
+	@SuppressWarnings("java:S2143")
 	private static final ThreadLocal<SimpleDateFormat> dateFormat = ThreadLocal.withInitial(() ->
 			new SimpleDateFormat("HH:mm:ss.SSS"));
 	private static final ThreadLocal<StringBuilder> builder = ThreadLocal.withInitial(StringBuilder::new);
