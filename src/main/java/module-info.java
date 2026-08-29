@@ -8,6 +8,8 @@ module mpo.dayon {
     requires org.tukaani.xz;
     requires sdp.api;
     requires WaifUPnP;
+    requires com.sun.jna;
+    requires com.sun.jna.platform;
 
     exports mpo.dayon.assistant;
     exports mpo.dayon.assisted;
