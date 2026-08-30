@@ -154,7 +154,6 @@ public class Assisted implements Subscriber, ClipboardOwner {
             networkEngine.configure(networkConfiguration);
             networkConfiguration.persist();
         } else {
-            networkConfiguration = new NetworkAssistedEngineConfiguration();
             if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(valueOf(networkConfiguration.getServerPort()))) {
                 autoConnect = networkConfiguration.isAutoConnect();
                 if (autoConnect) {
@@ -175,9 +174,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean requestConnectionSettings() {
-        networkConfiguration = new NetworkAssistedEngineConfiguration();
         ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
-
         final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, true, () -> {
             final String token = connectionSettingsDialog.getToken().trim();
             if (!token.isEmpty() && !token.equals(TOKEN.getTokenString())) {

@@ -124,19 +124,19 @@ class AssistedFrame extends BaseFrame {
     }
 
     void enableStartButton() {
-        startButton.setEnabled(true);
+        startAction.setEnabled(true);
     }
 
     void disableStartButton() {
-        startButton.setEnabled(false);
+        startAction.setEnabled(false);
     }
 
     void enableStopButton() {
-        stopButton.setEnabled(true);
+        stopAction.setEnabled(true);
     }
 
     void disableStopButton() {
-        stopButton.setEnabled(false);
+        stopAction.setEnabled(false);
     }
 
     void onConnecting(String serverName, int serverPort) {

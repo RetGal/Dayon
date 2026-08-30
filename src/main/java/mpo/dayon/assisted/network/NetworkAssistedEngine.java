@@ -169,6 +169,10 @@ public class NetworkAssistedEngine extends NetworkEngine
             // got public ip and able to expose a port?
             localPort = detectEnvironment();
             checkAndUpdateRVS(localPort, true);
+            if (token.getPeerAddress() == null || token.getPeerPort() == 0) {
+                Log.warn("Token resolution failed");
+                return;
+            }
             Log.debug("Updating configuration ServerName and ServerPort with Token values");
             configuration.setServerName(token.getPeerAddress());
             configuration.setServerPort(token.getPeerPort());
