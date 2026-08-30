@@ -84,9 +84,7 @@ public interface Runner {
             return null;
         }
 
-        File appHomeDir = isSnapped() ?
-                new File(format("%s%s", homeDir, System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar"))), ".dayon")
-                : new File(homeDir, ".dayon");
+        File appHomeDir = new File(isSnapped() ? format("%s%s", homeDir, System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar")), ".dayon") : homeDir, ".dayon");
 
         if (!appHomeDir.exists() && !appHomeDir.mkdirs()) {
             Log.warn(format("Could not create the application directory [%s]!", appHomeDir.getAbsolutePath()));
