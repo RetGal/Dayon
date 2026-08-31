@@ -2,7 +2,6 @@ package mpo.dayon.assisted.gui;
 
 import mpo.dayon.assisted.capture.CaptureEngine;
 import mpo.dayon.assisted.capture.RobotCaptureFactory;
-import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.control.RobotNetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngine;
 import mpo.dayon.assisted.network.NetworkAssistedEngine;
@@ -30,7 +29,7 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
-import java.util.Base64;
+import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -49,6 +48,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private static final String TOKEN_PARAMS = "?token=%s&rport=%d&open=%d&laddr=%s&v=1.5";
 
     private static final Token TOKEN = new Token(TOKEN_PARAMS);
+
+    public static final String INVALID_TOKEN = "connection.settings.invalidToken";
+
+    private static boolean isWayland = false;
 
     private String tokenServerUrl;
 
@@ -72,35 +75,29 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final String tokenServerUrlFromYaml;
 
-    private static boolean isWayland = false;
-
     public Assisted(String tokenServerUrl) {
         tokenServerUrlFromYaml = tokenServerUrl;
         networkConfiguration = new NetworkAssistedEngineConfiguration();
         updateTokenServerUrl(tokenServerUrl);
-
-        final String lnf = getDefaultLookAndFeel();
-        try {
-            UIManager.setLookAndFeel(lnf);
-        } catch (Exception ex) {
-            Log.warn(format("Could not set the L&F [%s]", lnf), ex);
-        }
+        initLookAndFeel();
         detectDesktopSession();
+    }
+
+    private void initLookAndFeel() {
+        try {
+            UIManager.setLookAndFeel(getDefaultLookAndFeel());
+        } catch (Exception ex) {
+            Log.warn(format("Could not set the L&F [%s]", getDefaultLookAndFeel()), ex);
+        }
     }
 
     private static void detectDesktopSession() {
         String sessionType = System.getenv("XDG_SESSION_TYPE");
-        if (sessionType != null) {
-            if (sessionType.equals("wayland")) {
-                Log.warn("Wayland session detected");
-                isWayland = true;
-            }
+        if (sessionType != null && sessionType.equals("wayland")) {
+            Log.warn("Wayland session detected");
+            isWayland = true;
             System.setProperty("xdg.session.type", sessionType);
         }
-    }
-
-    private boolean hasTokenServerUrlFromYaml() {
-        return tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty();
     }
 
     private void updateTokenServerUrl(String tokenServerUrl) {
@@ -111,9 +108,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
         } else {
             this.tokenServerUrl = DEFAULT_TOKEN_SERVER_URL + TOKEN_PARAMS;
         }
+        updateCustomTokenServerProperty();
+    }
 
-        if (!this.tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
-            System.setProperty("dayon.custom.tokenServer", this.tokenServerUrl.substring(0, this.tokenServerUrl.indexOf('?')));
+    private void updateCustomTokenServerProperty() {
+        if (!tokenServerUrl.startsWith(DEFAULT_TOKEN_SERVER_URL)) {
+            System.setProperty("dayon.custom.tokenServer", tokenServerUrl.substring(0, tokenServerUrl.indexOf('?')));
         } else {
             System.clearProperty("dayon.custom.tokenServer");
         }
@@ -123,28 +123,35 @@ public class Assisted implements Subscriber, ClipboardOwner {
      * Returns true if we have a valid configuration
      */
     public boolean start(String serverName, String portNumber, boolean autoConnect) {
-        // these should not block as they are called from the network incoming message thread (!)
-        final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler = this::onCaptureEngineConfigured;
-        final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler = this::onCompressorEngineConfigured;
-        final NetworkClipboardRequestMessageHandler clipboardRequestHandler = this::onClipboardRequested;
-        final NetworkScreenshotRequestMessageHandler screenshotRequestHandler = this::onScreenshotRequested;
-        final NetworkControlMessageHandler controlHandler = new RobotNetworkControlMessageHandler();
-        controlHandler.subscribe(this);
-
-        networkEngine = new NetworkAssistedEngine(captureConfigurationHandler, compressorConfigurationHandler,
-                controlHandler, clipboardRequestHandler, screenshotRequestHandler, this);
+        networkEngine = createNetworkEngine();
         networkEngine.addListener(new MyNetworkAssistedEngineListener());
-
         if (frame == null) {
-            networkEngine.initUpnp();
-            frame = new AssistedFrame(createStartAction(), createStopAction(), createToggleMultiScreenAction(), networkEngine, hasTokenServerUrlFromYaml(), isWayland);
-            FatalErrorHandler.attachFrame(frame);
-            KeyboardErrorHandler.attachFrame(frame);
-            frame.setVisible(true);
-            Log.info("Assisted start");
+            initializeFrame();
         }
-
         return configureConnection(serverName, portNumber, autoConnect);
+    }
+
+    private NetworkAssistedEngine createNetworkEngine() {
+        return new NetworkAssistedEngine(
+                this::onCaptureEngineConfigured,
+                this::onCompressorEngineConfigured,
+                new RobotNetworkControlMessageHandler(),
+                this::onClipboardRequested,
+                this::onScreenshotRequested,
+                this
+        );
+    }
+
+    private void initializeFrame() {
+        networkEngine.initUpnp();
+        frame = new AssistedFrame(
+                createStartAction(), createStopAction(), createToggleMultiScreenAction(),
+                networkEngine, tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty(), isWayland
+        );
+        FatalErrorHandler.attachFrame(frame);
+        KeyboardErrorHandler.attachFrame(frame);
+        frame.setVisible(true);
+        Log.info("Assisted start");
     }
 
     private boolean configureConnection(String serverName, String portNumber, boolean autoConnect) {
@@ -153,12 +160,10 @@ public class Assisted implements Subscriber, ClipboardOwner {
             Log.info("Autoconfigured " + networkConfiguration);
             networkEngine.configure(networkConfiguration);
             networkConfiguration.persist();
-        } else {
-            if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(valueOf(networkConfiguration.getServerPort()))) {
-                autoConnect = networkConfiguration.isAutoConnect();
-                if (autoConnect) {
-                    networkEngine.configure(networkConfiguration);
-                }
+        } else if (isValidIpAddressOrHostName(networkConfiguration.getServerName()) && isValidPortNumber(valueOf(networkConfiguration.getServerPort()))) {
+            autoConnect = networkConfiguration.isAutoConnect();
+            if (autoConnect) {
+                networkEngine.configure(networkConfiguration);
             }
         }
         // no network settings dialog after startup
@@ -174,24 +179,12 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private boolean requestConnectionSettings() {
-        ConnectionSettingsDialog connectionSettingsDialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
-        final boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), connectionSettingsDialog.getTabbedPane(), false, true, () -> {
-            final String token = connectionSettingsDialog.getToken().trim();
-            if (!token.isEmpty() && !token.equals(TOKEN.getTokenString())) {
-                return isValidToken(token) ? null : translate("connection.settings.invalidToken");
-            } else {
-                String validationErrorMessage = validateIpAddress(connectionSettingsDialog.getIpAddress());
-                if (validationErrorMessage != null) {
-                    connectionSettingsDialog.getTabbedPane().setSelectedIndex(1);
-                    return validationErrorMessage;
-                }
-                validationErrorMessage = validatePortNumber(connectionSettingsDialog.getPortNumber());
-                return validationErrorMessage;
-            }
-        });
+        ConnectionSettingsDialog dialog = new ConnectionSettingsDialog(networkConfiguration, TOKEN.getTokenString());
+        boolean ok = DialogFactory.showOkCancel(frame, translate("connection.settings"), dialog.getTabbedPane(), false, true,
+                () -> validateConnectionSettings(dialog));
 
         if (ok) {
-            applyConnectionSettings(connectionSettingsDialog);
+            applyConnectionSettings(dialog);
         } else {
             // cancel
             frame.onReady();
@@ -199,71 +192,98 @@ public class Assisted implements Subscriber, ClipboardOwner {
         return ok;
     }
 
+    private String validateConnectionSettings(ConnectionSettingsDialog dialog) {
+        String token = dialog.getToken().trim();
+        if (!token.isEmpty() && !token.equals(TOKEN.getTokenString())) {
+            try {
+                return isValidToken(token) ? null : translate(INVALID_TOKEN);
+            } catch (NoSuchAlgorithmException ex) {
+                return translate(INVALID_TOKEN);
+            }
+        }
+
+        String ipValidation = validateIpAddress(dialog.getIpAddress());
+        if (ipValidation != null) {
+            dialog.getTabbedPane().setSelectedIndex(1);
+            return ipValidation;
+        }
+
+        return validatePortNumber(dialog.getPortNumber());
+    }
+
     private static String validateIpAddress(String ipAddress) {
         if (ipAddress.isEmpty()) {
             return translate("connection.settings.emptyIpAddress");
         }
-        return isValidIpAddressOrHostName(ipAddress.trim()) ? null : translate("connection.settings.invalidIpAddress");
+        if (!isValidIpAddressOrHostName(ipAddress.trim())) {
+            return translate("connection.settings.invalidIpAddress");
+        }
+        return null;
     }
 
     private static String validatePortNumber(String portNumber) {
         if (portNumber.isEmpty()) {
             return translate("connection.settings.emptyPortNumber");
         }
-        return isValidPortNumber(portNumber.trim()) ? null : translate("connection.settings.invalidPortNumber");
+        if (!isValidPortNumber(portNumber.trim())) {
+            return translate("connection.settings.invalidPortNumber");
+        }
+        return null;
     }
 
-    private void applyConnectionSettings(ConnectionSettingsDialog connectionSettingsDialog) {
+    private void applyConnectionSettings(ConnectionSettingsDialog dialog) {
         CompletableFuture.supplyAsync(() -> {
-            final NetworkAssistedEngineConfiguration newConfiguration;
-            String tokenString = connectionSettingsDialog.getToken().trim();
+            String tokenString = dialog.getToken().trim();
             if (!tokenString.isEmpty() && !tokenString.equals(TOKEN.getTokenString())) {
-                Log.debug("Applying new token: " + tokenString);
-                TOKEN.setTokenString(tokenString);
-                frame.disableStartButton();
-                String connectionParams = obtainConnectionParamsFromTokenServer();
-                newConfiguration = extractNetworkConfigurationFromConnectionParams(connectionParams);
-                Log.debug("Received: %s", () -> new String(Base64.getDecoder().decode(TOKEN.getIceInfo())));
+                return processTokenConfiguration(tokenString);
             } else {
-                newConfiguration = new NetworkAssistedEngineConfiguration(connectionSettingsDialog.getIpAddress().trim(),
-                        Integer.parseInt(connectionSettingsDialog.getPortNumber().trim()));
+                return new NetworkAssistedEngineConfiguration(
+                        dialog.getIpAddress().trim(),
+                        Integer.parseInt(dialog.getPortNumber().trim())
+                );
             }
-            return newConfiguration;
-        }).thenAcceptAsync(newConfiguration -> {
-            if (newConfiguration != null && !newConfiguration.getServerName().equals(networkConfiguration.getServerName())
-                    || newConfiguration.getServerPort() != networkConfiguration.getServerPort()) {
-                Log.debug("Applying new configuration: " + newConfiguration);
-                networkConfiguration = newConfiguration;
-                networkConfiguration.persist();
-                if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPeerPort()) {
-                    TOKEN.reset();
-                }
-                networkEngine.configure(networkConfiguration);
-                frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
+        }).thenAcceptAsync(this::applyNewConfiguration);
+    }
+
+    private NetworkAssistedEngineConfiguration processTokenConfiguration(String tokenString) {
+        Log.debug("Applying new token: " + tokenString);
+        TOKEN.setTokenString(tokenString);
+        frame.disableStartButton();
+        String connectionParams = obtainConnectionParamsFromTokenServer();
+        return extractNetworkConfigurationFromConnectionParams(connectionParams);
+    }
+
+    private void applyNewConfiguration(NetworkAssistedEngineConfiguration newConfig) {
+        if (newConfig != null && !newConfig.getServerName().equals(networkConfiguration.getServerName())
+                || newConfig.getServerPort() != networkConfiguration.getServerPort()) {
+            Log.debug("Applying new configuration: " + newConfig);
+            networkConfiguration = newConfig;
+            networkConfiguration.persist();
+            if (!networkConfiguration.getServerName().equals(TOKEN.getPeerAddress()) || networkConfiguration.getServerPort() != TOKEN.getPeerPort()) {
+                TOKEN.reset();
             }
-            frame.enableStartButton();
-            Log.info("NetworkConfiguration " + networkConfiguration);
-        });
+            networkEngine.configure(networkConfiguration);
+            frame.onConnecting(networkConfiguration.getServerName(), networkConfiguration.getServerPort());
+        }
+        frame.enableStartButton();
     }
 
     private NetworkAssistedEngineConfiguration extractNetworkConfigurationFromConnectionParams(String connectionParams) {
-        final NetworkAssistedEngineConfiguration newConfiguration;
         if (connectionParams == null || connectionParams.trim().isEmpty()) {
             // expired or wrong token server
             Log.warn("Invalid token " + TOKEN.getTokenString());
-            JOptionPane.showMessageDialog(frame, translate("connection.settings.invalidToken"), translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(frame, translate(INVALID_TOKEN),
+                    translate("connection.settings.token"), JOptionPane.ERROR_MESSAGE);
             TOKEN.reset();
             stop();
             onReady();
             return null;
         }
-        newConfiguration = extractConfiguration(connectionParams);
-        Log.debug("Connection params " + connectionParams);
-        return newConfiguration;
+        return extractConfiguration(connectionParams);
     }
 
     private String obtainConnectionParamsFromTokenServer() {
-        final Cursor cursor = frame.getCursor();
+        Cursor cursor = frame.getCursor();
         frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
         String connectionParams = null;
         try {
@@ -281,128 +301,80 @@ public class Assisted implements Subscriber, ClipboardOwner {
     }
 
     private Action createToggleMultiScreenAction() {
-        final Action multiScreen = new AbstractAction() {
+        Action action = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                initNewCaptureEngine(!shareAllScreens.get());
                 shareAllScreens.set(!shareAllScreens.get());
+                initNewCaptureEngine(shareAllScreens.get());
                 frame.repaint();
                 if (networkEngine != null) {
-                    final Dimension screenSize = ScreenUtilities.getSharedScreenSize().getSize();
+                    Dimension screenSize = ScreenUtilities.getSharedScreenSize().getSize();
                     networkEngine.sendResizeScreen(screenSize.width, screenSize.height);
                 }
             }
         };
-        multiScreen.putValue(Action.SHORT_DESCRIPTION, translate("share.all.screens"));
-        multiScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.LNF));
-        return multiScreen;
+        action.putValue(Action.SHORT_DESCRIPTION, translate("share.all.screens"));
+        action.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.LNF));
+        return action;
     }
 
     private Action createStopAction() {
-        final Action stopAction = new AbstractAction() {
+        Action action = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 stop();
             }
         };
-        stopAction.setEnabled(false);
-        stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
-        stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP_LARGE));
-        return stopAction;
+        action.setEnabled(false);
+        action.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
+        action.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP_LARGE));
+        return action;
     }
 
     private Action createStartAction() {
-        final Action startAction = new AbstractAction() {
+        Action action = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 onReady();
                 new NetWorker().execute();
             }
         };
-        startAction.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
-        startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START_LARGE));
-        return startAction;
+        action.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
+        action.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START_LARGE));
+        return action;
     }
 
-    private class NetWorker extends SwingWorker<String, String> {
-        @Override
-        protected String doInBackground() {
-            if (isConfigured() && !isCancelled()) {
-                networkEngine.configure(networkConfiguration);
-                networkEngine.connect(TOKEN, 7000);
-            }
-            return null;
-        }
-
-        private boolean isConfigured() {
-            // triggers network settings dialogue
-            return start(null, null, false);
-        }
-
-        @Override
-        protected void done() {
-            try {
-                if (!isCancelled()) {
-                    super.get();
-                    Log.debug(format("NetWorker is done [%s]", getNetworkConfiguration().getServerName()));
-                }
-            } catch (InterruptedException | ExecutionException ie) {
-                Log.info("NetWorker was cancelled");
-                Log.error(ie.getCause().getMessage(), ie);
-                Thread.currentThread().interrupt();
-            }
-        }
-
-        private NetworkAssistedEngineConfiguration getNetworkConfiguration() {
-            return networkConfiguration;
-        }
-    }
-
-    @SuppressWarnings("java:S2589") // networkEngine can get null after first null check
     private void stop() {
         Log.info("Assisted stop");
         if (networkEngine != null) {
             networkEngine.farewell();
             stopCaCoMoEngines();
-            if (networkEngine != null) {
-                networkEngine.cancel();
-                networkEngine = null;
-            }
+            networkEngine.cancel();
+            networkEngine = null;
         }
         frame.onDisconnecting();
     }
 
-    private static NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
-        if (connectionParams != null) {
-            String[] parts = connectionParams.split("\\*");
-            if (parts.length > 1) {
-                String assistantAddress = parts[0];
-                String port = parts[1];
-                // maybe extract timestamps of open and closed as well?
-                if (parts.length > 4) {
-                    // 0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assistant_ice
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), Integer.parseInt(parts[4]), parts[5]);
-                } else {
-                    TOKEN.updateToken(assistantAddress, Integer.parseInt(port), "", null, 0, null);
-                }
-                Log.debug(TOKEN.toString());
-                return new NetworkAssistedEngineConfiguration(assistantAddress, Integer.parseInt(port));
-            }
+    private void stopCaCoMoEngines() {
+        if (captureEngine != null) {
+            captureEngine.stop();
+            captureEngine = null;
         }
-        return null;
-    }
-
-    @Override
-    public void lostOwnership(Clipboard clipboard, Transferable transferable) {
-        Log.debug("Lost clipboard ownership");
+        if (compressorEngine != null) {
+            compressorEngine.stop();
+            compressorEngine = null;
+        }
+        if (mouseEngine != null) {
+            mouseEngine.stop();
+            mouseEngine = null;
+        }
     }
 
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    private void onCaptureEngineConfigured(NetworkCaptureConfigurationMessage configuration) {
-        captureEngineConfiguration = configuration.getConfiguration();
-
+    private void onCaptureEngineConfigured(NetworkCaptureConfigurationMessage config) {
+        captureEngineConfiguration = config.getConfiguration();
         if (captureEngine != null) {
             Log.info("Capture configuration received " + captureEngineConfiguration);
             captureEngine.reconfigure(captureEngineConfiguration);
@@ -427,35 +399,18 @@ public class Assisted implements Subscriber, ClipboardOwner {
         captureEngine.start();
     }
 
-    private void stopCaCoMoEngines() {
-        if (captureEngine != null) {
-            captureEngine.stop();
-            captureEngine = null;
-        }
-        if (compressorEngine != null) {
-            compressorEngine.stop();
-            compressorEngine = null;
-        }
-        if (mouseEngine != null) {
-            mouseEngine.stop();
-            mouseEngine = null;
-        }
-    }
-
     /**
      * Should not block as called from the network incoming message thread (!)
      */
-    private void onCompressorEngineConfigured(NetworkCompressorConfigurationMessage configuration) {
-        final CompressorEngineConfiguration compressorEngineConfiguration = configuration.getConfiguration();
-
+    private void onCompressorEngineConfigured(NetworkCompressorConfigurationMessage config) {
+        CompressorEngineConfiguration compConfig = config.getConfiguration();
         if (compressorEngine != null) {
-            Log.info("Compressor configuration received " + compressorEngineConfiguration);
-            compressorEngine.reconfigure(compressorEngineConfiguration);
+            Log.info("Compressor configuration received " + compConfig);
+            compressorEngine.reconfigure(compConfig);
             return;
         }
-
         compressorEngine = new CompressorEngine();
-        compressorEngine.configure(compressorEngineConfiguration);
+        compressorEngine.configure(compConfig);
         compressorEngine.addListener(networkEngine);
         compressorEngine.start(1);
         if (captureEngine != null) {
@@ -471,7 +426,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         ClipboardDispatcher.sendClipboard(networkEngine, frame, this);
     }
 
-    private void onScreenshotRequested(){
+    private void onScreenshotRequested() {
         Log.info("Screenshot request received");
         try {
             NetworkEngine.setClipboardContents(new Robot().createScreenCapture(ScreenUtilities.getSharedScreenSize()), this);
@@ -485,12 +440,62 @@ public class Assisted implements Subscriber, ClipboardOwner {
         KeyboardErrorHandler.warn(valueOf(message));
     }
 
+    @Override
+    public void lostOwnership(Clipboard clipboard, Transferable transferable) {
+        Log.debug("Lost clipboard ownership");
+    }
+
     private void onReady() {
         frame.onReady();
     }
 
-    private class MyNetworkAssistedEngineListener implements NetworkAssistedEngineListener {
+    private static NetworkAssistedEngineConfiguration extractConfiguration(String connectionParams) {
+        String[] parts = connectionParams.split("\\*");
+        if (parts.length <= 1) return null;
 
+        String assistantAddress = parts[0];
+        int port = Integer.parseInt(parts[1]);
+        // maybe extract timestamps of open and closed as well?
+        if (parts.length > 4) {
+            // 0 assistant 1 port 2 assistant_local 3 closed 4 rport 5 $assistant_ice
+            TOKEN.updateToken(assistantAddress, port, parts[2], parts[3].equals("0"), Integer.parseInt(parts[4]), parts[5]);
+        } else {
+            TOKEN.updateToken(assistantAddress, port, "", null, 0, null);
+        }
+        Log.debug(TOKEN.toString());
+        return new NetworkAssistedEngineConfiguration(assistantAddress, port);
+    }
+
+    private class NetWorker extends SwingWorker<String, String> {
+        @Override
+        protected String doInBackground() {
+            if (isConfigured() && !isCancelled()) {
+                networkEngine.configure(networkConfiguration);
+                networkEngine.connect(TOKEN, 7000);
+            }
+            return null;
+        }
+
+        private boolean isConfigured() {
+            return start(null, null, false);
+        }
+
+        @Override
+        protected void done() {
+            if (!isCancelled()) {
+                try {
+                    get();
+                    Log.debug(format("NetWorker is done [%s]", networkConfiguration.getServerName()));
+                } catch (InterruptedException | ExecutionException ex) {
+                    Log.info("NetWorker was cancelled");
+                    Log.error(ex.getCause().getMessage(), ex);
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }
+    }
+
+    private class MyNetworkAssistedEngineListener implements NetworkAssistedEngineListener {
         @Override
         public void onConnecting(String serverName, int serverPort) {
             capsOff();
@@ -559,7 +564,8 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
         @Override
         public void onReconfigured(NetworkAssistedEngineConfiguration configuration) {
-            if (!networkConfiguration.getServerName().equals(configuration.getServerName()) || networkConfiguration.getServerPort() != configuration.getServerPort()) {
+            if (!networkConfiguration.getServerName().equals(configuration.getServerName())
+                    || networkConfiguration.getServerPort() != configuration.getServerPort()) {
                 TOKEN.reset();
             }
             networkConfiguration = configuration;
@@ -568,20 +574,20 @@ public class Assisted implements Subscriber, ClipboardOwner {
         }
 
         private void capsOff() {
-            if (Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK)) {
-                Log.info("Caps Lock is on, turning it off");
+            if (!Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK)) {
+                return;
+            }
+            Log.info("Caps Lock is on, turning it off");
+            try {
+                Toolkit.getDefaultToolkit().setLockingKeyState(VK_CAPS_LOCK, false);
+            } catch (UnsupportedOperationException e) {
                 try {
-                    Toolkit.getDefaultToolkit().setLockingKeyState(VK_CAPS_LOCK, false);
-                } catch (UnsupportedOperationException e) {
-                    final Robot robot;
-                    try {
-                        robot = new Robot();
-                    } catch (AWTException ex) {
-                        throw new IllegalStateException("Could not initialize the AWT robot!", ex);
-                    }
+                    Robot robot = new Robot();
                     robot.keyPress(VK_CAPS_LOCK);
                     robot.delay(10);
                     robot.keyRelease(VK_CAPS_LOCK);
+                } catch (AWTException ex) {
+                    throw new IllegalStateException("Could not initialize the AWT robot!", ex);
                 }
             }
         }

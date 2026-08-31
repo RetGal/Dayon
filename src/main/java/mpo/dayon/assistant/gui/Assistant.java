@@ -181,6 +181,19 @@ public class Assistant implements ClipboardOwner {
         counters = new ArrayList<>(Arrays.asList(captureRateCounter, receivedBitCounter, receivedTileCounter, skippedTileCounter, mergedTileCounter, captureCompressionCounter));
     }
 
+    private Action createSimpleAction(Runnable runnable, String shortDescKey, String imageName, boolean enabled) {
+        final Action act = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                runnable.run();
+            }
+        };
+        act.setEnabled(enabled);
+        act.putValue(Action.SHORT_DESCRIPTION, translate(shortDescKey));
+        act.putValue(Action.SMALL_ICON, getOrCreateIcon(imageName));
+        return act;
+    }
+
     private AssistantActions createAssistantActions() {
         AssistantActions assistantActions = new AssistantActions();
         assistantActions.setIpAddressAction(createWhatIsMyIpAction());
@@ -292,27 +305,11 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createRemoteClipboardRequestAction() {
-        final Action getRemoteClipboard = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                sendRemoteClipboardRequest();
-            }
-        };
-        getRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.getRemote"));
-        getRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.DOWN));
-        return getRemoteClipboard;
+        return createSimpleAction(this::sendRemoteClipboardRequest, "clipboard.getRemote", ImageNames.DOWN, true);
     }
 
     private Action createRemoteClipboardUpdateAction() {
-        final Action setRemoteClipboard = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                sendLocalClipboard();
-            }
-        };
-        setRemoteClipboard.putValue(Action.SHORT_DESCRIPTION, translate("clipboard.setRemote"));
-        setRemoteClipboard.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UP));
-        return setRemoteClipboard;
+        return createSimpleAction(this::sendLocalClipboard, "clipboard.setRemote", ImageNames.UP, true);
     }
 
     private void sendLocalClipboard() {
@@ -547,16 +544,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createResetAction() {
-        final Action configure = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                // Currently making a RESET within the assisted ...
-                sendCaptureConfiguration(captureEngineConfiguration);
-            }
-        };
-        configure.putValue(Action.SHORT_DESCRIPTION, translate("capture.reset"));
-        configure.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.RESET_CAPTURE));
-        return configure;
+        return createSimpleAction(() -> sendCaptureConfiguration(captureEngineConfiguration), "capture.reset", ImageNames.RESET_CAPTURE, true);
     }
 
     private Action createTokenAction() {
@@ -642,29 +630,11 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createStartAction() {
-        final Action startAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                new NetWorker().execute();
-            }
-        };
-        startAction.setEnabled(false);
-        startAction.putValue(Action.SHORT_DESCRIPTION, translate("start.session"));
-        startAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START));
-        return startAction;
+        return createSimpleAction(() -> new NetWorker().execute(), "start.session", ImageNames.START, false);
     }
 
     private Action createStopAction() {
-        final Action stopAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                stopNetwork();
-            }
-        };
-        stopAction.setEnabled(false);
-        stopAction.putValue(Action.SHORT_DESCRIPTION, translate("stop.session"));
-        stopAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.STOP));
-        return stopAction;
+        return createSimpleAction(this::stopNetwork, "stop.session", ImageNames.STOP, false);
     }
 
     private Action createToggleCompatibilityModeAction() {
@@ -713,16 +683,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createScreenshotRequestAction() {
-        final Action screenshotAction = new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent ev) {
-                new Thread(networkEngine::sendScreenshotRequest, "ScreenshotRequest").start();
-            }
-        };
-        screenshotAction.setEnabled(false);
-        screenshotAction.putValue(Action.SHORT_DESCRIPTION, translate("send.prtScrKey"));
-        screenshotAction.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CAM));
-        return screenshotAction;
+        return createSimpleAction(() -> new Thread(networkEngine::sendScreenshotRequest, "ScreenshotRequest").start(), "send.prtScrKey", ImageNames.CAM, false);
     }
 
     private class NetWorker extends SwingWorker<String, String> {
