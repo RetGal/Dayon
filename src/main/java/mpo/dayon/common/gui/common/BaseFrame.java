@@ -229,7 +229,6 @@ public abstract class BaseFrame extends JFrame {
 
     private Action createExitAction() {
         final Action exit = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
                 doExit();
@@ -241,76 +240,93 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private Action createShowInfoAction() {
-
         JLabel latestVersion = new JLabel();
         final Action showSystemInfo = new AbstractAction() {
-
             @Override
             public void actionPerformed(ActionEvent ev) {
-                final EmptyBorder marginLeft = new EmptyBorder(0, 2, 0, 0);
-                final JPanel panel = new JPanel();
-                panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-                panel.setPreferredSize(new Dimension(500, 300));
-                final JLabel info = new JLabel(composeLabelHtml("Dayon!", translate("synopsys")));
-                info.setAlignmentX(Component.LEFT_ALIGNMENT);
-                info.setBorder(marginLeft);
-                info.addMouseListener(new UrlMouseAdapter(HTTP_HOME));
-                info.setCursor(handCursor);
-                final JLabel version = new JLabel(composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()));
-                version.setAlignmentX(Component.LEFT_ALIGNMENT);
-                version.setBorder(marginLeft);
-                version.addMouseListener(new UrlMouseAdapter(Version.RELEASE_LOCATION + Version.get()));
-                version.setCursor(handCursor);
-                latestVersion.setAlignmentX(Component.LEFT_ALIGNMENT);
-                latestVersion.setBorder(marginLeft);
-                latestVersion.addMouseListener(new UrlMouseAdapter(Version.RELEASE_LOCATION + Version.get().getLatestRelease()));
-                latestVersion.setCursor(handCursor);
-
-                final JTextArea props = new JTextArea(getSystemPropertiesEx());
-                props.setEditable(false);
-                props.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
-                final JScrollPane spane = new JScrollPane(props);
-                spane.setAlignmentX(Component.LEFT_ALIGNMENT);
-
-                final JButton support = new JButton(translate("support"));
-                support.addMouseListener(new UrlMouseAdapter(HTTP_SUPPORT));
-                final JButton feedback = new JButton(translate("feedback"));
-                feedback.addMouseListener(new UrlMouseAdapter(HTTP_FEEDBACK));
-                final JButton privacy = new JButton(translate("privacy"));
-                privacy.addMouseListener(new UrlMouseAdapter(HTTP_PRIVACY));
-                final JButton license = new JButton(translate("license"));
-                license.addMouseListener(new UrlMouseAdapter(HTTP_LICENSE));
-                final JPanel buttonsPanel = new JPanel();
-                buttonsPanel.setLayout(new GridLayout(1, 4));
-                buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
-                buttonsPanel.add(support);
-                buttonsPanel.add(feedback);
-                buttonsPanel.add(privacy);
-                buttonsPanel.add(license);
-
-                panel.add(Box.createVerticalStrut(10));
-                panel.add(info);
-                panel.add(Box.createVerticalStrut(5));
-                panel.add(version);
-                panel.add(Box.createVerticalStrut(5));
-                panel.add(latestVersion);
-                panel.add(Box.createVerticalStrut(5));
-                panel.add(spane);
-                panel.add(Box.createVerticalStrut(5));
-                panel.add(buttonsPanel);
-
-                final Object[] options = {translate("ok")};
-
-                JOptionPane.showOptionDialog(BaseFrame.this, panel, translate("system.info"),
-                        JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
-                        getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
-
+                showSystemInfoDialog(latestVersion);
             }
         };
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
         showSystemInfo.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.INFO));
         new LatestVersionLabelUpdater(latestVersion).execute();
         return showSystemInfo;
+    }
+
+    private void showSystemInfoDialog(JLabel latestVersion) {
+        final JPanel panel = createSystemInfoPanel(latestVersion);
+        final Object[] options = {translate("ok")};
+        JOptionPane.showOptionDialog(BaseFrame.this, panel, translate("system.info"),
+                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
+                getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
+    }
+
+    private JPanel createSystemInfoPanel(JLabel latestVersion) {
+        final EmptyBorder marginLeft = new EmptyBorder(0, 2, 0, 0);
+        final JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
+        panel.setPreferredSize(new Dimension(500, 300));
+
+        final JLabel info = createLinkLabel(composeLabelHtml("Dayon!", translate("synopsys")), HTTP_HOME, marginLeft);
+        final JLabel version = createLinkLabel(
+                composeLabelHtmlWithBuildNumber(translate("version.installed"), Version.get().toString(), getBuildNumber()),
+                Version.RELEASE_LOCATION + Version.get(), marginLeft);
+        latestVersion.setAlignmentX(Component.LEFT_ALIGNMENT);
+        latestVersion.setBorder(marginLeft);
+        latestVersion.addMouseListener(new UrlMouseAdapter(Version.RELEASE_LOCATION + Version.get().getLatestRelease()));
+        latestVersion.setCursor(handCursor);
+
+        final JScrollPane sysProps = createSystemPropertiesScrollPane();
+        final JPanel buttonsPanel = createInfoButtonsPanel();
+
+        panel.add(Box.createVerticalStrut(10));
+        panel.add(info);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(version);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(latestVersion);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(sysProps);
+        panel.add(Box.createVerticalStrut(5));
+        panel.add(buttonsPanel);
+        return panel;
+    }
+
+    private JLabel createLinkLabel(String labelHtml, String url, EmptyBorder marginLeft) {
+        JLabel label = new JLabel(labelHtml);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        label.setBorder(marginLeft);
+        label.addMouseListener(new UrlMouseAdapter(url));
+        label.setCursor(handCursor);
+        return label;
+    }
+
+    private JScrollPane createSystemPropertiesScrollPane() {
+        final JTextArea props = new JTextArea(getSystemPropertiesEx());
+        props.setEditable(false);
+        props.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        final JScrollPane spane = new JScrollPane(props);
+        spane.setAlignmentX(Component.LEFT_ALIGNMENT);
+        return spane;
+    }
+
+    private JPanel createInfoButtonsPanel() {
+        final JButton support = new JButton(translate("support"));
+        support.addMouseListener(new UrlMouseAdapter(HTTP_SUPPORT));
+        final JButton feedback = new JButton(translate("feedback"));
+        feedback.addMouseListener(new UrlMouseAdapter(HTTP_FEEDBACK));
+        final JButton privacy = new JButton(translate("privacy"));
+        privacy.addMouseListener(new UrlMouseAdapter(HTTP_PRIVACY));
+        final JButton license = new JButton(translate("license"));
+        license.addMouseListener(new UrlMouseAdapter(HTTP_LICENSE));
+        final JPanel buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new GridLayout(1, 4));
+        buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        buttonsPanel.add(support);
+        buttonsPanel.add(feedback);
+        buttonsPanel.add(privacy);
+        buttonsPanel.add(license);
+        return buttonsPanel;
     }
 
     protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
@@ -326,7 +342,6 @@ public abstract class BaseFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 JFrame networkFrame = (JFrame) SwingUtilities.getRoot((Component) ev.getSource());
-
                 final JTextField addressTextField = new JTextField();
                 final JTextField portNumberTextField = new JTextField();
                 final JCheckBox autoConnectCheckBox = new JCheckBox();
@@ -335,18 +350,12 @@ public abstract class BaseFrame extends JFrame {
                 CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
 
                 JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive, hasTokenServerUrlFromYaml);
-
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
                         () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
 
                 if (ok) {
-                    final String newTokenServerUrl = tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM) &&
-                            isValidUrl(customTokenTextField.getText().trim()) ? customTokenTextField.getText() : "";
-                    if (ASSISTED.equals(frameType)) {
-                        updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
-                    } else {
-                        updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, autoConnectCheckBox, networkAssistantEngine);
-                    }
+                    String newTokenServerUrl = getSelectedTokenServerUrl(tokenRadioGroup, customTokenTextField);
+                    applyNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistantEngine, networkAssistedEngine);
                 }
             }
         };
@@ -355,112 +364,153 @@ public abstract class BaseFrame extends JFrame {
         return conf;
     }
 
-    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive, boolean hasTokenServerUrlFromYaml) {
-        final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
-        final JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        int gridy = 0;
-        String currentTokenServer;
-
+    private void applyNetworkConfiguration(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox,
+                                         String newTokenServerUrl, NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
         if (ASSISTED.equals(frameType)) {
-            final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("assistant")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
-            assistantPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel addressLbl = new JLabel(translate("connection.settings.assistantIpAddress"));
-            addressTextField.setText(networkConfiguration.getServerName());
-            assistantPanel.add(addressLbl);
-            assistantPanel.add(addressTextField);
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.assistantPortNumber"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getServerPort()));
-            assistantPanel.add(portNumberLbl);
-            assistantPanel.add(portNumberTextField);
-            final JLabel autoConnectLbl = new JLabel(translate("connection.settings.autoConnect"));
-            autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
-            assistantPanel.add(autoConnectLbl);
-            assistantPanel.add(autoConnectCheckBox);
-            panel.add(assistantPanel, createGridBagConstraints(gridy++));
+            updateAssistedNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistedEngine);
         } else {
-            final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
-            currentTokenServer = networkConfiguration.getTokenServerUrl();
-            final JLabel hostLbl = new JLabel(toUpperFirst(translate("host")));
-            hostLbl.setFont(titleFont);
-            panel.add(hostLbl, createGridBagConstraints(gridy++));
-
-            final JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            upnpPanel.setBorder(BorderFactory.createEmptyBorder(10,0,0,0));
-            final JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>", format(translate(format("connection.settings.upnp.%s", upnpActive.join())), UPnP.getDefaultGatewayIP()), translate(format("connection.settings.portforward.%s", upnpActive.join()))));
-            upnpPanel.add(upnpStatus);
-            panel.add(upnpPanel, createGridBagConstraints(gridy++));
-
-            final JPanel portPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-            portPanel.setBorder(BorderFactory.createEmptyBorder(10,0,20,0));
-            final JLabel portNumberLbl = new JLabel(translate("connection.settings.portNumber"));
-            portNumberLbl.setToolTipText(translate("connection.settings.portNumber.tooltip"));
-            portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
-            portPanel.add(portNumberLbl);
-            portPanel.add(portNumberTextField);
-            final JLabel autoAcceptLbl = new JLabel(translate("connection.settings.autoAccept"));
-            portPanel.add(autoAcceptLbl);
-            autoConnectCheckBox.setSelected(networkConfiguration.isAutoAccept());
-            portPanel.add(autoConnectCheckBox);
-            panel.add(portPanel, createGridBagConstraints(gridy++));
+            updateAssistantNetworkConfiguration(portNumberTextField, newTokenServerUrl, autoConnectCheckBox, networkAssistantEngine);
         }
+    }
 
+    private String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+        String selectedValue = tokenRadioGroup.getSelection() == null ? null : tokenRadioGroup.getSelection().getActionCommand();
+        if (CUSTOM.equals(selectedValue) && isValidUrl(customTokenTextField.getText().trim())) {
+            return customTokenTextField.getText();
+        }
+        return "";
+    }
+
+    private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup,
+                              JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive, boolean hasTokenServerUrlFromYaml) {
+        final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
+        final JPanel panel = new JPanel(new GridBagLayout());
+        int gridy = 0;
+        String currentTokenServer = getCurrentTokenServer();
+        if (ASSISTED.equals(frameType)) {
+            gridy = addAssistedConfiguration(panel, gridy, titleFont, addressTextField, portNumberTextField, autoConnectCheckBox);
+        } else {
+            gridy = addAssistantConfiguration(panel, gridy, titleFont, portNumberTextField, autoConnectCheckBox, upnpActive);
+        }
         if (hasTokenServerUrlFromYaml) {
-            final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
-            tokenServerLbl.setFont(titleFont);
-            panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-            final JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
-            final JLabel preconfiguredLbl = new JLabel(translate("token.server.preconfigured"));
-            tokenPanel.add(preconfiguredLbl);
-            panel.add(tokenPanel, createGridBagConstraints(gridy));
-            return panel;
+            return addPreconfiguredTokenServerPanel(panel, gridy, titleFont);
         }
+        return addTokenServerSelectionPanel(panel, gridy, titleFont, tokenRadioGroup, customTokenTextField, currentTokenServer);
+    }
 
-        final JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
+    private String getCurrentTokenServer() {
+        if (ASSISTED.equals(frameType)) {
+            return new NetworkAssistedEngineConfiguration().getTokenServerUrl();
+        }
+        return new NetworkAssistantEngineConfiguration().getTokenServerUrl();
+    }
+
+    private int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
+        final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
+        JLabel hostLabel = new JLabel(toUpperFirst(translate("assistant")));
+        hostLabel.setFont(titleFont);
+        panel.add(hostLabel, createGridBagConstraints(gridy++));
+
+        JPanel assistantPanel = new JPanel(new GridLayout(4, 2, 10, 0));
+        assistantPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        addressTextField.setText(networkConfiguration.getServerName());
+        portNumberTextField.setText(format("%d", networkConfiguration.getServerPort()));
+        autoConnectCheckBox.setSelected(networkConfiguration.isAutoConnect());
+
+        assistantPanel.add(new JLabel(translate("connection.settings.assistantIpAddress")));
+        assistantPanel.add(addressTextField);
+        assistantPanel.add(new JLabel(translate("connection.settings.assistantPortNumber")));
+        assistantPanel.add(portNumberTextField);
+        assistantPanel.add(new JLabel(translate("connection.settings.autoConnect")));
+        assistantPanel.add(autoConnectCheckBox);
+        panel.add(assistantPanel, createGridBagConstraints(gridy++));
+        return gridy;
+    }
+
+    private int addAssistantConfiguration(JPanel panel, int gridy, Font titleFont, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, CompletableFuture<Boolean> upnpActive) {
+        final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
+        JLabel hostLabel = new JLabel(toUpperFirst(translate("host")));
+        hostLabel.setFont(titleFont);
+        panel.add(hostLabel, createGridBagConstraints(gridy++));
+
+        JPanel upnpPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+        upnpPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
+        JLabel upnpStatus = new JLabel(format("<html>%s<br>%s</html>",
+                format(translate(format("connection.settings.upnp.%s", upnpActive.join())), UPnP.getDefaultGatewayIP()),
+                translate(format("connection.settings.portforward.%s", upnpActive.join()))));
+        upnpPanel.add(upnpStatus);
+        panel.add(upnpPanel, createGridBagConstraints(gridy++));
+
+        JPanel portPanel = new JPanel(new GridLayout(2, 2, 10, 0));
+        portPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 20, 0));
+        portNumberTextField.setText(format("%d", networkConfiguration.getPort()));
+        autoConnectCheckBox.setSelected(networkConfiguration.isAutoAccept());
+
+        JLabel portNumberLabel = new JLabel(translate("connection.settings.portNumber"));
+        portNumberLabel.setToolTipText(translate("connection.settings.portNumber.tooltip"));
+        portPanel.add(portNumberLabel);
+        portPanel.add(portNumberTextField);
+        portPanel.add(new JLabel(translate("connection.settings.autoAccept")));
+        portPanel.add(autoConnectCheckBox);
+        panel.add(portPanel, createGridBagConstraints(gridy++));
+        return gridy;
+    }
+
+    private JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont) {
+        JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
+        tokenServerLbl.setFont(titleFont);
+        panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
+        JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+        tokenPanel.add(new JLabel(translate("token.server.preconfigured")));
+        panel.add(tokenPanel, createGridBagConstraints(gridy));
+        return panel;
+    }
+
+    private JPanel addTokenServerSelectionPanel(JPanel panel, int gridy, Font titleFont, ButtonGroup tokenRadioGroup,
+                                               JTextField customTokenTextField, String currentTokenServer) {
+        JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
         tokenServerLbl.setFont(titleFont);
         panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
 
-        final JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10,0,10,0));
+        JPanel tokenPanel = new JPanel(new GridLayout(2, 2, 10, 0));
+        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
 
-        final JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
+        JRadioButton defaultTokenRadio = new JRadioButton(translate("token.default.server"));
         defaultTokenRadio.setActionCommand("default");
-        final JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
+        JRadioButton customTokenRadio = new JRadioButton(translate("token.custom.server"));
         customTokenRadio.setActionCommand(CUSTOM);
         tokenRadioGroup.add(defaultTokenRadio);
         tokenRadioGroup.add(customTokenRadio);
-        boolean customTextFieldEditable = false;
-        if (currentTokenServer.isEmpty() || currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL)) {
-            currentTokenServer = "";
+
+        boolean customTextFieldEditable = !currentTokenServer.isEmpty() && !currentTokenServer.equals(DEFAULT_TOKEN_SERVER_URL);
+        if (!customTextFieldEditable) {
             defaultTokenRadio.setSelected(true);
+            currentTokenServer = "";
         } else {
             customTokenRadio.setSelected(true);
-            customTextFieldEditable = true;
         }
 
-        final JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
+        JTextField defaultTokenTextField = new JTextField(DEFAULT_TOKEN_SERVER_URL);
         defaultTokenTextField.setEditable(false);
         defaultTokenTextField.setFocusable(false);
         customTokenTextField.setText(currentTokenServer);
         customTokenTextField.setEditable(customTextFieldEditable);
 
-        defaultTokenRadio.addActionListener(evt -> {defaultTokenRadio.requestFocus(); customTokenTextField.setEditable(false);});
-        customTokenRadio.addActionListener(evt -> {customTokenTextField.requestFocus(); customTokenTextField.setEditable(true);});
+        defaultTokenRadio.addActionListener(evt -> {
+            defaultTokenRadio.requestFocus();
+            customTokenTextField.setEditable(false);
+        });
+        customTokenRadio.addActionListener(evt -> {
+            customTokenTextField.requestFocus();
+            customTokenTextField.setEditable(true);
+        });
 
         tokenPanel.add(defaultTokenRadio);
         tokenPanel.add(defaultTokenTextField);
-
         tokenPanel.add(customTokenRadio);
         tokenPanel.add(customTokenTextField);
         panel.add(tokenPanel, createGridBagConstraints(gridy));
-
         return panel;
     }
 
@@ -469,29 +519,57 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
-        if (ASSISTED.equals(frameType)) {
-            final String ipAddress = addressTextField.getText();
-            if (ipAddress.isEmpty()) {
-                return translate("connection.settings.emptyIpAddress");
-            } else if (!isValidIpAddressOrHostName(ipAddress)) {
-                return translate("connection.settings.invalidIpAddress");
-            }
+        String addressError = validateAddressText(addressTextField);
+        if (addressError != null) {
+            return addressError;
         }
+        String portError = validatePortNumberText(portNumberTextField);
+        if (portError != null) {
+            return portError;
+        }
+        if (isCustomTokenServerSelected(tokenRadioGroup)) {
+            return validateCustomTokenServer(customTokenTextField);
+        }
+        return null;
+    }
+
+    private String validateAddressText(JTextField addressTextField) {
+        if (!ASSISTED.equals(frameType)) {
+            return null;
+        }
+        final String ipAddress = addressTextField.getText();
+        if (ipAddress.isEmpty()) {
+            return translate("connection.settings.emptyIpAddress");
+        }
+        if (!isValidIpAddressOrHostName(ipAddress)) {
+            return translate("connection.settings.invalidIpAddress");
+        }
+        return null;
+    }
+
+    private String validatePortNumberText(JTextField portNumberTextField) {
         final String portNumber = portNumberTextField.getText();
         if (portNumber.isEmpty()) {
             return translate("connection.settings.emptyPortNumber");
-        } else if (!isValidPortNumber(portNumber)) {
+        }
+        if (!isValidPortNumber(portNumber)) {
             return translate("connection.settings.invalidPortNumber");
-        } else if (tokenRadioGroup.getSelection().getActionCommand().equals(CUSTOM)) {
-            final String tokenServer = customTokenTextField.getText().trim();
-            if ((isValidUrl(tokenServer) && tokenServer.endsWith("/"))) {
-                final String tokenServerVersion = getTokenServerVersion(tokenServer);
-                Log.debug("Token server version: " + tokenServerVersion);
-                return validateTokenServerVersion(tokenServerVersion);
-            }
-            return translate("connection.settings.invalidTokenServer");
         }
         return null;
+    }
+
+    private boolean isCustomTokenServerSelected(ButtonGroup tokenRadioGroup) {
+        return tokenRadioGroup.getSelection() != null && CUSTOM.equals(tokenRadioGroup.getSelection().getActionCommand());
+    }
+
+    private String validateCustomTokenServer(JTextField customTokenTextField) {
+        final String tokenServer = customTokenTextField.getText().trim();
+        if (isValidUrl(tokenServer) && tokenServer.endsWith("/")) {
+            final String tokenServerVersion = getTokenServerVersion(tokenServer);
+            Log.debug("Token server version: " + tokenServerVersion);
+            return validateTokenServerVersion(tokenServerVersion);
+        }
+        return translate("connection.settings.invalidTokenServer");
     }
 
     private static String validateTokenServerVersion(String tokenServerVersion) {
@@ -609,7 +687,6 @@ public abstract class BaseFrame extends JFrame {
         };
         showHelp.putValue(Action.SHORT_DESCRIPTION, translate("help"));
         showHelp.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.HELP));
-
         return showHelp;
     }
 
