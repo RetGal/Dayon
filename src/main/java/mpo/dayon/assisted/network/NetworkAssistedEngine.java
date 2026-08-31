@@ -263,7 +263,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         monitorIceProcessingState(latch);
 
         final long start = System.nanoTime();
-        final long timeoutMs = 5000L; // total wait for ICE
+        final long timeoutMs = 6000L; // total wait for ICE
         try {
             boolean signaled = latch.await(timeoutMs, TimeUnit.MILLISECONDS);
             long elapsed = (System.nanoTime() - start) / 1_000_000;
