@@ -352,7 +352,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 NetworkAssistantEngine.this.fileReceivingLoop();
             }
         }, "FileReceiver");
-
         fileReceiver.start();
     }
 
@@ -387,44 +386,36 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
                 captureMessageHandler.handleCapture(capture);
                 return true;
-
             case MOUSE_LOCATION:
                 final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
                 fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
                 mouseMessageHandler.handleLocation(mouse);
                 return true;
-
             case CLIPBOARD_TEXT:
                 final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
                 fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
                 setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
                 fireOnClipboardReceived();
                 return true;
-
             case CLIPBOARD_GRAPHIC:
                 final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
                 fireOnByteReceived(1 + clipboardGraphicMessage.getWireSize()); // +1 : magic number (byte)
                 setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
                 fireOnClipboardReceived();
                 return true;
-
             case PING:
                 fireOnClipboardSent();
                 return true;
-
             case RESIZE:
                 final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
                 fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
                 fireOnResizeScreen(resize.getWidth(), resize.getHeight());
                 return true;
-
             case GOODBYE:
                 fireOnTerminating();
                 return false;
-
             case HELLO:
                 throw new IllegalArgumentException("Unexpected message [HELLO]!");
-
             default:
                 throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }
@@ -435,22 +426,18 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             case HELLO:
                 fireOnConnected(connection, introduce(in));
                 return true;
-
             case PING:
                 return false;
-
             case CAPTURE:
             case MOUSE_LOCATION:
                 // reconnect case
                 processIntroduced(type, in);
                 return false;
-
             case CLIPBOARD_TEXT:
             case CLIPBOARD_GRAPHIC:
             case CLIPBOARD_FILES:
             case GOODBYE:
                 throw new IllegalArgumentException(format("Unexpected message [%s]!", type.name()));
-
             default:
                 throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }

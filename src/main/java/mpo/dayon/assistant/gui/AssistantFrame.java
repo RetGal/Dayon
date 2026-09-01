@@ -411,6 +411,18 @@ class AssistantFrame extends BaseFrame {
         return keepAspectRatio;
     }
 
+    void onRequestingToken() {
+        // connection
+        getStatusBar().setMessage(translate("token.request.msg"));
+        actions.getTokenAction().setEnabled(false);
+        actions.getStartAction().setEnabled(false);
+        actions.getIpAddressAction().setEnabled(false);
+        actions.getToggleCompatibilityModeAction().setEnabled(false);
+        // settings
+        actions.getNetworkConfigurationAction().setEnabled(false);
+        showSpinner();
+    }
+
     void onReady() {
         hideSpinner();
         validate();

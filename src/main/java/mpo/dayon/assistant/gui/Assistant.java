@@ -554,10 +554,7 @@ public class Assistant implements ClipboardOwner {
             public void actionPerformed(ActionEvent ev) {
                 final JButton button = (JButton) ev.getSource();
                 this.putValue("button", button);
-                button.setEnabled(false);
-                frame.getActions().getStartAction().setEnabled(false);
-                frame.getActions().getIpAddressAction().setEnabled(false);
-                frame.getActions().getToggleCompatibilityModeAction().setEnabled(false);
+                frame.onRequestingToken();
                 CompletableFuture.supplyAsync(() -> {
                     if (publicIp == null && activeIp == null) {
                         publicIp = networkEngine.resolvePublicIp();
@@ -578,10 +575,7 @@ public class Assistant implements ClipboardOwner {
                         button.setText(format(" %s", token.getTokenString()));
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(token.getTokenString()), null);
                     }
-                    button.setEnabled(true);
-                    frame.getActions().getStartAction().setEnabled(true);
-                    frame.getActions().getIpAddressAction().setEnabled(true);
-                    frame.getActions().getToggleCompatibilityModeAction().setEnabled(true);
+                    frame.onReady();
                 });
             }
         };

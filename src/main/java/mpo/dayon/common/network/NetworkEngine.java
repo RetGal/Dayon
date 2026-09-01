@@ -248,6 +248,13 @@ public abstract class NetworkEngine {
         return null;
     }
 
+    private boolean isPortAccessible(String publicIp, int portNumber) throws IOException {
+        Socket socket = new Socket();
+        socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
+        return true;
+    }
+
+    // more reliable, but currently defunct until a solution with the hoster is found
     private boolean isPortAccessible(int portNumber) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -279,7 +286,7 @@ public abstract class NetworkEngine {
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
             boolean accessible;
             try (ServerSocket ignored = new ServerSocket(portNumber)) {
-                accessible = isPortAccessible(portNumber);
+                accessible = isPortAccessible(publicIp, portNumber);
             } catch (IOException e) {
                 accessible = false;
             }
