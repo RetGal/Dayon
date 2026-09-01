@@ -12,6 +12,9 @@ description: |
   - friendly, multilingual user interface
   - respects your privacy 100% - no registration required
   - available for Linux, Windows and macOS
+website: https://retgal.github.io/Dayon/
+source-code: https://github.com/retgal/dayon
+issues: https://github.com/retgal/dayon/issues
 license: GPL-3.0
 grade: stable
 base: core24
@@ -80,8 +83,8 @@ parts:
       cp target/dayon.launcher $CRAFT_PART_INSTALL/bin/
       cp target/dayon.png $CRAFT_PART_INSTALL/bin/
       rm $CRAFT_PART_INSTALL/jar/original-dayon.jar
-      rm $CRAFT_PART_INSTALL/jar/WaifUPnP-*.jar
-      rm $CRAFT_PART_INSTALL/jar/xz-*.jar
+      rm $CRAFT_PART_INSTALL/jar/ice4j*.jar
+      rm $CRAFT_PART_INSTALL/jar/*-1*.jar
 
     stage-packages:
       [openjdk-21-jre]
