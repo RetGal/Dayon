@@ -249,12 +249,14 @@ public abstract class NetworkEngine {
     }
 
     private boolean isPortAccessible(String publicIp, int portNumber) throws IOException {
-        Socket socket = new Socket();
-        socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
-        return true;
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
+            return true;
+        }
     }
 
     // more reliable, but currently defunct until a solution with the hoster is found
+    @SuppressWarnings("java:S1144")
     private boolean isPortAccessible(int portNumber) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
