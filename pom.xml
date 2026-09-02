@@ -239,6 +239,7 @@
                                             <artifact>*</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
+                                                <exclude>license.txt</exclude>
                                                 <exclude>gov/nist/core/net/**</exclude>
                                                 <exclude>gov/nist/javax/sip/**</exclude>
                                                 <exclude>org/bitlet/**</exclude>
@@ -437,6 +438,7 @@
                                             <artifact>*</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
+                                                <exclude>license.txt</exclude>
                                                 <exclude>gov/nist/core/net/**</exclude>
                                                 <exclude>gov/nist/javax/sip/**</exclude>
                                                 <exclude>org/bitlet/**</exclude>
