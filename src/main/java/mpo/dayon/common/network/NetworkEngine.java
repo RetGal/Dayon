@@ -248,6 +248,8 @@ public abstract class NetworkEngine {
         return null;
     }
 
+    // faster but less reliable as it requires a router supporting NAT reflection
+    @SuppressWarnings("java:S1144")
     private boolean isPortAccessible(String publicIp, int portNumber) throws IOException {
         try (Socket socket = new Socket()) {
             socket.connect(new InetSocketAddress(publicIp, portNumber), 1000);
@@ -255,8 +257,6 @@ public abstract class NetworkEngine {
         }
     }
 
-    // more reliable, but currently defunct until a solution with the hoster is found
-    @SuppressWarnings("java:S1144")
     private boolean isPortAccessible(int portNumber) {
         try {
             HttpRequest request = HttpRequest.newBuilder()
@@ -288,7 +288,7 @@ public abstract class NetworkEngine {
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
             boolean accessible;
             try (ServerSocket ignored = new ServerSocket(portNumber)) {
-                accessible = isPortAccessible(publicIp, portNumber);
+                accessible = isPortAccessible(portNumber);
             } catch (IOException e) {
                 accessible = false;
             }

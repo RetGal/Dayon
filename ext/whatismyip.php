@@ -1,15 +1,15 @@
 <?php
 header('Content-type: text/plain');
 if (!empty($_REQUEST['p'])) {
-    set_time_limit(1);
+    $timeout = 1;
     $address = $_SERVER['REMOTE_ADDR'];
-    $type = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) ? AF_INET : AF_INET6;
     $port = substr($_REQUEST['p'], 0, 5);
-    $socket = @socket_create($type, SOCK_STREAM, SOL_TCP);
-    if ($socket &&
-        @socket_set_option($socket, SOL_SOCKET, SO_SNDTIMEO, array('sec'=>0, 'usec'=>500)) &&
-        @socket_set_option($socket, SOL_SOCKET, SO_RCVTIMEO, array('sec'=>0, 'usec'=>500)) &&
-        @socket_connect($socket, $address, $port)) {
+    $errno = 0; $errstr = '';
+    // Handle IPv6 literals by wrapping in brackets for the URI
+    $target = filter_var($address, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? "tcp://[{$address}]:{$port}" : "tcp://{$address}:{$port}";
+    $fp = @stream_socket_client($target, $errno, $errstr, $timeout);
+    if ($fp) {
+        fclose($fp);
         echo 1;
     } else {
         echo 0;
