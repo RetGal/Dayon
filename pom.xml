@@ -230,6 +230,12 @@
                                     </artifactSet>
                                     <filters>
                                         <filter>
+                                            <artifact>ice4j*:*</artifact>
+                                            <excludes>
+                                                <exclude>reference.conf</exclude>
+                                            </excludes>
+                                        </filter>
+                                        <filter>
                                             <artifact>*</artifact>
                                             <excludes>
                                                 <exclude>META-INF/**</exclude>
@@ -421,6 +427,12 @@
                                         </excludes>
                                     </artifactSet>
                                     <filters>
+                                        <filter>
+                                            <artifact>ice4j*:*</artifact>
+                                            <excludes>
+                                                <exclude>reference.conf</exclude>
+                                            </excludes>
+                                        </filter>
                                         <filter>
                                             <artifact>*</artifact>
                                             <excludes>
