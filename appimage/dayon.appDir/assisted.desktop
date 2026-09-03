@@ -17,4 +17,4 @@ Type=Application
 Terminal=false
 StartupNotify=true
 Categories=RemoteAccess;Network;
-X-AppImage-Version=17.0.0
+X-AppImage-Version=18.0.0

@@ -12,7 +12,7 @@
 	<property name="dir.ppa" value="${dir.binfile}/debian"/>
 	<property name="main.class" value="mpo.dayon.common.Runner"/>
 	<property name="ant.build.javac.release" value="11"/>
-	<property name="version" value="17.0.0"/>
+	<property name="version" value="18.0.0"/>
 
 	<path id="project.classpath">
 		<fileset dir="${dir.lib}">
@@ -49,14 +49,14 @@
 	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipfileset src="${dir.binfile}/lib/xz-1.12.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/ice4j-3.2-15-g6da2b08.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/ice4j-3.2-15-g6da2b08.jar" excludes="META-INF/**,reference.conf"/>
 			<zipfileset src="${dir.binfile}/lib/jitsi-utils-1.0-127-g6c65524.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/jitsi-metaconfig-1.0-9-g5e1b624.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/jitsi-metaconfig-1.0-9-g5e1b624.jar" excludes="META-INF/**,"/>
 			<zipfileset src="${dir.binfile}/lib/jicoco-config-1.1-127-gf49982f.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/jain-sip-ri-ossonly-1.2.279-jitsi-oss1.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-1.9.10.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-common-1.9.10.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/kotlin-reflect-1.9.10.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/jain-sip-ri-ossonly-1.2.279-jitsi-oss1.jar" excludes="META-INF/**,gov/nist/core/net/**,gov/nist/javax/sip/**"/>
+			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-1.9.10.jar" excludes="META-INF/**,kotlin/**/*metadata"/>
+			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-common-1.9.10.jar" excludes="META-INF/**,kotlin/**/*metadata"/>
+			<zipfileset src="${dir.binfile}/lib/kotlin-reflect-1.9.10.jar" excludes="META-INF/**,kotlin/reflect/jvm/internal/calls/**"/>
 			<zipfileset src="${dir.binfile}/lib/java-sdp-nist-bridge-1.2.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/sdp-api-1.0.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/config-1.4.2.jar" excludes="META-INF/**"/>

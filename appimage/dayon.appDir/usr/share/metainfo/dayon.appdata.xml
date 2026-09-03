@@ -38,6 +38,16 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="18.0.0" date="2026-09-03">
+            <description>
+                <p>Changes in Gusty Goblin</p>
+                <ul>
+                    <li>Improved topology detection based on public STUN servers</li>
+                    <li>Support for configurable private TURN/S servers</li>
+                    <li>Numerous minor improvements and bug fixes</li>
+                </ul>
+            </description>
+        </release>
         <release version="17.0.0" date="2025-05-23">
             <description>
                 <p>Changes in Furry Flamingo</p>

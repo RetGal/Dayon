@@ -1,3 +1,11 @@
+dayon (18.0.0) stable; urgency=medium
+
+  * Improved topology detection based on public STUN servers
+  * Support for configurable private TURN/S servers
+  * Numerous minor improvements and bug fixes
+
+-- Reto Galante <reto@galante.ch> Thu, 3 September 2026 12:00:00 +0000
+
 dayon (17.0.0) stable; urgency=medium
 
   * User selectable interface to be included in token
