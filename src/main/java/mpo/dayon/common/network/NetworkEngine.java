@@ -290,14 +290,15 @@ public abstract class NetworkEngine {
             return false;
         }
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
+            boolean accessible;
             try (ServerSocket ignored = new ServerSocket(portNumber)) {
-                isOwnPortAccessible.set(isPortAccessible(portNumber));
+                accessible = isPortAccessible(portNumber);
             } catch (IOException e) {
-                isOwnPortAccessible.set(false);
+                accessible = false;
             }
-            if (!isOwnPortAccessible.get()) {
+            if (!accessible) {
                 Log.warn("Port " + portNumber + " is not reachable from the outside");
-                localAddress = obtainLocalAddress();
+                isOwnPortAccessible.set(false);
                 return false;
             }
         }
