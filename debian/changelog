@@ -4,7 +4,7 @@ dayon (18.0.0) stable; urgency=medium
   * Support for configurable private TURN/S servers
   * Numerous minor improvements and bug fixes
 
--- Reto Galante <reto@galante.ch> Thu, 3 September 2026 12:00:00 +0000
+-- Reto Galante <reto@galante.ch> Thu, 3 Sep 2026 12:00:00 +0000
 
 dayon (17.0.0) stable; urgency=medium
 
@@ -23,7 +23,7 @@ dayon (16.0.3) stable; urgency=medium
   * Fix revert connection
   * Various bug fixes and improvements
 
- -- Reto Galante <reto@galante.ch>  Fri, 14 March 2025 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Fri, 14 Mar 2025 12:00:00 +0000
 
 dayon (16.0.2) stable; urgency=medium
 
@@ -32,7 +32,7 @@ dayon (16.0.2) stable; urgency=medium
   * Update assisted status bar when connected
   * Reflect yaml preconfiguration in UI
 
- -- Reto Galante <reto@galante.ch>  Sat, 1 March 2025 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Sat, 1 Mar 2025 12:00:00 +0000
 
 dayon (16.0.1) stable; urgency=medium
 
@@ -40,13 +40,13 @@ dayon (16.0.1) stable; urgency=medium
   * Automatically connect to the assistants private address if both sides are behind same firewall
   * Enhanced integration for non gnome desktops
 
- -- Reto Galante <reto@galante.ch>  Mon, 17 February 2025 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Mon, 17 Feb 2025 12:00:00 +0000
 
 dayon (16.0.0) stable; urgency=medium
 
   * Ability to revert connection establishment if assistant is not reachable
 
- -- Reto Galante <reto@galante.ch>  Tue, 11 February 2025 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Tue, 11 Feb 2025 12:00:00 +0000
 
 dayon (15.0.2) stable; urgency=low
 
@@ -57,7 +57,7 @@ dayon (15.0.2) stable; urgency=low
   * Fixed toggle keys behaviour after focus loss
   * Improved french translation
 
- -- Reto Galante <reto@galante.ch>  Wed, 15 January 2025 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Wed, 15 Jan 2025 12:00:00 +0000
 
 dayon (15.0.1) stable; urgency=medium
 
@@ -65,7 +65,7 @@ dayon (15.0.1) stable; urgency=medium
   * Performance improvements
   * Fixed connection reset when switching between singel/multi screen
 
- -- Reto Galante <reto@galante.ch>  Sun, 8 December 2024 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Sun, 8 Dec 2024 12:00:00 +0000
 
 dayon (15.0.0) stable; urgency=medium
 
@@ -73,14 +73,14 @@ dayon (15.0.0) stable; urgency=medium
   * Additional gray scales
   * Improved UI responsiveness
 
- -- Reto Galante <reto@galante.ch>  Mon, 18 November 2024 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Mon, 18 Nov 2024 12:00:00 +0000
 
 dayon (14.0.2) stable; urgency=low
 
   * Improved UPnP gateway discovery
   * Improved chinese translation
 
- -- Reto Galante <reto@galante.ch>  Fri, 7 June 2024 12:00:00 +0000
+ -- Reto Galante <reto@galante.ch>  Fri, 7 Jun 2024 12:00:00 +0000
 
 dayon (14.0.1) stable; urgency=low
 
