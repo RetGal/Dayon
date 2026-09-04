@@ -224,6 +224,10 @@ public abstract class NetworkEngine {
     protected void fireOnIOError(IOException error) {
     }
 
+    public static String nullToZeroStr(String str) {
+        return str == null ? "0" : str;
+    }
+
     public String getLocalAddress() {
         if (localAddress == null) {
             localAddress = obtainLocalAddress();
@@ -286,15 +290,13 @@ public abstract class NetworkEngine {
             return false;
         }
         if (!manageRouterPorts(0, portNumber, remoteHost)) {
-            boolean accessible;
             try (ServerSocket ignored = new ServerSocket(portNumber)) {
-                accessible = isPortAccessible(portNumber);
+                isOwnPortAccessible.set(isPortAccessible(portNumber));
             } catch (IOException e) {
-                accessible = false;
-            }
-            if (!accessible) {
-                Log.warn("Port " + portNumber + " is not reachable from the outside");
                 isOwnPortAccessible.set(false);
+            }
+            if (!isOwnPortAccessible.get()) {
+                Log.warn("Port " + portNumber + " is not reachable from the outside");
                 localAddress = obtainLocalAddress();
                 return false;
             }
@@ -306,15 +308,15 @@ public abstract class NetworkEngine {
 
     private String obtainLocalAddress() {
         try (Socket socket = new Socket()) {
-            socket.connect(new InetSocketAddress("fensterkitt.ch", 80), 5000);
+            socket.connect(new InetSocketAddress("fensterkitt.ch", 80), 3000);
             return socket.getLocalAddress().getHostAddress();
         } catch (IOException e) {
             try (Socket socket = new Socket()) {
-                socket.connect(new InetSocketAddress("info.cern.ch", 80), 5000);
+                socket.connect(new InetSocketAddress("info.cern.ch", 80), 4000);
                 return socket.getLocalAddress().getHostAddress();
             } catch (IOException ex) {
                 Log.warn("No internet connection");
-                return "0";
+                return null;
             }
         }
     }

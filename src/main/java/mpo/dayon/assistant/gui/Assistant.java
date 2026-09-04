@@ -603,7 +603,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     private void getToken(boolean closed, String localAddress, String activeAddress, String iceInfo) throws IOException, InterruptedException, SecurityException {
-        String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, localAddress);
+        String query = format(tokenServerUrl, networkConfiguration.getPort(), closed ? 1 : 0, nullToZeroStr(localAddress));
         if (activeAddress != null && !activeAddress.equals(publicIp)) {
             query += "&addr=" + activeAddress;
         }

@@ -495,7 +495,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             isOwnPortAccessible.set(null);
         }
         // null = unknown = -1, true = open = 1, false = closed = 0
-        String query = format(tokenServerUrl, token, port, toInt(open), localAddress);
+        String query = format(tokenServerUrl, token, port, toInt(open), nullToZeroStr(localAddress));
         Log.debug("Resolving token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))

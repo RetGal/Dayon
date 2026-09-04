@@ -322,7 +322,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
-        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, getLocalAddress());
+        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, nullToZeroStr(getLocalAddress()));
         Log.debug("Querying token server " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
