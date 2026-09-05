@@ -58,6 +58,13 @@ public abstract class NetworkEngine {
 
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
 
+    private static final String[][] STUN_SERVERS = {
+        {"jitsi.org", "3478"},
+        {"stun.fbsbx.com", "3478"},
+        {"stun.l.google.com", "19302"},
+        {"stun.cloudflare.com", "3478"}
+    };
+
     protected NetworkSender sender; // out
 
     private NetworkSender fileSender; // file out
@@ -377,20 +384,12 @@ public abstract class NetworkEngine {
             iceAgent = new Agent();
             iceAgent.setLoggingLevel(Level.FINEST);
             Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());
-            String[] stunServers = {
-                    "jitsi.org:3478",
-                    "stun.fbsbx.com:3478",
-                    "stun.l.google.com:19302",
-                    "stun.cloudflare.com:3478"
-            };
-            for (String sts : stunServers) {
+            for (String[] server : STUN_SERVERS) {
                 try {
-                    String[] parts = sts.split(":");
-                    TransportAddress ta = new TransportAddress(new InetSocketAddress(parts[0], Integer.parseInt(parts[1])), Transport.UDP);
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(server[0], Integer.parseInt(server[1])), Transport.UDP);
                     iceAgent.addCandidateHarvester(new StunCandidateHarvester(ta));
-                    Log.debug("Added STUN harvester: " + sts);
                 } catch (Exception e) {
-                    Log.warn("Failed to add STUN harvester: " + sts, e);
+                    Log.warn("Failed to add STUN harvester: " + server[0] + ":" + server[1], e);
                 }
             }
             Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());

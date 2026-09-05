@@ -286,9 +286,6 @@ public class NetworkAssistedEngine extends NetworkEngine
             IceProcessingState newState = (IceProcessingState) evt.getNewValue();
             Log.debug("ICE state changed: " + newState);
             switch (newState) {
-                case COMPLETED:
-                    iceAgent.free();
-                    break;
                 case TERMINATED:
                     handleIceTerminated(evt);
                     break;
@@ -521,9 +518,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void cancel() {
         Log.info("Cancelling the network assisted engine...");
         cancelling.set(true);
-        if (iceAgent != null) {
-            iceAgent.free();
-        }
+        // Don't free the agent - keep it alive for reuse to avoid expensive recreation
+        // Only free if explicitly needed for cleanup
         closeConnections();
         fireOnDisconnecting();
     }
