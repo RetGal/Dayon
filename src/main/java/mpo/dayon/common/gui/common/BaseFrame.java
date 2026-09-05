@@ -25,6 +25,7 @@ import mpo.dayon.assisted.network.NetworkAssistedEngineConfiguration;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.network.SdpUtils;
 import mpo.dayon.common.version.Version;
 
 import static java.awt.GridBagConstraints.HORIZONTAL;
@@ -109,6 +110,7 @@ public abstract class BaseFrame extends JFrame {
             }
             Log.info("Bye!");
             cleanup();
+            SdpUtils.releaseSdpFactory();
             System.exit(0);
         }
     }

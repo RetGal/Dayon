@@ -384,12 +384,12 @@ public abstract class NetworkEngine {
             iceAgent = new Agent();
             iceAgent.setLoggingLevel(Level.FINEST);
             Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());
-            for (String[] server : STUN_SERVERS) {
+            for (String[] sts : STUN_SERVERS) {
                 try {
-                    TransportAddress ta = new TransportAddress(new InetSocketAddress(server[0], Integer.parseInt(server[1])), Transport.UDP);
+                    TransportAddress ta = new TransportAddress(new InetSocketAddress(sts[0], Integer.parseInt(sts[1])), Transport.UDP);
                     iceAgent.addCandidateHarvester(new StunCandidateHarvester(ta));
                 } catch (Exception e) {
-                    Log.warn("Failed to add STUN harvester: " + server[0] + ":" + server[1], e);
+                    Log.warn("Failed to add STUN harvester: " + sts[0] + ":" + sts[1], e);
                 }
             }
             Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());

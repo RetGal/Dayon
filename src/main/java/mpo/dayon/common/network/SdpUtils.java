@@ -201,4 +201,8 @@ public class SdpUtils {
         return cand;
     }
 
+    public static void releaseSdpFactory() {
+        SDP_FACTORY.remove();
+    }
+
 }
