@@ -39,6 +39,9 @@ import org.opentelecoms.javax.sdp.*;
  * Reformatted, refactored and improved by Reto Galante
  */
 public class SdpUtils {
+
+    private static final ThreadLocal<SdpFactory> SDP_FACTORY = ThreadLocal.withInitial(NistSdpFactory::new);
+
     private SdpUtils() {
         // This utility class should not be instantiated
     }
@@ -56,7 +59,7 @@ public class SdpUtils {
      * @throws SdpException on rainy days
      */
     public static String createSDPDescription(Agent agent) throws SdpException {
-        SdpFactory factory = new NistSdpFactory();
+        SdpFactory factory = SDP_FACTORY.get();
         SessionDescription sDesc= factory.createSessionDescription();
 
         if (agent == null || agent.getStreams() == null || agent.getStreams().isEmpty()) {
@@ -76,7 +79,7 @@ public class SdpUtils {
      */
     @SuppressWarnings("unchecked") // jain-sdp legacy code.
     public static void parseSDP(Agent localAgent, String sdp) throws SdpException {
-        SdpFactory factory = new NistSdpFactory();
+        SdpFactory factory = SDP_FACTORY.get();
         SessionDescription sDesc = factory.createSessionDescription(sdp);
 
         for (IceMediaStream stream : localAgent.getStreams()) {
