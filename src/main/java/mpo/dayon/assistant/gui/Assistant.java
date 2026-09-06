@@ -575,7 +575,7 @@ public class Assistant implements ClipboardOwner {
                         button.setText(format(" %s", token.getTokenString()));
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(token.getTokenString()), null);
                     }
-                    frame.onReady();
+                    networkEngine.start(compatibilityModeActive.get(), TOKEN);
                 });
             }
         };
