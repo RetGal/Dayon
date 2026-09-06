@@ -383,7 +383,6 @@ public abstract class NetworkEngine {
             Log.debug("Initializing new ICE agent");
             iceAgent = new Agent();
             iceAgent.setLoggingLevel(Level.FINEST);
-            Log.debug("Number of STUN harvesters: " + iceAgent.getHarvesters().size());
             for (String[] sts : STUN_SERVERS) {
                 try {
                     TransportAddress ta = new TransportAddress(new InetSocketAddress(sts[0], Integer.parseInt(sts[1])), Transport.UDP);
