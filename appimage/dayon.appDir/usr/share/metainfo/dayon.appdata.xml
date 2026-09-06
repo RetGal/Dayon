@@ -38,6 +38,15 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="18.0.1" date="2026-09-06">
+            <description>
+                <p>Changes in Gusty Goblin I</p>
+                <ul>
+                    <li>Much faster connection establishment when requiring STUN servers</li>
+                    <li>Start network engine directly after token generation</li>
+                </ul>
+            </description>
+        </release>
         <release version="18.0.0" date="2026-09-03">
             <description>
                 <p>Changes in Gusty Goblin</p>
