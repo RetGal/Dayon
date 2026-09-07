@@ -76,6 +76,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
 
     public void addListener(CaptureEngineListener listener) {
         listeners.add(listener);
+        // We're keeping locally a previous state, so we must be sure to send at
+        // least once the previous capture state to the new listener.
+        synchronized (reconfigurationLOCK) {
+            if (configuration != null) {
+                this.reconfigured.set(true);
+            }
+        }
     }
 
     public void start() {
