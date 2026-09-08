@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <meta name="description" content="Remote assistance made easy!"/>
-    <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
+    <meta name="description" content="轻松实现远程协助！"/>
+    <meta name="keywords" content="远程协助, 远程桌面, 屏幕共享, 远程支持, Java 远程桌面, Java 屏幕捕获"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - 为您的家人和朋友提供远程协助</title>
     <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
@@ -56,59 +56,69 @@
       <h2>远程协助服务</h2>
       <div id="intro">
         <p>
-          &nbsp; &nbsp; Dayon! 是一个开源和跨平台 (JAVA) 的远程解决方案，允许您观看和控制远程计算机。或许，它与现有的远程桌面解决方案(Teamviewer、Anydesk…)非常相似。
+          &nbsp; &nbsp; Dayon! 是一款开源、跨平台（JAVA）的解决方案，可以查看并控制远程电脑。
+          某种意义上说，它和现有的远程桌面方案（Teamviewer、Anydesk…）很像。
         </p>
-        <p>
-          &nbsp; &nbsp; 但我想 Dayon! 有自己的特色，这也是它的价值所在。
-          &nbsp; &nbsp; 更多详情请查看 <a href="zh_quickstart.html">这个页面</a>。
-        </p>
+         <p>&nbsp; &nbsp; 但我想，Dayon! 有自己的特色，这正是它的价值所在。
+           更多细节详见 <a href="zh_quickstart.html">快速入门</a>。
+         </p>
       </div>
+
       <h2>功能</h2>
       <div id="features">
-        <h3><img src="check.png" alt="" width="16" height="16"> 轻松配置和部署 —— 一键运行</h3>
+        <h3><img src="check.png" alt="勾选" width="16" height="16"/> 轻松配置</h3>
         <p>
-          &nbsp; &nbsp; Dayon! 是专为 零 计算机基础的用户而设计的。终端用户无需在他们的计算机上手动设置网络（无需配置防火墙、无需配置路由器、无需配置 NAT ），
-            只需要打开Dayon! 客户端输入指定的地址，就能连接到开发者的远程计算机(客户端主动连接服务端)。
+          &nbsp; &nbsp; Dayon! 专为零计算机基础的用户而设计。终端用户无需配置网络（无需配置防火墙、路由器或 NAT），只需打开 Dayon! 客户端，输入指定地址，即可连接到远程计算机（客户端主动连接服务端）。
         </p>
-        <h3><img src="check.png" alt="" width="16" height="16"> 超低的网络带宽占用 —— 强大的低带宽、高延时网络适应能力</h3>
+
+        <h3><img src="check.png" alt="勾选" width="16" height="16"/> 低带宽占用</h3>
         <p>
-          &nbsp; &nbsp; Dayon! 通过压缩算法和发送缓存的黑白(最高 256 色)图像以最大限度地减少网络资源使用，尽可能多地提供实时体验。
-            Dayon! 所提供的黑白屏幕影像质量足以清除分辨菜单、图标和查看计算机设置等...
+          &nbsp; &nbsp; Dayon! 发送经过压缩和缓存的灰度画面（最多 256 级），尽量少占带宽，在互联网上也能尽量做到接近实时。
+          这样的画面足以用来看菜单、图标，并了解对方电脑的设置等。
         </p>
       </div>
-      <h2>状态 (18)</h2>
+
+      <h2>近况（18）</h2>
       <p>
-        &nbsp; &nbsp; 在第 18 版（Gusty Goblin）中，建立连接时会根据需要查询公共 STUN 服务器。此外，还可以选择配置私有 TURN/S 服务器。
-        从第 16 版（Eager Eagle）开始，如果助手无法连接到端口，连接会自动反转。
-        从第 15 版（Dolly Double）开始，远程桌面还可以彩色传输。
-        从第 12 版（Adorable Asteroid）开始，Linux 下也有了便携版本，与 Windows 下的快速启动版本类似。
-        这些版本由两个独立文件组成，一个用于辅助用户，另一个用于助手。之所以称它们为 “快速启动”，是因为它们无需事先安装即可直接启动辅助程序或助手程序。
-        (在 Windows 下的限制：需要 JRE）。
-        它们与传统的 Dayon 完全兼容！
-        <br/><br/>
-        &nbsp; &nbsp; <strong><a href="./zh_download.html#changelog">查看完整的更新日志</a></strong>
+        &nbsp; &nbsp; 第 18 版（Gusty Goblin）会在建立连接时按需查询公共 STUN 服务器。也可以另外配置私有 TURN/S 服务器。<br/>&nbsp; &nbsp; 
+        从第 16 版（Eager Eagle）起，如果协助端端口无法被访问，连接会自动反转。<br/>&nbsp; &nbsp; 
+        从第 15 版（Dolly Double）起，远程桌面也可以用彩色传输。<br/>&nbsp; &nbsp; 
+        从第 12 版（Adorable Asteroid）起，Linux 也有了便携版，和 Windows 上已有一段时间的快速启动版类似。<br/>
+        &nbsp; &nbsp; 它们由两个独立文件组成：一个给受助端，一个给协助端。
+        之所以叫「快速启动」，是因为不用先安装就能直接打开受助端或协助端
+        （Windows 上的限制：需要 JRE）。它们与常规的 Dayon! 完全兼容。
+        <h4>&nbsp; &nbsp; 请见 <a href="./zh_download.html#changelog">完整更新日志</a></h4>
       </p>
-      <h2>讲个小故事…</h2>
+
+      <h2>缘起</h2>
       <p>
-        &nbsp; &nbsp; Marc Polizzi 于菲律宾开发了Dayon! ，彼时，他通过 Skype（一种通讯软件） 与远在欧洲的家人和朋友联络。
+        &nbsp; &nbsp; Marc Polizzi 在菲律宾生活期间开发了 Dayon!，彼时，他通过 Skype 与远在欧洲的家人、朋友联络。
       </p>
+
       <p>
-        &nbsp; &nbsp; 他希望能够有个不需要任何额外操作（无需设置防火墙、DSL/路由器、NAT等）就能使用的远程桌面，以便他访问家人和朋友们的计算机。所以，
-        他决定利用业余时间，开发一款能够适应低带宽和高网络延时的远程桌面应用 —— Dayon! 。
+        &nbsp; &nbsp; 他希望能有一款无需任何额外配置（无需设置防火墙、DSL/路由器、NAT 等）即可使用的远程桌面，以便访问家人和朋友的计算机。
+        因此，他决定利用业余时间开发一款能够适应低带宽和高网络延迟的远程桌面应用——Dayon!。
       </p>
+
       <p>
-        &nbsp; &nbsp; 几年后，我在 <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
-        上寻找免费的跨平台远程协助解决方案时发现了这个项目。 在使用 Dayon! 帮助 Windows 7 及更高版本 Windows 系统的用户时，我意识到它有一些严重的缺陷。
-        在2009年初新版本 Dayon! (1.2)发布后，我决定与作者联系。 在征得原作者同意后，我于2016年年底将项目的源代码转移至
-        <a href="https://github.com/retgal/dayon">GitHub</a> 并接管开发工作。
+        &nbsp; &nbsp; 多年后，我在
+        <a href="http://sourceforge.net/projects/dayonhome">Sourceforge</a>
+        上寻找免费的跨平台远程协助方案时发现了这个程序。
+        用 Dayon! 协助运行 Windows 7 及更新系统的用户时，我发现它有一些严重问题。
+        当时最新版（1.2）还是 2009 年初发布的，于是我联系了作者。
+        征得他同意后，我于 2016 年底把项目源代码迁到
+        <a href="https://github.com/retgal/dayon">GitHub</a>
+        ，并接手后续开发。
       </p>
+
       <p>
-        &nbsp; &nbsp; 顺带一提， "Dayon！" 来源于菲律宾米沙鄢语（Visayas）中的 "请进！" （或者“进来”，原文是：Come in!） 。
+        &nbsp; &nbsp; 顺带一提，Dayon! 在菲律宾当地方言米沙鄢语（Visayas）里是「请进！」的意思。
       </p>
       <h2>许可证</h2>
       <p>
-        &nbsp; &nbsp; 该程序是根据
-        <a href="https://opensource.org/licenses/GPL-3.0"> GPL 许可证 </a> 授权的免费软件。
+        &nbsp; &nbsp; 本程序是按
+        <a href="https://opensource.org/licenses/GPL-3.0">GPL 许可证</a>
+        授权的自由软件。
         <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
           <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy" src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width:100px; float:right; margin-top:-60px">
         </a>
