@@ -36,4 +36,4 @@ if [ ! -f "appimagetool" ]; then
   chmod +x appimagetool
 fi
 echo "Building AppImage"
-./appimagetool -n ./dayon.appDir ./dayon-x86_64.AppImage
+./appimagetool -n ./dayon.appDir ./dayon-x86_64.AppImage -u "gh-releases-zsync|retgal|dayon|latest|dayon-x86_64.AppImage.zsync"
