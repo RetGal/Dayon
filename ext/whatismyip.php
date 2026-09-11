@@ -1,7 +1,7 @@
 <?php
 header('Content-type: text/plain');
 if (!empty($_REQUEST['p'])) {
-    $timeout = 1;
+    $timeout = 1.5;
     $address = $_SERVER['REMOTE_ADDR'];
     $port = substr($_REQUEST['p'], 0, 5);
     $errno = 0; $errstr = '';
