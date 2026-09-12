@@ -112,6 +112,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         Log.info("Cancelling the network assistant engine...");
         if (sender != null && configuration.isTerminablePeer()) {
             sender.sendGoodbye();
+            pause(100);
         }
         cancelling.set(true);
         safeClose(server, connection, fileConnection);
