@@ -207,6 +207,7 @@ public class Assistant implements ClipboardOwner {
         assistantActions.setStartAction(createStartAction());
         assistantActions.setStopAction(createStopAction());
         assistantActions.setToggleCompatibilityModeAction(createToggleCompatibilityModeAction());
+        assistantActions.setPreExitAction(createPreExitAction());
         return assistantActions;
     }
 
@@ -220,9 +221,9 @@ public class Assistant implements ClipboardOwner {
         frame.resetConnectionIndicators();
     }
 
-    private void stopNetwork() {
+    private void stopNetwork(boolean exit) {
         frame.hideSpinner();
-        networkEngine.cancel();
+        networkEngine.cancel(exit);
     }
 
     @Override
@@ -628,7 +629,11 @@ public class Assistant implements ClipboardOwner {
     }
 
     private Action createStopAction() {
-        return createSimpleAction(this::stopNetwork, "stop.session", ImageNames.STOP, false);
+        return createSimpleAction(() -> stopNetwork(false), "stop.session", ImageNames.STOP, false);
+    }
+
+    private Action createPreExitAction() {
+        return createSimpleAction(() -> stopNetwork(true), "exit", ImageNames.STOP, false);
     }
 
     private Action createToggleCompatibilityModeAction() {

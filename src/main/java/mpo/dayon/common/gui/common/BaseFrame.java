@@ -747,8 +747,8 @@ public abstract class BaseFrame extends JFrame {
         FINGERPRINTS.setCursor(handCursor);
     }
 
-    protected void setPreExistAction(Action stopAction) {
-        preExitAction = stopAction;
+    protected void setPreExistAction(Action exitAction) {
+        preExitAction = exitAction;
     }
 
     private class LatestVersionLabelUpdater extends SwingWorker<String, Void> {
