@@ -285,29 +285,28 @@ public abstract class NetworkEngine {
         return false;
     }
 
-    // creates unrestricted port forwarding
+    // creates unrestricted port forwarding rule and performs a port accessibility check
     public boolean selfTest(String publicIp, int portNumber) {
         return selfTest(publicIp, portNumber, null);
     }
 
-    // creates port forwarding for the specific remote host only
+    // creates port forwarding rule for the specific remote host only and performs a port accessibility check
     protected boolean selfTest(String publicIp, int portNumber, String remoteHost) {
         if (publicIp == null) {
             isOwnPortAccessible.set(false);
             return false;
         }
-        if (!manageRouterPorts(0, portNumber, remoteHost)) {
-            boolean accessible;
-            try (ServerSocket ignored = new ServerSocket(portNumber)) {
-                accessible = isPortAccessible(portNumber);
-            } catch (IOException e) {
-                accessible = false;
-            }
-            if (!accessible) {
-                Log.warn("Port " + portNumber + " is not reachable from the outside");
-                isOwnPortAccessible.set(false);
-                return false;
-            }
+        manageRouterPorts(0, portNumber, remoteHost);
+        boolean accessible;
+        try (ServerSocket ignored = new ServerSocket(portNumber)) {
+            accessible = isPortAccessible(portNumber);
+        } catch (IOException e) {
+            accessible = false;
+        }
+        if (!accessible) {
+            Log.warn("Port " + portNumber + " is not reachable from the outside");
+            isOwnPortAccessible.set(false);
+            return false;
         }
         Log.debug("Port " + portNumber + " is reachable from the outside");
         isOwnPortAccessible.set(true);
@@ -340,14 +339,11 @@ public abstract class NetworkEngine {
         if (!UPnP.isMappedTCP(newPort)) {
             if (UPnP.openPortTCP(newPort, remoteHost, "Dayon!")) {
                 Log.info(format("Enabled forwarding for port %d", newPort));
-                isOwnPortAccessible.set(true);
                 return true;
             }
             Log.warn(format("Failed to enable forwarding for port %d", newPort));
-            isOwnPortAccessible.set(false);
             return false;
         }
-        isOwnPortAccessible.set(true);
         return true;
     }
 
