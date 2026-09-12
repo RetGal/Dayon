@@ -21,7 +21,7 @@ class NetworkAssistantEngineTest {
 
     @AfterEach
     void tearDown() {
-        engine.cancel();
+        engine.cancel(true);
         engine = null;
         listener = null;
     }
@@ -31,7 +31,7 @@ class NetworkAssistantEngineTest {
         // given
 
         // when
-        engine.cancel();
+        engine.cancel(false);
 
         // then
         verify(listener).onDisconnecting();

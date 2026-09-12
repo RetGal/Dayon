@@ -39,6 +39,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.Base64;
@@ -149,10 +150,6 @@ public class NetworkAssistedEngine extends NetworkEngine
             fireOnRefused(configuration);
         } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
-        } finally {
-            if (token.getLocalPort() != 0) {
-                UPnP.closePortTCP(token.getLocalPort(), token.getPeerAddress());
-            }
         }
     }
 
@@ -160,14 +157,12 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
         Log.debug(token.toString());
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
-        int localPort;
+        int localPort = 0;
         boolean isAssistantInSameNetwork = false;
         boolean isRevertedConnection = false;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
-            // got public ip and able to expose a port?
-            localPort = detectEnvironment();
             checkAndUpdateRVS(localPort, true);
             if (token.getPeerAddress() == null || token.getPeerPort() == 0) {
                 Log.warn("Token resolution failed");
@@ -184,12 +179,10 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (token.getTokenString() != null && Boolean.FALSE.equals(token.isPeerAccessible())) {
             fireOnPeerIsAccessible(false);
             Log.info("Assistant is not accessible directly");
-            if (token.getLocalPort() == 0) {
-                // got public ip and able to expose a port?
-                localPort = detectEnvironment();
-                // update the rvs
-                checkAndUpdateRVS(localPort, false);
-            }
+            // got public ip and able to expose a port?
+            localPort = detectEnvironment();
+            // update the rvs
+            checkAndUpdateRVS(localPort, false);
             Log.debug(String.valueOf(token));
             Log.debug("Updating configuration ServerName and ServerPort with Token values");
             configuration.setServerName(token.getPeerAddress());
@@ -197,7 +190,6 @@ public class NetworkAssistedEngine extends NetworkEngine
             // revert the connection and start server if necessary and possible
             if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
                 Log.info("Reverting the connection initialization");
-                localPort = token.getLocalPort();
                 fireOnAccepting(localPort);
                 startServer(localPort);
                 Log.debug("Connected");
@@ -437,17 +429,17 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    // returns port number or 0 if not accessible
     private int detectEnvironment() {
         if (publicIp == null) {
             publicIp = resolvePublicIp();
         }
-        String remoteHost = configuration.getServerName();
         // reuse the port number if possible
         int portNumber = token.getLocalPort() != 0 ? token.getLocalPort() : random.nextInt(8975) + 1025;
-        if (!selfTest(publicIp, portNumber, remoteHost)) {
+        if (!selfTest(publicIp, portNumber)) {
             return 0;
         }
-        return configuration.getServerPort();
+        return portNumber;
     }
 
     private void connectToAssistant(int connectionTimeout, int preDelay) throws IOException {
@@ -518,10 +510,15 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void cancel() {
         Log.info("Cancelling the network assisted engine...");
         cancelling.set(true);
-        // Don't free the agent - keep it alive for reuse to avoid expensive recreation
-        // Only free if explicitly needed for cleanup
         closeConnections();
         fireOnDisconnecting();
+        cleanUpUpnp();
+    }
+
+    public void cleanUpUpnp() {
+        if (token != null && token.getLocalPort() != 0) {
+            CompletableFuture.runAsync(() -> UPnP.closePortTCP(token.getLocalPort()));
+        }
     }
 
     private void receivingLoop() {
@@ -626,6 +623,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     public void farewell() {
         if (sender != null) {
             sender.sendGoodbye();
+            pause(100);
         }
     }
 

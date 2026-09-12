@@ -16,6 +16,7 @@ class AssistantActions {
     private Action stopAction;
     private Action tokenAction;
     private Action toggleCompatibilityModeAction;
+    private Action preExitAction;
 
     Action getIpAddressAction() {
         return ipAddressAction;
@@ -96,6 +97,14 @@ class AssistantActions {
 
     void setStopAction(Action stopAction) {
         this.stopAction = stopAction;
+    }
+
+    public Action getPreExitAction() {
+        return preExitAction;
+    }
+
+    public void setPreExitAction(Action preExitAction) {
+        this.preExitAction = preExitAction;
     }
 
     Action getTokenAction() {

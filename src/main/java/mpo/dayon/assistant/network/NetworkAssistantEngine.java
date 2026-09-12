@@ -34,6 +34,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
@@ -108,14 +109,19 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     /**
      * Called from a GUI action => do not block the AWT thread (!)
      */
-    public void cancel() {
+    public void cancel(boolean exit) {
         Log.info("Cancelling the network assistant engine...");
         if (sender != null && configuration.isTerminablePeer()) {
             sender.sendGoodbye();
+            pause(100);
         }
         cancelling.set(true);
         safeClose(server, connection, fileConnection);
         fireOnDisconnecting();
+        // called as preExitAction - cleanup
+        if (exit) {
+            CompletableFuture.runAsync(() -> UPnP.closePortTCP(configuration.getPort()));
+        }
     }
 
     // right, keep streams open - forever!
@@ -147,7 +153,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             throw new IllegalArgumentException(e);
         } finally {
             closeConnections();
-            UPnP.closePortTCP(configuration.getPort());
             fireOnReady();
         }
     }
