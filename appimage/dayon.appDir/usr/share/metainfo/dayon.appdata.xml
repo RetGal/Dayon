@@ -38,6 +38,15 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="18.0." date="2026-09-14">
+            <description>
+                <p>Changes in Gusty Goblin III</p>
+                <ul>
+                    <li>More reliable detection of port status in CGNAT environments</li>
+                    <li>Improved chinese localisation</li>
+                </ul>
+            </description>
+        </release>
         <release version="18.0.2" date="2026-09-08">
             <description>
                 <p>Changes in Gusty Goblin II</p>
