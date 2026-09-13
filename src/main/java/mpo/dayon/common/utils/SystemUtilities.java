@@ -26,6 +26,8 @@ public final class SystemUtilities {
     public static final String FLATPAK_BROWSER = "/app/bin/dayon.browser";
     private static final String JAVA_VENDOR = "java.vendor";
     private static final Pattern FQ_HOSTNAME_REGEX = Pattern.compile("^([a-zA-Z\\d][a-zA-Z\\d\\-]{0,61}[a-zA-Z\\d]\\.)*[a-zA-Z]{2,}$");
+    // allows unicode letters/digits, 1-15 characters, but not purely numeric
+    private static final Pattern MS_HOSTNAME_REGEX = Pattern.compile("^(?![0-9]+$)[\\p{L}\\p{N}][\\p{L}\\p{N}-]{0,14}$");
     private static final Pattern IPV4_REGEX = Pattern.compile("(\\d{1,3})");
 
     private SystemUtilities() {
@@ -189,7 +191,7 @@ public final class SystemUtilities {
     @SuppressWarnings("squid:S5998") // matcher input is max 256 chars long
     private static boolean isValidHostname(String serverName) {
         return !isLookingLikeAnIpV4(serverName) && serverName.length() < 256 &&
-                FQ_HOSTNAME_REGEX.matcher(serverName).matches();
+                (FQ_HOSTNAME_REGEX.matcher(serverName).matches() || MS_HOSTNAME_REGEX.matcher(serverName).matches());
     }
 
     public static boolean isValidUrl(String url) {

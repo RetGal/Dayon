@@ -64,6 +64,13 @@ class SystemUtilitiesTest {
 		assertTrue(isValidIpAddressOrHostName(hostName));
 	}
 
+	@ParameterizedTest
+	@CsvSource({ "msH05Tnämé", "5540ýçT", "Im-Wìth-5TüpéD" })
+	void isValidIpAdressOrHostNameShouldReturnTrueForValidMicrosoftHostname(String hostName) {
+		// when, then
+		assertTrue(isValidIpAddressOrHostName(hostName));
+	}
+
 	@Test
 	void checksumShouldReturnComputedChecksum() throws NoSuchAlgorithmException {
 		// given
