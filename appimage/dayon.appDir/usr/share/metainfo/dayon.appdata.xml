@@ -38,12 +38,13 @@
         </screenshot>
     </screenshots>
     <releases>
-        <release version="18.0." date="2026-09-14">
+        <release version="18.0.3" date="2026-09-14">
             <description>
                 <p>Changes in Gusty Goblin III</p>
                 <ul>
                     <li>More reliable detection of port status in CGNAT environments</li>
                     <li>Improved chinese localisation</li>
+                    <li>JRE 25</li>
                 </ul>
             </description>
         </release>
