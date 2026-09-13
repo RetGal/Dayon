@@ -59,10 +59,10 @@ public abstract class NetworkEngine {
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
 
     private static final String[][] STUN_SERVERS = {
-        {"jitsi.org", "3478"},
-        {"stun.fbsbx.com", "3478"},
-        {"stun.l.google.com", "19302"},
-        {"stun.cloudflare.com", "3478"}
+        {"stun.nextcloud.com", "443"},
+        {"stun.freeswitch.org", "3478"},
+        {"stun.gigaset.net", "3478"},
+        {"stun.gmx.net", "3478"}
     };
 
     protected NetworkSender sender; // out
