@@ -10,7 +10,7 @@
 Dayon! is an easy-to-use, cross-platform remote desktop assistance solution.
 
 It consists of two parts - one for the assistant and one for the assisted. Both are included in one single package.
-As quick launch versions for Windows, they are also available as individual binaries, as snap, flatpak or nix for various linux distributions.
+As quick launch versions for Windows, they are also available as individual binaries, as snap, flatpak or nix for various Linux distributions.
 
 ## Key features
 
@@ -27,18 +27,19 @@ As quick launch versions for Windows, they are also available as individual bina
 
 Dayon! was originally developed by Marc Polizzi back in 2008.
 
-With his consent, I have taken over the maintenance and further development of this software in late 2016.
-I also moved the code base to GitHub, where it can easier be maintained.
+With his consent, I took over the maintenance and further development of this software in late 2016.
+I have also moved the source code to GitHub, where it can be maintained more easily.
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v17.0.0 (Furry Flamingo) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v18.0.3 (Gusty Goblin III) - released more than ten years after the initial release.
 
 v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, 
 v16.0.0 came with the ability of automatically reversing the connection establishment in cases the assistant side is blocked by a NAT or firewall.
-v17.0.0 is the first version which is also vailable as AppImage.
+v17.0.0 was the first version which is also available as AppImage.
+v18.0.0 uses public STUN- and optional custom TURN/S server for enhanced NAT traversal.
 
-A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v17.0.0)
+A complete list of the changes in this version is available [here](https://github.com/RetGal/Dayon/releases/tag/v18.0.3)
  and an overview of the changes between the major versions can be found at: [Changelog](https://retgal.github.io/Dayon/download.html#change-log)
 
 The app is available directly from the [Microsoft Store](https://apps.microsoft.com/detail/9PBM5KW0C790):
