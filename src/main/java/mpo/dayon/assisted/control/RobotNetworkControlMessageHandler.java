@@ -1,6 +1,7 @@
 package mpo.dayon.assisted.control;
 
 import java.awt.AWTException;
+import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
 import java.io.File;
@@ -9,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
@@ -52,6 +54,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	 */
 	@Override
 	public void handleMessage(NetworkMouseControlMessage message) {
+		final Point absoluteLocation = ScreenUtilities.toAbsoluteLocation(new Point(message.getX(), message.getY()));
 		if (message.isPressed()) {
 			if (message.isButton1()) {
 				robot.mousePress(InputEvent.BUTTON1_DOWN_MASK);
@@ -71,7 +74,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		} else if (message.isWheel()) {
 			robot.mouseWheel(message.getRotations());
 		}
-		robot.mouseMove(message.getX(), message.getY());
+		robot.mouseMove(absoluteLocation.x, absoluteLocation.y);
 	}
 
 	/**

@@ -1,7 +1,6 @@
 package mpo.dayon.assisted.utils;
 
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
@@ -30,7 +29,7 @@ public final class ScreenUtilities {
     }
 
     static {
-        NUMBER_OF_SCREENS = countScreens();
+        NUMBER_OF_SCREENS = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
         DEFAULT_SIZE = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration().getBounds();
         COMBINED_SCREEN_SIZE = getCombinedScreenSize();
         init();
@@ -59,16 +58,41 @@ public final class ScreenUtilities {
         return NUMBER_OF_SCREENS;
     }
 
-    private static int countScreens() {
-        return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length;
+    public static Point toRelativeLocation(Point location) {
+        // adjust pointer location so it's relative to the shared screen origin
+        return new Point(location.x - sharedScreenSize.x, location.y - sharedScreenSize.y);
+    }
+
+    public static Point toAbsoluteLocation(Point location) {
+        // restore the absolute desktop pointer location from the shared screen coordinates
+        return new Point(location.x + sharedScreenSize.x, location.y + sharedScreenSize.y);
+    }
+
+    static Rectangle getCombinedScreenBounds(Rectangle... screenBounds) {
+        if (screenBounds == null || screenBounds.length == 0) {
+            return new Rectangle();
+        }
+
+        Rectangle fullSize = new Rectangle(screenBounds[0]);
+        for (int idx = 1; idx < screenBounds.length; idx++) {
+            final Rectangle screenBoundsAtIdx = screenBounds[idx];
+            if (screenBoundsAtIdx == null) {
+                continue;
+            }
+            final int minX = Math.min(fullSize.x, screenBoundsAtIdx.x);
+            final int minY = Math.min(fullSize.y, screenBoundsAtIdx.y);
+            final int maxX = Math.max(fullSize.x + fullSize.width, screenBoundsAtIdx.x + screenBoundsAtIdx.width);
+            final int maxY = Math.max(fullSize.y + fullSize.height, screenBoundsAtIdx.y + screenBoundsAtIdx.height);
+            fullSize.setBounds(minX, minY, maxX - minX, maxY - minY);
+        }
+        return fullSize.getBounds();
     }
 
     private static Rectangle getCombinedScreenSize() {
-        Rectangle fullSize = new Rectangle();
-        stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
-                .flatMap(gd -> stream(gd.getConfigurations()))
-                .forEach(graphicsConfiguration -> Rectangle2D.union(fullSize, graphicsConfiguration.getBounds(), fullSize));
-        return fullSize.getBounds();
+        return getCombinedScreenBounds(stream(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices())
+                .map(GraphicsDevice::getDefaultConfiguration)
+                .map(GraphicsConfiguration::getBounds)
+                .toArray(Rectangle[]::new));
     }
 
     public static byte[] captureGray(Gray8Bits quantization) {
