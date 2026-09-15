@@ -1,6 +1,7 @@
 package mpo.dayon.assisted.network;
 
 import com.dosse.upnp.UPnP;
+import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.network.SdpUtils;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngineListener;
@@ -611,7 +612,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      */
     @Override
     public boolean onLocationUpdated(Point location) {
-        return sender == null || sender.sendMouseLocation(location);
+        return sender == null || sender.sendMouseLocation(ScreenUtilities.toRelativeLocation(location));
     }
 
     public void sendResizeScreen(int width, int height) {
