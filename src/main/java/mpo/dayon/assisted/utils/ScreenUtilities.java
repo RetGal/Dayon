@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 
 import mpo.dayon.common.capture.Gray8Bits;
 
+import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.util.Arrays.stream;
 
@@ -79,10 +80,10 @@ public final class ScreenUtilities {
             if (screenBoundsAtIdx == null) {
                 continue;
             }
-            final int minX = Math.min(fullSize.x, screenBoundsAtIdx.x);
-            final int minY = Math.min(fullSize.y, screenBoundsAtIdx.y);
-            final int maxX = Math.max(fullSize.x + fullSize.width, screenBoundsAtIdx.x + screenBoundsAtIdx.width);
-            final int maxY = Math.max(fullSize.y + fullSize.height, screenBoundsAtIdx.y + screenBoundsAtIdx.height);
+            final int minY = min(fullSize.y, screenBoundsAtIdx.y);
+            final int maxX = max(fullSize.x + fullSize.width, screenBoundsAtIdx.x + screenBoundsAtIdx.width);
+            final int minX = min(fullSize.x, screenBoundsAtIdx.x);
+            final int maxY = max(fullSize.y + fullSize.height, screenBoundsAtIdx.y + screenBoundsAtIdx.height);
             fullSize.setBounds(minX, minY, maxX - minX, maxY - minY);
         }
         return fullSize.getBounds();

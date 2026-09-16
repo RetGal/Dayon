@@ -7,6 +7,8 @@ import java.util.zip.Checksum;
 import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.gui.common.Position;
 
+import static java.lang.Math.min;
+
 public class CaptureTile {
 	public static final CaptureTile MISSING = new CaptureTile();
 
@@ -252,9 +254,9 @@ public class CaptureTile {
 		final XYWH[] xywh = new XYWH[x * y];
 		int tileId = 0;
 		for (int ty = 0; ty < captureHeight; ty += tileHeight) {
-			final int th = Math.min(captureHeight - ty, tileHeight);
+			final int th = min(captureHeight - ty, tileHeight);
 			for (int tx = 0; tx < captureWidth; tx += tileWidth) {
-				final int tw = Math.min(captureWidth - tx, tileWidth);
+				final int tw = min(captureWidth - tx, tileWidth);
 				xywh[tileId++] = new XYWH(tx, ty, tw, th);
 			}
 		}
