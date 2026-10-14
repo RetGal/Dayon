@@ -746,7 +746,7 @@ public abstract class BaseFrame extends JFrame {
     public void setFingerprints(String hash) {
         FINGERPRINTS.setIcon(getOrCreateIcon(FINGERPRINT));
         FINGERPRINTS.setToolTipText(translate("startChat"));
-        FINGERPRINTS.setText(format("%s ", hash));
+        FINGERPRINTS.setText(hash + " ");
         FINGERPRINTS.setFont(DEFAULT_FONT);
         FINGERPRINTS.addMouseListener(CHAT_MOUSE_ADAPTER);
         FINGERPRINTS.setCursor(handCursor);

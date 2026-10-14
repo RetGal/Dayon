@@ -42,7 +42,7 @@ public final class SystemUtilities {
         if (transferDir.exists()) {
             cleanDir(transferDir);
         } else if (!transferDir.mkdir()) {
-            throw new IOException(format("Error creating %s", transferDir.getName()));
+            throw new IOException("Error creating " + transferDir.getName());
         }
         return transferDir;
     }
@@ -98,7 +98,7 @@ public final class SystemUtilities {
     public static String getRamInfo() {
         final double freeMG = Runtime.getRuntime().freeMemory();
         final double totalMG = Runtime.getRuntime().totalMemory();
-        return format("%s of %s", toByteSize(totalMG - freeMG), toByteSize(totalMG));
+        return toByteSize(totalMG - freeMG) + " of " + toByteSize(totalMG);
     }
 
     public static void safeClose(Closeable... closeables) {

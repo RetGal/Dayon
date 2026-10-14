@@ -15,7 +15,6 @@ import java.security.cert.X509Certificate;
 
 import javax.net.ssl.*;
 
-import static java.lang.String.format;
 import static java.lang.System.getProperty;
 
 public class CustomTrustManager implements X509TrustManager {
@@ -63,8 +62,8 @@ public class CustomTrustManager implements X509TrustManager {
 	public static String calculateFingerprints(SSLSession session, String side) throws NoSuchAlgorithmException,
 			CertificateEncodingException, SSLPeerUnverifiedException {
 		if (session != null && session.getSessionContext() != null) {
-			return side.equals("NetworkAssistedEngine") ? format("%s:%s", calculateFingerprint(session.getPeerCertificates()[0]), calculateFingerprint(session.getLocalCertificates()[0])) :
-					format("%s:%s",calculateFingerprint(session.getLocalCertificates()[0]), calculateFingerprint(session.getPeerCertificates()[0]));
+			return side.equals("NetworkAssistedEngine") ? calculateFingerprint(session.getPeerCertificates()[0]) + ":" + calculateFingerprint(session.getLocalCertificates()[0]) :
+					calculateFingerprint(session.getLocalCertificates()[0]) + ":" +  calculateFingerprint(session.getPeerCertificates()[0]);
 		}
 		return null;
 	}
