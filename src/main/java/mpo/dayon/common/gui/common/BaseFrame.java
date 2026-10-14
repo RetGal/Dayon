@@ -133,7 +133,7 @@ public abstract class BaseFrame extends JFrame {
 
     void setupDimension() {
         if (frameType.equals(ASSISTED)) {
-            int surplus = Runtime.version().version().getFirst() > 17 && ("wayland").equals(System.getProperty("xdg.session.type")) ? 40 : 0;
+            int surplus = Runtime.version().version().get(0) > 17 && ("wayland").equals(System.getProperty("xdg.session.type")) ? 40 : 0;
             dimension = new Dimension(frameType.getMinWidth(), frameType.getMinHeight() + surplus);
             setResizable(false);
         } else {
