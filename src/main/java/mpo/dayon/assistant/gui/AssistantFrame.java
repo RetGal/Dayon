@@ -300,7 +300,7 @@ class AssistantFrame extends BaseFrame {
         String token = (String) tokenAction.getValue("token");
         JButton button = createButton(tokenAction);
         if (token != null) {
-            button.setText(format(" %s", token));
+            button.setText(" " + token);
             button.setToolTipText(translate("token.copy.msg"));
         }
         return button;

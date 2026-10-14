@@ -573,7 +573,7 @@ public class Assistant implements ClipboardOwner {
                     return TOKEN;
                 }).thenAcceptAsync(token -> {
                     if (token.getTokenString() != null) {
-                        button.setText(format(" %s", token.getTokenString()));
+                        button.setText(" " + token.getTokenString());
                         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(token.getTokenString()), null);
                     }
                     networkEngine.start(compatibilityModeActive.get(), TOKEN);

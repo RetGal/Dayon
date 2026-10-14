@@ -38,7 +38,7 @@ public final class Babylon {
 
     @SuppressWarnings("squid:S4973")
     public static String translateEnum(Enum<?> value) {
-        final String tag = format("enum.%s.%s", value.getClass().getSimpleName(), value.name());
+        final String tag = "enum." + value.getClass().getSimpleName() + "." + value.name();
         final String val = translate(tag);
         // OK - means not localized (!)
         if (tag == val) {
