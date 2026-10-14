@@ -24,7 +24,8 @@ public final class FatalErrorHandler {
         Log.fatal("Bye!");
 
         if (frame != null) {
-            String info = translate(Objects.requireNonNullElse(error.getMessage(), "fatal.error.msg3"));
+            String errorMessage = error == null ? null : error.getMessage();
+            String info = translate(Objects.requireNonNullElse(errorMessage, "fatal.error.msg3"));
             JOptionPane.showMessageDialog(frame, format("%s%n%s", translate("fatal.error.msg1"), translate("fatal.error.msg2", info)),
                     translate("fatal.error"), JOptionPane.ERROR_MESSAGE);
         }
