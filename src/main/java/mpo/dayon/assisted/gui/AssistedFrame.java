@@ -9,6 +9,7 @@ import mpo.dayon.common.gui.common.ImageUtilities;
 import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
+import mpo.dayon.common.utils.SystemUtilities;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -33,7 +34,7 @@ class AssistedFrame extends BaseFrame {
     private boolean connected;
     private Timer peerStatusTimer;
 
-    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml, boolean showWaylandWarning) {
+    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml, boolean isWayland) {
         super.setFrameType(FrameType.ASSISTED);
         super.setPreExistAction(stopAction);
         this.stopAction = stopAction;
@@ -45,7 +46,7 @@ class AssistedFrame extends BaseFrame {
         setupToolBar(createToolBar());
         setupStatusBar(createStatusBar());
         onReady();
-        if (showWaylandWarning) {
+        if (isWayland && (SystemUtilities.isSnapped() || SystemUtilities.isFlat())) {
             showWarning();
         }
     }
@@ -80,9 +81,9 @@ class AssistedFrame extends BaseFrame {
 
     private void showWarning() {
         final JButton warning = new JButton(format("<html><center>%s<br>%s</center></html>", translate("wayland.warning"), translate("wayland.fix.me")));
-        warning.setFont(new Font("Sans Serif", Font.PLAIN, 18));
+        warning.setFont(new Font("Sans Serif", Font.PLAIN, 17));
         warning.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        this.setMinimumSize(new Dimension(500, 140));
+        this.setMinimumSize(new Dimension(640, 140));
         warning.addMouseListener(new ButtonMouseAdapter());
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(5, 15, 5, 15));
@@ -93,7 +94,7 @@ class AssistedFrame extends BaseFrame {
     private static class ButtonMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse("https://retgal.github.io/Dayon/wayland.to.xorg.gif");
+            browse(HTTP_SUPPORT + "#wayland-issues");
         }
     }
 

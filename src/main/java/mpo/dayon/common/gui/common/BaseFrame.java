@@ -55,7 +55,7 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String HTTP_HOME = "https://github.com/retgal/dayon";
 
-    private static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
+    protected static final String HTTP_SUPPORT = "https://retgal.github.io/Dayon/" + translate("support.html");
 
     private static final String HTTP_FEEDBACK = HTTP_HOME + "/issues";
 
@@ -123,18 +123,23 @@ public abstract class BaseFrame extends JFrame {
 
     private void setupWindow() {
         configuration = new FrameConfiguration(frameType);
-        if (frameType.equals(ASSISTED)) {
-            dimension = new Dimension(frameType.getMinWidth(), frameType.getMinHeight());
-            setResizable(false);
-        } else {
-            dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
-                    Math.max(configuration.getHeight(), frameType.getMinHeight()));
-        }
+        setupDimension();
         final Rectangle maximumWindowBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
         position = new Position(configuration.getX() + dimension.width < maximumWindowBounds.width ? configuration.getX() : (maximumWindowBounds.width - dimension.width) / 2,
                  configuration.getY() + dimension.height < maximumWindowBounds.height ? configuration.getY() : (maximumWindowBounds.height - dimension.height) / 2);
         setSize(dimension.width, dimension.height);
         setLocation(position.getX(), position.getY());
+    }
+
+    void setupDimension() {
+        if (frameType.equals(ASSISTED)) {
+            int surplus = Runtime.version().version().getFirst() > 17 && ("wayland").equals(System.getProperty("xdg.session.type")) ? 40 : 0;
+            dimension = new Dimension(frameType.getMinWidth(), frameType.getMinHeight() + surplus);
+            setResizable(false);
+        } else {
+            dimension = new Dimension(Math.max(configuration.getWidth(), frameType.getMinWidth()),
+                    Math.max(configuration.getHeight(), frameType.getMinHeight()));
+        }
     }
 
     protected void setupToolBar(ToolBar toolBar) {
