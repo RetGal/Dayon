@@ -58,11 +58,67 @@
         Für Rückmeldungen bin ich Ihnen sehr dankbar! Posten Sie eine Frage oder erfassen Sie ein Issue auf <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
 
+      <h3>Schematische Darstellung des Verbindungsaufbaus</h3>
+      <p>
+        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
+      </p>
+
+      <h3>Wayland</h3>
+
+      <p>Wenn auf der Seite des Assistierten Wayland im Einsatz ist, muss die Freigabe des Bildschirms und dessen Fernsteuerung explizit erlaubt werden.<br/>
+        Der Dialog "Bildschirmfreigabe" erscheint automatisch, sobald der Assistent die Verbindung aufgebaut hat.
+        Der Assistierte muss die Freigabe bestätigen, sonst kann der Assistent den Bildschirm nicht sehen und auch nicht steuern:<br/>
+        <img src="wayland.allow.png" alt="Grant access"/>
+      </p>
+
+      <h4><a id="wayland-issues" class="no">Bekannte Probleme mit Wayland</a></h4>
+
+      <p>
+        Ist Dayon! auf Seite des Assistierten als <strong>Snap</strong> oder <strong>Flatpak</strong> installiert, funktioniert die Fernsteuerung in Kombination mit Wayland nicht, oder zumindest nicht zuverlässig.
+      </p>
+
+      <h4>Abhilfe</h4>
+
+      <p>Falls möglich, die Wayland Session auf Xorg umstellen:</p>
+      <p>
+        <img src="wayland.to.xorg.gif" alt="Switch to Xorg"/>
+      </p>
+
+      <p>
+        Sollte dies, wie z.B. bei <strong>Ubuntu</strong> ab Version <strong>26.04</strong>, nicht möglich sein, dann kann Dayon! entweder:
+      </p>
+        <ul>
+          <li>
+            ohne Installation als
+        <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-x86_64.AppImage">AppImage</a> oder
+        <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.sh">Selbstextrahierendes Script</a> gestartet werden
+          </li>
+          <li>
+        oder via <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.18.0.3.tgz">tgz</a>
+        oder <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-18.0.3.deb">Debianpaket</a> installiert werden.
+          </li>
+        </ul>
+
       <h3>Dayon! Heimverzeichnis</h3>
       <p>
         Das Verzeichnis <code>.dayon</code> wird im Standardbenutzerverzeichnis des eingelogten Benutzers oder via
         JAVA-Property definierten Benutzerverzeichnis <code>user.home</code> erstellt und enthält nebst den
         gespeicherten Einstellungen auch die Logdatei(en).
+      </p>
+
+      <h3>Zertifikatsfingerabdrücke</h3>
+      <p>
+        Um "Men in the Middle"-Angriffe zu verhindern, werden die Zertifikatsfingerabdrücke der beiden verbindenden Seiten angezeigt.
+        Die beiden Fingerabdrücke müssen übereinstimmen - tun sie es nicht, dann ist etwas Merkwürdiges im Gange.
+        Diese zusätzliche Sicherheitsfunktion wurde mit Version 13 von Dayon eingeführt.
+      </p>
+      <p>
+        <img src="dayon_fingerprints.jpg" alt="Certificate Fingerprints"/>
+      </p>
+      <p>
+        <strong>Achtung:</strong> Um die Verbindung mit älteren Clients (vor Version 13) zu ermöglichen, muss der Kompatibilitätsmodus
+        <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/compatibility.png" alt="compatibility"/> aktiviert werden.<br/>
+        Dies ist eine Übergangslösung, bitte aktualisieren Sie die <em>Assistierten</em> so bald wie möglich.
       </p>
 
       <h3>CRC Checksumme</h3>
@@ -84,31 +140,6 @@
         dieser Hinsicht Mal etwas aus dem Ruder laufen, kann entweder die
         Applikation des Assistierten neu gestartet, oder dessen Puffer zurückgesetzt werden.
         (<strong>Abfallkübelsymbol</strong>).
-      </p>
-
-      <h3>Zertifikatsfingerabdrücke</h3>
-      <p>
-        Um "Men in the Middle"-Angriffe zu verhindern, werden die Zertifikatsfingerabdrücke der beiden verbindenden Seiten angezeigt.
-        Die beiden Fingerabdrücke müssen übereinstimmen - tun sie es nicht, dann ist etwas Merkwürdiges im Gange.
-        Diese zusätzliche Sicherheitsfunktion wurde mit Version 13 von Dayon eingeführt.
-      </p>
-      <p>
-        <img src="dayon_fingerprints.jpg" alt="Certificate Fingerprints"/>
-      </p>
-      <p>
-        <strong>Achtung:</strong> Um die Verbindung mit älteren Clients (vor Version 13) zu ermöglichen, muss der Kompatibilitätsmodus
-        <img src="https://raw.githubusercontent.com/RetGal/Dayon/master/src/main/resources/images/100/compatibility.png" alt="compatibility"/> aktiviert werden.<br/>
-        Dies ist eine Übergangslösung, bitte aktualisieren Sie die <em>Assistierten</em> so bald wie möglich.
-      </p>
-
-      <h3>Schematische Darstellung des Verbindungsaufbaus</h3>
-      <p>
-        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
-      </p>
-
-      <h3>Wayland Session auf Xorg umstellen</h3>
-      <p>
-        <img src="wayland.to.xorg.gif" alt="Switch to Xorg"/>
       </p>
     </div>
     <div id="footer"></div>

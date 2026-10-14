@@ -58,6 +58,48 @@
         Din feedback är mer än välkommen - posta dina frågor eller öppna ett nytt ärende på <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
 
+      <h3>Hur anslutningar sker</h3>
+      <p>
+        <img src="dayon.connection.diagram.svg" alt="Dayon! Anslutningsschema"/>
+      </p>
+
+      <h3>Wayland</h3>
+
+      <p>Om Wayland används på den sida som får hjälp måste skärmdelning och fjärrstyrning uttryckligen tillåtas.<br/>
+        Dialogrutan ”Skärmdelning” visas automatiskt så snart assistenten har upprättat anslutningen.
+        Den assisterade användaren måste bekräfta delningen; annars kan assistenten inte se eller styra skärmen:<br/>
+        <img src="wayland.allow.png" alt="Bevilja åtkomst"/>
+      </p>
+
+      <h4><a id="wayland-issues" class="no">Kända problem med Wayland</a></h4>
+
+      <p>
+        Om Dayon! är installerat på den assisterade datorn som ett <strong>Snap</strong> eller <strong>Flatpak</strong>,
+        fungerar inte fjärrstyrningen med Wayland – eller åtminstone inte pålitligt.
+      </p>
+
+      <h4>Lösning</h4>
+
+      <p>Om möjligt, byt från Wayland-sessionen till Xorg:</p>
+      <p>
+        <img src="wayland.to.xorg.gif" alt="Byt till Xorg"/>
+      </p>
+
+      <p>
+        Om detta inte är möjligt – vilket till exempel är fallet med <strong>Ubuntu</strong> version <strong>26.04</strong> och senare – kan Dayon! antingen:
+      </p>
+      <ul>
+        <li>
+          köras utan installation som
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-x86_64.AppImage">AppImage</a> eller
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.sh">självuppackande skript</a>
+        </li>
+        <li>
+          eller installeras som <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.18.0.3.tgz">tgz</a>
+          eller <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-18.0.3.deb">Debian-paket</a>.
+        </li>
+      </ul>
+
       <h3>Dayon! Hemmafolder (Home Directory)</h3>
       <p>
         Foldern <code>.dayon</code> skapas som standard i den inloggade användarens hemmafolder eller i den folder som anges i JAVA egenskapen (property) <code>user.home</code>. Där sparas användarinställningar och loggfiler.
@@ -87,15 +129,6 @@
         Detta är endast en tillfällig lösning, uppdatera dina klientinstallationer så snart som möjligt.
       </p>
 
-      <h3>Hur anslutningar sker</h3>
-      <p>
-        <img src="dayon.connection.diagram.svg" alt="Dayon! Anslutningsschema"/>
-      </p>
-
-      <h3>Konvertera Wayland-session till Xorg</h3>
-      <p>
-        <img src="wayland.to.xorg.gif" alt="Switch to Xorg"/>
-      </p>
     </div>
     <div id="footer"></div>
   </div>

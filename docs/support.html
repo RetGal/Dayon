@@ -57,6 +57,48 @@
       <p>
         Your feedback is more than welcome! Post your question or open a new issue on <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
+      <h3>Connection establishment</h3>
+      <p>
+        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
+      </p>
+
+      <h3>Wayland</h3>
+
+      <p>If Wayland is in use on the assisted side, screen sharing and remote control must be explicitly allowed.<br/>
+        The “Screen Sharing” dialog appears automatically as soon as the assistant has established the connection.
+        The assisted user must confirm the sharing; otherwise, the assistant cannot see or control the screen:<br/>
+        <img src="wayland.allow.png" alt="Grant access"/>
+      </p>
+
+      <h4><a id="wayland-issues" class="no">Known issues with Wayland</a></h4>
+
+      <p>
+        If Dayon! is installed on the assisted machine as a <strong>Snap</strong> or <strong>Flatpak</strong>,
+        remote control does not work with Wayland — or at least not reliably.
+      </p>
+
+      <h4>Workaround</h4>
+
+      <p>If possible, switch the Wayland session to Xorg:</p>
+      <p>
+        <img src="wayland.to.xorg.gif" alt="Switch to Xorg"/>
+      </p>
+
+      <p>
+        If this is not possible—as is the case, for example, with <strong>Ubuntu</strong> version <strong>26.04</strong> and later—then Dayon! can either:
+      </p>
+      <ul>
+        <li>
+          be executed without installation as
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-x86_64.AppImage">AppImage</a> or
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.sh">self-extracting script</a>
+        </li>
+        <li>
+          or installed as <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.18.0.3.tgz">tgz</a>
+          or <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-18.0.3.deb">Debian package</a>.
+        </li>
+      </ul>
+
       <h3>Dayon! Home Directory</h3>
       <p>
         The directory <code>.dayon</code> is created within the default home directory of the logged-in user or
@@ -98,16 +140,8 @@
         This is only an interim solution, please update your clients as soon as possible.
       </p>
 
-      <h3>Connection establishment</h3>
-      <p>
-        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram"/>
-      </p>
     </div>
 
-    <h3>Change Wayland session to Xorg</h3>
-    <p>
-      <img src="wayland.to.xorg.gif" alt="Switch to Xorg"/>
-    </p>
     <div id="footer"></div>
   </div>
   </body>

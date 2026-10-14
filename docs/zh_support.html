@@ -57,6 +57,52 @@
       <p>
         &nbsp; &nbsp; 非常欢迎您的反馈！请在 <a href="https://github.com/retgal/dayon/issues">GitHub</a> 上提问或开新的 issue。
       </p>
+
+      <h3>连接建立</h3>
+      <p>
+        &nbsp; &nbsp; <strong style="color:#fff;background:#307fe1;padding:0 0.35em">译者注</strong>：中国大陆用户请注意，示意图仅供参考。若协助端（Assistant）位于运营商 NAT（如 CGNAT）之后，端口无法从互联网访问，令牌或手动填写地址可能无法建立连接。可尝试连接反转，或使用内网穿透（如 花生壳、FRP）、组网（如 ZeroTier）/ VPN。
+      </p>
+      <p>
+        <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram">
+      </p>
+
+      <h3>Wayland</h3>
+
+      <p>
+        &nbsp; &nbsp; 如果被协助方正在使用 Wayland，则必须明确允许屏幕共享和远程控制。一旦协助方建立连接，“屏幕共享”对话框就会自动弹出。
+        受助用户必须确认共享；否则，协助者将无法查看或控制屏幕：<br/>
+        <img src="wayland.allow.png" alt="授予访问权限"/>
+      </p>
+
+      <h4><a id="wayland-issues" class="no">Wayland 的已知问题</a></h4>
+
+      <p>
+        &nbsp; &nbsp; 如果被协助机器上安装的 Dayon! 是作为 <strong>Snap</strong> 或 <strong>Flatpak</strong> 安装的，
+        则在 Wayland 环境下远程控制无法正常工作——或者至少无法稳定运行。
+      </p>
+
+      <h4>解决方法</h4>
+
+      <p>&nbsp; &nbsp; 把 Wayland 会话改成 Xorg：</p>
+      <p>
+        <img src="wayland.to.xorg.gif" alt="切换到 Xorg"/>
+      </p>
+
+      <p>
+        &nbsp; &nbsp; 如果无法实现这一点——例如，在 <strong>Ubuntu</strong> 版本 <strong>26.04</strong> 及更高版本中就是如此——那么 Dayon! 可以：
+      </p>
+      <ul>
+        <li>
+          作为
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-x86_64.AppImage">AppImage</a> 直接运行（无需安装），或
+          <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.sh">自解压脚本</a>
+        </li>
+        <li>
+          或作为 <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon.18.0.3.tgz">tgz</a>
+          或 <a href="https://github.com/RetGal/Dayon/releases/download/v18.0.3/dayon-18.0.3.deb">Debian 软件包</a>。
+        </li>
+      </ul>
+
       <h3>Dayon! 配置目录</h3>
       <p>
         &nbsp; &nbsp; 会在当前登录用户的默认配置目录，或 JAVA 属性 <code>user.home</code> 所指的目录下，创建 <code>.dayon</code> 文件夹，
@@ -92,18 +138,6 @@
         &nbsp; &nbsp; 这只是权宜之计，请尽快让对方升级。
       </p>
 
-        <h3>连接建立</h3>
-        <p>
-            &nbsp; &nbsp; <strong style="color:#fff;background:#307fe1;padding:0 0.35em">译者注</strong>：中国大陆用户请注意，示意图仅供参考。若协助端（Assistant）位于运营商 NAT（如 CGNAT）之后，端口无法从互联网访问，令牌或手动填写地址可能无法建立连接。可尝试连接反转，或使用内网穿透（如 花生壳、FRP）、组网（如 ZeroTier）/ VPN。
-        </p>
-        <p>
-            <img src="dayon.connection.diagram.svg" alt="Dayon! connection diagram">
-        </p>
-
-      <h3>把 Wayland 会话改成 Xorg</h3>
-      <p>
-        <img src="wayland.to.xorg.gif" alt="切换到 Xorg"/>
-      </p>
     </div>
     <div id="footer"></div>
   </div>
