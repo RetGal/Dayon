@@ -35,7 +35,7 @@ apps:
     extensions:
       [gnome]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-$SNAP_ARCH
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-25-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
       DISABLE_WAYLAND: 1
     command: bin/dayon.launcher $SNAP/jar/dayon.jar $1 $2 $3 $4 $5
@@ -47,7 +47,7 @@ apps:
     extensions:
       [gnome]
     environment:
-      JAVA_HOME: $SNAP/usr/lib/jvm/java-21-openjdk-$SNAP_ARCH
+      JAVA_HOME: $SNAP/usr/lib/jvm/java-25-openjdk-$SNAP_ARCH
       PATH: $JAVA_HOME/bin:$JAVA_HOME/jre/bin:$PATH
     command: bin/dayon.launcher $SNAP/jar/dayon.jar assistant $1 $2 $3
     desktop: ../parts/dayon/build/target/dayon.assistant.desktop
@@ -75,7 +75,7 @@ parts:
       craftctl set version=$(git describe --tags | sed 's/^v//' | cut -d "-" -f1)
 
     build-packages:
-      [openjdk-21-jdk, maven]
+      [openjdk-25-jdk, maven]
 
     override-build: |
       craftctl default
@@ -87,7 +87,7 @@ parts:
       rm $CRAFT_PART_INSTALL/jar/*-1*.jar
 
     stage-packages:
-      [openjdk-21-jre]
+      [openjdk-25-jre]
 
     override-prime: |
       craftctl default
