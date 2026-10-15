@@ -146,7 +146,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
             ++captureId;
 
             fireOnRawCaptured(captureId, pixels); // debugging purpose (!)
-            final CaptureTile[] dirty = computeDirtyTiles(pixels);
+            final CaptureTile[] dirty = computeDirtyTiles(pixels, captureColors ? 4 : 1);
 
             if (dirty != null) {
                 final Capture capture = new Capture(captureId, reset.getAndSet(false), skipped, 0, captureDimension, TILE_DIMENSION, dirty);
@@ -199,7 +199,7 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         }
     }
 
-    private CaptureTile[] computeDirtyTiles(byte[] capture) {
+    private CaptureTile[] computeDirtyTiles(byte[] capture, int pixelSize) {
         final int x = (captureDimension.width + TILE_DIMENSION.width - 1) / TILE_DIMENSION.width;
         final int y = (captureDimension.height + TILE_DIMENSION.height - 1) / TILE_DIMENSION.height;
         final int length = x * y;
@@ -211,7 +211,6 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
         CaptureTile[] dirty = new CaptureTile[length];
         byte[] tileData;
         boolean hasDirty = false;
-        int pixelSize = configuration.isCaptureColors() ? 4 : 1;
         int tileId = 0;
         for (int ty = 0; ty < captureDimension.height; ty += TILE_DIMENSION.height) {
             final int th = min(captureDimension.height - ty, TILE_DIMENSION.height);
@@ -233,17 +232,13 @@ public class CaptureEngine implements ReConfigurable<CaptureEngineConfiguration>
      * Screen-rectangle buffer to tile-rectangle buffer. Use pixelSize 4 for colored and 1 for gray pixels.
      */
     private static byte[] createTile(byte[] capture, int width, int tw, int th, int tx, int ty, int pixelSize) {
-        final int capacity = tw * th * pixelSize;
-        final byte[] tile = new byte[capacity];
-        final int maxSrcPos = capture.length;
-        int srcPos = ty * width * pixelSize + tx * pixelSize;
-        int destPos = 0;
-        final int screenRowIncrement = width * pixelSize;
-        final int tileRowIncrement = tw * pixelSize;
-        while (destPos < capacity && srcPos < maxSrcPos) {
-            System.arraycopy(capture, srcPos, tile, destPos, tileRowIncrement);
-            srcPos += screenRowIncrement;
-            destPos += tileRowIncrement;
+        final int tileRowBytes = tw * pixelSize;
+        final byte[] tile = new byte[tileRowBytes * th];
+        final int screenRowBytes = width * pixelSize;
+        int srcPos = ty * screenRowBytes + tx * pixelSize;
+        for (int row = 0; row < th; row++) {
+            System.arraycopy(capture, srcPos, tile, row * tileRowBytes, tileRowBytes);
+            srcPos += screenRowBytes;
         }
         return tile;
     }

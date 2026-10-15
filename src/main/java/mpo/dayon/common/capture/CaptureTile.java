@@ -79,7 +79,7 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		final byte[] data = new byte[width * height * 4];
+		final byte[] data = new byte[width * height];
 		Arrays.fill(data, singleLevel);
 		this.capture = new MemByteBuffer(data);
 		this.singleLevel = singleLevel;
@@ -95,7 +95,7 @@ public class CaptureTile {
 		this.position = new Position(xywh.x, xywh.y);
 		this.width = xywh.w;
 		this.height = xywh.h;
-		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height * 4]) // black image (!)
+		this.capture = (cached == MISSING) ? new MemByteBuffer(new byte[width * height]) // black image (!)
 				: cached.getCapture(); // sharing it (!)
 		this.singleLevel = -1;
 		this.fromCache = true;
