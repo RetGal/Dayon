@@ -18,8 +18,9 @@ As quick launch versions for Windows, they are also available as individual bina
 - intuitive, multilingual user interface (de, en, es, fr, it, ru, sv, tr, zh)
 - assistant and assisted functionality in one package
 - secure, end-to-end encrypted communication (TLS 1.3)
-- very low bandwidth usage
-- cross-platform
+- 100% respect for privacy (no registration)
+- cross-platform (Windows, Linux, macOS)
+- extremely low bandwidth usage
 - open source
 - free (as hugs)
 
@@ -28,7 +29,6 @@ As quick launch versions for Windows, they are also available as individual bina
 Dayon! was originally developed by Marc Polizzi back in 2008.
 
 With his consent, I took over the maintenance and further development of this software in late 2016.
-I have also moved the source code to GitHub, where it can be maintained more easily.
 
 ## Releases
 
@@ -68,13 +68,12 @@ or from [ppa:regal/dayon](https://launchpad.net/~regal/+archive/ubuntu/dayon)
 [Swedish](https://retgal.github.io/Dayon/sv_index.html)<br>
 [简体中文](https://retgal.github.io/Dayon/zh_index.html)<br>
 
-Currently, there is no online documentation available for Italian, Spanish, Russian and Turkish.
-Please refer to the [English](https://retgal.github.io/Dayon/index.html) or [French](https://retgal.github.io/Dayon/fr_index.html)
- version.
+At present, no translated online documentation is available for Italian, Spanish, Russian and Turkish.
+Please refer to the [English](https://retgal.github.io/Dayon/index.html) or [French](https://retgal.github.io/Dayon/fr_index.html) versions.
  
 ## Screen
 
-![Assistant in action](/docs/dayon.screen.png?raw=true "Assistant connected")
+![Assistant in action](/docs/dayon.screen.webp?raw=true "Assistant connected")
 
 ## Connection establishment
 
@@ -100,7 +99,7 @@ Have a look at ``pom.xml`` or ``build.xml`` for details and advanced options.
  
 Any feedback and contributions are very welcome. 
 
-You don't have to be a programmer!
+You don't have to be a programmer to get involved!
 
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/resources/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/resources/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
