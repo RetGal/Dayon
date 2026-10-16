@@ -1,7 +1,6 @@
 package mpo.dayon.common.squeeze;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 
@@ -134,7 +133,7 @@ public final class Compressor {
 
     public Capture decompress(TileCache cache, MemByteBuffer zipped) throws IOException {
         final MemByteBuffer unzipped = zipper.unzip(zipped);
-        final DataInputStream in = new DataInputStream(new ByteArrayInputStream(unzipped.getInternal(), 0, unzipped.size()));
+        final DataInputStream in = new DataInputStream(unzipped.asInputStream());
         final int cId = in.readInt();
         final boolean cReset = in.read() == 1;
         if (cReset) {

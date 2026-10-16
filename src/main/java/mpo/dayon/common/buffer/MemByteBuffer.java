@@ -1,5 +1,7 @@
 package mpo.dayon.common.buffer;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
 
@@ -35,6 +37,42 @@ public class MemByteBuffer extends OutputStream {
 
 	public byte[] getInternal() {
 		return Arrays.copyOf(buffer, count);
+	}
+
+	/**
+	 * Returns an input stream over the current contents without copying them.
+	 * The stream is a view of this buffer and should be consumed before writing
+	 * to this buffer again.
+	 */
+	public ByteArrayInputStream asInputStream() {
+		return new ByteArrayInputStream(buffer, 0, count);
+	}
+
+	/**
+	 * Writes the current contents directly to the specified stream.
+	 */
+	public void writeTo(OutputStream out) throws IOException {
+		out.write(buffer, 0, count);
+	}
+
+	/**
+	 * Appends the current contents to another memory buffer without copying
+	 * through a temporary array.
+	 */
+	public void appendTo(MemByteBuffer destination) {
+		destination.ensureCapacity(destination.count + count);
+		System.arraycopy(buffer, 0, destination.buffer, destination.count, count);
+		destination.count += count;
+	}
+
+	/**
+	 * Copies bytes from this buffer into the specified destination.
+	 */
+	public void copyTo(byte[] destination, int destinationOffset, int sourceOffset, int len) {
+		if (sourceOffset < 0 || len < 0 || sourceOffset > count - len) {
+			throw new IndexOutOfBoundsException();
+		}
+		System.arraycopy(buffer, sourceOffset, destination, destinationOffset, len);
 	}
 
 	public int mark() {

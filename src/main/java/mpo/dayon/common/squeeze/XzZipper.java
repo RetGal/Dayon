@@ -21,7 +21,7 @@ public class XzZipper implements Zipper {
     public MemByteBuffer zip(MemByteBuffer unCompressed) throws IOException {
 		final MemByteBuffer compressed = new MemByteBuffer();
 		try (XZOutputStream xzOutputStream = new XZOutputStream(compressed, options)) {
-			xzOutputStream.write(unCompressed.getInternal(), 0, unCompressed.size());
+			unCompressed.writeTo(xzOutputStream);
 		}
 		return compressed;
 	}
@@ -29,7 +29,7 @@ public class XzZipper implements Zipper {
 	@Override
     public MemByteBuffer unzip(MemByteBuffer compressed) throws IOException {
 		try (MemByteBuffer unCompressed = new MemByteBuffer()) {
-			try (XZInputStream xzInputStream = new XZInputStream(new ByteArrayInputStream(compressed.getInternal(), 0, compressed.size()))) {
+			try (XZInputStream xzInputStream = new XZInputStream(compressed.asInputStream())) {
 				final byte[] buffer = new byte[4096];
 				int count;
 				while ((count = xzInputStream.read(buffer)) > 0) {

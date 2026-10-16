@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,5 +84,33 @@ class MemByteBufferTest {
             assertEquals(size, memBuffer.size());
             assertEquals(buffer.getInternal().length, memBuffer.getInternal().length);
         }
+    }
+
+    @Test
+    void streamsContentsWithoutChangingSnapshotBehavior() throws IOException {
+        buffer.writes(1, 2, 3);
+        byte[] snapshot = buffer.getInternal();
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        buffer.writeTo(output);
+
+        assertArrayEquals(new byte[] { 1, 2, 3 }, output.toByteArray());
+        assertArrayEquals(new byte[] { 1, 2, 3 }, buffer.asInputStream().readAllBytes());
+        snapshot[0] = 9;
+        assertEquals(1, buffer.getInternal()[0]);
+    }
+
+    @Test
+    void appendsAndCopiesContentsWithoutExposingInternalStorage() {
+        buffer.writes(1, 2, 3);
+        MemByteBuffer destination = new MemByteBuffer();
+        byte[] copied = new byte[2];
+
+        buffer.appendTo(destination);
+        buffer.copyTo(copied, 0, 1, 2);
+
+        assertArrayEquals(new byte[] { 1, 2, 3 }, destination.getInternal());
+        assertArrayEquals(new byte[] { 2, 3 }, copied);
+        assertArrayEquals(new byte[] { 1, 2, 3 }, buffer.getInternal());
     }
 }

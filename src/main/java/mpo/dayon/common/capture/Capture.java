@@ -181,12 +181,11 @@ public class Capture {
 			.parallel()
 			.filter(Objects::nonNull)
 			.forEach(tile -> {
-				final byte[] internal = tile.getCapture().getInternal();
 				final int tileRowSize = tile.getWidth() * pixelStride;
 				final int srcSize = tileRowSize * tile.getHeight();
 				int destPos = tile.getY() * scanlineStride + tile.getX() * pixelStride;
 				for (int srcPos = 0; srcPos + tileRowSize <= srcSize; srcPos += tileRowSize) {
-					System.arraycopy(internal, srcPos, buffer, destPos, tileRowSize);
+					tile.getCapture().copyTo(buffer, destPos, srcPos, tileRowSize);
 					destPos += scanlineStride;
 				}
 			});

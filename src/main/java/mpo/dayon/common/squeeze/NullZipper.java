@@ -6,14 +6,14 @@ public class NullZipper implements Zipper {
 	@Override
     public MemByteBuffer zip(MemByteBuffer unzipped) {
 		final MemByteBuffer zipped = new MemByteBuffer();
-		zipped.write(unzipped.getInternal(), 0, unzipped.size());
+		unzipped.appendTo(zipped);
 		return zipped;
 	}
 
 	@Override
     public MemByteBuffer unzip(MemByteBuffer zipped) {
 		final MemByteBuffer unzipped = new MemByteBuffer();
-		unzipped.write(zipped.getInternal(), 0, zipped.size());
+		zipped.appendTo(unzipped);
 		return unzipped;
 	}
 }

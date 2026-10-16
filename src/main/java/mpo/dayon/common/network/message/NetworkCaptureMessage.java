@@ -71,7 +71,7 @@ public class NetworkCaptureMessage extends NetworkMessage {
 			new NetworkCompressorConfigurationMessage(compressionConfiguration).marshall(out);
 		}
 		out.writeInt(payload.size());
-		out.write(payload.getInternal(), 0, payload.size());
+		payload.writeTo(out);
 	}
 
 	public static NetworkCaptureMessage unmarshall(ObjectInputStream in) throws IOException {

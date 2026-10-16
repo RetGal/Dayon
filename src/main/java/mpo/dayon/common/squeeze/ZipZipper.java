@@ -1,6 +1,5 @@
 package mpo.dayon.common.squeeze;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -16,7 +15,7 @@ public class ZipZipper implements Zipper {
     public MemByteBuffer zip(MemByteBuffer unzipped) throws IOException {
 		final MemByteBuffer zipped = new MemByteBuffer();
 		try (OutputStream zip = createZipOutputStream(zipped)) {
-			zip.write(unzipped.getInternal(), 0, unzipped.size());
+			unzipped.writeTo(zip);
 		}
 		return zipped;
 	}
@@ -42,7 +41,7 @@ public class ZipZipper implements Zipper {
 	}
 
 	private static InputStream createZipInputStream(MemByteBuffer zipped) throws IOException {
-		final ZipInputStream unzip = new ZipInputStream(new ByteArrayInputStream(zipped.getInternal(), 0, zipped.size()));
+		final ZipInputStream unzip = new ZipInputStream(zipped.asInputStream());
 		unzip.getNextEntry();
 		return unzip;
 	}
