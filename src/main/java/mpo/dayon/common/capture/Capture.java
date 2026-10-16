@@ -18,6 +18,10 @@ import mpo.dayon.common.log.Log;
 import static java.util.Arrays.stream;
 
 public class Capture {
+	private static final ColorModel CM_GRAY = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[]{8}, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+
+	private static final ColorModel CM_SRGB = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+
 	private final int id;
 
 	private final boolean reset;
@@ -158,66 +162,37 @@ public class Capture {
 	}
 
 	/**
-	 * Tile-rectangle buffer to screen-rectangle buffer.
+	 * Tile-rectangle buffer to screen-rectangle buffer either monochromatic, 1 byte per pixel or color, 4 bytes per pixel.
 	 */
 	public AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
 		final boolean isGray = stream(dirty)
 				.anyMatch(tile -> tile != null && tile.getCapture().size() == tile.getWidth() * tile.getHeight());
-		return isGray ? createBufferedMonochromeImage(prevBuffer, prevWidth, prevHeight) : createBufferedColorImage(prevBuffer, prevWidth, prevHeight);
+		return isGray ? createBufferedImage(prevBuffer, prevWidth, prevHeight, 1, CM_GRAY, new int[] { 0 }) :
+				createBufferedImage(prevBuffer, prevWidth, prevHeight, 4, CM_SRGB, new int[] { 1, 2, 3 });
 	}
 
-	/**
-	 * Tile-rectangle buffer to screen-rectangle buffer. (monochromatic, 1 byte per pixel)
-	 */
-    private AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedMonochromeImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
+	private AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedImage(byte[] prevBuffer, int prevWidth, int prevHeight, int pixelStride, ColorModel colorModel, int[] bandOffsets) {
 		final int capWidth = captureDimension.width;
 		final int capHeight = captureDimension.height;
-		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight && prevBuffer.length == capWidth * capHeight) ? prevBuffer : new byte[capWidth * capHeight];
+		final int scanlineStride = capWidth * pixelStride;
+		final int bufferSize = scanlineStride * capHeight;
+		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight && prevBuffer.length == bufferSize) ? prevBuffer : new byte[bufferSize];
 		stream(dirty)
-				.parallel()
-				.filter(Objects::nonNull)
-				.forEach(tile -> {
-					final byte[] internal = tile.getCapture().getInternal();
-					final int tileWidth = tile.getWidth();
-					final int srcSize = tileWidth * tile.getHeight();
-					int destPos = tile.getY() * capWidth + tile.getX();
-					for (int srcPos = 0; srcPos + tileWidth <= srcSize; srcPos += tileWidth) {
-						System.arraycopy(internal, srcPos, buffer, destPos, tileWidth);
-						destPos += capWidth;
-					}
-				});
+			.parallel()
+			.filter(Objects::nonNull)
+			.forEach(tile -> {
+				final byte[] internal = tile.getCapture().getInternal();
+				final int tileRowSize = tile.getWidth() * pixelStride;
+				final int srcSize = tileRowSize * tile.getHeight();
+				int destPos = tile.getY() * scanlineStride + tile.getX() * pixelStride;
+				for (int srcPos = 0; srcPos + tileRowSize <= srcSize; srcPos += tileRowSize) {
+					System.arraycopy(internal, srcPos, buffer, destPos, tileRowSize);
+					destPos += scanlineStride;
+				}
+			});
 
 		final DataBufferByte dbuffer = new DataBufferByte(buffer, buffer.length);
-		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, capWidth, capHeight, capWidth, 1, new int[] { 0 }, null);
-		final ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_GRAY), new int[] { 8 }, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-		return new AbstractMap.SimpleEntry<>(new BufferedImage(cm, raster, false, null), buffer);
-	}
-
-	/**
-	 * Tile-rectangle buffer to screen-rectangle buffer. (color, 4 bytes per pixel)
-	 */
-    private AbstractMap.SimpleEntry<BufferedImage, byte[]> createBufferedColorImage(byte[] prevBuffer, int prevWidth, int prevHeight) {
-		final int capWidth = captureDimension.width;
-		final int capHeight = captureDimension.height;
-		final byte[] buffer = (prevBuffer != null && capWidth == prevWidth && capHeight == prevHeight && prevBuffer.length == capWidth * capHeight * 4) ? prevBuffer : new byte[capWidth * capHeight * 4];
-		final int capWidthByteSize = capWidth * 4;
-		stream(dirty)
-				.parallel()
-				.filter(Objects::nonNull)
-				.forEach(tile -> {
-					final byte[] internal = tile.getCapture().getInternal();
-					final int tileWidthByteSize = tile.getWidth() * 4;
-					final int srcSize = tileWidthByteSize * tile.getHeight();
-					int destPos = tile.getY() * capWidthByteSize + tile.getX() * 4;
-					for (int srcPos = 0; srcPos + tileWidthByteSize <= srcSize; srcPos += tileWidthByteSize) {
-						System.arraycopy(internal, srcPos, buffer, destPos, tileWidthByteSize);
-						destPos += capWidthByteSize;
-					}
-				});
-
-		final DataBufferByte dbuffer = new DataBufferByte(buffer, buffer.length);
-		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, capWidth, capHeight, capWidthByteSize , 4, new int[] { 1, 2, 3 }, null);
-		final ColorModel cm = new ComponentColorModel(ColorSpace.getInstance(ColorSpace.CS_sRGB), false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-		return new AbstractMap.SimpleEntry<>(new BufferedImage(cm, raster, false, null), buffer);
+		final WritableRaster raster = Raster.createInterleavedRaster(dbuffer, capWidth, capHeight, scanlineStride, pixelStride, bandOffsets, null);
+		return new AbstractMap.SimpleEntry<>(new BufferedImage(colorModel, raster, false, null), buffer);
 	}
 }
