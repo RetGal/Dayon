@@ -5,19 +5,19 @@ import mpo.dayon.common.buffer.MemByteBuffer;
 public class PackBitsRunLengthEncoder implements RunLengthEncoder {
 	@Override
     public void runLengthEncode(MemByteBuffer out, MemByteBuffer capture) {
-		final byte[] xcapture = capture.getInternal();
 		final int len = capture.size();
+		final byte[] snapshot = out == capture ? capture.getInternal() : null;
 		int pprev = -1;
 		int prev = -1;
 		int start = 0;
 		int pos = 0;
 		while (pos < len) {
-			final int current = xcapture[pos];
+			final int current = byteAt(capture, snapshot, pos);
 			if (current == prev && prev == pprev) {
 				if (start < pos - 2) {
-					encodeVerbatim(out, xcapture, start, pos - 2);
+					encodeVerbatim(out, capture, snapshot, start, pos - 2);
 				}
-				start = pos = encodeRun(out, xcapture, pos - 2);
+				start = pos = encodeRun(out, capture, snapshot, pos - 2, len);
 				pprev = prev = -1;
 			} else {
 				pprev = prev;
@@ -26,30 +26,29 @@ public class PackBitsRunLengthEncoder implements RunLengthEncoder {
 			}
 		}
 		if (len > 0) {
-			encodeVerbatim(out, xcapture, start, len);
+			encodeVerbatim(out, capture, snapshot, start, len);
 		}
 	}
 
-    private void encodeVerbatim(MemByteBuffer out, byte[] in, int start, int end) {
+    private void encodeVerbatim(MemByteBuffer out, MemByteBuffer in, byte[] snapshot, int start, int end) {
 		// [ start .. end [
         int verbatimMax = 128;
         final int d = (end - start) / verbatimMax;
 		for (int idx = 0; idx < d; idx++) {
 			out.write(verbatimMax - 1);
-			out.arraycopy(in, start + idx * verbatimMax, verbatimMax);
+			appendRange(out, in, snapshot, start + idx * verbatimMax, verbatimMax);
 		}
 		final int m = (end - start) % verbatimMax;
 		if (m > 0) {
 			out.write(m - 1);
-			out.arraycopy(in, start + d * verbatimMax, m);
+			appendRange(out, in, snapshot, start + d * verbatimMax, m);
 		}
 	}
 
-    private int encodeRun(MemByteBuffer out, byte[] in, int from) {
-		final int val = in[from];
+    private int encodeRun(MemByteBuffer out, MemByteBuffer in, byte[] snapshot, int from, int len) {
+		final int val = byteAt(in, snapshot, from);
 		int pos = from;
-		final int inLength = in.length;
-		while (pos < inLength && in[pos] == val) {
+		while (pos < len && byteAt(in, snapshot, pos) == val) {
 			++pos;
 		}
 		// [ from .. pos [
@@ -66,6 +65,18 @@ public class PackBitsRunLengthEncoder implements RunLengthEncoder {
 			pos -= m;
 		}
 		return pos;
+	}
+
+	private static int byteAt(MemByteBuffer in, byte[] snapshot, int index) {
+		return snapshot == null ? in.getByte(index) : snapshot[index];
+	}
+
+	private static void appendRange(MemByteBuffer out, MemByteBuffer in, byte[] snapshot, int start, int len) {
+		if (snapshot == null) {
+			in.appendRangeTo(out, start, len);
+		} else {
+			out.write(snapshot, start, len);
+		}
 	}
 
 	@Override

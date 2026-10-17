@@ -35,6 +35,13 @@ public class MemByteBuffer extends OutputStream {
 		return count;
 	}
 
+	public byte getByte(int index) {
+		if (index < 0 || index >= count) {
+			throw new IndexOutOfBoundsException();
+		}
+		return buffer[index];
+	}
+
 	public byte[] getInternal() {
 		return Arrays.copyOf(buffer, count);
 	}
@@ -60,9 +67,19 @@ public class MemByteBuffer extends OutputStream {
 	 * through a temporary array.
 	 */
 	public void appendTo(MemByteBuffer destination) {
-		destination.ensureCapacity(destination.count + count);
-		System.arraycopy(buffer, 0, destination.buffer, destination.count, count);
-		destination.count += count;
+		appendRangeTo(destination, 0, count);
+	}
+
+	/**
+	 * Appends a range of this buffer to another memory buffer without a temporary copy.
+	 */
+	public void appendRangeTo(MemByteBuffer destination, int sourceOffset, int len) {
+		if (sourceOffset < 0 || len < 0 || sourceOffset > count - len) {
+			throw new IndexOutOfBoundsException();
+		}
+		destination.ensureCapacity(destination.count + len);
+		System.arraycopy(buffer, sourceOffset, destination.buffer, destination.count, len);
+		destination.count += len;
 	}
 
 	/**
