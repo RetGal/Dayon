@@ -148,9 +148,7 @@ class AssistantFrame extends BaseFrame {
             } else {
                 putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UNPIN_S));
                 putValue(SHORT_DESCRIPTION, translate("toolbar.autohide"));
-                invokeLater(() -> {
-                    resetCanvas();
-                });
+                invokeLater(AssistantFrame.this::resetCanvas);
             }
             }
         };
