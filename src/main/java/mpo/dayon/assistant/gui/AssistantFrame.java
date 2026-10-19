@@ -216,16 +216,15 @@ class AssistantFrame extends BaseFrame {
                 if (controlActivated.get()) {
                     fireOnMouseMove(ev.getX(), ev.getY());
                 }
+
                 if (isToolbarAutohideActivated.get()) {
                     if (getToolBar().isVisible()) {
                         if (ev.getY() > 5) {
                             getToolBar().setVisible(false);
                             SwingUtilities.invokeLater(() -> resetCanvas());
                         }
-                    } else {
-                        if (ev.getY() < 2) {
-                            getToolBar().setVisible(true);
-                        }
+                    } else if (ev.getY() < 2) {
+                        getToolBar().setVisible(true);
                     }
                 }
             }
