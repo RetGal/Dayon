@@ -64,7 +64,7 @@ public abstract class BaseFrame extends JFrame {
 
     private static final String HTTP_PRIVACY = "https://retgal.github.io/Dayon/" + translate("privacy.html");
 
-    private static final String CHAT_URL = "https://meet.jit.si/%s";
+    private static final String CHAT_URL = "https://kmeet.infomaniak.com/%s#config.subject=%s&config.disableDeepLinking=true";
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder().proxy(ProxySelector.getDefault()).build();
 
@@ -851,7 +851,8 @@ public abstract class BaseFrame extends JFrame {
     private static class ChatMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            browse(format(CHAT_URL, FINGERPRINTS.getText().trim().replace(":", "-")));
+            String meetingName = FINGERPRINTS.getText().trim().replace(":", "-");
+            browse(format(CHAT_URL, meetingName.substring(7), meetingName));
         }
     }
 
