@@ -132,7 +132,8 @@ class AssistantFrame extends BaseFrame {
     private void addListeners() {
         addFocusListener();
         addKeyListeners();
-        addMouseListeners();
+        addMouseClickListeners();
+        addMouseMotionListeners();
         addResizeListener();
         addMinMaximizedListener();
     }
@@ -177,7 +178,7 @@ class AssistantFrame extends BaseFrame {
         return keepAspectRatioActivated.get();
     }
 
-    private void addMouseListeners() {
+    private void addMouseClickListeners() {
         assistantPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent ev) {
@@ -194,6 +195,14 @@ class AssistantFrame extends BaseFrame {
             }
         });
 
+        assistantPanel.addMouseWheelListener(ev -> {
+            if (controlActivated.get()) {
+                fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
+            }
+        });
+    }
+
+    private void addMouseMotionListeners() {
         assistantPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent ev) {
@@ -219,12 +228,6 @@ class AssistantFrame extends BaseFrame {
                         }
                     }
                 }
-            }
-        });
-
-        assistantPanel.addMouseWheelListener(ev -> {
-            if (controlActivated.get()) {
-                fireOnMouseWheeled(ev.getX(), ev.getY(), ev.getWheelRotation());
             }
         });
     }
