@@ -96,8 +96,8 @@ public final class SystemUtilities {
     }
 
     public static String getRamInfo() {
-        final double freeMG = Runtime.getRuntime().freeMemory();
-        final double totalMG = Runtime.getRuntime().totalMemory();
+        final double freeMG = (double) Runtime.getRuntime().freeMemory();
+        final double totalMG = (double) Runtime.getRuntime().totalMemory();
         return toByteSize(totalMG - freeMG) + " of " + toByteSize(totalMG);
     }
 
