@@ -28,7 +28,9 @@ public final class ImageNames {
 	public static final String MOUSE_YELLOW = "cursor_yellow.png";
 	public static final String NETWORK_ADDRESS = "network_address.png";
 	public static final String NETWORK_SETTINGS = "network_settings.png";
+	public static final String PIN_S = "pin_s.png";
 	public static final String RESET_CAPTURE = "reset_capture.png";
+	public static final String UNPIN_S = "unpin_s.png";
 	public static final String SHIELD = "shield.png";
 	public static final String START = "start.png";
 	public static final String START_LARGE = "start_l.png";

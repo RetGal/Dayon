@@ -31,6 +31,7 @@ import mpo.dayon.common.version.Version;
 import static java.awt.GridBagConstraints.HORIZONTAL;
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
 import static java.lang.String.format;
+import static javax.swing.SwingUtilities.invokeLater;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.gui.common.FrameType.ASSISTANT;
@@ -142,18 +143,46 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    protected void setupToolBar(ToolBar toolBar) {
-        float alignmentY = frameType.equals(ASSISTANT) ? Component.BOTTOM_ALIGNMENT : Component.CENTER_ALIGNMENT;
+    protected void setupToolBar(ToolBar toolBar, Action toolbarAction) {
         if (ASSISTANT.equals(frameType)) {
-            // poor man's vertical align top
-            FINGERPRINTS.setBorder(BorderFactory.createEmptyBorder(0, 10, 35, 0));
-        }
-        toolBar.add(FINGERPRINTS);
-        toolBar.addAction(createShowInfoAction(), alignmentY);
-        toolBar.addAction(createShowHelpAction(), alignmentY);
-        toolBar.addAction(createExitAction(), alignmentY);
-        if (ASSISTANT.equals(frameType)) {
+            JPanel sixSix = new JPanel();
+            sixSix.setLayout(new GridBagLayout());
+            sixSix.setPreferredSize(new Dimension(170, 67));
+            sixSix.setMaximumSize(new Dimension(170, 67));
+            FINGERPRINTS.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            FINGERPRINTS.setHorizontalAlignment(SwingConstants.CENTER);
+            GridBagConstraints gb = new GridBagConstraints();
+            sixSix.add(FINGERPRINTS, gb);
+            gb.gridy = 1;
+            gb.weighty = 1;
+            // prevent vertical stretching of the clickable region of the fingerprints
+            sixSix.add(new JLabel(), gb);
+            toolBar.add(sixSix, BorderLayout.WEST);
+
+            JPanel sixSeven = new JPanel();
+            sixSeven.setLayout(new GridBagLayout());
+            sixSeven.setPreferredSize(new Dimension(97, 67));
+            sixSeven.setMaximumSize(new Dimension(97, 67));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.anchor = GridBagConstraints.EAST;
+            gbc.insets = new Insets(1,0,0,0);
+            sixSeven.add(addAction(createShowInfoAction()), gbc);
+            gbc.gridx = 1;
+            sixSeven.add(addAction(createShowHelpAction()), gbc);
+            gbc.gridx = 2;
+            gbc.weightx = 1;
+            sixSeven.add(addAction(createExitAction()), gbc);
+            gbc.gridy = 1;
+            gbc.weighty = 1;
+            gbc.anchor = GridBagConstraints.LAST_LINE_END;
+            sixSeven.add(addAction(toolbarAction, 4), gbc);
+            toolBar.add(sixSeven, BorderLayout.EAST);
             toolBar.add(DEFAULT_SPACER);
+        } else {
+            toolBar.add(FINGERPRINTS);
+            toolBar.add(addAction(createShowInfoAction()));
+            toolBar.add(addAction(createShowHelpAction()));
+            toolBar.add(addAction(createExitAction()));
         }
         add(toolBar, BorderLayout.NORTH);
         toolBar.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
@@ -172,6 +201,30 @@ public abstract class BaseFrame extends JFrame {
             updateCapsLockState();
         });
         statusBarTimer.start();
+    }
+
+    private JButton addAction(Action action) {
+        return addAction(action, 5);
+    }
+
+    private JButton addAction(Action action, int borderSize) {
+        final JButton button = new JButton();
+        // let jbutton focus and rollover behavior behave as if it were inside a ToolBar
+        button.addChangeListener(event -> button.setContentAreaFilled(button.isFocusOwner() || button.getModel().isRollover() || button.getModel().isPressed()));
+
+        addSmallButtonProperties(action, button, borderSize);
+        add(button);
+        return button;
+    }
+
+    private static void addSmallButtonProperties(Action action, AbstractButton button, Integer borderSize) {
+        button.setMargin(ZERO_INSETS);
+        button.setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize, borderSize, borderSize));
+        button.setHideActionText(true);
+        button.setAction(action);
+        button.setFont(DEFAULT_FONT);
+        button.setFocusable(false);
+        button.setContentAreaFilled(false);
     }
 
     private void updateInputLocale() {
@@ -204,7 +257,7 @@ public abstract class BaseFrame extends JFrame {
         return button;
     }
 
-    protected JToggleButton createToggleButton(Action action) {
+    protected static JToggleButton createToggleButton(Action action) {
         return createToggleButton(action, true);
     }
 
@@ -215,7 +268,7 @@ public abstract class BaseFrame extends JFrame {
         return button;
     }
 
-    protected JToggleButton createToggleButton(Action action, boolean visible, boolean selected) {
+    protected static JToggleButton createToggleButton(Action action, boolean visible, boolean selected) {
         final JToggleButton button = createToggleButton(action, visible);
         button.setSelected(selected);
         return button;
@@ -251,7 +304,7 @@ public abstract class BaseFrame extends JFrame {
         final Action showSystemInfo = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                showSystemInfoDialog(latestVersion);
+                invokeLater(() -> showSystemInfoDialog(latestVersion));
             }
         };
         showSystemInfo.putValue(Action.SHORT_DESCRIPTION, translate("system.info.show"));
@@ -308,7 +361,7 @@ public abstract class BaseFrame extends JFrame {
         return label;
     }
 
-    private JScrollPane createSystemPropertiesScrollPane() {
+    private static JScrollPane createSystemPropertiesScrollPane() {
         final JTextArea props = new JTextArea(getSystemPropertiesEx());
         props.setEditable(false);
         props.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
@@ -317,7 +370,7 @@ public abstract class BaseFrame extends JFrame {
         return spane;
     }
 
-    private JPanel createInfoButtonsPanel() {
+    private static JPanel createInfoButtonsPanel() {
         final JButton support = new JButton(translate("support"));
         support.addMouseListener(new UrlMouseAdapter(HTTP_SUPPORT));
         final JButton feedback = new JButton(translate("feedback"));
@@ -380,7 +433,7 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+    private static String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
         String selectedValue = tokenRadioGroup.getSelection() == null ? null : tokenRadioGroup.getSelection().getActionCommand();
         if (CUSTOM.equals(selectedValue) && isValidUrl(customTokenTextField.getText().trim())) {
             return customTokenTextField.getText();
@@ -412,7 +465,7 @@ public abstract class BaseFrame extends JFrame {
         return new NetworkAssistantEngineConfiguration().getTokenServerUrl();
     }
 
-    private int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
+    private static int addAssistedConfiguration(JPanel panel, int gridy, Font titleFont, JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox) {
         final NetworkAssistedEngineConfiguration networkConfiguration = new NetworkAssistedEngineConfiguration();
         JLabel hostLabel = new JLabel(toUpperFirst(translate("assistant")));
         hostLabel.setFont(titleFont);
@@ -434,7 +487,7 @@ public abstract class BaseFrame extends JFrame {
         return gridy;
     }
 
-    private int addAssistantConfiguration(JPanel panel, int gridy, Font titleFont, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, CompletableFuture<Boolean> upnpActive) {
+    private static int addAssistantConfiguration(JPanel panel, int gridy, Font titleFont, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, CompletableFuture<Boolean> upnpActive) {
         final NetworkAssistantEngineConfiguration networkConfiguration = new NetworkAssistantEngineConfiguration();
         JLabel hostLabel = new JLabel(toUpperFirst(translate("host")));
         hostLabel.setFont(titleFont);
@@ -463,7 +516,7 @@ public abstract class BaseFrame extends JFrame {
         return gridy;
     }
 
-    private JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont) {
+    private static JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont) {
         JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
         tokenServerLbl.setFont(titleFont);
         panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
@@ -474,8 +527,8 @@ public abstract class BaseFrame extends JFrame {
         return panel;
     }
 
-    private JPanel addTokenServerSelectionPanel(JPanel panel, int gridy, Font titleFont, ButtonGroup tokenRadioGroup,
-                                               JTextField customTokenTextField, String currentTokenServer) {
+    private static JPanel addTokenServerSelectionPanel(JPanel panel, int gridy, Font titleFont, ButtonGroup tokenRadioGroup,
+                                                       JTextField customTokenTextField, String currentTokenServer) {
         JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
         tokenServerLbl.setFont(titleFont);
         panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
@@ -554,7 +607,7 @@ public abstract class BaseFrame extends JFrame {
         return null;
     }
 
-    private String validatePortNumberText(JTextField portNumberTextField) {
+    private static String validatePortNumberText(JTextField portNumberTextField) {
         final String portNumber = portNumberTextField.getText();
         if (portNumber.isEmpty()) {
             return translate("connection.settings.emptyPortNumber");
@@ -565,11 +618,11 @@ public abstract class BaseFrame extends JFrame {
         return null;
     }
 
-    private boolean isCustomTokenServerSelected(ButtonGroup tokenRadioGroup) {
+    private static boolean isCustomTokenServerSelected(ButtonGroup tokenRadioGroup) {
         return tokenRadioGroup.getSelection() != null && CUSTOM.equals(tokenRadioGroup.getSelection().getActionCommand());
     }
 
-    private String validateCustomTokenServer(JTextField customTokenTextField) {
+    private static String validateCustomTokenServer(JTextField customTokenTextField) {
         final String tokenServer = customTokenTextField.getText().trim();
         if (isValidUrl(tokenServer) && tokenServer.endsWith("/")) {
             final String tokenServerVersion = getTokenServerVersion(tokenServer);
@@ -674,11 +727,11 @@ public abstract class BaseFrame extends JFrame {
         configuration.persist(frameType);
     }
 
-    private String composeLabelHtml(String label, String url) {
+    private static String composeLabelHtml(String label, String url) {
         return format("<html>%s : <a href=''>%s</a></html>", label, url);
     }
 
-    private String composeLabelHtmlWithBuildNumber(String label, String url, String buildNumber) {
+    private static String composeLabelHtmlWithBuildNumber(String label, String url, String buildNumber) {
         if (buildNumber.isEmpty()) {
             return composeLabelHtml(label, url);
         }

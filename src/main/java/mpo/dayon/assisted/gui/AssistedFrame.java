@@ -43,7 +43,7 @@ class AssistedFrame extends BaseFrame {
         this.stopButton = createButton(this.stopAction, false);
         this.connectionSettingsButton = createButton(createAssistedConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml));
         this.toggleMultiScreenCaptureAction = toggleMultiScreenCaptureAction;
-        setupToolBar(createToolBar());
+        setupToolBar(createToolBar(), null);
         setupStatusBar(createStatusBar());
         onReady();
         if (isWayland && (SystemUtilities.isSnapped() || SystemUtilities.isFlat())) {
@@ -72,7 +72,7 @@ class AssistedFrame extends BaseFrame {
         return toolbar;
     }
 
-    private Action createShowUacSettingsAction() {
+    private static Action createShowUacSettingsAction() {
         final Action showUacSettings = new AssistedAbstractAction();
         showUacSettings.putValue(Action.SHORT_DESCRIPTION, translate("uacSettings"));
         showUacSettings.putValue(Action.SMALL_ICON, ImageUtilities.getOrCreateIcon(ImageNames.SHIELD));
@@ -98,7 +98,7 @@ class AssistedFrame extends BaseFrame {
         }
     }
 
-    private StatusBar createStatusBar() {
+    private static StatusBar createStatusBar() {
         final StatusBar statusBar = new StatusBar(15);
         statusBar.addSeparator();
         statusBar.addRamInfo();

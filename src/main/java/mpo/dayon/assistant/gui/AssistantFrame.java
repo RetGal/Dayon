@@ -26,6 +26,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static java.awt.event.KeyEvent.*;
 import static java.lang.Math.abs;
 import static java.lang.String.format;
+import static javax.swing.Action.*;
+import static javax.swing.SwingUtilities.invokeLater;
 import static mpo.dayon.common.babylon.Babylon.translate;
 import static mpo.dayon.common.gui.common.ImageUtilities.getOrCreateIcon;
 
@@ -68,6 +70,7 @@ class AssistantFrame extends BaseFrame {
     private final AtomicBoolean fitToScreenActivated = new AtomicBoolean(false);
     private final AtomicBoolean keepAspectRatioActivated = new AtomicBoolean(false);
     private final AtomicBoolean isImmutableWindowsSize = new AtomicBoolean(false);
+    private final AtomicBoolean isToolbarAutohideActivated = new AtomicBoolean(false);
 
     private double xFactor = DEFAULT_FACTOR;
     private double yFactor = DEFAULT_FACTOR;
@@ -101,7 +104,7 @@ class AssistantFrame extends BaseFrame {
         this.ctrlKeyToggleButton = createToggleButton(createSendCtrlKeyAction());
         this.screenshotButton = createButton(actions.getScreenshotRequestAction());
         this.languageSelection = languageSelection;
-        setupToolBar(createToolBar());
+        setupToolBar(createToolBar(), toggleToolbarAutohideAction());
         setupStatusBar(createStatusBar(counters));
         assistantPanel = new AssistantPanel();
         assistantPanel.setFocusable(false);
@@ -133,6 +136,29 @@ class AssistantFrame extends BaseFrame {
         addResizeListener();
         addMinMaximizedListener();
     }
+
+    private Action toggleToolbarAutohideAction() {
+        final Action action = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+            isToolbarAutohideActivated.set(!isToolbarAutohideActivated.get());
+            if (isToolbarAutohideActivated.get()) {
+                putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.PIN_S));
+                putValue(SHORT_DESCRIPTION, translate("toolbar.pin"));
+            } else {
+                putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UNPIN_S));
+                putValue(SHORT_DESCRIPTION, translate("toolbar.autohide"));
+                invokeLater(() -> {
+                    resetCanvas();
+                });
+            }
+            }
+        };
+        action.putValue(SHORT_DESCRIPTION, translate("toolbar.autohide"));
+        action.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UNPIN_S));
+        return action;
+    }
+
 
     Dimension getCanvas() {
         return canvas;
@@ -182,6 +208,18 @@ class AssistantFrame extends BaseFrame {
             public void mouseMoved(MouseEvent ev) {
                 if (controlActivated.get()) {
                     fireOnMouseMove(ev.getX(), ev.getY());
+                }
+                if (isToolbarAutohideActivated.get()) {
+                    if (getToolBar().isVisible()) {
+                        if (ev.getY() > 5) {
+                            getToolBar().setVisible(false);
+                            SwingUtilities.invokeLater(() -> resetCanvas());
+                        }
+                    } else {
+                        if (ev.getY() < 2) {
+                            getToolBar().setVisible(true);
+                        }
+                    }
                 }
             }
         });
@@ -331,8 +369,8 @@ class AssistantFrame extends BaseFrame {
                 ctrlKeyToggleButton.setEnabled(controlActivated.get());
             }
         };
-        remoteControl.putValue(Action.SHORT_DESCRIPTION, translate("control.mode"));
-        remoteControl.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WATCH));
+        remoteControl.putValue(SHORT_DESCRIPTION, translate("control.mode"));
+        remoteControl.putValue(SMALL_ICON, getOrCreateIcon(ImageNames.WATCH));
         remoteControl.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.WATCH));
         remoteControl.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.CONTROL));
         return remoteControl;
@@ -351,8 +389,8 @@ class AssistantFrame extends BaseFrame {
                 windowsKeyActivated.set(!windowsKeyActivated.get());
             }
         };
-        sendWindowsKey.putValue(Action.SHORT_DESCRIPTION, translate("send.windowsKey"));
-        sendWindowsKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
+        sendWindowsKey.putValue(SHORT_DESCRIPTION, translate("send.windowsKey"));
+        sendWindowsKey.putValue(SMALL_ICON, getOrCreateIcon(ImageNames.WIN));
         return sendWindowsKey;
     }
 
@@ -368,8 +406,8 @@ class AssistantFrame extends BaseFrame {
                 ctrlKeyActivated.set(!ctrlKeyActivated.get());
             }
         };
-        sendCtrlKey.putValue(Action.SHORT_DESCRIPTION, translate("send.ctrlKey"));
-        sendCtrlKey.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
+        sendCtrlKey.putValue(SHORT_DESCRIPTION, translate("send.ctrlKey"));
+        sendCtrlKey.putValue(SMALL_ICON, getOrCreateIcon(ImageNames.CTRL));
         return sendCtrlKey;
     }
 
@@ -388,8 +426,8 @@ class AssistantFrame extends BaseFrame {
                 repaint();
             }
         };
-        fitScreen.putValue(Action.SHORT_DESCRIPTION, translate("toggle.screen.mode"));
-        fitScreen.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.FULLSCREEN));
+        fitScreen.putValue(SHORT_DESCRIPTION, translate("toggle.screen.mode"));
+        fitScreen.putValue(SMALL_ICON, getOrCreateIcon(ImageNames.FULLSCREEN));
         fitScreen.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.FULLSCREEN));
         fitScreen.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.FIT));
         return fitScreen;
@@ -400,12 +438,14 @@ class AssistantFrame extends BaseFrame {
             @Override
             public void actionPerformed(ActionEvent ev) {
                 keepAspectRatioActivated.set(!keepAspectRatioActivated.get());
-                resetCanvas();
-                repaint();
+                invokeLater(() -> {
+                    resetCanvas();
+                    repaint();
+                });
             }
         };
-        keepAspectRatio.putValue(Action.SHORT_DESCRIPTION, translate("toggle.keep.aspect"));
-        keepAspectRatio.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.UNLOCKED));
+        keepAspectRatio.putValue(SHORT_DESCRIPTION, translate("toggle.keep.aspect"));
+        keepAspectRatio.putValue(SMALL_ICON, getOrCreateIcon(ImageNames.UNLOCKED));
         keepAspectRatio.putValue(ROLLOVER_ICON, getOrCreateIcon(ImageNames.UNLOCKED));
         keepAspectRatio.putValue(SELECTED_ICON, getOrCreateIcon(ImageNames.LOCK));
         return keepAspectRatio;
