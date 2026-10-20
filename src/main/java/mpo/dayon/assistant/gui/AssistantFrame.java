@@ -355,7 +355,7 @@ class AssistantFrame extends BaseFrame {
         statusBar.addRamInfo();
         statusBar.addSeparator();
         statusBar.addConnectionDuration();
-        statusBar.add(Box.createHorizontalStrut(15));
+        statusBar.add(Box.createHorizontalStrut(10));
         return statusBar;
     }
 

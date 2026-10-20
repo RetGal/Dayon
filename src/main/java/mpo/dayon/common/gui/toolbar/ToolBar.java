@@ -9,8 +9,6 @@ public class ToolBar extends JToolBar {
 
 	public static final Font DEFAULT_FONT = new Font("Sans Serif", Font.PLAIN, 16);
 
-	public static final Component DEFAULT_SPACER = Box.createHorizontalStrut(8);
-
 	public static final String DISPLAY_NAME = "DISPLAY_NAME";
 
 	public ToolBar() {

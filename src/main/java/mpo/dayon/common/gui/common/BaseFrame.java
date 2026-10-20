@@ -72,6 +72,8 @@ public abstract class BaseFrame extends JFrame {
 
     private static final JLabel FINGERPRINTS = new JLabel();
 
+    private JPanel biometricPanel;
+
     private static final MouseAdapter CHAT_MOUSE_ADAPTER = new ChatMouseAdapter();
 
     private transient FrameConfiguration configuration;
@@ -145,27 +147,29 @@ public abstract class BaseFrame extends JFrame {
 
     protected void setupToolBar(ToolBar toolBar, Action toolbarAction) {
         if (ASSISTANT.equals(frameType)) {
-            JPanel sixSix = new JPanel();
-            sixSix.setLayout(new GridBagLayout());
-            sixSix.setPreferredSize(new Dimension(170, 67));
-            sixSix.setMaximumSize(new Dimension(170, 67));
-            FINGERPRINTS.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+            biometricPanel = new JPanel();
+            biometricPanel.setLayout(new GridBagLayout());
+            biometricPanel.setVisible(false);
+            biometricPanel.setBorder(BorderFactory.createEmptyBorder(3, 5, 0, 0));
+            biometricPanel.setPreferredSize(new Dimension(165, 67));
+            biometricPanel.setMaximumSize(new Dimension(165, 67));
             FINGERPRINTS.setHorizontalAlignment(SwingConstants.CENTER);
             GridBagConstraints gb = new GridBagConstraints();
-            sixSix.add(FINGERPRINTS, gb);
+            gb.insets = new Insets(5,5,5,0);
+            biometricPanel.add(FINGERPRINTS, gb);
             gb.gridy = 1;
             gb.weighty = 1;
             // prevent vertical stretching of the clickable region of the fingerprints
-            sixSix.add(new JLabel(), gb);
-            toolBar.add(sixSix, BorderLayout.WEST);
+            biometricPanel.add(new JLabel(), gb);
+            toolBar.add(biometricPanel, BorderLayout.WEST);
 
             JPanel sixSeven = new JPanel();
             sixSeven.setLayout(new GridBagLayout());
-            sixSeven.setPreferredSize(new Dimension(97, 67));
-            sixSeven.setMaximumSize(new Dimension(97, 67));
+            sixSeven.setBorder(BorderFactory.createEmptyBorder(1, 10, 0, 5));
+            sixSeven.setPreferredSize(new Dimension(125, 67));
+            sixSeven.setMaximumSize(new Dimension(125, 67));
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.anchor = GridBagConstraints.EAST;
-            gbc.insets = new Insets(1,0,0,0);
             sixSeven.add(addAction(createShowInfoAction()), gbc);
             gbc.gridx = 1;
             sixSeven.add(addAction(createShowHelpAction()), gbc);
@@ -177,7 +181,6 @@ public abstract class BaseFrame extends JFrame {
             gbc.anchor = GridBagConstraints.LAST_LINE_END;
             sixSeven.add(addAction(toolbarAction, 4), gbc);
             toolBar.add(sixSeven, BorderLayout.EAST);
-            toolBar.add(DEFAULT_SPACER);
         } else {
             toolBar.add(FINGERPRINTS);
             toolBar.add(addAction(createShowInfoAction()));
@@ -789,7 +792,10 @@ public abstract class BaseFrame extends JFrame {
         return FINGERPRINTS;
     }
 
-    protected static void clearFingerprints() {
+    protected void clearFingerprints() {
+        if (biometricPanel != null) {
+            biometricPanel.setVisible(false);
+        }
         FINGERPRINTS.setText(null);
         FINGERPRINTS.setIcon(null);
         FINGERPRINTS.setCursor(null);
@@ -797,6 +803,9 @@ public abstract class BaseFrame extends JFrame {
     }
 
     public void setFingerprints(String hash) {
+        if (biometricPanel != null) {
+            biometricPanel.setVisible(true);
+        }
         FINGERPRINTS.setIcon(getOrCreateIcon(FINGERPRINT));
         FINGERPRINTS.setToolTipText(translate("startChat"));
         FINGERPRINTS.setText(hash + " ");
