@@ -861,7 +861,7 @@ public abstract class BaseFrame extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             String meetingName = FINGERPRINTS.getText().trim().replace(":", "-");
-            browse(format(CHAT_URL, meetingName.substring(7), meetingName));
+            browse(format(CHAT_URL, meetingName, meetingName));
         }
     }
 
