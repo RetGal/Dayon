@@ -218,7 +218,16 @@ public class NetworkAssistedEngine extends NetworkEngine
         // ICE connection
         if (connection == null && token.getIceInfo() != null) {
             fireOnIceConnecting();
-            connectIce();
+            try {
+                Log.info("Starting ICE");
+                connectIce(token.getLocalPort());
+            } catch (IOException e) {
+                // try again with another port
+                iceAgent = null;
+                int localPort = detectEnvironment();
+                Log.info("Restarting ICE");
+                connectIce(localPort);
+            }
         }
 
         // common part
@@ -244,9 +253,8 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileReceiver.start();
     }
 
-    private void connectIce() throws IOException {
-        Log.info("Starting ICE");
-        initIceAgent();
+    private void connectIce(int localPort) throws IOException {
+        initIceAgent(localPort);
         getLocalSdpDesc();
         // process remote SDP and start connectivity establishment
         processRemoteSdp(new String(Base64.getDecoder().decode(token.getIceInfo())));
@@ -336,19 +344,18 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void initIceAgent() {
+    private void initIceAgent(int port) {
         super.initializeIceAgent();
-        createMediaStream();
+        createMediaStream(port);
     }
 
-    private void createMediaStream() {
+    private void createMediaStream(int port) {
         if (mediaStream != null) {
             iceAgent.removeStream(mediaStream);
         }
         mediaStream = iceAgent.createMediaStream("dayon");
-        int port = new SplittableRandom().nextInt(8000, 9000);
         try {
-            iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
+            iceAgent.createComponent(mediaStream, port, port-1, port+1, KeepAliveStrategy.SELECTED_AND_TCP);
         } catch (IOException e) {
             Log.error("Failed to initialize ICE agent", e);
         }
@@ -422,7 +429,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                     // legacy RVS
                     //   0              1       2            3       4
                     // 188.155.141.250*8056*192.168.1.135*1786705306*0*
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), 0, null);
+                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, null);
                 }
             }
         } catch (InterruptedException e) {
@@ -430,17 +437,14 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    // returns port number or 0 if not accessible
+    // returns a random port number for which an upnp port mapping was added (if possible)
     private int detectEnvironment() {
         if (publicIp == null) {
             publicIp = resolvePublicIp();
         }
-        // reuse the port number if possible
-        int portNumber = token.getLocalPort() != 0 ? token.getLocalPort() : random.nextInt(8975) + 1025;
-        if (!selfTest(publicIp, portNumber)) {
-            return 0;
-        }
-        return portNumber;
+        int newPort = random.nextInt(8976) + 1026;
+        selfTest(publicIp, newPort, token.getLocalPort());
+        return newPort;
     }
 
     private void connectToAssistant(int connectionTimeout, int preDelay) throws IOException {
