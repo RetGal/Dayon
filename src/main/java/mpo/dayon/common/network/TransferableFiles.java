@@ -26,8 +26,7 @@ class TransferableFiles implements Transferable {
         }
     }
 
-    private static final DataFlavor[] FLAVORS = new DataFlavor[]{
-            DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
+    private static final DataFlavor[] FLAVORS = {DataFlavor.javaFileListFlavor, uriListFlavor, gnomeCopiedFilesFlavor};
 
     TransferableFiles(List<File> files) {
         this.files = Collections.unmodifiableList(files);
