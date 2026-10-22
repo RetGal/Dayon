@@ -380,7 +380,7 @@ class AssistantFrame extends BaseFrame {
         final Action sendWindowsKey = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
-                final int virtualKey = osId != 'm' ? VK_WINDOWS : VK_META;
+                final int virtualKey = osId == 'm' ?  VK_META : VK_WINDOWS;
                 if (windowsKeyActivated.get()) {
                     fireOnKeyReleased(virtualKey, EMPTY_CHAR);
                 } else {

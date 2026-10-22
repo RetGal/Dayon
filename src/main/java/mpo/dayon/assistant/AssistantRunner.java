@@ -15,7 +15,7 @@ public class AssistantRunner {
 
 	private static String[] appendAssistant(String[] args) {
 		String[] combined = Arrays.copyOf(args, args.length + 1);
-		String[] additional = new String[]{"assistant"};
+		String[] additional = {"assistant"};
 		System.arraycopy(additional, 0, combined, args.length, 1);
 		return combined;
 	}
