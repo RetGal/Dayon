@@ -319,7 +319,7 @@ public abstract class BaseFrame extends JFrame {
     private void showSystemInfoDialog(JLabel latestVersion) {
         final JPanel panel = createSystemInfoPanel(latestVersion);
         final Object[] options = {translate("ok")};
-        JOptionPane.showOptionDialog(BaseFrame.this, panel, translate("system.info"),
+        JOptionPane.showOptionDialog(this, panel, translate("system.info"),
                 JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE,
                 getOrCreateIcon(ImageNames.APP_LARGE), options, options[0]);
     }

@@ -37,7 +37,7 @@ public abstract class DialogFactory {
     public static boolean showOkCancel(final Component owner, final String title, final JComponent payloadPane, final boolean bordered, final boolean setFocusOnFirstInputField, final Validator validator) {
         final JButton ok = new JButton(translate("ok"));
         final JButton cancel = new JButton(translate("cancel"));
-        final JButton[] buttons = new JButton[]{ok, cancel};
+        final JButton[] buttons = {ok, cancel};
         final JDialog dialog = createDialog(owner, title, payloadPane, bordered, buttons, ok, true);
         final boolean[] result = new boolean[1];
 
