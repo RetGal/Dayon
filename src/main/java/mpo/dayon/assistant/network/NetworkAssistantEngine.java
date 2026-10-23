@@ -274,7 +274,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void queryPeerStatus() {
-        String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
+        final String customTokenServer = System.getProperty("dayon.custom.tokenServer");
+        String tokenServerUrl = customTokenServer.isEmpty() ? DEFAULT_TOKEN_SERVER_URL : customTokenServer;
         try {
             Log.info("Trying to obtain the assisted address");
             while (token.getPeerAddress() == null && !cancelling.get()) {

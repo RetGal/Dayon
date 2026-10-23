@@ -87,12 +87,13 @@ class AssistantFrame extends BaseFrame {
 
     private long sessionSeconds;
 
-    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
+    AssistantFrame(AssistantActions actions, ArrayList<Counter<?>> counters, JComboBox<Language> languageSelection, boolean compatibilityModeActive, NetworkAssistantEngine networkEngine, String[] tokenServerUrlsFromYaml) {
         RepeatingReleasedEventsFixer.install();
         super.setFrameType(FrameType.ASSISTANT);
         super.setPreExistAction(actions.getPreExitAction());
+        super.setTokenServerUrlsFromYaml(tokenServerUrlsFromYaml);
         this.actions = actions;
-        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine, hasTokenServerUrlFromYaml));
+        this.actions.setNetworkConfigurationAction(createAssistantConnectionSettingsAction(networkEngine));
         this.startButton = createButton(actions.getStartAction());
         this.stopButton = createButton(actions.getStopAction(), false);
         this.tokenButton = createTokenButton(actions.getTokenAction());

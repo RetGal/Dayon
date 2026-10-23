@@ -73,12 +73,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     private final AtomicBoolean shareAllScreens = new AtomicBoolean(false);
 
-    private final String tokenServerUrlFromYaml;
+    private String[] tokenServerUrlsFromYaml = {};
 
     public Assisted(String tokenServerUrl) {
-        tokenServerUrlFromYaml = tokenServerUrl;
+        if (tokenServerUrl != null) {
+            tokenServerUrlsFromYaml = tokenServerUrl.split(",");
+        }
         networkConfiguration = new NetworkAssistedEngineConfiguration();
-        updateTokenServerUrl(tokenServerUrl);
+        updateTokenServerUrl(tokenServerUrlsFromYaml.length > 0 ? tokenServerUrlsFromYaml[0] : "");
         initLookAndFeel();
         detectDesktopSession();
     }
@@ -146,7 +148,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
         networkEngine.initUpnp();
         frame = new AssistedFrame(
                 createStartAction(), createStopAction(), createToggleMultiScreenAction(),
-                networkEngine, tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty(), isWayland
+                networkEngine, tokenServerUrlsFromYaml, isWayland
         );
         FatalErrorHandler.attachFrame(frame);
         KeyboardErrorHandler.attachFrame(frame);

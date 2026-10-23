@@ -18,6 +18,7 @@ public class StatusBar extends JPanel {
     private static final int HEIGHT = 5;
     private static final Color DEFAULT_INDICATOR_COLOR = Color.darkGray;
     private static final String INITIAL_SESSION_DURATION = "00:00:00";
+    private final JLabel tokenserverIndicator = tokenserverIndicator();
     private final JLabel portStateIndicator = stateIndicator();
     private final JLabel peerStateIndicator = stateIndicator();
     private final JLabel message = new JLabel();
@@ -28,6 +29,7 @@ public class StatusBar extends JPanel {
     public StatusBar(int strutWidth) {
         setLayout(new BoxLayout(this, LINE_AXIS));
         add(Box.createHorizontalStrut(strutWidth));
+        add(tokenserverIndicator);
         add(portStateIndicator);
         add(peerStateIndicator);
         add(Box.createHorizontalStrut(5));
@@ -38,8 +40,14 @@ public class StatusBar extends JPanel {
         addCapsLockIndicator();
     }
 
+    private JLabel tokenserverIndicator() {
+        JLabel tokenserverIndicator = new JLabel("■ ");
+        tokenserverIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
+        return tokenserverIndicator;
+    }
+
     private JLabel stateIndicator() {
-        JLabel stateIndicator = new JLabel("\u25CF ");
+        JLabel stateIndicator = new JLabel("● ");
         stateIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
         return stateIndicator;
     }
@@ -66,6 +74,10 @@ public class StatusBar extends JPanel {
 
     public void resetPeerStateIndicator() {
         peerStateIndicator.setForeground(DEFAULT_INDICATOR_COLOR);
+    }
+
+    public void setTokenserverIndicator(boolean hasDefaultServer) {
+        tokenserverIndicator.setText(hasDefaultServer ? "● " : "⛰ ");
     }
 
     public void setSessionDuration(String sessionDuration) {

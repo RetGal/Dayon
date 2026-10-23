@@ -92,6 +92,8 @@ public abstract class BaseFrame extends JFrame {
 
     private transient Action preExitAction;
 
+    private String[] tokenServerUrlsFromYaml;
+
     protected BaseFrame() {
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setIconImage(getOrCreateIcon(ImageNames.APP).getImage());
@@ -193,6 +195,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     protected void setupStatusBar(StatusBar statusBar) {
+        statusBar.setTokenserverIndicator(getCurrentTokenServer().isBlank() && tokenServerUrlsFromYaml.length == 0);
         Timer statusBarTimer;
         statusBar.add(Box.createHorizontalStrut(10));
         add(statusBar, BorderLayout.SOUTH);
@@ -242,6 +245,10 @@ public abstract class BaseFrame extends JFrame {
         if (currentCapsLockState != statusBar.isCapsLockOn()) {
             statusBar.setCapsLockIndicator(currentCapsLockState);
         }
+    }
+
+    protected void setTokenServerUrlsFromYaml(String[] tokenServerUrlsFromYaml) {
+        this.tokenServerUrlsFromYaml = tokenServerUrlsFromYaml;
     }
 
     public void resetConnectionIndicators() {
@@ -392,15 +399,15 @@ public abstract class BaseFrame extends JFrame {
         return buttonsPanel;
     }
 
-    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
-        return createConnectionSettingsAction(null, networkEngine, hasTokenServerUrlFromYaml);
+    protected Action createAssistedConnectionSettingsAction(NetworkAssistedEngine networkEngine) {
+        return createConnectionSettingsAction(null, networkEngine);
     }
 
-    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine, boolean hasTokenServerUrlFromYaml) {
-        return createConnectionSettingsAction(networkEngine, null, hasTokenServerUrlFromYaml);
+    protected Action createAssistantConnectionSettingsAction(NetworkAssistantEngine networkEngine) {
+        return createConnectionSettingsAction(networkEngine, null);
     }
 
-    private Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine, boolean hasTokenServerUrlFromYaml) {
+    private Action createConnectionSettingsAction(NetworkAssistantEngine networkAssistantEngine, NetworkAssistedEngine networkAssistedEngine) {
         final Action conf = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent ev) {
@@ -410,14 +417,16 @@ public abstract class BaseFrame extends JFrame {
                 final JCheckBox autoConnectCheckBox = new JCheckBox();
                 final ButtonGroup tokenRadioGroup = new ButtonGroup();
                 final JTextField customTokenTextField = new JTextField();
+                final JComboBox<String> customTokenServersSelection = new JComboBox<>(tokenServerUrlsFromYaml);
                 CompletableFuture<Boolean> upnpActive = ASSISTED.equals(frameType) ? networkAssistedEngine.isUpnpEnabled() : networkAssistantEngine.isUpnpEnabled();
 
-                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, upnpActive, hasTokenServerUrlFromYaml);
+                JPanel panel = createPanel(addressTextField, portNumberTextField, autoConnectCheckBox, tokenRadioGroup, customTokenTextField, customTokenServersSelection, upnpActive);
                 final boolean ok = DialogFactory.showOkCancel(networkFrame, translate("connection.network"), panel, true,
-                        () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField));
+                        () -> validateInputFields(addressTextField, portNumberTextField, tokenRadioGroup, customTokenTextField, customTokenServersSelection));
 
                 if (ok) {
-                    String newTokenServerUrl = getSelectedTokenServerUrl(tokenRadioGroup, customTokenTextField);
+                    String newTokenServerUrl = getSelectedTokenServerUrl(tokenRadioGroup, customTokenTextField, customTokenServersSelection);
+                    statusBar.setTokenserverIndicator(newTokenServerUrl.isBlank() && tokenServerUrlsFromYaml.length == 0);
                     applyNetworkConfiguration(addressTextField, portNumberTextField, autoConnectCheckBox, newTokenServerUrl, networkAssistantEngine, networkAssistedEngine);
                 }
             }
@@ -436,7 +445,10 @@ public abstract class BaseFrame extends JFrame {
         }
     }
 
-    private static String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+    private static String getSelectedTokenServerUrl(ButtonGroup tokenRadioGroup, JTextField customTokenTextField, JComboBox<String> customTokenServersSelection) {
+        if (customTokenServersSelection.getItemCount() > 1) {
+            return customTokenServersSelection.getSelectedItem().toString();
+        }
         String selectedValue = tokenRadioGroup.getSelection() == null ? null : tokenRadioGroup.getSelection().getActionCommand();
         if (CUSTOM.equals(selectedValue) && isValidUrl(customTokenTextField.getText().trim())) {
             return customTokenTextField.getText();
@@ -445,7 +457,7 @@ public abstract class BaseFrame extends JFrame {
     }
 
     private JPanel createPanel(JTextField addressTextField, JTextField portNumberTextField, JCheckBox autoConnectCheckBox, ButtonGroup tokenRadioGroup,
-                              JTextField customTokenTextField, CompletableFuture<Boolean> upnpActive, boolean hasTokenServerUrlFromYaml) {
+                              JTextField customTokenTextField, JComboBox<String> customTokenServersSelection, CompletableFuture<Boolean> upnpActive) {
         final Font titleFont = new Font("Sans Serif", Font.BOLD, 14);
         final JPanel panel = new JPanel(new GridBagLayout());
         int gridy = 0;
@@ -455,8 +467,8 @@ public abstract class BaseFrame extends JFrame {
         } else {
             gridy = addAssistantConfiguration(panel, gridy, titleFont, portNumberTextField, autoConnectCheckBox, upnpActive);
         }
-        if (hasTokenServerUrlFromYaml) {
-            return addPreconfiguredTokenServerPanel(panel, gridy, titleFont);
+        if (customTokenServersSelection.getItemCount() > 1) {
+            return addPreconfiguredTokenServerPanel(panel, gridy, titleFont, customTokenServersSelection);
         }
         return addTokenServerSelectionPanel(panel, gridy, titleFont, tokenRadioGroup, customTokenTextField, currentTokenServer);
     }
@@ -519,14 +531,24 @@ public abstract class BaseFrame extends JFrame {
         return gridy;
     }
 
-    private static JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont) {
+    private static JPanel addPreconfiguredTokenServerPanel(JPanel panel, int gridy, Font titleFont, JComboBox<String> customTokenServersSelection) {
         JLabel tokenServerLbl = new JLabel(toUpperFirst(translate("token.server")));
         tokenServerLbl.setFont(titleFont);
         panel.add(tokenServerLbl, createGridBagConstraints(gridy++));
-        JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
-        tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        tokenPanel.add(new JLabel(translate("token.server.preconfigured")));
-        panel.add(tokenPanel, createGridBagConstraints(gridy));
+        if (customTokenServersSelection.getItemCount() > 1) {
+            JPanel tokenPanel = new JPanel(new GridLayout(1, 2, 10, 0));
+            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+            tokenPanel.add(new JLabel(translate("token.custom.server")));
+            customTokenServersSelection.setFont(new Font("Sans Serif", Font.PLAIN, 13));
+            customTokenServersSelection.setSelectedItem(System.getProperty("dayon.tokenserver.url", ""));
+            tokenPanel.add(customTokenServersSelection);
+            panel.add(tokenPanel, createGridBagConstraints(gridy));
+        } else {
+            JPanel tokenPanel = new JPanel(new GridLayout(1, 1, 10, 0));
+            tokenPanel.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+            tokenPanel.add(new JLabel(translate("token.server.preconfigured")));
+            panel.add(tokenPanel, createGridBagConstraints(gridy));
+        }
         return panel;
     }
 
@@ -581,7 +603,7 @@ public abstract class BaseFrame extends JFrame {
         return text.isEmpty() ? text : Character.toUpperCase(text.charAt(0)) + text.substring(1);
     }
 
-    private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField) {
+    private String validateInputFields(JTextField addressTextField, JTextField portNumberTextField, ButtonGroup tokenRadioGroup, JTextField customTokenTextField, JComboBox<String> customTokenServersSelection) {
         String addressError = validateAddressText(addressTextField);
         if (addressError != null) {
             return addressError;
@@ -591,7 +613,10 @@ public abstract class BaseFrame extends JFrame {
             return portError;
         }
         if (isCustomTokenServerSelected(tokenRadioGroup)) {
-            return validateCustomTokenServer(customTokenTextField);
+            return validateCustomTokenServer(customTokenTextField.getText().trim());
+        }
+        if (customTokenServersSelection.getItemCount() > 1) {
+            return validateCustomTokenServer(customTokenServersSelection.getSelectedItem().toString());
         }
         return null;
     }
@@ -625,8 +650,7 @@ public abstract class BaseFrame extends JFrame {
         return tokenRadioGroup.getSelection() != null && CUSTOM.equals(tokenRadioGroup.getSelection().getActionCommand());
     }
 
-    private static String validateCustomTokenServer(JTextField customTokenTextField) {
-        final String tokenServer = customTokenTextField.getText().trim();
+    private static String validateCustomTokenServer(String tokenServer) {
         if (isValidUrl(tokenServer) && tokenServer.endsWith("/")) {
             final String tokenServerVersion = getTokenServerVersion(tokenServer);
             Log.debug("Token server version: " + tokenServerVersion);
@@ -818,7 +842,7 @@ public abstract class BaseFrame extends JFrame {
         preExitAction = exitAction;
     }
 
-    private class LatestVersionLabelUpdater extends SwingWorker<String, Void> {
+    private static class LatestVersionLabelUpdater extends SwingWorker<String, Void> {
         private final JLabel latestVersion;
 
         private LatestVersionLabelUpdater(JLabel latestVersion) {

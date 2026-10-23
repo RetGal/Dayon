@@ -104,12 +104,14 @@ public class Assistant implements ClipboardOwner {
 
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
-    private final String tokenServerUrlFromYaml;
+    private String[] tokenServerUrlsFromYaml = {};
 
     public Assistant(String tokenServerUrl, String language) {
-        tokenServerUrlFromYaml = tokenServerUrl;
+        if (tokenServerUrl != null) {
+            tokenServerUrlsFromYaml = tokenServerUrl.split(",");
+        }
         networkConfiguration = new NetworkAssistantEngineConfiguration();
-        updateTokenServerUrl(tokenServerUrl);
+        updateTokenServerUrl(tokenServerUrlsFromYaml.length > 0 ? tokenServerUrlsFromYaml[0] : "");
 
         this.configuration = new AssistantConfiguration();
         // has not been overridden by command line
@@ -137,7 +139,7 @@ public class Assistant implements ClipboardOwner {
     }
 
     public boolean hasTokenServerUrlFromYaml() {
-        return tokenServerUrlFromYaml != null && !tokenServerUrlFromYaml.isEmpty();
+        return tokenServerUrlsFromYaml.length > 0;
     }
 
     private void updateTokenServerUrl(String tokenServerUrl) {
@@ -159,7 +161,7 @@ public class Assistant implements ClipboardOwner {
             clearToken();
             frame.dispose();
         }
-        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, hasTokenServerUrlFromYaml());
+        frame = new AssistantFrame(createAssistantActions(), counters, createLanguageSelection(), compatibilityModeActive.get(), networkEngine, tokenServerUrlsFromYaml);
         FatalErrorHandler.attachFrame(frame);
         frame.addListener(new ControlEngine(networkEngine));
         frame.setVisible(true);

@@ -406,7 +406,8 @@ public class NetworkAssistedEngine extends NetworkEngine
     private void checkAndUpdateRVS(int localPort, boolean incomplete) throws IOException {
         try {
             String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
-            String tokenServerUrl = configuration.getTokenServerUrl().isEmpty() ? DEFAULT_TOKEN_SERVER_URL : configuration.getTokenServerUrl();
+            final String customTokenServer = System.getProperty("dayon.custom.tokenServer");
+            String tokenServerUrl = customTokenServer.isEmpty() ? DEFAULT_TOKEN_SERVER_URL : customTokenServer;
             final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
             String[] parts = connectionParams.split("\\*");
             if (parts.length > 1) {
