@@ -484,6 +484,7 @@ class AssistantFrame extends BaseFrame {
         languageSelection.setEnabled(true);
         disableControls();
         clearFingerprints();
+        getToolBar().setVisible(true);
         getStatusBar().setMessage(translate("ready"));
     }
 
