@@ -172,4 +172,15 @@ class RunnerTest {
         assertEquals("https://foo.bar/rvs/,https://six.seven/rvs/", Runner.getCustomTokenServerUrls(config));
     }
 
+    @Test
+    void getCustomTokenServerUrlsShouldRemoveDuplicates() {
+        // given
+        Map<String, String> config = new HashMap<>();
+        config.put("tokenServerUrl", "https://foo.bar/rvs/");
+        config.put("backupTokenServerUrls", "https://six.seven/rvs/,https://seven.eight/rvs/,https://foo.bar/rvs/");
+        // when then
+        assertEquals("https://foo.bar/rvs/,https://six.seven/rvs/,https://seven.eight/rvs/",
+                Runner.getCustomTokenServerUrls(config));
+    }
+
 }

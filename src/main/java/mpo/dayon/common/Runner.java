@@ -153,10 +153,14 @@ public interface Runner {
     static String getCustomTokenServerUrls(Map<String, String> config) {
         String tokenServerUrls = config.get("tokenServerUrl");
         String backupTokenServerUrls = config.get("backupTokenServerUrls");
-        if (backupTokenServerUrls == null) {
-            return tokenServerUrls;
-        }
-        return tokenServerUrls == null ? backupTokenServerUrls : tokenServerUrls + "," + backupTokenServerUrls;
+        Set<String> urls = new LinkedHashSet<>();
+        Stream.of(tokenServerUrls, backupTokenServerUrls)
+                .filter(Objects::nonNull)
+                .flatMap(value -> Arrays.stream(value.split(",")))
+                .map(String::trim)
+                .filter(url -> !url.isEmpty())
+                .forEach(urls::add);
+        return urls.isEmpty() ? null : String.join(",", urls);
     }
 
     static boolean isAutoConnect(Map<String, String> config) {
