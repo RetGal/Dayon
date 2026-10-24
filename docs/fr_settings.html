@@ -159,10 +159,16 @@ port: 8080
       <p>
       <ul>
         <li>Si vous souhaitez empêcher l'appareil assisté de se connecter automatiquement à l'assistant configuré lors de son démarrage,
-          cette ligne doit être commentée dans <code>assisted.yaml</code> : <code># autoConnect: false</code> </li>
+          cette ligne doit être commentée dans <code>assisted.yaml</code> :<br/>
+          <code># autoConnect: false</code>
+        </li>
         <li>Si toutefois l'assisté doit utiliser un serveur de jetons alternatif, la ligne suivante doit être
-          commentée dans <code>assisted.yaml</code> et renseignée avec l'URL du serveur de jetons : <code># tokenServerUrl: "https://example.org/token/"</code><br/>
-          <strong>Important :</strong> Assurez-vous de saisir le même serveur de jetons du côté de l'assisté que celui utilisé par l'assistant !</li>
+          commentée dans <code>assisted.yaml</code> et renseignée avec l'URL du serveur de jetons :<br/>
+          <code># tokenServerUrl: https://example.org/token/</code><br/>
+          <strong>Important :</strong> Assurez-vous de saisir le même serveur de jetons du côté de l'assisté que celui utilisé par l'assistant !<br/>
+          Vous pouvez également définir plusieurs serveurs de jetons ; dans ce cas, vous pouvez sélectionner le serveur de jetons à utiliser dans l'interface utilisateur. Par défaut, c'est le premier qui est utilisé :<br/>
+          <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
+        </li>
       </ul>
       </p>
       
@@ -172,9 +178,13 @@ port: 8080
         <ul>
           <li>
             Si vous souhaitez que l'assistant utilise un serveur de jetons alternatif, alors <code>assistant.yaml</code>
-            Commentez la ligne suivante et remplissez-la avec l'URL du serveur de tokens : <code># tokenServerUrl: "https://example.org/token/"</code><br/>
-            <strong>Important :</strong> Assurez-vous de saisir le même serveur de jetons sur la page de l'assistant. qui est également utilisé par l'assisté' !</li>
-        </ul>
+            Commentez la ligne suivante et remplissez-la avec l'URL du serveur de tokens :<br/>
+            <code># tokenServerUrl: https://example.org/token/</code><br/>
+            <strong>Important :</strong> Assurez-vous de saisir le même serveur de jetons sur la page de l'assistant. qui est également utilisé par l'assisté' !<br/>
+            Vous pouvez également définir plusieurs serveurs de jetons ; dans ce cas, vous pouvez sélectionner le serveur de jetons à utiliser dans l'interface utilisateur. Par défaut, c'est le premier qui est utilisé :<br/>
+            <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
+          </li>
+      </ul>
 
         Ces fichiers YAML peuvent être appelés <code><a href="assisted.yaml">assisted.yaml</a></code> et
         <code><a href="assistant.yaml">assistant.yaml</a></code> soit à Dayon ! répertoire personnel, dans le répertoire utilisateur,

@@ -167,9 +167,15 @@ port: 8080
 
       <p>
         <ul>
-          <li>To prevent the assisted from automatically connecting right after the start, in <code>assisted.yaml</code> just uncomment the following line: <code># autoConnect: false</code></li>
-          <li>To make assisted use other token server than the default public token server, in <code>assisted.yaml</code>, just uncomment the following line and set the appropriate URL:
-              <code># tokenServerUrl: "https://example.org/token/"</code><br/><strong>Important:</strong> make sure to use the same as assistant!</li>
+          <li>To prevent the assisted from automatically connecting right after the start, in <code>assisted.yaml</code> just uncomment the following line:<br/>
+            <code># autoConnect: false</code>
+          </li>
+          <li>To make assisted use other token server than the default public token server, in <code>assisted.yaml</code>, just uncomment the following line and set the appropriate URL:<br/>
+            <code># tokenServerUrl: https://example.org/token/</code><br/>
+            <strong>Important:</strong> make sure to use the same as assistant!<br/>
+            You can also define multiple token servers; in this case, you can select the token server to use in the UI. By default, the first one is used:<br/>
+            <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
+          </li>
         </ul>
       </p>
 
@@ -177,10 +183,12 @@ port: 8080
         The <em>assistant</em> also has a YAML configuration file.
         <br/>
         <ul>
-          <li>
-          To make assistant use other token server than the default public token server, in <code>assistant.yaml</code>,
-          just uncomment the following line and set the appropriate URL: <code># tokenServerUrl: "https://example.org/token/"</code>
-          <br/><strong>Important:</strong> make sure to use the same as assisted!
+          <li>To make assistant use other token server than the default public token server, in <code>assistant.yaml</code>,
+            just uncomment the following line and set the appropriate URL:<br/>
+            <code># tokenServerUrl: "https://example.org/token/"</code><br/>
+            <strong>Important:</strong> make sure to use the same as assisted!<br/>
+            You can also define multiple token servers; in this case, you can select the token server to use in the UI. By default, the first one is used:<br/>
+            <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
           </li>
         </ul>
 

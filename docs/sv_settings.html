@@ -159,12 +159,15 @@ port: 8080
       <p>
         <ul>
           <li>För att förhindra <em>hjälptagaren</em> från att automatiskt ansluta direkt efter starten, i <code>assisted.yaml</code>
-            avkommenterar du bara följande rad: <code># autoConnect: false</code>
+            avkommenterar du bara följande rad:<br/>
+            <code># autoConnect: false</code>
           </li>
           <li>För att få assisterad användning av annan tokenserver än standardservern för offentliga token, i <code>assisted.yaml</code>,
-            avkommenterar du bara följande rad och<br/>
-            ställer in lämplig URL:<code># tokenServerUrl: "https://example.org/token/"</code><br/>
-            <strong>Viktigt:</strong> se till att använda samma som <em>hjälpgivaren</em>!
+            avkommenterar du bara följande rad och ställer in lämplig URL:<br/>
+            <code># tokenServerUrl: https://example.org/token/</code><br/>
+            <strong>Viktigt:</strong> se till att använda samma som <em>hjälpgivaren</em>!<br/>
+            Du kan också ange flera tokenservrar; i så fall kan du välja vilken tokenserver som ska användas i användargränssnittet. Som standard används den första:<br/>
+            <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
           </li>
         </ul>
       </p>
@@ -175,9 +178,11 @@ port: 8080
         <ul>
           <li>
             För att få <em>hjälpgivaren</em> att använda en annan tokenserver än standardservern för offentliga token, i <code>assistant.yaml</code>,
-            avkommentera bara följande rad och<br/>
-            ange lämplig URL: <code># tokenServerUrl: "https://example.org/token/"</code><br/>
-            <strong>Viktigt:</strong> se till att använda samma som <em>hjälptagaren</em>!
+            avkommentera bara följande rad och ange lämplig URL:<br/>
+            <code># tokenServerUrl: https://example.org/token/</code><br/>
+            <strong>Viktigt:</strong> se till att använda samma som <em>hjälptagaren</em>!<br/>
+            Du kan också ange flera tokenservrar; i så fall kan du välja vilken tokenserver som ska användas i användargränssnittet. Som standard används den första:<br/>
+            <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
           </li>
         </ul>
         Denna fil kan sparas under namnet <code><a href="assisted.yaml">assisted.yaml</a></code> antingen i Dayon! hemmafolder (home directory), i användarfoldern (user directory), eller i samma folder som <code>.jar</code>, resp.

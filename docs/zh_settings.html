@@ -161,9 +161,14 @@ port: 8080
 </pre>
 
       <ul>
-        <li>若不想让受助端（Assisted）启动后立刻自动连接，在 <code>assisted.yaml</code> 里取消下面这行的注释：<code># autoConnect: false</code></li>
-        <li>若要让受助端（Assisted）使用非默认的公共令牌服务器，在 <code>assisted.yaml</code> 里取消下面这行的注释，并填入对应的 URL：
-            <code># tokenServerUrl: "https://example.org/token/"</code><br/><strong>重要：</strong>必须与协助端（Assistant）使用的令牌服务器保持一致！</li>
+        <li>若不想让受助端（Assisted）启动后立刻自动连接，在 <code>assisted.yaml</code> 里取消下面这行的注释：<br/>
+          <code># autoConnect: false</code></li>
+        <li>若要让受助端（Assisted）使用非默认的公共令牌服务器，在 <code>assisted.yaml</code> 里取消下面这行的注释，并填入对应的 URL：<br/>
+          <code># tokenServerUrl: https://example.org/token/</code><br/>
+          <strong>重要：</strong>必须与协助端（Assistant）使用的令牌服务器保持一致！<br/>
+          您还可以定义多个令牌服务器；在这种情况下，您可以在用户界面中选择要使用的令牌服务器。默认情况下，系统会使用第一个：<br/>
+          <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
+        </li>
       </ul>
 
       <p>
@@ -171,8 +176,11 @@ port: 8080
       </p>
       <ul>
         <li>
-          若要让协助端（Assistant）使用非默认的公共令牌服务器，在 <code>assistant.yaml</code> 里取消下面这行的注释，并填入对应的 URL：<code># tokenServerUrl: "https://example.org/token/"</code>
-          <br/><strong>重要：</strong>必须与受助端（Assisted）使用的令牌服务器保持一致！
+          若要让协助端（Assistant）使用非默认的公共令牌服务器，在 <code>assistant.yaml</code> 里取消下面这行的注释，并填入对应的 URL：<br/>
+          <code># tokenServerUrl: https://example.org/token/</code><br/>
+          <strong>重要：</strong>必须与受助端（Assisted）使用的令牌服务器保持一致！<br/>
+          您还可以定义多个令牌服务器；在这种情况下，您可以在用户界面中选择要使用的令牌服务器。默认情况下，系统会使用第一个：<br/>
+          <code># backupTokenServerUrls: [https://example.com/rvs/,https://example.net/rvs/]</code>
         </li>
       </ul>
       <p>
