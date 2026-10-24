@@ -32,7 +32,7 @@ With his consent, I took over the maintenance and further development of this so
 
 ## Releases
 
-The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v18.0.3 (Gusty Goblin III) - released more than ten years after the initial release.
+The ![latest version](https://github.com/RetGal/Dayon/releases/latest) is v18.0.4 (Gusty Goblin IV) - released more than ten years after the initial release.
 
 v15.0.0 was the first version in which the remote desktop could also be transmitted in colour - in addition to the bandwidth-saving greyscales, 
 v16.0.0 came with the ability of automatically reversing the connection establishment in cases the assistant side is blocked by a NAT or firewall.

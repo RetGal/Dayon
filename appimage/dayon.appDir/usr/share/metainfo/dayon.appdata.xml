@@ -38,6 +38,17 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="18.0.4" date="2026-10-25">
+            <description>
+                <p>Changes in Gusty Goblin IV</p>
+                <ul>
+                    <li>UI improvements</li>
+                    <li>Automatic Tikbalang mode</li>
+                    <li>Improved custom token server support</li>
+                    <li>Performance improvements and various bugfixes</li>
+                </ul>
+            </description>
+        </release>
         <release version="18.0.3" date="2026-09-14">
             <description>
                 <p>Changes in Gusty Goblin III</p>
