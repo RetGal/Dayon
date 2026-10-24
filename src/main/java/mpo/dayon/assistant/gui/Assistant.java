@@ -619,7 +619,11 @@ public class Assistant implements ClipboardOwner {
                 .header("User-Agent", USER_AGENT)
                 .timeout(Duration.ofSeconds(5))
                 .build();
-        TOKEN.setTokenString(limit(HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString()).body()));
+        final HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new IOException("Failed to obtain token, status code: " + response.statusCode());
+        }
+        TOKEN.setTokenString(limit(response.body()));
     }
 
     private String limit(String string) {

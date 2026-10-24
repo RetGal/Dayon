@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static mpo.dayon.common.Runner.*;
 import static mpo.dayon.common.utils.SystemUtilities.getJarDir;
@@ -132,4 +129,47 @@ class RunnerTest {
         // given when then
         assertFalse(Runner.isReadableFile(new File(System.getProperty("java.io.tmpdir"))));
     }
+
+    @Test
+    void getCustomTokenServerUrlsShouldReturnNullWhenEmpty() {
+        // given when then
+        assertNull(Runner.getCustomTokenServerUrls(Collections.emptyMap()));
+    }
+
+    @Test
+    void parseValuesShouldCorrectlyParseListValues() {
+        // given
+        String[] token = { "backupTokenServerUrls", "[https://www.example.com/rvs/, https://six.seven/rvs/]" };
+        // when then
+        assertEquals("https://www.example.com/rvs/,https://six.seven/rvs/", Runner.parseValue(token));
+    }
+
+    @Test
+    void getCustomTokenServerUrlsShouldReturnUrl() {
+        // given
+        Map<String, String> config = new HashMap<>();
+        config.put("tokenServerUrl", "https://foo.bar/rvs/");
+        // when then
+        assertEquals("https://foo.bar/rvs/", Runner.getCustomTokenServerUrls(config));
+    }
+
+    @Test
+    void getCustomTokenServerUrlsShouldReturnBackupUrls() {
+        // given
+        Map<String, String> config = new HashMap<>();
+        config.put("backupTokenServerUrls", "https://six.seven/rvs/,https://seven.eight/rvs/");
+        // when then
+        assertEquals("https://six.seven/rvs/,https://seven.eight/rvs/", Runner.getCustomTokenServerUrls(config));
+    }
+
+    @Test
+    void getCustomTokenServerUrlsShouldReturnCombinedUrlsInCorrectOrder() {
+        // given
+        Map<String, String> config = new HashMap<>();
+        config.put("tokenServerUrl", "https://foo.bar/rvs/");
+        config.put("backupTokenServerUrls", "https://six.seven/rvs/");
+        // when then
+        assertEquals("https://foo.bar/rvs/,https://six.seven/rvs/", Runner.getCustomTokenServerUrls(config));
+    }
+
 }

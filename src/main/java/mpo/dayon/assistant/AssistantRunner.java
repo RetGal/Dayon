@@ -4,7 +4,9 @@ import mpo.dayon.assistant.gui.Assistant;
 import mpo.dayon.common.Runner;
 
 import java.util.Arrays;
+import java.util.Map;
 
+import static mpo.dayon.common.Runner.getCustomTokenServerUrls;
 import static mpo.dayon.common.Runner.readPresetFile;
 
 public class AssistantRunner {
@@ -21,6 +23,7 @@ public class AssistantRunner {
 	}
 
 	public static void launchAssistant(String language) {
-		new Assistant(readPresetFile("assistant.yaml").get("tokenServerUrl"), language);
+		final Map<String, String> config = readPresetFile("assistant.yaml");
+		new Assistant(getCustomTokenServerUrls(config), language);
 	}
 }

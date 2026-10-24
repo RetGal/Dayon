@@ -1,4 +1,4 @@
-# uncomment the next line to use a custom token server (can not be changed in the ui)
-# tokenServerUrl: "https://example.org/token/"
-# uncomment the next line to use multiple custom token servers, comma separated - the first is used by default (can be changed in the ui)
-# tokenServerUrl: [https://example.org/token/, https://example.net/rvs/]
+# uncomment the next line to use a custom token server (will be used by default, can not be changed in the ui)
+# tokenServerUrl: "https://example.com/token/"
+# uncomment the next line to use multiple custom token servers, comma separated - if none is specified as tokenServerUrl, the first of the list is used by default (can be changed in the ui if multiple are available)
+# backupTokenServerUrls: [https://example.org/rvs/, https://example.net/rvs/]

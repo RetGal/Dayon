@@ -5,8 +5,7 @@ import mpo.dayon.common.Runner;
 
 import java.util.Map;
 
-import static mpo.dayon.common.Runner.isAutoConnect;
-import static mpo.dayon.common.Runner.readPresetFile;
+import static mpo.dayon.common.Runner.*;
 
 public class AssistedRunner {
 
@@ -18,7 +17,7 @@ public class AssistedRunner {
         // cli args have precedence
         if (assistantHost == null || assistantPort == null) {
             final Map<String, String> config = readPresetFile("assisted.yaml");
-            final Assisted assisted = new Assisted(config.get("tokenServerUrl"));
+            final Assisted assisted = new Assisted(getCustomTokenServerUrls(config));
             assisted.start(config.get("host"), config.get("port"), isAutoConnect(config));
         } else {
             final Assisted assisted = new Assisted(null);

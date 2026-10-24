@@ -123,8 +123,11 @@ public interface Runner {
 
     static Map<String, String> parsePresetFileContent(File presetFile) {
         try (Stream<String> lines = Files.lines(presetFile.toPath())) {
-            final Map<String, String> content = lines.filter(line -> !line.startsWith("#")).map(line -> line.split(":")).filter(s -> s.length > 1).collect(Collectors.toMap(s -> s[0].trim(), Runner::parseValue));
-            if ((content.containsKey("host") && content.containsKey("port")) || content.containsKey("tokenServerUrl")) {
+            final Map<String, String> content = lines.filter(line -> !line.startsWith("#"))
+                    .map(line -> line.split(":"))
+                    .filter(s -> s.length > 1)
+                    .collect(Collectors.toMap(s -> s[0].trim(), Runner::parseValue));
+            if (hasConnectionSettings(content)) {
                 Log.info(format("Using connection settings from [%s]", presetFile.getPath()));
                 return content;
             }
@@ -134,11 +137,26 @@ public interface Runner {
         return Collections.emptyMap();
     }
 
+    static boolean hasConnectionSettings(Map<String, String> content) {
+        return (content.containsKey("host") && content.containsKey("port"))
+                || content.containsKey("tokenServerUrl")
+                || content.containsKey("backupTokenServerUrls");
+    }
+
     static String parseValue(String[] s) {
         return String.join(":", Arrays.stream(s)
                 .skip(1)
                 .map(str -> str.trim().replaceAll("(^\\[)|(\\]$|[\"' ])", ""))
                 .toArray(String[]::new));
+    }
+
+    static String getCustomTokenServerUrls(Map<String, String> config) {
+        String tokenServerUrls = config.get("tokenServerUrl");
+        String backupTokenServerUrls = config.get("backupTokenServerUrls");
+        if (backupTokenServerUrls == null) {
+            return tokenServerUrls;
+        }
+        return tokenServerUrls == null ? backupTokenServerUrls : tokenServerUrls + "," + backupTokenServerUrls;
     }
 
     static boolean isAutoConnect(Map<String, String> config) {

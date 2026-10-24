@@ -497,6 +497,9 @@ public class NetworkAssistedEngine extends NetworkEngine
                 .timeout(Duration.ofSeconds(5))
                 .build();
         HttpResponse<String> response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() != 200) {
+            throw new IOException("Failed to obtain token, status code: " + response.statusCode());
+        }
         final String responseString = response.body().trim();
         Log.debug("Token resolved: " + responseString);
         return responseString;
