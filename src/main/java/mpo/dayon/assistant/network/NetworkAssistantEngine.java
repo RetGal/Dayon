@@ -204,22 +204,18 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         startClassicMode(compatibilityMode);
     }
 
-    public void initIceAgent() {
+    public void initIceAgent() throws IOException {
         super.initializeIceAgent();
         createMediaStream();
     }
 
-    private void createMediaStream() {
+    private void createMediaStream() throws IOException {
         if (mediaStream != null) {
             iceAgent.removeStream(mediaStream);
         }
         int port = configuration.getPort();
         mediaStream = iceAgent.createMediaStream("dayon");
-        try {
-            iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
-        } catch (IOException e) {
-            Log.error("Failed to initialize ICE agent", e);
-        }
+        iceAgent.createComponent(mediaStream, port, port, port, KeepAliveStrategy.SELECTED_AND_TCP);
     }
 
     private void startClassicMode(boolean compatibilityMode) throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {

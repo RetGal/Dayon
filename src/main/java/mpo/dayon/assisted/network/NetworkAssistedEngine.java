@@ -343,21 +343,17 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    private void initIceAgent(int port) {
+    private void initIceAgent(int port) throws IOException {
         super.initializeIceAgent();
         createMediaStream(port);
     }
 
-    private void createMediaStream(int port) {
+    private void createMediaStream(int port) throws IOException {
         if (mediaStream != null) {
             iceAgent.removeStream(mediaStream);
         }
         mediaStream = iceAgent.createMediaStream("dayon");
-        try {
-            iceAgent.createComponent(mediaStream, port, port-1, port+1, KeepAliveStrategy.SELECTED_AND_TCP);
-        } catch (IOException e) {
-            Log.error("Failed to initialize ICE agent", e);
-        }
+        iceAgent.createComponent(mediaStream, port, port-1, port+1, KeepAliveStrategy.SELECTED_AND_TCP);
     }
 
     private boolean detectLocalAssistant() {
