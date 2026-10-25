@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v6
 
       - name: Generate SBOM
-        uses: anchore/sbom-action@v0
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c
         with:
           format: cyclonedx-json
           output-file: sbom.cyclonedx.json
@@ -28,6 +28,6 @@ jobs:
           subject-path: sbom.cyclonedx.json
 
       - name: Attach SBOM to release
-        uses: softprops/action-gh-release@v3
+        uses: softprops/action-gh-release@efb35369e0ad2afab669f228072c1b0d510eae64
         with:
           files: sbom.cyclonedx.json
