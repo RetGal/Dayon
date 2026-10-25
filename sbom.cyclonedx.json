@@ -1,0 +1,1410 @@
+{
+  "bomFormat" : "CycloneDX",
+  "specVersion" : "1.6",
+  "serialNumber" : "urn:uuid:11f1353d-27e4-3bcc-b5de-61730ed9e693",
+  "version" : 1,
+  "metadata" : {
+    "timestamp" : "2026-10-25T13:56:37Z",
+    "lifecycles" : [
+      {
+        "phase" : "build"
+      }
+    ],
+    "tools" : {
+      "components" : [
+        {
+          "type" : "library",
+          "author" : "OWASP Foundation",
+          "group" : "org.cyclonedx",
+          "name" : "cyclonedx-maven-plugin",
+          "version" : "2.9.1",
+          "description" : "CycloneDX Maven plugin",
+          "hashes" : [
+            {
+              "alg" : "MD5",
+              "content" : "9c7a565cf28cce58557d0c621c5ea4b1"
+            },
+            {
+              "alg" : "SHA-1",
+              "content" : "be882d5a22050bfa9d19090b1420c188617d0e1c"
+            },
+            {
+              "alg" : "SHA-256",
+              "content" : "698e0f37184a5b28c245c4065fd036dfce253b52f82fbb7113d81d36326cc249"
+            },
+            {
+              "alg" : "SHA-512",
+              "content" : "c0f0b11026858166f872a2eb54719492e5cecaa0bc9cd6b30b3ecb4a174eed220f4a1b5829d18d6734128e778d3cb3db7ffed177c92866133129cb29081814a0"
+            },
+            {
+              "alg" : "SHA-384",
+              "content" : "d80964707dfe5caca8c70521d5066f57589304c0a657e6fbc7c0614ea0fc7b3b3dbe7778361eee0f54ba111e9cb0ffcb"
+            },
+            {
+              "alg" : "SHA3-384",
+              "content" : "80bc3a275d9514bc457461ff52a72add8c7ecbbc01d8912efce57139016c544ee776981851be0a58fa977ab4221f703f"
+            },
+            {
+              "alg" : "SHA3-256",
+              "content" : "142317d6f245390f4fd2d0c100b16281b8dfc5c0c2cff86943bdcc97039cb699"
+            },
+            {
+              "alg" : "SHA3-512",
+              "content" : "af0fb9137c90b65d1a07f72e4d51ae509956cdb8800f35c961b037cdda1fe4a14ce3b496cef71ba85f1621affcfe29cd42704ae4191ff0b090a9602087c8997b"
+            }
+          ]
+        }
+      ]
+    },
+    "component" : {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/mpo.dayon/dayon@18.0.4?type=jar",
+      "group" : "mpo.dayon",
+      "name" : "dayon",
+      "version" : "18.0.4",
+      "description" : "cross platform remote desktop solution",
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "GPL-3",
+            "url" : "http://www.gnu.org/licenses/gpl-3.0.txt"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/mpo.dayon/dayon@18.0.4?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/retgal/dayon"
+        }
+      ]
+    },
+    "properties" : [
+      {
+        "name" : "maven.goal",
+        "value" : "makeAggregateBom"
+      },
+      {
+        "name" : "maven.scopes",
+        "value" : "compile,provided,runtime,system"
+      }
+    ]
+  },
+  "components" : [
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.dosse.upnp/WaifUPnP@1.3.2?type=jar",
+      "group" : "com.dosse.upnp",
+      "name" : "WaifUPnP",
+      "version" : "1.3.2",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "3882f281b0b4487d0392166bf09d9d76"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "23a18502a7b05bbf9acba9e8d6abb6b8c2843c47"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "d80df470533f6a4c1d899526ea017c9491cfd7b6b9cf809b3616b0119d0c7724"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "3a73f711cb28584e0b853783713153886c8f3b589e364e8441a02f8e478d86f6a06f678eed2c1c655e78b7b25f819deac1798a1be742838b618cb38c3c16d086"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "10150e9be2bedaad59085ef1dcd96017d2498894b06fee0dfff43861164a05147547ff6fbb09ef30a24a9b0b75d12ff8"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "690d819826de727211952086cc196dd9d713d5d26661b5dc336398552e3bdab8fab201cfd59dd5fcf269190fcf49f047"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "c1935771cef16388694d5fd048eeb359fdcb605bb7b0b8567d7f24c1fef8d17e"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "b996a4dc2b5c06c9e1da947bd38f27b2c5e9ea2e3b3c0b26918f8c01b8d91e23d72342800aef2f5eff72193bcfcf15c147b72ed6296f2ed2becea3f10594f07f"
+        }
+      ],
+      "purl" : "pkg:maven/com.dosse.upnp/WaifUPnP@1.3.2?type=jar"
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.tukaani/xz@1.12?type=jar",
+      "group" : "org.tukaani",
+      "name" : "xz",
+      "version" : "1.12",
+      "description" : "XZ data compression",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "9c8773d7dc00a4d842cf78752ca6adfa"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "bb9703ba3753ab8665f65e6a25b3ddc7b09b1caf"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "3e158a87bd73d8afb4b6e8239c013b7d049c48563f45860ce99cd2e448cf4a6b"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "a854dc65df5a07fbb026f624d2b10901f6f5d95a20091c52bfb64f88c14565ef1bb65733436ffd5b2a9d16329e523b650085fd4c36a1bb384d40788e727c1e60"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "4c8366773c7bab2db88029ab4589687fbb62d41c3ec9d263e150e3edd85f0e163fe8729d8937ba299b85c2d621a59688"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "435b3751a390000897d8fc3998d63664ae090704e5bb9f832d85bcf361f10ee1a44eeecda0941c60ffb685169a1979de"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "b655696201f997e38c838150d6885114c1eaa19ee07640098144f659b3826d8a"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "529779b7118db46162b926524f2d4248b44240557bd325ac77d28d5cc7351f6f3f9edf16c6139a68a5e37ea296b872816fd0e1f84d4d148ed0971541eb835866"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "0BSD",
+            "url" : "http://landley.net/toybox/license.html"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.tukaani/xz@1.12?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://tukaani.org/xz/java.html"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/tukaani-project/xz-java"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jitsi/ice4j@3.2-15-g6da2b08?type=jar",
+      "publisher" : "jitsi.org",
+      "group" : "org.jitsi",
+      "name" : "ice4j",
+      "version" : "3.2-15-g6da2b08",
+      "description" : "A Java implementation of the ICE protocol",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "eaffb973edafb449ec4e38955f96e267"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "da8ec9b9f069da054184c90129c9cdc9078fc7e9"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "dfce847c62008f044edf0f1448bf9c16b5e80de17a0994289a7581e602075532"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "b65eb5dcecfd9993b8bed0c137fb2d319e09af452fcdce4e382272d0ffcf0b8a0507176f92d8499857b704bd4df04c4930007973a1d3c8649e81ae452872cae1"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "1072794e33e8ebf4f8bad9d5c6b0ba2ad1128cf43486493c82401b26d7d3c28f04fbad42f9e260b94b5b849b34e2a63f"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "84210fd0004a266f9f031e40fc3163560d9528e02beb3757baf8c7059a530885ef3ba03c1782047a315919c040bb3b25"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "db7d2483805f5de770e9f28cdd6ded569edb6b4bf43c5254abb33cfd37d0ff22"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "8e53ab25b4710ac194c2fe92a7863a7fdd42823e50658ab9541ea7d8a1566d36d6703086c82f606915adb4173eb177b55d7a57325d9e1ae1b8fc3e7dc6c79902"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jitsi/ice4j@3.2-15-g6da2b08?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/jitsi/ice4j"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jitsi/ice4j"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.opentelecoms.sdp/java-sdp-nist-bridge@1.2?type=jar",
+      "group" : "org.opentelecoms.sdp",
+      "name" : "java-sdp-nist-bridge",
+      "version" : "1.2",
+      "description" : "An SdpFactory binding the free OpenTelecoms javax.sdp API with the free NIST reference implementation.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "666120c0a315e8bfab55449b0eacc9d5"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "687e316fecc651d3103a3b3eebf1b050f0a26f23"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "198e0c6895731f58d5951c5d65d7ccd7d2c3372ee09be391e132c2b8ad886a0d"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "c987a0965073839ff8083075518df5d2a30bd888fa0dda4dd5a56b60c321f1312a10cc7d03071bc411434fab3cf6b57d261f3f2ad95fc4953c94cd5eb9c29314"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "2f0af607b746c248689f590e7f64264568e2903836a649cc76c8c9e140d77590f9038bab2e97b040006408c20cec6365"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "2a6854931b13dab8d436edc9ceebb1d7445c0579458dc8f82a17d4bc6f1437372eb7b0e79ba629c26f14c1f57c02330c"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "aa50e74788a062c6d314eaef2b89f76f3daaf976da2a14e187ac28ea5a09067f"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "008a8a1b6b967946274e6705f51c895a7a237c3c346ea68cb1a1b75f3fe4e1bcd77e1da6b3746d5e0e4af07a541fc439e19df3a9aff84c94a62417202e6b9a9b"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.opentelecoms.sdp/java-sdp-nist-bridge@1.2?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/opentelecoms-org/java-sdp-nist-bridge"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/opentelecoms-org/java-sdp-nist-bridge.git"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.opentelecoms.sdp/sdp-api@1.0?type=jar",
+      "group" : "org.opentelecoms.sdp",
+      "name" : "sdp-api",
+      "version" : "1.0",
+      "description" : "SDP API for Java",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "63d5e63df2e7e65a5ff47b5aa379d5cf"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "de20fa5fb752327aabf69da060f3841053a62bcb"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "4071f8d6494119adb6cd2adefec064fa3b2a04e88483b4b361f4c29e05228b68"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "293aff66c704439b637da38b170f51e9ff7114e85dc2ede09457a52fdfef45b1f859c8d9f7bf324a6034f14e818d8fdc57268228c7c21c1fb28a635441798745"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "899ad50d9c255bf4244a9cd04ca9421a8ecab1a1388570813797eabbbd1199f1b2138d2a069675e2bbed31090515e70f"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "322c813bcd6259bd618167d0798b8219c95b8fc4c97c5dde750ce22bf495b281f8cf1da870cdad68b9251f9afabade67"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "ce983ace7ba4c6e4c191e7f69e029ccf0f33c40edddde3cc9ea25917edde6a9e"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "d3faf9d9b355b6e983243773e992951b4ca559ac1da899f517b661fb6eb82be762a2ecd54aab63aa3272af67be0dd9d364c5ada581c063e240e975a224be80d2"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.opentelecoms.sdp/sdp-api@1.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/opentelecoms-org/java-sdp-api"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "scm:git:git@github.com:opentelecoms-org/java-sdp-api.git"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jitsi/jain-sip-ri-ossonly@1.2.279-jitsi-oss1?type=jar",
+      "group" : "org.jitsi",
+      "name" : "jain-sip-ri-ossonly",
+      "version" : "1.2.279-jitsi-oss1",
+      "description" : "Package of JAIN SIP and SDP that contains only OSS code (i.e. not javax.sip/java.sdp).",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "29819a9b909c71a2e7b02d57b15e2a57"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "42008d66663da5c7f92ded017492922776f63f57"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "f9402ef23cd58e8c3fb134750592a2282943d999984485a6a863fc5f5b1c21bd"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "87086deecbf0819dc5ebd44ee11a88f008a268194a09f5e483cca14021864e9643da37c3c3d7cc983aa079839b83443795c8d4a8eea67db3a561b0896b09b8c5"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "83377d6f754874ab9df7c096cfd6cf483a174e9010c2b6f7be766c0dbff3ff57833e18266e280ea0af34ae5fa04afcd0"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "d7c0057dcfebf121b974b01b389b8b49d155849bf7efcd9c185cfbe13a4565dd7682db9863319fd3039adc84a4adc50e"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "a9e0faa498adeb80fd6081512cf0ece3d536cbdcfba7b9b8cced2ee14b62cbbf"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "1a6b1cd210e9c115485e9358a7b1759c178464264a87376e4e4fcf1df083778600e85213aa3398138bbee2b63239acdfc48c990a29fa92378901c62efa20e220"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "Public Domain",
+            "url" : "http://www.gnu.org/licenses/license-list.html#PublicDomain"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jitsi/jain-sip-ri-ossonly@1.2.279-jitsi-oss1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/jitsi/jain-sip/tree/jitsi-oss-only/"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jitsi/jain-sip"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.bitlet/weupnp@0.1.4?type=jar",
+      "group" : "org.bitlet",
+      "name" : "weupnp",
+      "version" : "0.1.4",
+      "description" : "Weupnp is a lightweight Java library, released under the LGPL licence, designed to implement the UPnP protocol to handle port mappings on Gateway Devices.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "2a1124af3151711eece44a9ec689bdda"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "b99cd791ede89b7c17426e6c51a0f171dc925def"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "88df7e6504929d00bdb832863761385c68ab92af945b04f0770b126270a444fb"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "5bfb49f3b4519d22d3e109bba82de45807f3cf3dd896053d57b426619ed85e428c20d63823d4eccc8885100d896ccb3ad5f8097de7a8c720d2c030c5f9060798"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "d7d2e6300faaaabbdc477d62d3aca9bc013d414e99d224c4957d715714ed58be05dd87e2a177ed86f5c4c3a2695b571f"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "406a78220a2a2e31d04502895a84b0b14ef957bfd826e1103e8609e5df8338ba9cf513a5e08d1b2064c800a4d6cd1187"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "094412f2b428846bffcda67c0b34f29b97833218c0533ffea66e9dc4d75cd1cc"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "b34e8504178732ba55e751e27299b050deea0e6a34acd2662701c8a3d670c78b5045723ec420662c662f9ec62eb617742eb9a34d65156a69eb2a9b255e2eeb47"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "name" : "GNU Lesser General Public License (LGPL)"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.bitlet/weupnp@0.1.4?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/bitletorg/weupnp"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/bitletorg/weupnp"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jitsi/jitsi-utils@1.0-127-g6c65524?type=jar",
+      "publisher" : "jitsi.org",
+      "group" : "org.jitsi",
+      "name" : "jitsi-utils",
+      "version" : "1.0-127-g6c65524",
+      "description" : "A set of basic utilities used in Jitsi projects",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "67fc7bbe5ee14e24631c2cbdeb88cbc4"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "18f6dcc55109984b20661d87481549641c8b9b1c"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "78cfc37707c6dfc9f891b03d79a775229d3fbe2bf1838d86d3668867af35f360"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "bec2095e4e214640701104a6ca0e4314b37bad82ddab85d06f47397f310d9b86ff3cb2f4dbcacd0b19a050ae72b0eb61a4dbcd03fc461a3668fe50f182f6a977"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "52d028b368380ea1bf25f7ed7cadf808162ee4f2ca6a549d0e2d7f8cb01e232bf9deeb2af77aecfd4d6ce3e87b755dca"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "6702e09baadf967e26a3d7244fca97e7f4286751db1d7b038ae7424b6e7151db00a1c579a7e7723c6886ecdb4dda6431"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "93192efe9e5d152a5bd84cfa9bdd804d63dcb0ecc2ccb9fdc9672e81f7627bba"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "96f0bf31ceb084166ffc7bd17c373a18f957f60b84250ecf5eee78a79d0d303f7c0c34e02dc0d5a7be6a455ae845e4b4b65be3c4c96970cee29539dcf0cd6142"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jitsi/jitsi-utils@1.0-127-g6c65524?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/jitsi/jitsi-utils"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jitsi/jitsi-utils"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.googlecode.json-simple/json-simple@1.1.1?type=jar",
+      "group" : "com.googlecode.json-simple",
+      "name" : "json-simple",
+      "version" : "1.1.1",
+      "description" : "A simple Java toolkit for JSON",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "5cc2c478d73e8454b4c369cee66c5bc7"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "c9ad4a0850ab676c5c64461a05ca524cdfff59f1"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "4e69696892b88b41c55d49ab2fdcc21eead92bf54acc588c0050596c3b75199c"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "f8798bfbcc8ab8001baf90ce47ec2264234dc1da2d4aa97fdcdc0990472a6b5a5a32f828e776140777d598a99d8a0c0f51c6d0767ae1a829690ab9200ae35742"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "cec0c65bc033bf449a9214c37f4a4f1b8e6d90120cc613b677cfbe92f2b7bb68285d1d910146f1fd7ea7c622f898dcb5"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "f489282b37e79b1f5d9ac27b66b61ca4bdc7697e7e27724e3dbc96fd5fc43e5c003b8dfbaa6947a9112d2aee15858ddf"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "0de6743867e024955c58f771a38bda33c8e975e9066765db36b0db3e519f9534"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "2566d35f2f426dbb5bd2a6cbab7ba1b78e503a315bcd784054dadbce7f98f41ec2cd1bb45be1677fdc909fb26e060b35b0064a3cd8c5dc6029cec891dd8ba77b"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.googlecode.json-simple/json-simple@1.1.1?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://code.google.com/p/json-simple/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "http://json-simple.googlecode.com/svn/trunk/"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/net.java.dev.jna/jna@5.9.0?type=jar",
+      "group" : "net.java.dev.jna",
+      "name" : "jna",
+      "version" : "5.9.0",
+      "description" : "Java Native Access",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "bd7ccbc4f374a791fbfc8b79c2de1e72"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "8f503e6d9b500ceff299052d6be75b38c7257758"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "eafcc780b445434d3c5ae7fa2fb6665de1a7560d537d2c408a8e80cd14d27161"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "aca2fc0db125de7a7e92def798a666145d39d572f7b23d8a6a9ac5b4602d3ca222895b839bd846f7043f1ab9c34b0c985388640bc1740993ec55ae91f16b4bd6"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "ea393b8f76e7333d3c253c6e3a9cd15064a06288bedcf4000c8c69d7e987d7a75deeb8f2d20bb1ea656eb330cfe2dc9a"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "bfd8421c5454b55fbc0971647cca8b09a8b6995fb20341e44f154fbd8225e7b38849522899806ed8dd5b7a062838a478"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "1e8bfa2ff9240d5a5326b55dbd22fce062f16c5b46b577a16b9db7931b69d35b"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "f800fed3878737b64b4acc50d7a000096a379f3dcb12a240ef8e1b4928190268f034ac86e0a232341dbd7a6b2650a69f331b59cb871aced0f3889c7e60ed2ad4"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "LGPL-2.1-or-later",
+            "url" : "https://www.gnu.org/licenses/old-licenses/lgpl-2.1-standalone.html"
+          }
+        },
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/net.java.dev.jna/jna@5.9.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/java-native-access/jna"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/java-native-access/jna"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar",
+      "group" : "org.jetbrains.kotlin",
+      "name" : "kotlin-stdlib",
+      "version" : "1.9.10",
+      "description" : "Kotlin Standard Library for JVM",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "da8348128b101f854fafa9a31e3806bd"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "72812e8a368917ab5c0a5081b56915ffdfec93b7"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "55e989c512b80907799f854309f3bc7782c5b3d13932442d0379d5c472711504"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "6eab000f55dd196a074d1d97df9d285bccace31f0cae8db1846b1c9a55a6ea5e401307a95922a1d758b4152916de47fe36d31551ad0250918e6e07ce710a83a2"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "5f34959bd398c5e6c15d8caa21068b337b851fdd8ae7ebc915853909d71d3fedd2e6542e63730c5199cbcc03b48f5e81"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "afea5f6f39a136a859d8f3d1ae5ee1e8cf7356b4069b0a41f77069a7d001f0ba402c666286296a0c609fca25b277d210"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "2d7bd20511dd96069425e81bdb03573bca1f9e0a4b95bc64d061c349db84cb4d"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "c45aa810f250916e3839de5cb1cff99cd482cf6c693540842be9f8e18aa6c238271da00e2af85897687c29d3795a810404780050539cfa24fa82da27eb8c3a1f"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://kotlinlang.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/kotlin"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.9.10?type=jar",
+      "group" : "org.jetbrains.kotlin",
+      "name" : "kotlin-stdlib-common",
+      "version" : "1.9.10",
+      "description" : "Kotlin Common Standard Library",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "de4024a53c843e959f2d50ecd1f0e951"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "dafaf2c27f27c09220cee312df10917d9a5d97ce"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "cde3341ba18a2ba262b0b7cf6c55b20c90e8d434e42c9a13e6a3f770db965a88"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "e7166112e27edcbc1fb7b918bf66120b35f82311016f944472ebc23c848b81d7016660d5d1a3e7a1679e599c555d796d73c520a0d8178e00b36aa3668415170e"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "f2d3a3c33cc3d9f2c554b1afce255b885fc7914fe13ef316d743d9300e4231556250fd691306f4feae356e8f21c4f777"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "48ee306c706fe0579610e5105cd9688a25dd9f964ad1ba47b5da25f1e9dc686fb6e4703b5950cdfca28d33ad92e7817e"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "e6788f12612e7ba42187b1f8ad6a9fd316c2ef91ca917dca8093fe5696094b54"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "628d660c681fdcc2750a47b131a046409997b95cb2417f9ebcd69946fa678c6e15f1079008f9be6b7d356a0d6e9b6b27bcb6fd01cd5d0c47fc583690c081f6b9"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.9.10?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://kotlinlang.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/kotlin"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains/annotations@13.0?type=jar",
+      "group" : "org.jetbrains",
+      "name" : "annotations",
+      "version" : "13.0",
+      "description" : "A set of annotations used for code inspection support and code documentation.",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "f4fb462172517b46b6cd90003508515a"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "919f0dfe192fb4e063e7dacadee7f8bb9a2672a9"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "ace2a10dc8e2d5fd34925ecac03e4988b2c0f851650c94b8cef49ba1bd111478"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "5622d0ffe410e7272e2bb9fae1006caedeb86d0c62d2d9f3929a3b3cdcdef1963218fcf0cede82e95ef9f4da3ed4a173fa055ee6e4038886376181e0423e02ff"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "6bcde3a6e471d416522e6288474bc4f9115e2e8abf8ce5d300829bee4aa98dff73be7d8c6f0607f3d6d423c7f5abbf90"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "f4d5a5d5a76b24c4751c8c52f2879b097d2430c3571c59b4630e8c871c9bdb08e24e803a14c24fc8d3378417f29b7244"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "b4a80ea81c4bc7e364e07981465f547e8ed83031806eaf3b97dfb38f894f5b6f"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "15b23bce818b4399b334dd632eb85de5a1b70c47fb9260561e70b1f726211c83bddbc957f3b4c32a1d8c687f9bc6c38d0a638c731cb5daf5b619aa725d6050c2"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains/annotations@13.0?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "http://www.jetbrains.org"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "http://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/intellij-community"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-reflect@1.9.10?type=jar",
+      "group" : "org.jetbrains.kotlin",
+      "name" : "kotlin-reflect",
+      "version" : "1.9.10",
+      "description" : "Kotlin Full Reflection Library",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "dd9c5b1139dd521f3a58bfa05791ccf3"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "dd37cb80926cb4ed427b606502e6f6f063d38fb5"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "8a835f5176355083668aff0ed6eef5b3eb030e10e89679ed3eeb703fd2d5b900"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "157c785155c7644bbac1146893b293a4ec619b578f78d7d2c337d55d79401e57a35a220356cefeb2394e9a6519a6a6a09e31732c2400d3a9ffc59cc806629b6a"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "1c57eb40bb99edcd4a582eb029f4bf04566064bbcc6a390f831c66bead3abdca495b1d843c9c57c743fa470eda0766e6"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "d11943323959bb8e1f2c55597f8f638fd673645d23d3c5a70a7b6a6368ee27f79dc0c1ba768b2d1d26bad7a1dd4b8bfe"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "80fd4744dc13048535177c42b6a573bad21a4d82cf2838ecf49b5b5d3865d578"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "a7208dc073be9cac78d502ab28f79b775506a0152a7805ee42ba9b76e38e19fbc6ba011729bd707e62e78d56c30a6b60f2300374f0c152820eaae22b569e668d"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains.kotlin/kotlin-reflect@1.9.10?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://kotlinlang.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/kotlin"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jitsi/jicoco-config@1.1-127-gf49982f?type=jar",
+      "publisher" : "jitsi.org",
+      "group" : "org.jitsi",
+      "name" : "jicoco-config",
+      "version" : "1.1-127-gf49982f",
+      "description" : "Jitsi Common Components (Configuration Utilities)",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "e79ae7d20700db25ea82e3ab6d46b5d8"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "618c96152f568d7a735c692d168f1c7bea2edff5"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "a18ba984adad9de4aa40340f5e27921331bf52608a9e8e4b6e894004bddccb11"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "95f9759e5bf2beede9e7d6dd550893c3562a1d55e8d5acc6d9bb58fd8921295c9638ef5cfcff132ab64cf8e6951feb18fdfafb06d6ac52b2160be648c784bfc9"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "dd5d7d47677de75afc0bf93c1b853ddbabfb894394fafaaa064eac55ef6731a9dbdb3176a67b52534b31325168109418"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "f72f5717827225e9737b1f5fafc75c6a5992fbf4cff49e7eda69e9b533a808a017e8728721542baad177c9343833905e"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "fa3cfefc045bb982be4ba519230e923879f96d57b7fd194a53a29d6b286fa3a6"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "6034fa32f215015fab4cc2eba867a0a4553f6bf288e0f5b6e2f937c91684aeba2caad2892ccea18d6da5118aa93c77b53a29e93b3108f273584d3b1279ded761"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jitsi/jicoco-config@1.1-127-gf49982f?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/jitsi/jicoco/jicoco-config"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jitsi/jicoco/jicoco-config"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.10?type=jar",
+      "group" : "org.jetbrains.kotlin",
+      "name" : "kotlin-stdlib-jdk8",
+      "version" : "1.9.10",
+      "description" : "Kotlin Standard Library JDK 8 extension",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "d223cbd9e57f02cf4e9f3d9ed01edcee"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "c7510d64a83411a649c76f2778304ddf71d7437b"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "a4c74d94d64ce1abe53760fe0389dd941f6fc558d0dab35e47c085a11ec80f28"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "b027fc4a0be8e69f41a86ae775ce350ef0084eb4652e50a0640dbcc600db76c3fc2983e17c96b6071b5698cea636e1b2cb015e84a6c0efe95e6db668036ba3cc"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "3889a432424a69fa2fea634bb540a1a78c12c2ed42d02efe74ffbe90d980497975f4d43d9b994bd520953d0761cdfaa3"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "836acd6918290fa1b6a5ffa223597233e34b6c685dfe76568b5895fcd9e75294a7f065c35bb652e653014879f25aa8ee"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "4125ea0839e84336806248e9a8c46053f9e5fe065797c11353e5475ac096f7e8"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "40742cd9e9370be96fd9a8e1b15ae419381a7eafdc1fd8a9954bc20193ea2dfc4b0b29ec154966d4e385c2384e13c84dcf10a503a54c9006894b5f4b2f93d89d"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.10?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://kotlinlang.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/kotlin"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk7@1.9.10?type=jar",
+      "group" : "org.jetbrains.kotlin",
+      "name" : "kotlin-stdlib-jdk7",
+      "version" : "1.9.10",
+      "description" : "Kotlin Standard Library JDK 7 extension",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "14f35bcc452b095f3034a1471960cccc"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "bc5bfc2690338defd5195b05c57562f2194eeb10"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "ac6361bf9ad1ed382c2103d9712c47cdec166232b4903ed596e8876b0681c9b7"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "f839178f07b9d6bd9a3910d13b181399e975211fa556c3a9ead08eca30ababa74f75c79aee95224ffb7b610b9e56768eeeba18e8fae84826903adb12e122bb67"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "b93606f0e2888e6c48665d1003ee4766dde5b58be284afa604010f592c8f9390904e430f8704cc0a7d57d00788b858d7"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "8f9bfcdea034e6f73deef804e00ed2535631b0b7cf433515a60ce7c38479e0f7a2d7459bbc2bbf87163ef63156384451"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "a8a6eb1d7d305c85ac73cba3d9b0bbf0c17dbcdfe58b4864b9e15124c9c097f0"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "b34b365d5e32f0372426ff076ba0bbc8568891687fd8b2ae67a88576bb32e2f54844b7f41200ea20f333eb27bb5bc617e55a6a99ec6b2f23c5091dfe5a00a706"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk7@1.9.10?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://kotlinlang.org/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/JetBrains/kotlin"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/org.jitsi/jitsi-metaconfig@1.0-9-g5e1b624?type=jar",
+      "publisher" : "jitsi.org",
+      "group" : "org.jitsi",
+      "name" : "jitsi-metaconfig",
+      "version" : "1.0-9-g5e1b624",
+      "description" : "jitsi-metaconfig helps solve the problems around the evolution of configuration properties",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "102d9b39f1eeca92ab123b47b1d45048"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "121c12ee9db295e24dbed87ead1d35c03b9c9a2d"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "229b8e6ab967785d1a49c0415d1b2054b39a8d59936f6d587d366a1493a195ec"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "a297e89da76ceb55ca43f716186949ac7e1946f63264c61fbb94b47ea955735197e2618886459bcb10bfdde63673968b8ef724545f6b5bc81de704f57a28de76"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "897404cd9a2ed286e90054d6bcb67d2c2965dd780e953fc55cd6cbc8c38cd21801770f03396b68998bbc1beb83f0b6f6"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "b612b6c3cab36fdbd9896e6a3b4f59e540cfbfd6f59ddb3c5b3948e84564142659d1a48593187285f37412300a2d6c5e"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "c005199339d93886e42cc90f3d93f9e61a8f5decd0e6ec7c80fb4502aaab20d5"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "c17ad59bb525caa7b9afe1f9080f46bbe1f34e41ea9475fa9aba9b072bc03640bd39f948790ead1a2697735a0357e517985918b858b5dc21119a5b703b40d94b"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/org.jitsi/jitsi-metaconfig@1.0-9-g5e1b624?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/jitsi/jitsi-metaconfig"
+        },
+        {
+          "type" : "distribution-intake",
+          "url" : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/jitsi/jitsi-metaconfig"
+        }
+      ]
+    },
+    {
+      "type" : "library",
+      "bom-ref" : "pkg:maven/com.typesafe/config@1.4.2?type=jar",
+      "publisher" : "com.typesafe",
+      "group" : "com.typesafe",
+      "name" : "config",
+      "version" : "1.4.2",
+      "description" : "configuration library for JVM languages using HOCON files",
+      "scope" : "required",
+      "hashes" : [
+        {
+          "alg" : "MD5",
+          "content" : "bac1bde09507bbd53e4e8a6a270488b7"
+        },
+        {
+          "alg" : "SHA-1",
+          "content" : "4c40a633e7994cfb0354244efb6d03fcb11c3ecf"
+        },
+        {
+          "alg" : "SHA-256",
+          "content" : "0076c249b4387d8369146528fd5dacb3efba098dc02ecf9ac81debdfc2e12fd5"
+        },
+        {
+          "alg" : "SHA-512",
+          "content" : "830a85093ab23a7c147974e781e2e6847c8fae043bdb5135149906d96f15c8de24f878d37b41c45c0a41a66a2af08b7c26c69daa224f90eb6960cb6b65457be7"
+        },
+        {
+          "alg" : "SHA-384",
+          "content" : "3fde4d51dc42b0014d64a39b19bd79ed53cb4ee958488d87298f332e223fcada08cb95656526273331aa25a2da51e034"
+        },
+        {
+          "alg" : "SHA3-384",
+          "content" : "b1cbeba850eba05c5bbc95b3e5a13497a4b94eb5c91eac10305b404c50c9f2bba19c841c1db0ac23404c77098abf95fa"
+        },
+        {
+          "alg" : "SHA3-256",
+          "content" : "baf6f2a098798bc61304df459fca71f47aa71654869fb0f3c72c67f32b91d40e"
+        },
+        {
+          "alg" : "SHA3-512",
+          "content" : "ab5bb68d2515d8f305aa678cc6577589c35e79c79c10cd3c6c36c0488a4a46fb653448e64ff8cb69b956dfe3e7d75ad6b2e0fdcd8c29a6c35f69d33252d6bb96"
+        }
+      ],
+      "licenses" : [
+        {
+          "license" : {
+            "id" : "Apache-2.0",
+            "url" : "https://www.apache.org/licenses/LICENSE-2.0"
+          }
+        }
+      ],
+      "purl" : "pkg:maven/com.typesafe/config@1.4.2?type=jar",
+      "externalReferences" : [
+        {
+          "type" : "website",
+          "url" : "https://github.com/lightbend/config"
+        },
+        {
+          "type" : "vcs",
+          "url" : "https://github.com/lightbend/config"
+        }
+      ]
+    }
+  ],
+  "dependencies" : [
+    {
+      "ref" : "pkg:maven/mpo.dayon/dayon@18.0.4?type=jar",
+      "dependsOn" : [
+        "pkg:maven/com.dosse.upnp/WaifUPnP@1.3.2?type=jar",
+        "pkg:maven/org.tukaani/xz@1.12?type=jar",
+        "pkg:maven/org.jitsi/ice4j@3.2-15-g6da2b08?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/com.dosse.upnp/WaifUPnP@1.3.2?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.tukaani/xz@1.12?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jitsi/ice4j@3.2-15-g6da2b08?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.opentelecoms.sdp/java-sdp-nist-bridge@1.2?type=jar",
+        "pkg:maven/org.bitlet/weupnp@0.1.4?type=jar",
+        "pkg:maven/org.jitsi/jitsi-utils@1.0-127-g6c65524?type=jar",
+        "pkg:maven/org.jitsi/jicoco-config@1.1-127-gf49982f?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.opentelecoms.sdp/java-sdp-nist-bridge@1.2?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.opentelecoms.sdp/sdp-api@1.0?type=jar",
+        "pkg:maven/org.jitsi/jain-sip-ri-ossonly@1.2.279-jitsi-oss1?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.opentelecoms.sdp/sdp-api@1.0?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jitsi/jain-sip-ri-ossonly@1.2.279-jitsi-oss1?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.bitlet/weupnp@0.1.4?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jitsi/jitsi-utils@1.0-127-g6c65524?type=jar",
+      "dependsOn" : [
+        "pkg:maven/com.googlecode.json-simple/json-simple@1.1.1?type=jar",
+        "pkg:maven/net.java.dev.jna/jna@5.9.0?type=jar",
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar",
+        "pkg:maven/org.jetbrains.kotlin/kotlin-reflect@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/com.googlecode.json-simple/json-simple@1.1.1?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/net.java.dev.jna/jna@5.9.0?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.9.10?type=jar",
+        "pkg:maven/org.jetbrains/annotations@13.0?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-common@1.9.10?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains/annotations@13.0?type=jar",
+      "dependsOn" : [ ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-reflect@1.9.10?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.jitsi/jicoco-config@1.1-127-gf49982f?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.10?type=jar",
+        "pkg:maven/org.jitsi/jitsi-utils@1.0-127-g6c65524?type=jar",
+        "pkg:maven/org.jitsi/jitsi-metaconfig@1.0-9-g5e1b624?type=jar",
+        "pkg:maven/com.typesafe/config@1.4.2?type=jar",
+        "pkg:maven/org.jetbrains.kotlin/kotlin-reflect@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.10?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar",
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk7@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk7@1.9.10?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/org.jitsi/jitsi-metaconfig@1.0-9-g5e1b624?type=jar",
+      "dependsOn" : [
+        "pkg:maven/org.jetbrains.kotlin/kotlin-stdlib-jdk8@1.9.10?type=jar"
+      ]
+    },
+    {
+      "ref" : "pkg:maven/com.typesafe/config@1.4.2?type=jar",
+      "dependsOn" : [ ]
+    }
+  ]
+}
