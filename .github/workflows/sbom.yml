@@ -1,0 +1,33 @@
+name: Release (SBOM)
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          format: cyclonedx-json
+          output-file: sbom.cyclonedx.json
+
+      - name: Attest SBOM
+        uses: actions/attest@v4
+        with:
+          subject-path: sbom.cyclonedx.json
+
+      - name: Attach SBOM to release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: sbom.cyclonedx.json
