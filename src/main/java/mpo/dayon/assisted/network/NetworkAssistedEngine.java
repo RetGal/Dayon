@@ -84,6 +84,8 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private boolean iceConnected;
 
+    private boolean isRevertedConnection;
+
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
                                  NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler,
                                  NetworkControlMessageHandler controlHandler,
@@ -159,7 +161,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
         int localPort = 0;
         boolean isAssistantInSameNetwork = false;
-        boolean isRevertedConnection = false;
+        isRevertedConnection = false;
 
         if (token.getTokenString() != null && token.getPeerAddress() == null) {
             Log.debug("Incomplete Token, resolving " + token);
@@ -223,9 +225,9 @@ public class NetworkAssistedEngine extends NetworkEngine
             } catch (IOException e) {
                 // try again with another port
                 iceAgent = null;
-                int localPort = detectEnvironment();
+                token.setLocalPort(detectEnvironment());
                 Log.info("Restarting ICE");
-                connectIce(localPort);
+                connectIce(token.getLocalPort());
             }
         }
 
@@ -270,6 +272,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             Log.debug("ICE wait elapsed: " + elapsed + "ms, signaled=" + signaled + ", iceConnected=" + iceConnected);
             if (connection == null || !iceConnected) {
                 Log.info("ICE connection failed");
+                cleanUpUpnp(localPort);
                 throw new IOException("ICE connection failed");
             }
             Log.info("ICE connection succeeded");
@@ -519,9 +522,16 @@ public class NetworkAssistedEngine extends NetworkEngine
         cleanUpUpnp();
     }
 
-    public void cleanUpUpnp() {
+    private void cleanUpUpnp() {
         if (token != null && token.getLocalPort() != 0) {
-            CompletableFuture.runAsync(() -> UPnP.closePortTCP(token.getLocalPort()));
+            cleanUpUpnp(token.getLocalPort());
+        }
+    }
+
+    private void cleanUpUpnp(int localPort) {
+        if (localPort != 0) {
+            Log.debug("Cleaning up UPnP port: " + localPort);
+            CompletableFuture.runAsync(() -> UPnP.closePortTCP(localPort));
         }
     }
 
@@ -573,13 +583,19 @@ public class NetworkAssistedEngine extends NetworkEngine
         } catch (IOException ex) {
             if (!cancelling.get()) {
                 closeConnections();
-                pause(1500);
-                Log.warn("Session was interrupted - reconnect");
-                connect(token, connectionTimeout);
+                if (!isRevertedConnection) {
+                    cleanUpUpnp();
+                    pause(1500);
+                    Log.warn("Session was interrupted - reconnect");
+                    connect(token, connectionTimeout);
+                }
             } else {
                 closeConnections();
                 Log.info("Stopped network receiver (cancelled)");
                 fireOnDisconnecting();
+                if (!isRevertedConnection) {
+                    cleanUpUpnp();
+                }
             }
         } catch (ClassNotFoundException e) {
             closeConnections();

@@ -34,9 +34,9 @@ class AssistedFrame extends BaseFrame {
     private boolean connected;
     private Timer peerStatusTimer;
 
-    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, NetworkAssistedEngine networkEngine, String[] tokenServerUrlsFromYaml, boolean isWayland) {
+    AssistedFrame(Action startAction, Action stopAction, Action toggleMultiScreenCaptureAction, Action preExitAction, NetworkAssistedEngine networkEngine, String[] tokenServerUrlsFromYaml, boolean isWayland) {
         super.setFrameType(FrameType.ASSISTED);
-        super.setPreExistAction(stopAction);
+        super.setPreExistAction(preExitAction);
         super.setTokenServerUrlsFromYaml(tokenServerUrlsFromYaml);
         this.stopAction = stopAction;
         this.startAction = startAction;

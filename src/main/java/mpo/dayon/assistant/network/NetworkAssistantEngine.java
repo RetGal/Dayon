@@ -115,13 +115,14 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             sender.sendGoodbye();
             pause(100);
         }
+        // called as preExitAction - cleanup
+        if (exit) {
+            Log.debug("Assistant pre-exit - cleaning up UPnP port: " + configuration.getPort());
+            UPnP.closePortTCP(configuration.getPort());
+        }
         cancelling.set(true);
         safeClose(server, connection, fileConnection);
         fireOnDisconnecting();
-        // called as preExitAction - cleanup
-        if (exit) {
-            CompletableFuture.runAsync(() -> UPnP.closePortTCP(configuration.getPort()));
-        }
     }
 
     // right, keep streams open - forever!

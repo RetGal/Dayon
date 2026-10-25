@@ -147,7 +147,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private void initializeFrame() {
         networkEngine.initUpnp();
         frame = new AssistedFrame(
-                createStartAction(), createStopAction(), createToggleMultiScreenAction(),
+                createStartAction(), createStopAction(), createToggleMultiScreenAction(), createPreExitAction(),
                 networkEngine, tokenServerUrlsFromYaml, isWayland
         );
         FatalErrorHandler.attachFrame(frame);
@@ -344,6 +344,16 @@ public class Assisted implements Subscriber, ClipboardOwner {
         action.putValue(Action.SHORT_DESCRIPTION, translate("connect.assistant"));
         action.putValue(Action.SMALL_ICON, getOrCreateIcon(ImageNames.START_LARGE));
         return action;
+    }
+
+    private Action createPreExitAction() {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent ev) {
+                Log.debug("Assisted pre-exit");
+                stop();
+            }
+        };
     }
 
     private void stop() {

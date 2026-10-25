@@ -70,6 +70,15 @@ public class Token {
         }
     }
 
+    public void setLocalPort(int port) {
+        lock.lock();
+        try {
+            localPort.set(port);
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public Boolean isPeerAccessible() {
         lock.lock();
         try {

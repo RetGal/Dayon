@@ -11,12 +11,14 @@ class NetworkAssistantEngineTest {
 
     private NetworkAssistantEngine engine;
     private NetworkAssistantEngineListener listener;
+    private int portNumber = 12345;
 
     @BeforeEach
     void init() {
         engine = new NetworkAssistantEngine(null, null, null);
         listener = mock(NetworkAssistantEngineListener.class);
         engine.addListener(listener);
+        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
     }
 
     @AfterEach
@@ -41,8 +43,6 @@ class NetworkAssistantEngineTest {
     void selfTestShouldFailIfPublicIpIsNull() {
         // given
         String publicIp = null;
-        int portNumber = 12345;
-        engine.configure(new NetworkAssistantEngineConfiguration(portNumber, "", false));
 
         // when // then
         assertFalse(engine.selfTest(publicIp, portNumber));

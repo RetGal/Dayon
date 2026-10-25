@@ -60,7 +60,7 @@
 			<zipfileset src="${dir.binfile}/lib/java-sdp-nist-bridge-1.2.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/sdp-api-1.0.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/config-1.4.2.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.2/WaifUPnP-1.3.2.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/com/dosse/upnp/WaifUPnP/1.3.3/WaifUPnP-1.3.3.jar" excludes="META-INF/**"/>
 			<manifest>
 				<attribute name="Application-Name" value="Dayon!"/>
 				<attribute name="Implementation-Version" value="${version}"/>
