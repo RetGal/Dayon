@@ -34,7 +34,11 @@
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
-		<javac debug="true" includeantruntime="false" srcdir="${dir.src}" destdir="${dir.bin}" classpathref="project.classpath">
+		<javac debug="true" includeantruntime="false" destdir="${dir.bin}" classpathref="project.classpath">
+			<src>
+				<pathelement location="${dir.src}/mpo/dayon/"/>
+			</src>
+			<exclude name="module-info.java" />
 			<compilerarg compiler="modern" line="-Xlint"/>
 			<compilerarg compiler="modern" line="-implicit:none"/>
 		</javac>
