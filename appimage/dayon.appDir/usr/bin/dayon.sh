@@ -5,7 +5,7 @@ cross_realpath() {
   fi
 }
 HERE=$(dirname "$(cross_realpath "$0")")
-JAVA=${HERE}/../lib/jrex/bin/java
+JAVA=${HERE}/../lib/jre/bin/java
 case "$@" in
   *log=console*)
     LOG=

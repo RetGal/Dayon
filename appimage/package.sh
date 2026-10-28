@@ -1,4 +1,6 @@
 #!/bin/sh
+set -eu
+
 VERSION=$(grep "<version>" ../pom.xml | head -1 | sed -E 's/.*<version>(.*)<\/version>.*/\1/')
 grep "<release version=\"${VERSION}" ./dayon.appDir/usr/share/metainfo/dayon.appdata.xml > /dev/null
 if [ $? -ne 0 ]; then
@@ -6,29 +8,52 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-set -e
+case "$@" in
+  *jlink*)
+    JLINK=1
+    ;;
+  *)
+    JLINK=0
+    ;;
+esac
 
-if [ ! -f "../dist/dayon.jar" ]; then
-  echo "Building the application jar first."
-  cd ..
-  mvn clean package -DskipTests
-  if [ $? -ne 0 ]; then
-    echo "Build failed."
-    exit 1
+cd ..
+if [ $JLINK -eq 0 ]; then
+  if [ ! -f "./dist/dayon.jar" ]; then
+    echo "Building the jar"
+    mvn clean package -DskipTests >/dev/null
   fi
-  cd -
+else
+  if [ ! -f "./dist/dayon.jar" ] || [ ! -d "./target/jlink" ]; then
+    echo "Building jar and runtime"
+    mvn clean verify -DskipTests >/dev/null
+  fi
 fi
+if [ $? -ne 0 ]; then
+  echo "Build failed."
+  exit 1
+fi
+cd -
 
 echo "Updating desktop entries"
 sed -i "s/X-AppImage-Version=.*/X-AppImage-Version=${VERSION}/" dayon.appDir/*.desktop
+
 echo "Cleaning appDir"
-mkdir -p ./dayon.appDir/usr/lib
-rm -rf ./dayon.appDir/usr/lib/jrex
+mkdir -p ./dayon.appDir/usr/lib/jre
+rm -rf ./dayon.appDir/usr/lib/jre/*
+
 echo "Copying files to appDir"
 cp ../dist/dayon.jar ./dayon.appDir/usr/bin/
 cp ../resources/dayon.png ./dayon.appDir/
-cp -r ../resources/jrex ./dayon.appDir/usr/lib/
 cp -r ../resources/license ./dayon.appDir/usr/
+
+if [ $JLINK -eq 0 ]; then
+  echo "Copying JRE from resources"
+  cp -r ../resources/jrex/* ./dayon.appDir/usr/lib/jre/
+else
+  echo "Copying JRE from jlink"
+  cp -r ../target/jlink/runtime/* ./dayon.appDir/usr/lib/jre/
+fi
 
 if [ ! -f "appimagetool" ]; then
   echo "Downloading appimagetool"
