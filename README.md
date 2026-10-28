@@ -94,6 +94,7 @@ or with Ant:
 ``ant clean build``
 
 Have a look at ``pom.xml`` or ``build.xml`` for details and advanced options.
+The Maven build can also create a platform-specific Java runtime image in ``target/jlink/runtime`` for running the shaded ``dist/dayon.jar``. Building it requires a JDK with ``jlink`` on ``PATH``.
  
 ## Contributors
  

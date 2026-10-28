@@ -345,10 +345,11 @@
             <build>
                 <finalName>dayon</finalName>
                 <plugins>
-                    <plugin>
+                   <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>3.6.1</version>
                         <configuration>
+                            <useModulePath>false</useModulePath>
                             <argLine>-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.core.version}/mockito-core-${mockito.core.version}.jar</argLine>
                         </configuration>
                     </plugin>
@@ -538,6 +539,25 @@
                                         <argument>${basedir}/dist/dayon_assistant.sh</argument>
                                         <argument>${basedir}/dist/dayon_assisted.sh</argument>
                                         <argument>${basedir}/dist/setup.sh</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>link-runtime</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>jlink</executable>
+                                    <arguments>
+                                        <argument>--add-modules</argument>
+                                        <argument>java.se,jdk.crypto.ec</argument>
+                                        <argument>--strip-debug</argument>
+                                        <argument>--no-header-files</argument>
+                                        <argument>--no-man-pages</argument>
+                                        <argument>--output</argument>
+                                        <argument>${project.build.directory}/jlink/runtime</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
