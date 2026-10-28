@@ -48,7 +48,7 @@ The app is available directly from the [Microsoft Store](https://apps.microsoft.
 
 as snap:
 
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/dayon)
+[<img src="https://snapcraft.io/static/images/badges/en/snap-store-black.svg" width="180" height="90"/>](https://snapcraft.io/dayon)
 
 as flatpak:
 
