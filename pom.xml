@@ -544,7 +544,7 @@
                             </execution>
                             <execution>
                                 <id>link-runtime</id>
-                                <phase>verify</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
@@ -557,7 +557,7 @@
                                         <argument>--no-header-files</argument>
                                         <argument>--no-man-pages</argument>
                                         <argument>--output</argument>
-                                        <argument>${project.build.directory}/jlink/runtime</argument>
+                                        <argument>${project.build.directory}/jlink/jre</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -580,12 +580,12 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <phase>package</phase>
+                                <phase>prepare-package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${basedir}/dist</outputDirectory>
+                                    <outputDirectory>${basedir}/package</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>resources</directory>
@@ -613,7 +613,88 @@
                         <artifactId>makeself-maven-plugin</artifactId>
                         <version>${makeself.version}</version>
                         <configuration>
-                            <archiveDir>../dist/</archiveDir>
+                            <archiveDir>../package/</archiveDir>
+                            <fileName>dayon.sh</fileName>
+                            <label>Dayon! ${project.version}</label>
+                            <startupScript>./dayon_assisted.sh</startupScript>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>makeself</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>makeself</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>makejself</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <configuration>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>copy-resources</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/package</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>resources</directory>
+                                            <include>**/*</include>
+                                            <excludes>
+                                                <exclude>jre/</exclude>
+                                                <exclude>jrex/</exclude>
+                                                <exclude>snap/</exclude>
+                                            </excludes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${basedir}/target</directory>
+                                            <include>dayon.jar</include>
+                                        </resource>
+                                        <resource>
+                                            <directory>${basedir}/docs</directory>
+                                            <include>favicon.ico</include>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>copy-runtime</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${basedir}/package</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${basedir}/target/jlink</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>com.github.hazendaz.maven</groupId>
+                        <artifactId>makeself-maven-plugin</artifactId>
+                        <version>${makeself.version}</version>
+                        <configuration>
+                            <archiveDir>../package/</archiveDir>
                             <fileName>dayon.sh</fileName>
                             <label>Dayon! ${project.version}</label>
                             <startupScript>./dayon_assisted.sh</startupScript>
@@ -716,43 +797,6 @@
                                 <goals>
                                     <goal>makeself</goal>
                                 </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>coverage</id>
-            <properties>
-                <sonar.coverage.jacoco.xmlReportPaths>
-                    target/jacoco.xml
-                </sonar.coverage.jacoco.xmlReportPaths>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.15</version>
-                        <executions>
-                            <execution>
-                                <id>prepare-agent</id>
-                                <goals>
-                                    <goal>prepare-agent</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>report</id>
-                                <goals>
-                                    <goal>report</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${project.basedir}/target</outputDirectory>
-                                    <formats>
-                                        <format>XML</format>
-                                    </formats>
-                                </configuration>
                             </execution>
                         </executions>
                     </plugin>

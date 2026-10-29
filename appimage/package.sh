@@ -18,16 +18,9 @@ case "$@" in
 esac
 
 cd ..
-if [ $JLINK -eq 0 ]; then
-  if [ ! -f "./dist/dayon.jar" ]; then
-    echo "Building the jar"
-    mvn clean package -DskipTests >/dev/null
-  fi
-else
-  if [ ! -f "./dist/dayon.jar" ] || [ ! -d "./target/jlink" ]; then
-    echo "Building jar and runtime"
-    mvn clean verify -DskipTests >/dev/null
-  fi
+if [ ! -f "./dist/dayon.jar" ] || { [ "$JLINK" -eq 1 ] && [ ! -d "./target/jlink" ]; }; then
+  echo "Building the jar"
+  mvn clean package -DskipTests >/dev/null
 fi
 if [ $? -ne 0 ]; then
   echo "Build failed."
@@ -52,7 +45,7 @@ if [ $JLINK -eq 0 ]; then
   cp -r ../resources/jrex/* ./dayon.appDir/usr/lib/jre/
 else
   echo "Copying JRE from jlink"
-  cp -r ../target/jlink/runtime/* ./dayon.appDir/usr/lib/jre/
+  cp -r ../target/jlink/jre/* ./dayon.appDir/usr/lib/jre/
 fi
 
 if [ ! -f "appimagetool" ]; then
