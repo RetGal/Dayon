@@ -1118,6 +1118,7 @@ jdk/internal/invoke/MhUtil
 jdk/internal/jimage/BasicImageReader
 jdk/internal/jimage/BasicImageReader$1
 jdk/internal/jimage/ImageHeader
+jdk/internal/jimage/ImageLocation
 jdk/internal/jimage/ImageReader
 jdk/internal/jimage/ImageReader$SharedImageReader
 jdk/internal/jimage/ImageReaderFactory
@@ -1374,7 +1375,6 @@ sun/nio/fs/WindowsFileAttributeViews$Basic
 sun/nio/fs/WindowsFileAttributes
 sun/nio/fs/WindowsFileSystem
 sun/nio/fs/WindowsFileSystemProvider
-sun/nio/fs/WindowsLinkSupport
 sun/nio/fs/WindowsNativeDispatcher
 sun/nio/fs/WindowsNativeDispatcher$Account
 sun/nio/fs/WindowsNativeDispatcher$AclInformation

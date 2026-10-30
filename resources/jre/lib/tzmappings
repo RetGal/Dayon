@@ -2,6 +2,7 @@ AUS Central Standard Time:001:Australia/Darwin:
 AUS Eastern Standard Time:001:Australia/Sydney:
 Afghanistan Standard Time:001:Asia/Kabul:
 Alaskan Standard Time:001:America/Anchorage:
+Alberta Standard Time:001:America/Edmonton:
 Aleutian Standard Time:001:America/Adak:
 Altai Standard Time:001:Asia/Barnaul:
 Arab Standard Time:BH:Asia/Bahrain:
@@ -27,6 +28,7 @@ Bangladesh Standard Time:BT:Asia/Thimphu:
 Bangladesh Standard Time:001:Asia/Dhaka:
 Belarus Standard Time:001:Europe/Minsk:
 Bougainville Standard Time:001:Pacific/Bougainville:
+British Columbia Standard Time:001:America/Vancouver:
 Canada Central Standard Time:001:America/Regina:
 Cape Verde Standard Time:ZZ:Etc/GMT+1:
 Cape Verde Standard Time:001:Atlantic/Cape_Verde:
@@ -148,6 +150,7 @@ Line Islands Standard Time:001:Pacific/Kiritimati:
 Lord Howe Standard Time:001:Australia/Lord_Howe:
 Magadan Standard Time:001:Asia/Magadan:
 Magallanes Standard Time:001:America/Punta_Arenas:
+Manitoba Standard Time:001:America/Winnipeg:
 Marquesas Standard Time:001:Pacific/Marquesas:
 Mauritius Standard Time:RE:Indian/Reunion:
 Mauritius Standard Time:SC:Indian/Mahe:
