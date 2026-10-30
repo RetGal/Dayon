@@ -18,9 +18,14 @@ case "$@" in
 esac
 
 cd ..
-if [ ! -f "./dist/dayon.jar" ] || { [ "$JLINK" -eq 1 ] && [ ! -d "./target/jlink" ]; }; then
-  echo "Building the jar"
-  mvn clean package -DskipTests >/dev/null
+if [ ! -f "./dist/dayon.jar" ] || { [ $JLINK -eq 1 ] && [ ! -d "./target/jlink" ]; }; then
+  if [ $JLINK -eq 0 ]; then
+    echo "Building the jar"
+    mvn clean package -DskipTests >/dev/null
+  else
+    echo "Building the jar and jre"
+    mvn clean package -Pdefault,jlink -DskipTests >/dev/null
+  fi
 fi
 if [ $? -ne 0 ]; then
   echo "Build failed."

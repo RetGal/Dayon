@@ -94,7 +94,8 @@ or with Ant:
 ``ant clean build``
 
 Have a look at ``pom.xml`` or ``build.xml`` for details and advanced options.
-The Maven build can also create a platform-specific Java runtime image in ``target/jlink/jre`` for running the shaded ``dist/dayon.jar``. Building it requires a JDK with ``jlink`` on ``PATH``.
+The Maven profile ``jlink`` creates a platform-specific Java runtime image in ``target/jlink/jre`` for running the shaded ``dist/dayon.jar``. Building it requires a JDK with ``jlink`` on ``PATH``.
+To build a self-contained ``makeself`` package from scratch, explicitly activate the ``default``, ``makeself`` and ``jlink`` profiles because explicitly selecting profiles disables the default activation: ``mvn clean package -Pdefault,makeself,jlink``.
  
 ## Contributors
  

@@ -542,6 +542,20 @@
                                     </arguments>
                                 </configuration>
                             </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jlink</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.6.4</version>
+                        <executions>
                             <execution>
                                 <id>link-runtime</id>
                                 <phase>prepare-package</phase>
@@ -580,77 +594,12 @@
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>copy-resources</goal>
-                                </goals>
-                                <configuration>
-                                    <outputDirectory>${basedir}/package</outputDirectory>
-                                    <resources>
-                                        <resource>
-                                            <directory>resources</directory>
-                                            <include>**/*</include>
-                                            <excludes>
-                                                <exclude>jre/</exclude>
-                                                <exclude>snap/</exclude>
-                                            </excludes>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/target</directory>
-                                            <include>dayon.jar</include>
-                                        </resource>
-                                        <resource>
-                                            <directory>${basedir}/docs</directory>
-                                            <include>favicon.ico</include>
-                                        </resource>
-                                    </resources>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>com.github.hazendaz.maven</groupId>
-                        <artifactId>makeself-maven-plugin</artifactId>
-                        <version>${makeself.version}</version>
-                        <configuration>
-                            <archiveDir>../package/</archiveDir>
-                            <fileName>dayon.sh</fileName>
-                            <label>Dayon! ${project.version}</label>
-                            <startupScript>./dayon_assisted.sh</startupScript>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>makeself</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>makeself</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>makejself</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <configuration>
-                            <includeEmptyDirs>true</includeEmptyDirs>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>copy-resources</id>
-                                <phase>prepare-package</phase>
-                                <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${basedir}/package</outputDirectory>
+                                    <outputDirectory>${basedir}/dist</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>resources</directory>
@@ -674,12 +623,12 @@
                             </execution>
                             <execution>
                                 <id>copy-runtime</id>
-                                <phase>prepare-package</phase>
+                                <phase>package</phase>
                                 <goals>
                                     <goal>copy-resources</goal>
                                 </goals>
                                 <configuration>
-                                    <outputDirectory>${basedir}/package</outputDirectory>
+                                    <outputDirectory>${basedir}/dist</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${basedir}/target/jlink</directory>
@@ -694,7 +643,7 @@
                         <artifactId>makeself-maven-plugin</artifactId>
                         <version>${makeself.version}</version>
                         <configuration>
-                            <archiveDir>../package/</archiveDir>
+                            <archiveDir>../dist/</archiveDir>
                             <fileName>dayon.sh</fileName>
                             <label>Dayon! ${project.version}</label>
                             <startupScript>./dayon_assisted.sh</startupScript>
