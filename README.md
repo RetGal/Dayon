@@ -99,7 +99,7 @@ To build a self-contained ``makeself`` package from scratch, explicitly activate
  
 ## Contributors
  
-Every<sup>★</sup> feedback and contributions are very welcome - and you don't have to be a programmer to get involved!
+Every<sup>★</sup> feedback and contribution is very welcome - and you don't have to be a programmer to get involved!
 
 For example translations for additional languages would make this app more useful for more earthlings - see: [src/main/resources/Babylon.properties](https://github.com/RetGal/Dayon/blob/master/src/main/resources/Babylon.properties) or [docs](https://github.com/RetGal/Dayon/tree/master/docs)
 
@@ -107,4 +107,4 @@ Also, improvements of the existing translations and documentation are very welco
 
 Further testing, especially on macOS with silicon (M series) would also be greatly appreciated.
 
-<sup>★</sup> No discrimination based on gender, race, nationality, religion, or any other factor. Something that, unfortunately, can no longer be taken for granted even in the OSS sector these days - see: [linuxfoundation](https://www.linuxfoundation.org/blog/navigating-global-regulations-and-open-source-us-ofac-sanctions)
+<sup>★</sup> No discrimination based on gender, race, nationality, religion, or any other factor. Something that, unfortunately, can no longer be taken for granted even in the OSS sector these days - see: [linuxfoundation.org/ofac](https://www.linuxfoundation.org/blog/navigating-global-regulations-and-open-source-us-ofac-sanctions) 🤮
