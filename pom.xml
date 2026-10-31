@@ -82,6 +82,110 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.5.1</version>
+                    <configuration>
+                        <archive>
+                            <addMavenDescriptor>false</addMavenDescriptor>
+                            <manifest>
+                                <mainClass>${dayon.mainClass}</mainClass>
+                            </manifest>
+                            <manifestEntries>
+                                <Application-Name>Dayon!</Application-Name>
+                                <Implementation-Version>${project.version}</Implementation-Version>
+                                <Permissions>all-permissions</Permissions>
+                                <Trusted-Library>true</Trusted-Library>
+                                <Built-By>a computer</Built-By>
+                            </manifestEntries>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>3.6.2</version>
+                    <executions>
+                        <execution>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>shade</goal>
+                            </goals>
+                            <configuration>
+                                <minimizeJar>false</minimizeJar>
+                                <transformers>
+                                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                        <mainClass>mpo.dayon.common.Runner</mainClass>
+                                    </transformer>
+                                </transformers>
+                                <artifactSet>
+                                    <excludes>
+                                        <exclude>net.java.dev.jna:*</exclude>
+                                        <exclude>com.googlecode.json-simple:*</exclude>
+                                    </excludes>
+                                </artifactSet>
+                                <filters>
+                                    <filter>
+                                        <artifact>ice4j*:*</artifact>
+                                        <excludes>
+                                            <exclude>reference.conf</exclude>
+                                        </excludes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>*</artifact>
+                                        <excludes>
+                                            <exclude>META-INF/**</exclude>
+                                            <exclude>license.txt</exclude>
+                                            <exclude>gov/nist/core/net/**</exclude>
+                                            <exclude>gov/nist/javax/sip/**</exclude>
+                                            <exclude>org/bitlet/**</exclude>
+                                            <exclude>org/intellij/**</exclude>
+                                            <exclude>org/jetbrains/**</exclude>
+                                            <exclude>kotlin/**/*metadata</exclude>
+                                            <exclude>kotlin/coroutines/**</exclude>
+                                            <exclude>kotlin/comparisons/**</exclude>
+                                            <exclude>kotlin/io/encoding/**</exclude>
+                                            <exclude>kotlin/io/path/**</exclude>
+                                            <exclude>kotlin/math/**</exclude>
+                                            <exclude>kotlin/random/**</exclude>
+                                            <exclude>kotlin/reflect/jvm/internal/calls/**</exclude>
+                                            <exclude>kotlin/streams/**</exclude>
+                                            <exclude>kotlin/time/**</exclude>
+                                        </excludes>
+                                    </filter>
+                                </filters>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jarsigner-plugin</artifactId>
+                    <version>3.1.0</version>
+                    <executions>
+                        <execution>
+                            <id>sign</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>sign</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <keystore>${basedir}/src/main/resources/trust/X509</keystore>
+                        <alias>mykey</alias>
+                        <storepass>spasspass</storepass>
+                        <tsa>http://timestamp.sectigo.com</tsa>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
     <profiles>
         <profile>
             <id>deb</id>
@@ -186,101 +290,13 @@
                         <version>3.16.0</version>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.5.1</version>
-                        <configuration>
-                            <archive>
-                                <addMavenDescriptor>false</addMavenDescriptor>
-                                <manifest>
-                                    <mainClass>${dayon.mainClass}</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Application-Name>Dayon!</Application-Name>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Permissions>all-permissions</Permissions>
-                                    <Trusted-Library>true</Trusted-Library>
-                                    <Built-By>a computer</Built-By>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.6.2</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <minimizeJar>false</minimizeJar>
-                                    <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                            <mainClass>mpo.dayon.common.Runner</mainClass>
-                                        </transformer>
-                                    </transformers>
-                                    <artifactSet>
-                                        <excludes>
-                                            <exclude>net.java.dev.jna:*</exclude>
-                                            <exclude>com.googlecode.json-simple:*</exclude>
-                                        </excludes>
-                                    </artifactSet>
-                                    <filters>
-                                        <filter>
-                                            <artifact>ice4j*:*</artifact>
-                                            <excludes>
-                                                <exclude>reference.conf</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>*</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
-                                                <exclude>license.txt</exclude>
-                                                <exclude>gov/nist/core/net/**</exclude>
-                                                <exclude>gov/nist/javax/sip/**</exclude>
-                                                <exclude>org/bitlet/**</exclude>
-                                                <exclude>org/intellij/**</exclude>
-                                                <exclude>org/jetbrains/**</exclude>
-                                                <exclude>kotlin/**/*metadata</exclude>
-                                                <exclude>kotlin/coroutines/**</exclude>
-                                                <exclude>kotlin/comparisons/**</exclude>
-                                                <exclude>kotlin/io/encoding/**</exclude>
-                                                <exclude>kotlin/io/path/**</exclude>
-                                                <exclude>kotlin/math/**</exclude>
-                                                <exclude>kotlin/random/**</exclude>
-                                                <exclude>kotlin/reflect/jvm/internal/calls/**</exclude>
-                                                <exclude>kotlin/streams/**</exclude>
-                                                <exclude>kotlin/time/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                    </filters>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jarsigner-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>sign</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <keystore>${basedir}/src/main/resources/trust/X509</keystore>
-                            <alias>mykey</alias>
-                            <storepass>spasspass</storepass>
-                            <tsa>http://timestamp.sectigo.com</tsa>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -313,23 +329,24 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.6.4</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>chmod</executable>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>${basedir}/target/dayon.browser</argument>
-                                        <argument>${basedir}/target/dayon.launcher</argument>
-                                    </arguments>
+                                    <target>
+                                        <exec executable="chmod" osfamily="unix">
+                                            <arg value="+x"/>
+                                            <arg value="${basedir}/target/dayon.browser"/>
+                                            <arg value="${basedir}/target/dayon.launcher"/>
+                                        </exec>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
@@ -386,101 +403,13 @@
                         </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jar-plugin</artifactId>
-                        <version>3.5.1</version>
-                        <configuration>
-                            <archive>
-                                <addMavenDescriptor>false</addMavenDescriptor>
-                                <manifest>
-                                    <mainClass>${dayon.mainClass}</mainClass>
-                                </manifest>
-                                <manifestEntries>
-                                    <Application-Name>Dayon!</Application-Name>
-                                    <Implementation-Version>${project.version}</Implementation-Version>
-                                    <Permissions>all-permissions</Permissions>
-                                    <Trusted-Library>true</Trusted-Library>
-                                    <Built-By>a computer</Built-By>
-                                </manifestEntries>
-                            </archive>
-                        </configuration>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-shade-plugin</artifactId>
-                        <version>3.6.2</version>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>shade</goal>
-                                </goals>
-                                <configuration>
-                                    <minimizeJar>false</minimizeJar>
-                                    <transformers>
-                                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                            <mainClass>mpo.dayon.common.Runner</mainClass>
-                                        </transformer>
-                                    </transformers>
-                                    <artifactSet>
-                                        <excludes>
-                                            <exclude>net.java.dev.jna:*</exclude>
-                                            <exclude>com.googlecode.json-simple:*</exclude>
-                                        </excludes>
-                                    </artifactSet>
-                                    <filters>
-                                        <filter>
-                                            <artifact>ice4j*:*</artifact>
-                                            <excludes>
-                                                <exclude>reference.conf</exclude>
-                                            </excludes>
-                                        </filter>
-                                        <filter>
-                                            <artifact>*</artifact>
-                                            <excludes>
-                                                <exclude>META-INF/**</exclude>
-                                                <exclude>license.txt</exclude>
-                                                <exclude>gov/nist/core/net/**</exclude>
-                                                <exclude>gov/nist/javax/sip/**</exclude>
-                                                <exclude>org/bitlet/**</exclude>
-                                                <exclude>org/intellij/**</exclude>
-                                                <exclude>org/jetbrains/**</exclude>
-                                                <exclude>kotlin/**/*metadata</exclude>
-                                                <exclude>kotlin/coroutines/**</exclude>
-                                                <exclude>kotlin/comparisons/**</exclude>
-                                                <exclude>kotlin/io/encoding/**</exclude>
-                                                <exclude>kotlin/io/path/**</exclude>
-                                                <exclude>kotlin/math/**</exclude>
-                                                <exclude>kotlin/random/**</exclude>
-                                                <exclude>kotlin/reflect/jvm/internal/calls/**</exclude>
-                                                <exclude>kotlin/streams/**</exclude>
-                                                <exclude>kotlin/time/**</exclude>
-                                            </excludes>
-                                        </filter>
-                                    </filters>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-jarsigner-plugin</artifactId>
-                        <version>3.1.0</version>
-                        <executions>
-                            <execution>
-                                <id>sign</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <keystore>${basedir}/src/main/resources/trust/X509</keystore>
-                            <alias>mykey</alias>
-                            <storepass>spasspass</storepass>
-                            <tsa>http://timestamp.sectigo.com</tsa>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -521,25 +450,26 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.6.4</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>3.1.0</version>
                         <executions>
                             <execution>
                                 <id>chmod</id>
                                 <phase>package</phase>
                                 <goals>
-                                    <goal>exec</goal>
+                                    <goal>run</goal>
                                 </goals>
                                 <configuration>
-                                    <executable>chmod</executable>
-                                    <arguments>
-                                        <argument>+x</argument>
-                                        <argument>${basedir}/dist/dayon.sh</argument>
-                                        <argument>${basedir}/dist/dayon_assistant.sh</argument>
-                                        <argument>${basedir}/dist/dayon_assisted.sh</argument>
-                                        <argument>${basedir}/dist/setup.sh</argument>
-                                    </arguments>
+                                    <target>
+                                        <exec executable="chmod" osfamily="unix">
+                                            <arg value="+x"/>
+                                            <arg value="${basedir}/dist/dayon.sh"/>
+                                            <arg value="${basedir}/dist/dayon_assistant.sh"/>
+                                            <arg value="${basedir}/dist/dayon_assisted.sh"/>
+                                            <arg value="${basedir}/dist/setup.sh"/>
+                                        </exec>
+                                    </target>
                                 </configuration>
                             </execution>
                         </executions>
