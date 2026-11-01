@@ -811,6 +811,14 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
+        public void onConnecting() {
+            Toolkit.getDefaultToolkit().beep();
+        }
+
+        /**
+         * Should not block as called from the network receiving thread (!)
+         */
+        @Override
         public boolean onAccepted(Socket connection, boolean autoAccept) {
             return frame.onAccepted(connection, autoAccept);
         }
