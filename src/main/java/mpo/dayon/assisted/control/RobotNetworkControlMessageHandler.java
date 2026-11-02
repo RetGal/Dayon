@@ -4,6 +4,7 @@ import java.awt.AWTException;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -99,7 +100,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void pressKey(NetworkKeyControlMessage message) {
-		int keyCode = message.getKeyCode();
+		int keyCode = getMappedKeyCode(message);
 		if (keyCode != VK_UNDEFINED) {
 			if (keyCode == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyPress(VK_CONTROL);
@@ -130,6 +131,19 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		Log.warn("Undefined KeyChar " + message);
 	}
 
+	private static int getMappedKeyCode(NetworkKeyControlMessage message) {
+		int keyCode = message.getKeyCode();
+		if (keyCode == VK_UNDEFINED || keyCode == VK_SHIFT || keyCode == VK_CONTROL || keyCode == VK_ALT || keyCode == VK_META || keyCode == VK_ALT_GRAPH) {
+			return keyCode;
+		}
+		int extendedKeyCode = KeyEvent.getExtendedKeyCodeForChar(message.getKeyChar());
+		if (keyCode != extendedKeyCode) {
+			Log.debug("%s mapped to [" + extendedKeyCode + "]", () -> String.valueOf(message));
+			return extendedKeyCode;
+		}
+		return keyCode;
+	}
+
 	private void typeUnicode(int keyCode) {
 		if (File.separatorChar == UNIX_SEPARATOR_CHAR) {
 			typeLinuxUnicode(keyCode);
@@ -139,7 +153,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 	}
 
 	private void releaseKey(NetworkKeyControlMessage message) {
-		int keyCode = message.getKeyCode();
+		int keyCode = getMappedKeyCode(message);
 		if (keyCode != VK_UNDEFINED) {
 			if (keyCode == VK_ALT_GRAPH && File.separatorChar != UNIX_SEPARATOR_CHAR) {
 				robot.keyRelease(VK_ALT);
@@ -187,6 +201,8 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 		robot.keyPress(VK_SHIFT);
 		robot.keyPress(VK_U);
 		robot.keyRelease(VK_U);
+		robot.keyRelease(VK_SHIFT);
+		robot.keyRelease(VK_CONTROL);
 		char[] charArray = Integer.toHexString(keyCode).toCharArray();
 		// simulate a key press/release for each char
 		// char[] { 'e', '4' }  => keyPress(69), keyRelease(69), keyPress(52), keyRelease(52)
@@ -195,7 +211,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			robot.keyPress(code);
 			robot.keyRelease(code);
 		}
-		robot.keyRelease(VK_SHIFT);
-		robot.keyRelease(VK_CONTROL);
+		robot.keyPress(VK_ENTER);
+		robot.keyRelease(VK_ENTER);
 	}
 }

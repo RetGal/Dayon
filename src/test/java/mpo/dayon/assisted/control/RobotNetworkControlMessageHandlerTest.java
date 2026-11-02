@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
+import static java.awt.event.KeyEvent.*;
 import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.PRESSED;
 import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.RELEASED;
 import static org.junit.jupiter.api.condition.OS.WINDOWS;
@@ -20,7 +20,7 @@ class RobotNetworkControlMessageHandlerTest {
     @Test
     void testHandleMessagePress0() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 48, '0');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_0, '0');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -30,7 +30,7 @@ class RobotNetworkControlMessageHandlerTest {
     @Test
     void testHandleMessagePressA() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 65, 'A');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_A, 'A');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -38,19 +38,19 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessagePressZ() {
+    void testHandleMessagePress1() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 122, 'z');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_1, '1');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(122);
+        verify(robot).keyPress(49);
     }
 
     @Test
     void testHandleMessageDoNotReleaseUnpressedA() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(RELEASED, 65, 'A');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(RELEASED, VK_A, 'A');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -60,89 +60,95 @@ class RobotNetworkControlMessageHandlerTest {
     @Test
     void testHandleMessagePressAndReleaseB() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 66, 'B');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_B, 'B');
         controlMessageHandler.handleMessage(message);
         // when
-        controlMessageHandler.handleMessage(new NetworkKeyControlMessage(RELEASED, 66, 'B'));
+        controlMessageHandler.handleMessage(new NetworkKeyControlMessage(RELEASED, VK_B, 'B'));
         // then
         verify(robot).keyRelease(66);
     }
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressAe() {
+    void testHandleMessagePressAeAsUnicode() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'ä');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(KeyEvent.VK_CONTROL);
-        verify(robot).keyPress(KeyEvent.VK_SHIFT);
-        verify(robot).keyPress(KeyEvent.VK_U);
-        verify(robot).keyRelease(KeyEvent.VK_U);
+        verify(robot).keyPress(VK_CONTROL);
+        verify(robot).keyPress(VK_SHIFT);
+        verify(robot).keyPress(VK_U);
+        verify(robot).keyRelease(VK_U);
+        verify(robot).keyRelease(VK_CONTROL);
+        verify(robot).keyRelease(VK_SHIFT);
         // 228 as hex E4
-        verify(robot).keyPress(KeyEvent.VK_E);
-        verify(robot).keyRelease(KeyEvent.VK_E);
-        verify(robot).keyPress(KeyEvent.VK_4);
-        verify(robot).keyRelease(KeyEvent.VK_4);
-        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
-        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
+        verify(robot).keyPress(VK_E);
+        verify(robot).keyRelease(VK_E);
+        verify(robot).keyPress(VK_4);
+        verify(robot).keyRelease(VK_4);
+        verify(robot).keyPress(VK_ENTER);
+        verify(robot).keyRelease(VK_ENTER);
     }
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressAt() {
+    void testHandleMessagePress6() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 50, '@');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_6, '6');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(50);
+        verify(robot).keyPress(54);
     }
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressTurkishLowerSpecialSTypedOnNonTurkishAssisted() {
+    void testHandleMessagePressTurkishLowerSpecialSTypedOnNonTurkishAssistedAsUnicode() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'ş');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(KeyEvent.VK_CONTROL);
-        verify(robot).keyPress(KeyEvent.VK_SHIFT);
-        verify(robot).keyPress(KeyEvent.VK_U);
-        verify(robot).keyRelease(KeyEvent.VK_U);
+        verify(robot).keyPress(VK_CONTROL);
+        verify(robot).keyPress(VK_SHIFT);
+        verify(robot).keyPress(VK_U);
+        verify(robot).keyRelease(VK_U);
+        verify(robot).keyRelease(VK_CONTROL);
+        verify(robot).keyRelease(VK_SHIFT);
         // 351 as hex 15F
-        verify(robot).keyPress(KeyEvent.VK_1);
-        verify(robot).keyRelease(KeyEvent.VK_1);
-        verify(robot).keyPress(KeyEvent.VK_5);
-        verify(robot).keyRelease(KeyEvent.VK_5);
-        verify(robot).keyPress(KeyEvent.VK_F);
-        verify(robot).keyRelease(KeyEvent.VK_F);
-        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
-        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
+        verify(robot).keyPress(VK_1);
+        verify(robot).keyRelease(VK_1);
+        verify(robot).keyPress(VK_5);
+        verify(robot).keyRelease(VK_5);
+        verify(robot).keyPress(VK_F);
+        verify(robot).keyRelease(VK_F);
+        verify(robot).keyPress(VK_ENTER);
+        verify(robot).keyRelease(VK_ENTER);
     }
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressTurkishUpperSpecialSTypedOnNonTurkishAssisted() {
+    void testHandleMessagePressTurkishUpperSpecialSTypedOnNonTurkishAssistedAsUnicode() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'Ş');
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(KeyEvent.VK_CONTROL);
-        verify(robot).keyPress(KeyEvent.VK_SHIFT);
-        verify(robot).keyPress(KeyEvent.VK_U);
-        verify(robot).keyRelease(KeyEvent.VK_U);
+        verify(robot).keyPress(VK_CONTROL);
+        verify(robot).keyPress(VK_SHIFT);
+        verify(robot).keyPress(VK_U);
+        verify(robot).keyRelease(VK_U);
+        verify(robot).keyRelease(VK_CONTROL);
+        verify(robot).keyRelease(VK_SHIFT);
         // 350 as hex 15E
-        verify(robot).keyPress(KeyEvent.VK_1);
-        verify(robot).keyRelease(KeyEvent.VK_1);
-        verify(robot).keyPress(KeyEvent.VK_5);
-        verify(robot).keyRelease(KeyEvent.VK_5);
-        verify(robot).keyPress(KeyEvent.VK_E);
-        verify(robot).keyRelease(KeyEvent.VK_E);
-        verify(robot).keyRelease(KeyEvent.VK_CONTROL);
-        verify(robot).keyRelease(KeyEvent.VK_SHIFT);
+        verify(robot).keyPress(VK_1);
+        verify(robot).keyRelease(VK_1);
+        verify(robot).keyPress(VK_5);
+        verify(robot).keyRelease(VK_5);
+        verify(robot).keyPress(VK_E);
+        verify(robot).keyRelease(VK_E);
+        verify(robot).keyPress(VK_ENTER);
+        verify(robot).keyRelease(VK_ENTER);
     }
 }
