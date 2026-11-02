@@ -1,10 +1,12 @@
 package mpo.dayon.assisted.control;
 
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
+import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import java.awt.*;
+import java.awt.event.InputEvent;
 
 import static java.awt.event.KeyEvent.*;
 import static mpo.dayon.common.network.message.NetworkKeyControlMessage.KeyState.PRESSED;
@@ -18,7 +20,7 @@ class RobotNetworkControlMessageHandlerTest {
     private final RobotNetworkControlMessageHandler controlMessageHandler = new RobotNetworkControlMessageHandler(robot);
 
     @Test
-    void testHandleMessagePress0() {
+    void testHandleMessageKeyPress0() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_0, '0');
         // when
@@ -28,7 +30,7 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessagePressA() {
+    void testHandleMessageKeyPressA() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_A, 'A');
         // when
@@ -38,7 +40,7 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessagePress1() {
+    void testHandleMessageKeyPress1() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_1, '1');
         // when
@@ -58,7 +60,7 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessagePressAndReleaseB() {
+    void testHandleMessageKeyPressAndReleaseB() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_B, 'B');
         controlMessageHandler.handleMessage(message);
@@ -70,9 +72,9 @@ class RobotNetworkControlMessageHandlerTest {
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressAeAsUnicode() {
+    void testHandleMessageKeyPressAeAsUnicode() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'ä');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_UNDEFINED, 'ä');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -93,7 +95,7 @@ class RobotNetworkControlMessageHandlerTest {
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePress6() {
+    void testHandleMessageKeyPress6() {
         // given
         NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_6, '6');
         // when
@@ -104,9 +106,9 @@ class RobotNetworkControlMessageHandlerTest {
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressTurkishLowerSpecialSTypedOnNonTurkishAssistedAsUnicode() {
+    void testHandleMessageKeyPressTurkishLowerSpecialSTypedOnNonTurkishAssistedAsUnicode() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'ş');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_UNDEFINED, 'ş');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -129,9 +131,9 @@ class RobotNetworkControlMessageHandlerTest {
 
     @Test
     @DisabledOnOs(WINDOWS)
-    void testHandleMessagePressTurkishUpperSpecialSTypedOnNonTurkishAssistedAsUnicode() {
+    void testHandleMessageKeyPressTurkishUpperSpecialSTypedOnNonTurkishAssistedAsUnicode() {
         // given
-        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, 0, 'Ş');
+        NetworkKeyControlMessage message = new NetworkKeyControlMessage(PRESSED, VK_UNDEFINED, 'Ş');
         // when
         controlMessageHandler.handleMessage(message);
         // then
@@ -150,5 +152,60 @@ class RobotNetworkControlMessageHandlerTest {
         verify(robot).keyRelease(VK_E);
         verify(robot).keyPress(VK_ENTER);
         verify(robot).keyRelease(VK_ENTER);
+    }
+
+    @Test
+    void testHandleMessageButtonPress1() {
+        // given
+        NetworkMouseControlMessage message = new NetworkMouseControlMessage(6, 7, NetworkMouseControlMessage.ButtonState.PRESSED, 4);
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        verify(robot).mouseMove(6, 7);
+    }
+
+    @Test
+    void testHandleMessageButtonPress2() {
+        // given
+        NetworkMouseControlMessage message = new NetworkMouseControlMessage(4, 40, NetworkMouseControlMessage.ButtonState.PRESSED, 8);
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).mousePress(InputEvent.BUTTON2_DOWN_MASK);
+        verify(robot).mouseMove(4, 40);
+    }
+
+    @Test
+    void testHandleMessageButtonPress3() {
+        // given
+        NetworkMouseControlMessage message = new NetworkMouseControlMessage(19, 72, NetworkMouseControlMessage.ButtonState.PRESSED, 16);
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).mousePress(InputEvent.BUTTON3_DOWN_MASK);
+        verify(robot).mouseMove(19, 72);
+    }
+
+    @Test
+    void testHandleMessageButtonRelease2() {
+        // given
+        NetworkMouseControlMessage message = new NetworkMouseControlMessage(4, 3, NetworkMouseControlMessage.ButtonState.RELEASED, 8);
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).mouseRelease(InputEvent.BUTTON2_DOWN_MASK);
+        verify(robot).mouseMove(4, 3);
+    }
+
+    @Test
+    void testHandleMessageMouseWheeled() {
+        // given
+        NetworkMouseControlMessage message = new NetworkMouseControlMessage(3, 2, 1);
+        // when
+        controlMessageHandler.handleMessage(message);
+        // then
+        verify(robot).mouseWheel(1);
+        verify(robot).mouseMove(3, 2);
     }
 }
