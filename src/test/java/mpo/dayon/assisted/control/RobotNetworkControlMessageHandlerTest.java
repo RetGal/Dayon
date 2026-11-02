@@ -3,6 +3,7 @@ package mpo.dayon.assisted.control;
 import mpo.dayon.common.network.message.NetworkKeyControlMessage;
 import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 
 import java.awt.*;
@@ -155,7 +156,8 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessageButtonPress1() {
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
+    void testHandleMessageMouseButtonPress1() {
         // given
         NetworkMouseControlMessage message = new NetworkMouseControlMessage(6, 7, NetworkMouseControlMessage.ButtonState.PRESSED, 4);
         // when
@@ -166,7 +168,8 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessageButtonPress2() {
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
+    void testHandleMessageMouseButtonPress2() {
         // given
         NetworkMouseControlMessage message = new NetworkMouseControlMessage(4, 40, NetworkMouseControlMessage.ButtonState.PRESSED, 8);
         // when
@@ -177,7 +180,8 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessageButtonPress3() {
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
+    void testHandleMessageMouseButtonPress3() {
         // given
         NetworkMouseControlMessage message = new NetworkMouseControlMessage(19, 72, NetworkMouseControlMessage.ButtonState.PRESSED, 16);
         // when
@@ -188,7 +192,8 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
-    void testHandleMessageButtonRelease2() {
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
+    void testHandleMessageMouseButtonRelease2() {
         // given
         NetworkMouseControlMessage message = new NetworkMouseControlMessage(4, 3, NetworkMouseControlMessage.ButtonState.RELEASED, 8);
         // when
@@ -199,6 +204,7 @@ class RobotNetworkControlMessageHandlerTest {
     }
 
     @Test
+    @DisabledIf(value = "java.awt.GraphicsEnvironment#isHeadless")
     void testHandleMessageMouseWheeled() {
         // given
         NetworkMouseControlMessage message = new NetworkMouseControlMessage(3, 2, 1);
