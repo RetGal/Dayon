@@ -83,8 +83,14 @@ class BabylonTest {
 
     @Test
     void shouldHandleNullArguments() {
-        // given, when, then
-        assertEquals("Assistent", Babylon.translate("assistant", (Object[]) null));
+        // given
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("en"));
+
+        // when, then
+        assertEquals("assistant", Babylon.translate("assistant", (Object[]) null));
+
+        Locale.setDefault(defaultLocale);
     }
 
     @Test
