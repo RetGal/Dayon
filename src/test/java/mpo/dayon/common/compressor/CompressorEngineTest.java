@@ -13,9 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.awt.Dimension;
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -119,7 +117,7 @@ class CompressorEngineTest {
     void mergesPendingCapturesWhenTheQueueIsFull() throws Exception {
         // given
         engine = new CompressorEngine();
-        final List<Capture> decompressed = Collections.synchronizedList(new ArrayList<>());
+        final List<Capture> decompressed = new CopyOnWriteArrayList<>();
         final CountDownLatch latch = new CountDownLatch(1);
         engine.addListener((captureId, compressionMethod, compressionConfiguration, compressed) -> {
             decompressed.add(decompress(compressionMethod, compressed));
