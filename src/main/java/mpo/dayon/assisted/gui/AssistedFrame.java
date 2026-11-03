@@ -82,14 +82,15 @@ class AssistedFrame extends BaseFrame {
 
     private void showWarning() {
         final JButton warning = new JButton(format("<html><center>%s<br>%s</center></html>", translate("wayland.warning"), translate("wayland.fix.me")));
-        warning.setFont(new Font("Sans Serif", Font.PLAIN, 17));
+        warning.setFont(new Font("Sans Serif", Font.PLAIN, 15));
         warning.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        this.setMinimumSize(new Dimension(640, 140));
+        this.setMinimumSize(new Dimension(640, 150));
         warning.addMouseListener(new ButtonMouseAdapter());
         JPanel contentPane = new JPanel(new BorderLayout());
         contentPane.setBorder(new EmptyBorder(5, 15, 5, 15));
         contentPane.add(warning, BorderLayout.CENTER);
         add(contentPane, BorderLayout.CENTER);
+        repaint();
     }
 
     private static class ButtonMouseAdapter extends MouseAdapter {
