@@ -42,4 +42,17 @@ class ListenersTest {
         assertTrue(listeners.getListeners().isEmpty());
     }
 
+    @Test
+    void shouldRemoveListener() {
+        // given
+        final CompressorEngine compressorEngine = new CompressorEngine();
+        listeners.add(compressorEngine);
+
+        // when
+        listeners.remove(compressorEngine);
+
+        // then
+        assertTrue(listeners.getListeners().isEmpty());
+    }
+
 }

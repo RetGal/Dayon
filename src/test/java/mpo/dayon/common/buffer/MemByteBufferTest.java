@@ -113,4 +113,91 @@ class MemByteBufferTest {
         assertArrayEquals(new byte[] { 2, 3 }, copied);
         assertArrayEquals(new byte[] { 1, 2, 3 }, buffer.getInternal());
     }
+
+    @Test
+    void getByteChecksTheBounds() {
+        // given
+        buffer.writes(1, 2, 3);
+
+        // when, then
+        assertEquals(2, buffer.getByte(1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(-1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(buffer.size()));
+    }
+
+    @Test
+    void appendRangeChecksTheBounds() {
+        // given
+        buffer.writes(1, 2, 3, 4);
+        MemByteBuffer destination = new MemByteBuffer();
+
+        // when
+        buffer.appendRangeTo(destination, 1, 2);
+
+        // then
+        assertArrayEquals(new byte[] { 2, 3 }, destination.getInternal());
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.appendRangeTo(destination, -1, 2));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.appendRangeTo(destination, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.appendRangeTo(destination, 3, 2));
+    }
+
+    @Test
+    void copyToChecksTheBounds() {
+        // given
+        buffer.writes(1, 2, 3, 4);
+        byte[] destination = new byte[2];
+
+        // when, then
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.copyTo(destination, 0, -1, 1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.copyTo(destination, 0, 0, -1));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.copyTo(destination, 0, 3, 2));
+    }
+
+    @Test
+    void writesNothingForAnEmptyArray() {
+        // given
+        byte[] empty = new byte[0];
+
+        // when
+        buffer.write(empty, 0, 0);
+
+        // then
+        assertEquals(0, buffer.size());
+    }
+
+    @Test
+    void arraycopyAppendsTheContent() {
+        // given
+        byte[] source = { 4, 5, 6, 7 };
+
+        // when
+        buffer.arraycopy(source, 1, 2);
+
+        // then
+        assertArrayEquals(new byte[] { 5, 6 }, buffer.getInternal());
+    }
+
+    @Test
+    void growsBeyondTheInitialCapacity() {
+        // given
+        byte[] chunk = new byte[BEAST];
+
+        // when
+        for (int idx = 0; idx < 3; idx++) {
+            buffer.write(chunk);
+        }
+
+        // then
+        assertEquals(3 * BEAST, buffer.size());
+        assertEquals(3 * BEAST, buffer.getInternal().length);
+    }
+
+    @Test
+    void markReturnsTheCurrentSize() {
+        // given
+        buffer.writes(1, 2, 3);
+
+        // when, then
+        assertEquals(3, buffer.mark());
+    }
 }

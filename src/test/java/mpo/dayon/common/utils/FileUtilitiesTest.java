@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collections;
-
 import static java.lang.String.format;
 import static mpo.dayon.common.network.FileUtilities.separatorsToSystem;
 import static mpo.dayon.common.network.FileUtilities.calculateTotalFileSize;
@@ -51,6 +50,27 @@ class FileUtilitiesTest {
         final long totalFileSize = calculateTotalFileSize(Collections.singletonList(testDirectory));
         // then
         assertEquals(7, totalFileSize);
+    }
+
+    @Test
+    void calculateTotalFileSizeOfRegularFiles() throws IOException {
+        // given
+        File file = File.createTempFile("dayon", ".txt");
+        file.deleteOnExit();
+        try (FileWriter writer = new FileWriter(file)) {
+            writer.write("unicorn");
+        }
+        // when
+        final long totalFileSize = calculateTotalFileSize(Collections.singletonList(file));
+        // then
+        assertEquals(7, totalFileSize);
+        assertEquals(0, calculateTotalFileSize(Collections.emptyList()));
+    }
+
+    @Test
+    void separatorsToSystemReturnsNullForNull() {
+        // when, then
+        assertNull(separatorsToSystem(null));
     }
 
     private void writeIntoFile(File aDir, String fileName, String content) throws IOException {

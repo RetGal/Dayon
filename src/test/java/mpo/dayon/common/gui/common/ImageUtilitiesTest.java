@@ -27,4 +27,20 @@ class ImageUtilitiesTest {
         assertEquals(33, icon.getIconWidth(), "Width should be 33");
         assertEquals(32, icon.getIconHeight(), "Height should be 32");
     }
+
+    @Test
+    void getOrCreateIconCachesTheIcons() {
+        // given, when
+        ImageIcon first = ImageUtilities.getOrCreateIcon(ImageNames.FINGERPRINT);
+        ImageIcon second = ImageUtilities.getOrCreateIcon(ImageNames.FINGERPRINT);
+
+        // then
+        assertSame(first, second);
+    }
+
+    @Test
+    void getOrCreateIconFailsForAMissingIcon() {
+        // given, when, then
+        assertThrows(IllegalStateException.class, () -> ImageUtilities.getOrCreateIcon("snafu.png"));
+    }
 }

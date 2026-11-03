@@ -5,6 +5,7 @@ import mpo.dayon.common.network.message.NetworkMouseControlMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.mockito.InOrder;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
@@ -79,19 +80,21 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(VK_CONTROL);
-        verify(robot).keyPress(VK_SHIFT);
-        verify(robot).keyPress(VK_U);
-        verify(robot).keyRelease(VK_U);
-        verify(robot).keyRelease(VK_CONTROL);
-        verify(robot).keyRelease(VK_SHIFT);
-        // 228 as hex E4
-        verify(robot).keyPress(VK_E);
-        verify(robot).keyRelease(VK_E);
-        verify(robot).keyPress(VK_4);
-        verify(robot).keyRelease(VK_4);
-        verify(robot).keyPress(VK_ENTER);
-        verify(robot).keyRelease(VK_ENTER);
+        // 228 as hex E4 - 'E', '4' and finally ENTER are typed in that order
+        InOrder inOrder = inOrder(robot);
+        inOrder.verify(robot).keyPress(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_SHIFT);
+        inOrder.verify(robot).keyPress(VK_U);
+        inOrder.verify(robot).keyRelease(VK_U);
+        inOrder.verify(robot).keyRelease(VK_SHIFT);
+        inOrder.verify(robot).keyRelease(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_E);
+        inOrder.verify(robot).keyRelease(VK_E);
+        inOrder.verify(robot).keyPress(VK_4);
+        inOrder.verify(robot).keyRelease(VK_4);
+        inOrder.verify(robot).keyPress(VK_ENTER);
+        inOrder.verify(robot).keyRelease(VK_ENTER);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -113,21 +116,23 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(VK_CONTROL);
-        verify(robot).keyPress(VK_SHIFT);
-        verify(robot).keyPress(VK_U);
-        verify(robot).keyRelease(VK_U);
-        verify(robot).keyRelease(VK_CONTROL);
-        verify(robot).keyRelease(VK_SHIFT);
-        // 351 as hex 15F
-        verify(robot).keyPress(VK_1);
-        verify(robot).keyRelease(VK_1);
-        verify(robot).keyPress(VK_5);
-        verify(robot).keyRelease(VK_5);
-        verify(robot).keyPress(VK_F);
-        verify(robot).keyRelease(VK_F);
-        verify(robot).keyPress(VK_ENTER);
-        verify(robot).keyRelease(VK_ENTER);
+        // 351 as hex 15F - '1', '5', 'F' and finally ENTER are typed in that order
+        InOrder inOrder = inOrder(robot);
+        inOrder.verify(robot).keyPress(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_SHIFT);
+        inOrder.verify(robot).keyPress(VK_U);
+        inOrder.verify(robot).keyRelease(VK_U);
+        inOrder.verify(robot).keyRelease(VK_SHIFT);
+        inOrder.verify(robot).keyRelease(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_1);
+        inOrder.verify(robot).keyRelease(VK_1);
+        inOrder.verify(robot).keyPress(VK_5);
+        inOrder.verify(robot).keyRelease(VK_5);
+        inOrder.verify(robot).keyPress(VK_F);
+        inOrder.verify(robot).keyRelease(VK_F);
+        inOrder.verify(robot).keyPress(VK_ENTER);
+        inOrder.verify(robot).keyRelease(VK_ENTER);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test
@@ -138,21 +143,23 @@ class RobotNetworkControlMessageHandlerTest {
         // when
         controlMessageHandler.handleMessage(message);
         // then
-        verify(robot).keyPress(VK_CONTROL);
-        verify(robot).keyPress(VK_SHIFT);
-        verify(robot).keyPress(VK_U);
-        verify(robot).keyRelease(VK_U);
-        verify(robot).keyRelease(VK_CONTROL);
-        verify(robot).keyRelease(VK_SHIFT);
-        // 350 as hex 15E
-        verify(robot).keyPress(VK_1);
-        verify(robot).keyRelease(VK_1);
-        verify(robot).keyPress(VK_5);
-        verify(robot).keyRelease(VK_5);
-        verify(robot).keyPress(VK_E);
-        verify(robot).keyRelease(VK_E);
-        verify(robot).keyPress(VK_ENTER);
-        verify(robot).keyRelease(VK_ENTER);
+        // 350 as hex 15E - '1', '5', 'E' and finally ENTER are typed in that order
+        InOrder inOrder = inOrder(robot);
+        inOrder.verify(robot).keyPress(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_SHIFT);
+        inOrder.verify(robot).keyPress(VK_U);
+        inOrder.verify(robot).keyRelease(VK_U);
+        inOrder.verify(robot).keyRelease(VK_SHIFT);
+        inOrder.verify(robot).keyRelease(VK_CONTROL);
+        inOrder.verify(robot).keyPress(VK_1);
+        inOrder.verify(robot).keyRelease(VK_1);
+        inOrder.verify(robot).keyPress(VK_5);
+        inOrder.verify(robot).keyRelease(VK_5);
+        inOrder.verify(robot).keyPress(VK_E);
+        inOrder.verify(robot).keyRelease(VK_E);
+        inOrder.verify(robot).keyPress(VK_ENTER);
+        inOrder.verify(robot).keyRelease(VK_ENTER);
+        inOrder.verifyNoMoreInteractions();
     }
 
     @Test

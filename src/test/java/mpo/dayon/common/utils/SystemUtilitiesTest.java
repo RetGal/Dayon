@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 class SystemUtilitiesTest {
 	
@@ -140,6 +143,77 @@ class SystemUtilitiesTest {
 	void shouldObtainJarDir() {
 		// when, then
 		assertTrue(Files.isDirectory(new File(getJarDir()).toPath()), "JarDir should be a directory");
+	}
+
+	@Test
+	void shouldObtainQuickStartUri() {
+		// when, then
+		assertEquals("https://retgal.github.io/Dayon/assistant.html#assistant-setup", getQuickStartURI("assistant.html", "assistant").toString());
+	}
+
+	@Test
+	void shouldObtainRamInfo() {
+		// when, then
+		assertTrue(getRamInfo().matches(".+ of .+"));
+	}
+
+	@Test
+	void shouldObtainTheSystemProperties() {
+		// when
+		List<String> properties = getSystemProperties();
+
+		// then
+		assertFalse(properties.isEmpty());
+		assertTrue(properties.stream().anyMatch(prop -> prop.contains("java.version")));
+		assertTrue(properties.stream().anyMatch(prop -> prop.contains("line.separator") && prop.contains("\\")));
+		assertEquals(String.join(System.lineSeparator(), properties), getSystemPropertiesEx());
+	}
+
+	@Test
+	void shouldObtainTheDefaultLookAndFeel() {
+		// when, then
+		assertNotNull(getDefaultLookAndFeel());
+	}
+
+	@Test
+	void safeCloseClosesAllCloseablesAndIgnoresErrors() throws IOException {
+		// given
+		AtomicBoolean closed = new AtomicBoolean(false);
+		Closeable closeable = () -> closed.set(true);
+		Closeable failing = () -> {
+			throw new IOException("snafu");
+		};
+
+		// when
+		safeClose(closeable, null, failing);
+
+		// then
+		assertTrue(closed.get());
+	}
+
+	@Test
+	void safeInterruptInterruptsTheThread() {
+		// given
+		Thread thread = new Thread(() -> {
+		});
+		thread.start();
+
+		// when
+		Thread result = safeInterrupt(thread);
+
+		// then
+		assertNull(result);
+		assertTrue(thread.isInterrupted());
+		assertNull(safeInterrupt(null));
+	}
+
+	@Test
+	void isValidAddressEdgeCases() {
+		// when, then
+		assertTrue(isValidIpAddressOrHostName("192.168.0.1"));
+		assertFalse(isValidIpAddressOrHostName("192.168.0.1.1.1"));
+		assertFalse(isValidIpAddressOrHostName(""));
+		assertFalse(isValidIpAddressOrHostName(null));
 	}
 
 }

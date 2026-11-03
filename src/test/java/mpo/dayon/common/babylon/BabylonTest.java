@@ -52,4 +52,44 @@ class BabylonTest {
 
         Locale.setDefault(defaultLocale);
     }
+
+    @Test
+    void shouldHandleBlankTranslations() {
+        // given
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.ENGLISH);
+
+        // when, then
+        assertEquals("language.suffix", Babylon.translate("language.suffix"));
+
+        Locale.setDefault(defaultLocale);
+    }
+
+    @Test
+    void shouldHandleAnIllegalFormat() {
+        // given
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("de"));
+
+        // when
+        String translated = Babylon.translate("connecting", "localhost");
+
+        // then
+        assertNotNull(translated);
+        assertTrue(translated.contains("localhost"));
+
+        Locale.setDefault(defaultLocale);
+    }
+
+    @Test
+    void shouldHandleNullArguments() {
+        // given, when, then
+        assertEquals("Assistent", Babylon.translate("assistant", (Object[]) null));
+    }
+
+    @Test
+    void shouldTranslateAnEnumWithoutTranslationToItsName() {
+        // given, when, then
+        assertEquals("X_128", Babylon.translateEnum(Gray8Bits.X_128));
+    }
 }
