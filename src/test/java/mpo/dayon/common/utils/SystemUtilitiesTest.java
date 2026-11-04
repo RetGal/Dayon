@@ -4,6 +4,7 @@ import static mpo.dayon.common.utils.SystemUtilities.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -11,6 +12,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -214,6 +216,84 @@ class SystemUtilitiesTest {
 		assertFalse(isValidIpAddressOrHostName("192.168.0.1.1.1"));
 		assertFalse(isValidIpAddressOrHostName(""));
 		assertFalse(isValidIpAddressOrHostName(null));
+	}
+
+	@Test
+	void isNotSnappedWithARegularClassPath() {
+		// given
+		String classPath = System.getProperty(JAVA_CLASS_PATH);
+
+		try {
+			System.setProperty(JAVA_CLASS_PATH, "/opt/dayon/jar/dayon.jar");
+
+			// when, then
+			assertFalse(isSnapped());
+			assertEquals("", getBuildNumber());
+		} finally {
+			System.setProperty(JAVA_CLASS_PATH, classPath);
+		}
+	}
+
+	@Test
+	void isSnappedAndComputesTheBuildNumber() {
+		// given
+		String classPath = System.getProperty(JAVA_CLASS_PATH);
+
+		try {
+			System.setProperty(JAVA_CLASS_PATH, "/snap/dayon/18.0.4/jar/dayon.jar");
+
+			// when, then
+			assertTrue(isSnapped());
+			assertEquals("18.0.4", getBuildNumber());
+			assertEquals("/snap/dayon/18.0.4/bin/dayon.browser", getSnapBrowserCommand());
+		} finally {
+			System.setProperty(JAVA_CLASS_PATH, classPath);
+		}
+	}
+
+	@Test
+	void isFlatWithAFlatpakVendor() {
+		// given
+		String vendor = System.getProperty("java.vendor");
+
+		try {
+			// when, then
+			System.setProperty("java.vendor", "Flatpak");
+			assertTrue(isFlat());
+			System.setProperty("java.vendor", "Oracle Corporation");
+			assertFalse(isFlat());
+		} finally {
+			System.setProperty("java.vendor", vendor);
+		}
+	}
+
+	@Test
+	void getTempDirCleansTheSnapTransferDir(@TempDir Path tempDir) throws IOException {
+		// given
+		String classPath = System.getProperty(JAVA_CLASS_PATH);
+		String dayonHome = System.getProperty("dayon.home");
+		Path transferDir = tempDir.resolve(".transfer");
+		Path stale = Files.createDirectories(transferDir).resolve("stale.txt");
+		Files.writeString(stale, "stale");
+		System.setProperty(JAVA_CLASS_PATH, "/snap/dayon/18.0.4/jar/dayon.jar");
+		System.setProperty("dayon.home", tempDir.toString());
+
+		try {
+			// when
+			String temp = getTempDir();
+
+			// then
+			assertEquals(transferDir.toString(), temp);
+			assertTrue(Files.isDirectory(transferDir), "the transfer dir must still exist");
+			assertFalse(Files.exists(stale), "previous transfer files must be removed");
+		} finally {
+			System.setProperty(JAVA_CLASS_PATH, classPath);
+			if (dayonHome == null) {
+				System.clearProperty("dayon.home");
+			} else {
+				System.setProperty("dayon.home", dayonHome);
+			}
+		}
 	}
 
 }

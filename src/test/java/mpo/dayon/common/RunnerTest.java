@@ -3,6 +3,7 @@ package mpo.dayon.common;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -181,6 +182,100 @@ class RunnerTest {
         // when then
         assertEquals("https://foo.bar/rvs/,https://six.seven/rvs/,https://seven.eight/rvs/",
                 Runner.getCustomTokenServerUrls(config));
+    }
+
+    @Test
+    void detectsTheAssistantMode() {
+        // when, then
+        assertTrue(hasAssistant(new String[] { "assistant" }));
+        assertTrue(hasAssistant(new String[] { "-lang=en", "ASSISTANT" }));
+        assertFalse(hasAssistant(new String[] { "-lang=en" }));
+        assertFalse(hasAssistant(new String[0]));
+    }
+
+    @Test
+    void detectsAutoConnect() {
+        // when, then
+        assertTrue(isAutoConnect(Collections.emptyMap()));
+        assertTrue(isAutoConnect(Collections.singletonMap("autoConnect", "true")));
+        assertFalse(isAutoConnect(Collections.singletonMap("autoConnect", "false")));
+        assertFalse(isAutoConnect(Collections.singletonMap("autoConnect", "FALSE")));
+    }
+
+    @Test
+    void getOrCreateAppHomeDirReturnsNullWithoutAHomeDirectory() {
+        // given
+        final String userHome = System.getProperty("user.home");
+        System.clearProperty("user.home");
+
+        try {
+            // when, then
+            assertNull(getOrCreateAppHomeDir());
+        } finally {
+            System.setProperty("user.home", userHome);
+        }
+    }
+
+    @Test
+    void logAppInfoSetsTheApplicationName() {
+        // given
+        final String applicationName = System.getProperty("dayon.application.name");
+
+        try {
+            // when
+            logAppInfo("dayon_test");
+
+            // then
+            assertEquals("dayon_test", System.getProperty("dayon.application.name"));
+        } finally {
+            if (applicationName == null) {
+                System.clearProperty("dayon.application.name");
+            } else {
+                System.setProperty("dayon.application.name", applicationName);
+            }
+        }
+    }
+
+    @Test
+    void prepareKeystoreIsSkippedWithoutAnApplicationDirectory() {
+        // when, then - must not throw
+        assertDoesNotThrow(() -> prepareKeystore(null));
+    }
+
+    @Test
+    void prepareKeystoreIsSkippedWhenOneExists(@TempDir Path tempDir) throws IOException {
+        // given
+        final Path keystore = tempDir.resolve("keystore.jks");
+        Files.writeString(keystore, "existing");
+
+        // when, then - must not start a new keytool process
+        assertDoesNotThrow(() -> prepareKeystore(tempDir.toFile()));
+        assertEquals("existing", Files.readString(keystore));
+    }
+
+    @Test
+    void parsePresetFileContentReturnsAnEmptyMapWithoutConnectionSettings(@TempDir Path tempDir) throws IOException {
+        // given
+        final Path commentsOnly = tempDir.resolve("comments.yaml");
+        Files.writeString(commentsOnly, "# just a comment");
+        final Path withoutConnectionSettings = tempDir.resolve("incomplete.yaml");
+        Files.writeString(withoutConnectionSettings, "language: de");
+
+        // when, then
+        assertTrue(parsePresetFileContent(commentsOnly.toFile()).isEmpty());
+        assertTrue(parsePresetFileContent(withoutConnectionSettings.toFile()).isEmpty());
+        assertTrue(parsePresetFileContent(tempDir.resolve("missing.yaml").toFile()).isEmpty());
+    }
+
+    @Test
+    void detectsConnectionSettings() {
+        // when, then
+        assertTrue(hasConnectionSettings(Map.of("host", "localhost", "port", "8080")));
+        assertTrue(hasConnectionSettings(Collections.singletonMap("tokenServerUrl", "https://foo.bar")));
+        assertTrue(hasConnectionSettings(Collections.singletonMap("backupTokenServerUrls", "https://foo.bar")));
+        assertFalse(hasConnectionSettings(Collections.singletonMap("host", "localhost")));
+        assertFalse(hasConnectionSettings(Collections.singletonMap("port", "8080")));
+        assertFalse(hasConnectionSettings(Collections.emptyMap()));
     }
 
 }
