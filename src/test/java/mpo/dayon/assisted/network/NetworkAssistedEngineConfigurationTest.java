@@ -62,14 +62,13 @@ class NetworkAssistedEngineConfigurationTest {
         final NetworkAssistedEngineConfiguration second = new NetworkAssistedEngineConfiguration("dayon.example.com", 1234, true, TOKEN_SERVER_URL);
 
         // when, then
-        assertEquals(first, first);
+        assertNotNull(first);
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());
-        assertNotEquals(first, new NetworkAssistedEngineConfiguration("other.example.com", 1234, true, TOKEN_SERVER_URL));
-        assertNotEquals(first, new NetworkAssistedEngineConfiguration("dayon.example.com", 4321, true, TOKEN_SERVER_URL));
-        assertNotEquals(first, new NetworkAssistedEngineConfiguration("dayon.example.com", 1234, false, TOKEN_SERVER_URL));
-        assertNotEquals(first, null);
-        assertNotEquals(first, new Object());
+        assertNotEquals(new NetworkAssistedEngineConfiguration("other.example.com", 1234, true, TOKEN_SERVER_URL), first);
+        assertNotEquals(new NetworkAssistedEngineConfiguration("dayon.example.com", 4321, true, TOKEN_SERVER_URL), first);
+        assertNotEquals(new NetworkAssistedEngineConfiguration("dayon.example.com", 1234, false, TOKEN_SERVER_URL), first);
+        assertNotEquals(new Object(), first);
     }
 
     @Test

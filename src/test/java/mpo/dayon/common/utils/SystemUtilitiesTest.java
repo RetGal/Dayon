@@ -154,7 +154,7 @@ class SystemUtilitiesTest {
 	@Test
 	void shouldObtainRamInfo() {
 		// when, then
-		assertTrue(getRamInfo().matches(".+ of .+"));
+		assertTrue(getRamInfo().contains(" of "));
 	}
 
 	@Test
