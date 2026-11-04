@@ -11,9 +11,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CaptureTileTest {
 
-    private static final byte[] GRAY_BYTES = new byte[]{(byte) 200, (byte) 200, (byte) 200, (byte) 200};
+    private static final byte[] GRAY_BYTES = {(byte) 200, (byte) 200, (byte) 200, (byte) 200};
 
-    private static final byte[] COLOR_BYTES = new byte[]{1, 2, 3, 4};
+    private static final byte[] COLOR_BYTES = {1, 2, 3, 4};
 
     @Test
     void computeSingleLevel() {

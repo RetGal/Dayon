@@ -2,8 +2,6 @@ package mpo.dayon.common.network.message;
 
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkScreenshotRequestMessageTest {

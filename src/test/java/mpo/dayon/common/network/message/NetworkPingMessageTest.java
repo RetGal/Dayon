@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class NetworkPingMessageTest {
 
     @Test
-    void aPingMessageIsASingleByteWireMessage() throws IOException {
+    void aPingMessageIsASingleByteWireMessage() {
         // given, when
         NetworkPingMessage message = new NetworkPingMessage();
 

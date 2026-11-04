@@ -176,7 +176,7 @@ class SystemUtilitiesTest {
 	}
 
 	@Test
-	void safeCloseClosesAllCloseablesAndIgnoresErrors() throws IOException {
+	void safeCloseClosesAllCloseablesAndIgnoresErrors() {
 		// given
 		AtomicBoolean closed = new AtomicBoolean(false);
 		Closeable closeable = () -> closed.set(true);
