@@ -28,9 +28,8 @@ public class NetworkMessageTestSupport {
      * Writes bytes via DataOutputStream.
      */
     public static byte[] writeBytes(DataWriter writer) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            DataOutputStream out = new DataOutputStream(baos);
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(baos)) {
             writer.write(out);
             out.flush();
             return baos.toByteArray();
@@ -44,20 +43,10 @@ public class NetworkMessageTestSupport {
      * Any IOException thrown during construction or close is wrapped in an UncheckedIOException.
      */
     public static void withNoHeaderInput(byte[] data, ObjectInputStreamConsumer consumer) {
-        ObjectInputStream in = null;
-        try {
-            in = new NoHeaderObjectInputStream(new ByteArrayInputStream(data));
+        try (ObjectInputStream in = new NoHeaderObjectInputStream(new ByteArrayInputStream(data))) {
             consumer.accept(in);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException ignored) {
-                    // closing silently
-                }
-            }
         }
     }
 
