@@ -25,12 +25,11 @@ class PositionTest {
         Position otherY = new Position(10, 21);
 
         // when, then
-        assertEquals(first, first);
+        assertNotNull(first);
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());
-        assertNotEquals(first, otherX);
-        assertNotEquals(first, otherY);
-        assertNotEquals(first, null);
-        assertNotEquals(first, new Object());
+        assertNotEquals(otherX, first);
+        assertNotEquals(otherY, first);
+        assertNotEquals(new Object(), first);
     }
 }

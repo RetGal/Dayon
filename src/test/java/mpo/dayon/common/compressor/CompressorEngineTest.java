@@ -144,7 +144,7 @@ class CompressorEngineTest {
         engine.configure(new CompressorEngineConfiguration(CompressionMethod.ZIP, false, 1024, 512));
         engine.start(1);
 
-        // when, then - must not throw
-        engine.onRawCaptured(1, new byte[] { 1, 2, 3 });
+        // when, then
+        assertDoesNotThrow(() -> engine.onRawCaptured(1, new byte[] { 1, 2, 3 }));
     }
 }

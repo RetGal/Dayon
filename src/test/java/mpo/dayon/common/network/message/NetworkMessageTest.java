@@ -24,8 +24,10 @@ class NetworkMessageTest {
         NetworkMessage.marshallMagicNumber(out);
         out.flush();
 
+        ObjectInputStream in = asInput(bytes);
+
         // then
-        NetworkMessage.unmarshallMagicNumber(asInput(bytes));
+        assertDoesNotThrow(() -> NetworkMessage.unmarshallMagicNumber(in));
     }
 
     @Test
@@ -36,8 +38,10 @@ class NetworkMessageTest {
         out.writeByte(169);
         out.flush();
 
+        ObjectInputStream in = asInput(bytes);
+
         // when, then
-        assertThrows(IOException.class, () -> NetworkMessage.unmarshallMagicNumber(asInput(bytes)));
+        assertThrows(IOException.class, () -> NetworkMessage.unmarshallMagicNumber(in));
     }
 
     @Test

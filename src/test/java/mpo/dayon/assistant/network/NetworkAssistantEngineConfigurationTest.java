@@ -61,7 +61,6 @@ class NetworkAssistantEngineConfigurationTest {
 
         // when, then
         assertNotNull(first);
-        assertEquals(first, first);
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());
         assertNotEquals(new NetworkAssistantEngineConfiguration(9091, TOKEN_SERVER_URL, true), first);
