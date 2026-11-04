@@ -81,9 +81,11 @@ class PreferencesTest {
         props.set(key("malformed"), "snafu");
         preferences.update(props);
 
+        final String malformedKey = key("malformed");
+
         // when, then
-        assertThrows(NumberFormatException.class, () -> preferences.getIntPreference(key("malformed"), 42));
-        assertThrows(NumberFormatException.class, () -> preferences.getDoublePreference(key("malformed"), 4.2d));
+        assertThrows(NumberFormatException.class, () -> preferences.getIntPreference(malformedKey, 42));
+        assertThrows(NumberFormatException.class, () -> preferences.getDoublePreference(malformedKey, 4.2d));
     }
 
     @Test

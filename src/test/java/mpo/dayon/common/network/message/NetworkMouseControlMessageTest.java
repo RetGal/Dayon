@@ -155,7 +155,7 @@ class NetworkMouseControlMessageTest {
         assertEquals(1500, in.readShort());
         assertEquals(600, in.readShort());
         int info = in.readInt();
-        assertTrue((info & NetworkMouseControlMessage.BUTTON1) != 0);
+        assertNotEquals(0, info & NetworkMouseControlMessage.BUTTON1);
         assertTrue(message.getWireSize() <= bytes.size(), "the actual stream carries the message plus the serialization header");
     }
 }

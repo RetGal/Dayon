@@ -118,11 +118,12 @@ class MemByteBufferTest {
     void getByteChecksTheBounds() {
         // given
         buffer.writes(1, 2, 3);
+        int size = buffer.size();
 
         // when, then
         assertEquals(2, buffer.getByte(1));
         assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(-1));
-        assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(buffer.size()));
+        assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(size));
     }
 
     @Test

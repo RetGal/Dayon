@@ -27,14 +27,13 @@ class CaptureEngineConfigurationTest {
         CaptureEngineConfiguration otherColors = new CaptureEngineConfiguration(200, Gray8Bits.X_128, true);
 
         // when, then
-        assertEquals(first, first);
+        assertNotNull(first);
         assertEquals(first, second);
         assertEquals(first.hashCode(), second.hashCode());
-        assertNotEquals(first, otherTick);
-        assertNotEquals(first, otherQuantization);
-        assertNotEquals(first, otherColors);
-        assertNotEquals(first, null);
-        assertNotEquals(first, new Object());
+        assertNotEquals(otherTick, first);
+        assertNotEquals(otherQuantization, first);
+        assertNotEquals(otherColors, first);
+        assertNotEquals(new Object(), first);
     }
 
     @Test

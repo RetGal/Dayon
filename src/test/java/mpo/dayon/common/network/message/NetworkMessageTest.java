@@ -80,8 +80,10 @@ class NetworkMessageTest {
         out.writeByte(CompressionMethodForTest.values().length); // out of range
         out.flush();
 
+        ObjectInputStream in = asInput(bytes);
+
         // when, then
-        assertThrows(IllegalArgumentException.class, () -> NetworkMessage.unmarshallEnum(asInput(bytes), CompressionMethodForTest.class));
+        assertThrows(IllegalArgumentException.class, () -> NetworkMessage.unmarshallEnum(in, CompressionMethodForTest.class));
     }
 
     private enum CompressionMethodForTest {
