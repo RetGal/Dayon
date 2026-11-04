@@ -13,13 +13,12 @@ public class NetworkMessageTestSupport {
     /**
      * Calls {@code marshall} on a NoHeaderObjectOutputStream and returns the raw bytes.
      */
-    public static byte[] marshallToBytes(MessageMarshaller marshaller) {
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            NoHeaderObjectOutputStream out = new NoHeaderObjectOutputStream(baos);
-            marshaller.marshall(out);
-            out.flush();
-            return baos.toByteArray();
+     public static byte[] marshallToBytes(MessageMarshaller marshaller) {
+         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             NoHeaderObjectOutputStream out = new NoHeaderObjectOutputStream(baos)) {
+             marshaller.marshall(out);
+             out.flush();
+             return baos.toByteArray();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
