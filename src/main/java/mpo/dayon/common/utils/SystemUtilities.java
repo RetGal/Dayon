@@ -18,6 +18,7 @@ import java.util.stream.Stream;
 import static java.lang.String.format;
 import static java.lang.System.getProperty;
 import static java.lang.Thread.sleep;
+import static java.nio.file.attribute.PosixFilePermission.*;
 import static mpo.dayon.common.utils.UnitUtilities.toByteSize;
 
 public final class SystemUtilities {
@@ -38,13 +39,18 @@ public final class SystemUtilities {
     }
 
     private static File getOrCreateTransferDir() throws IOException {
-        final File transferDir = new File(getProperty("dayon.home"), ".transfer");
-        if (transferDir.exists()) {
+        final Path transferDir = new File(getProperty("dayon.home"), ".transfer").toPath().normalize();
+        if (Files.exists(transferDir)) {
             cleanDir(transferDir);
-        } else if (!transferDir.mkdir()) {
-            throw new IOException("Error creating " + transferDir.getName());
+        } else {
+            Files.createDirectories(transferDir);
+            try {
+                Files.setPosixFilePermissions(transferDir, Set.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE));
+            } catch (UnsupportedOperationException ex) {
+                // ignore, not a posix file system
+            }
         }
-        return transferDir;
+        return transferDir.toFile();
     }
 
     public static String getTempDir() throws IOException {
@@ -60,11 +66,11 @@ public final class SystemUtilities {
         }
     }
 
-    private static void cleanDir(File folder) throws IOException {
-        try (Stream<Path> walk = Files.walk(folder.toPath())) {
+    private static void cleanDir(Path folder) throws IOException {
+        try (Stream<Path> walk = Files.walk(folder)) {
             walk.sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .filter(item -> !folder.getPath().equals(item.getPath()))
+                    .filter(item -> !folder.toFile().equals(item))
                     .forEach(File::delete);
         }
     }

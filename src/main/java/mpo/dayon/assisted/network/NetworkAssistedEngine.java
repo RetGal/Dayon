@@ -240,10 +240,16 @@ public class NetworkAssistedEngine extends NetworkEngine
         // the first message being sent to the assistant (e.g. version identification, locale and OS).
         sender.sendHello(osId);
 
+        rememberMainPeerIdentity();
+
         // only if we initiated the connection, we also need to establish a file connection
         if (!isRevertedConnection) {
             fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
             Log.debug("File connection established");
+        }
+
+        if (!isFileConnectionBound(fileConnection)) {
+            throw new IOException("File connection is not bound to the main session");
         }
 
         // common part
@@ -474,6 +480,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void createFileInputStream() throws IOException {
         fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+        NetworkClipboardFilesMessage.installFileObjectInputFilter(fileIn);
     }
 
     private void runReceiversIfNecessary() {

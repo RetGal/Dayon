@@ -3,6 +3,7 @@ package mpo.dayon.common.network;
 import com.dosse.upnp.UPnP;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
+import mpo.dayon.common.security.CustomTrustManager;
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
 import org.ice4j.ice.Agent;
@@ -27,6 +28,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.List;
@@ -95,6 +97,8 @@ public abstract class NetworkEngine {
 
     private String localAddress = null;
 
+    private byte[] mainPeerCertificateFingerprint;
+
     /**
      * Might be blocking if the sender queue is full (!)
      */
@@ -159,6 +163,38 @@ public abstract class NetworkEngine {
         fileSender.ping();
     }
 
+    /**
+     * Remembers the peer certificate of the authenticated main connection so that
+     * the file transfer connection can be bound to the very same peer.
+     */
+    protected void rememberMainPeerIdentity() {
+        mainPeerCertificateFingerprint = calculatePeerCertificateFingerprint(connection);
+        if (mainPeerCertificateFingerprint == null) {
+            Log.warn("Could not determine the identity of the main connection");
+        }
+    }
+
+    /**
+     * A file connection is only accepted if its peer certificate matches the one
+     * of the main connection.
+     */
+    protected boolean isFileConnectionBound(SSLSocket candidate) {
+        if (mainPeerCertificateFingerprint == null) {
+            Log.warn("Rejecting file connection: the identity of the main connection is unknown");
+            return false;
+        }
+        byte[] filePeerCertificateFingerprint = calculatePeerCertificateFingerprint(candidate);
+        if (filePeerCertificateFingerprint == null) {
+            Log.warn("Rejecting file connection: no peer certificate available");
+            return false;
+        }
+        return MessageDigest.isEqual(mainPeerCertificateFingerprint, filePeerCertificateFingerprint);
+    }
+
+    private static byte[] calculatePeerCertificateFingerprint(SSLSocket socket) {
+        return socket == null ? null : CustomTrustManager.calculatePeerCertificateFingerprint(socket.getSession());
+    }
+
     protected void handleIncomingClipboardFiles(ObjectInputStream fileIn, ClipboardOwner clipboardOwner) throws IOException {
         String tmpDir = getTempDir();
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
@@ -205,6 +241,7 @@ public abstract class NetworkEngine {
         }
         fileReceiver = safeInterrupt(fileReceiver);
         safeClose(fileIn, fileConnection);
+        mainPeerCertificateFingerprint = null;
         cancelling.set(false);
     }
 
@@ -214,6 +251,7 @@ public abstract class NetworkEngine {
         }
         try {
             in = new ObjectInputStream(new BufferedInputStream(connection.getInputStream()));
+            NetworkClipboardGraphicMessage.installImageObjectInputFilter(in);
         } catch (StreamCorruptedException ex) {
             throw new IOException("version.wrong");
         }

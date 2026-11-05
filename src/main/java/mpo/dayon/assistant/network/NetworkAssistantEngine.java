@@ -132,6 +132,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
         try {
             awaitConnections(compatibilityMode);
+            rememberMainPeerIdentity();
             startFileReceiver();
             initSender(8);
             createInputStream();
@@ -354,15 +355,26 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 Log.info(format("Dayon! file server [port:%d]", configuration.getPort()));
                 try {
                     if (isInvertibleConnection) {
-                        initFileConnection(token.getPeerAddress(), token.getPeerPort());
+                        if (!initFileConnection(token.getPeerAddress(), token.getPeerPort())) {
+                            Log.warn("Unable to establish the file connection");
+                            return;
+                        }
                     } else {
                         server = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
+                        server.setNeedClientAuth(true);
                         fileConnection = (SSLSocket) server.accept();
                         safeClose(server);
                         server = null;
                     }
+                    if (!isFileConnectionBound(fileConnection)) {
+                        Log.warn("Rejecting file connection: it is not bound to the main session");
+                        safeClose(fileConnection);
+                        fileConnection = null;
+                        return;
+                    }
                     initFileSender();
                     fileIn = new ObjectInputStream(new BufferedInputStream(fileConnection.getInputStream()));
+                    NetworkClipboardFilesMessage.installFileObjectInputFilter(fileIn);
 
                     handleIncomingClipboardFiles(fileIn, clipboardOwner);
                 } catch (IOException ex) {
