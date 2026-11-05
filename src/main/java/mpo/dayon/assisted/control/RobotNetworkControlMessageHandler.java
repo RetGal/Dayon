@@ -137,7 +137,7 @@ public class RobotNetworkControlMessageHandler implements NetworkControlMessageH
 			return keyCode;
 		}
 		int extendedKeyCode = KeyEvent.getExtendedKeyCodeForChar(message.getKeyChar());
-		if (keyCode != extendedKeyCode) {
+		if (extendedKeyCode != 0 && keyCode != extendedKeyCode) {
 			Log.debug("%s mapped to [" + extendedKeyCode + "]", () -> String.valueOf(message));
 			return extendedKeyCode;
 		}
