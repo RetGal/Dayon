@@ -90,7 +90,7 @@ public class Version {
     }
 
     public static boolean isCompatibleVersion(int major, int minor, Version that) {
-        if (!isProd(major, minor) || !isProd(that.major, that.major)) {
+        if (!isProd(major, minor) || !isProd(that.major, that.minor)) {
             return true;
         }
         if (that.major > 10 && (major > 10 || (major == 1 && minor == 10))) {
