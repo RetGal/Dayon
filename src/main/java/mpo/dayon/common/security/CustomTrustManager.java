@@ -68,6 +68,28 @@ public class CustomTrustManager implements X509TrustManager {
 		return null;
 	}
 
+	/**
+	 * Full SHA-256 fingerprint of the peer certificate of the given TLS session.
+	 * Used to bind the file transfer connection to the same peer as the main session.
+	 */
+	@SuppressWarnings("squid:S1168") // returning null is fine here, everything else would complicate things
+	public static byte[] calculatePeerCertificateFingerprint(SSLSession session) {
+		if (session == null) {
+			return null;
+		}
+		try {
+			Certificate[] peerCertificates = session.getPeerCertificates();
+			if (peerCertificates == null || peerCertificates.length == 0) {
+				return null;
+			}
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			return md.digest(peerCertificates[0].getEncoded());
+		} catch (SSLPeerUnverifiedException | NoSuchAlgorithmException | CertificateEncodingException ex) {
+			Log.warn("Could not determine the peer certificate fingerprint");
+			return null;
+		}
+	}
+
 	private static String calculateFingerprint(final Certificate cert) throws NoSuchAlgorithmException,
 			CertificateEncodingException {
 		MessageDigest md = MessageDigest.getInstance("SHA-256");

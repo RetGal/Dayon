@@ -7,12 +7,14 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -66,6 +68,7 @@ class NetworkClipboardFilesMessageTest {
 
         // when
         try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
             assertEquals(NetworkMessageType.CLIPBOARD_FILES, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
             NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
             do {
@@ -77,6 +80,83 @@ class NetworkClipboardFilesMessageTest {
             final File root = helper.getFiles().get(0).getParentFile();
             assertEquals("aaaa", Files.readString(root.toPath().resolve("a.txt")));
             assertEquals("bb", Files.readString(root.toPath().resolve("nested").resolve("b.txt")));
+        }
+    }
+
+    @Test
+    void marshallAndUnmarshallDotFileBeforeAnotherSmallFile() throws IOException {
+        // given
+        final Path dotFile = tempDir.resolve(".hidden");
+        final Path regularFile = tempDir.resolve("visible.txt");
+        Files.writeString(dotFile, "hidden file contents");
+        Files.writeString(regularFile, "visible file contents");
+        final List<File> files = new ArrayList<>();
+        files.add(dotFile.toFile());
+        files.add(regularFile.toFile());
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(files, 41, tempDir.toString());
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            message.marshall(out);
+        }
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+
+        // when
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
+            assertEquals(NetworkMessageType.CLIPBOARD_FILES, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
+            NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+            do {
+                helper = NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+            } while (!helper.isDone());
+
+            // then
+            final Path receivedRoot = helper.getFiles().get(0).getParentFile().toPath();
+            assertEquals("hidden file contents", Files.readString(receivedRoot.resolve(".hidden")));
+            assertEquals("visible file contents", Files.readString(receivedRoot.resolve("visible.txt")));
+        }
+    }
+
+    @Test
+    void unmarshallSanitizesParentDirectorySegments() throws IOException {
+        // given
+        final List<FileMetaData> metadata = new ArrayList<>(Collections.singletonList(
+                new FileMetaData(".." + File.separator + "escape.txt", 1, "")));
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(metadata);
+            out.writeByte(1);
+        }
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+        final NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+
+        // when
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
+            NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+        }
+
+        // then
+        assertEquals(1, helper.getFiles().size());
+        final File received = helper.getFiles().get(0);
+        assertEquals("escape.txt", received.getName());
+        assertEquals(target.resolve(helper.getTransferId()).toFile(), received.getParentFile());
+        assertEquals(1, Files.size(received.toPath()));
+    }
+
+    @Test
+    void unmarshallRejectsDisallowedMetadataClasses() throws IOException {
+        // given
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(new HashMap<>());
+        }
+        final NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+
+        // when, then
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
+            assertThrows(InvalidClassException.class,
+                    () -> NetworkClipboardFilesMessage.unmarshall(in, helper, tempDir.toString()));
         }
     }
 

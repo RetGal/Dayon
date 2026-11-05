@@ -8,6 +8,7 @@ import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -27,7 +28,7 @@ public class ClipboardDispatcher {
         try {
             if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 // noinspection unchecked
-                List<File> files = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
+                List<File> files = validateFiles((List<File>) clipboard.getData(DataFlavor.javaFileListFlavor));
                 if (!files.isEmpty()) {
                     final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                     Log.debug("Clipboard contains files with size: %s", () -> valueOf(totalFilesSize));
@@ -60,5 +61,17 @@ public class ClipboardDispatcher {
         String text = "\uD83E\uDD84";
         Log.debug("Sending a unicorn: " + text);
         networkEngine.sendClipboardText(text);
+    }
+
+    private static List<File> validateFiles(List<File> files) {
+        List<File> validFiles = new ArrayList<>();
+        for (File file : files) {
+            if (file.exists() && file.canRead()) {
+                validFiles.add(file);
+            } else {
+                Log.debug("Clipboard file is not accessible: " + file.getAbsolutePath());
+            }
+        }
+        return validFiles;
     }
 }

@@ -8,9 +8,11 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InvalidClassException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +38,7 @@ class NetworkClipboardGraphicMessageTest {
 
         // when
         final ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()));
+        NetworkClipboardGraphicMessage.installImageObjectInputFilter(in);
         assertEquals(NetworkMessageType.CLIPBOARD_GRAPHIC, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
         final NetworkClipboardGraphicMessage unmarshalled = NetworkClipboardGraphicMessage.unmarshall(in);
 
@@ -47,6 +50,21 @@ class NetworkClipboardGraphicMessageTest {
         assertEquals(Color.GREEN.getRGB(), restored.getRGB(1, 0));
         assertEquals(Color.BLUE.getRGB(), restored.getRGB(0, 1));
         assertEquals(Color.WHITE.getRGB(), restored.getRGB(1, 1));
+    }
+
+    @Test
+    void unmarshallRejectsDisallowedClasses() throws IOException {
+        // given
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeUnshared(new HashMap<>());
+        }
+
+        // when, then
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardGraphicMessage.installImageObjectInputFilter(in);
+            assertThrows(InvalidClassException.class, () -> NetworkClipboardGraphicMessage.unmarshall(in));
+        }
     }
 
     @Test
