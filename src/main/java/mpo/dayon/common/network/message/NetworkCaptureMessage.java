@@ -7,6 +7,8 @@ import mpo.dayon.common.buffer.MemByteBuffer;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.UnitUtilities;
 
+import static java.lang.Math.max;
+
 public class NetworkCaptureMessage extends NetworkMessage {
 	private final int id;
 
@@ -87,7 +89,10 @@ public class NetworkCaptureMessage extends NetworkMessage {
 			compressionConfiguration = null;
 		}
 
-		final int len = in.readInt();
+		final int len = max(0, in.readInt());
+		if (len > 67000067) {
+			throw new IOException("NetworkCaptureMessage: payload too large: " + len + " bytes");
+		}
 		final byte[] data = new byte[len];
 		int offset = 0;
 		int count;
