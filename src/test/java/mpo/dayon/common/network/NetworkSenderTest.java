@@ -20,9 +20,14 @@ import java.awt.im.InputContext;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.Long.sum;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class NetworkSenderTest {
@@ -238,5 +243,46 @@ class NetworkSenderTest {
         int last = capturedValues.get(capturedValues.size() - 1);
         assertEquals(width, first);
         assertEquals(height, last);
+    }
+
+    @Test
+    void cancelWakesUpProducersBlockedOnTheSendQueue() throws Exception {
+        // given - the sender thread is stuck writing to a dead socket
+        final CountDownLatch firstWriteStarted = new CountDownLatch(1);
+        final CountDownLatch releaseFirstWrite = new CountDownLatch(1);
+        final AtomicBoolean firstWrite = new AtomicBoolean();
+        doAnswer(invocation -> {
+            if (firstWrite.compareAndSet(false, true)) {
+                firstWriteStarted.countDown();
+                releaseFirstWrite.await(10, TimeUnit.SECONDS);
+            }
+            return null;
+        }).when(outMock).writeByte(anyInt());
+
+        // the first message keeps the sender thread busy and the second one
+        // consumes the only permit, so the third producer blocks on acquire()
+        sender.sendResizeScreen(1, 1);
+        assertTrue(firstWriteStarted.await(5, TimeUnit.SECONDS));
+        sender.sendResizeScreen(2, 2);
+
+        final CountDownLatch producerReturned = new CountDownLatch(1);
+        final Thread producer = new Thread(() -> {
+            sender.sendResizeScreen(3, 3);
+            producerReturned.countDown();
+        });
+        producer.start();
+        assertFalse(producerReturned.await(200, TimeUnit.MILLISECONDS),
+                "the producer should block while the sender is stuck");
+
+        // when
+        sender.cancel();
+
+        // then
+        try {
+            assertTrue(producerReturned.await(5, TimeUnit.SECONDS), "cancel must wake up blocked producers");
+        } finally {
+            releaseFirstWrite.countDown();
+            producer.join(5_000);
+        }
     }
 }

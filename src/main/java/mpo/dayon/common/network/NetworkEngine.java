@@ -238,24 +238,28 @@ public abstract class NetworkEngine {
 
         //noinspection InfiniteLoopStatement
         while (true) {
-            NetworkMessageType type;
-            if (filesHelper.isDone()) {
-                NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
-                type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
-                Log.debug("Received " + type.name());
-                if (!type.equals(CLIPBOARD_FILES) && !type.equals(PING)) {
-                    throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
-                }
-            } else {
-                type = CLIPBOARD_FILES;
-            }
-
-            if (type.equals(CLIPBOARD_FILES)) {
-                filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                        filesHelper, tmpDir), clipboardOwner);
+            try {
+                NetworkMessageType type;
                 if (filesHelper.isDone()) {
-                    fireOnClipboardReceived();
+                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+                    Log.debug("Received " + type.name());
+                    if (!type.equals(CLIPBOARD_FILES) && !type.equals(PING)) {
+                        throw new IOException(format(UNSUPPORTED_TYPE, type));
+                    }
+                } else {
+                    type = CLIPBOARD_FILES;
                 }
+
+                if (type.equals(CLIPBOARD_FILES)) {
+                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+                            filesHelper, tmpDir), clipboardOwner);
+                    if (filesHelper.isDone()) {
+                        fireOnClipboardReceived();
+                    }
+                }
+            } catch (RuntimeException ex) {
+                throw new IOException("Malformed clipboard file transfer", ex);
             }
         }
     }
@@ -264,23 +268,53 @@ public abstract class NetworkEngine {
     }
 
     /**
-     * closes all connections AND resets the cancelling flag
+     * Closes all connections AND resets the cancelling flag
      */
     protected void closeConnections() {
+        closeConnections(true);
+    }
+
+    /**
+     * Closes all connections. Between two reconnect attempts the cancelling flag
+     * and the pinned peer identity have to be preserved.
+     *
+     * @param finalCleanup true when no reconnect will follow
+     */
+    protected void closeConnections(boolean finalCleanup) {
         if (sender != null) {
             sender.cancel();
         }
-        receiver = safeInterrupt(receiver);
+        receiver = closeThread(receiver, finalCleanup);
         safeClose(in, connection, server);
 
         if (fileSender != null) {
             fileSender.cancel();
         }
-        fileReceiver = safeInterrupt(fileReceiver);
+        // Detach the file receiver before closing its socket so that a stale receiver cannot tear down a newer session.
+        final Thread oldFileReceiver = fileReceiver;
+        fileReceiver = null;
+        if (oldFileReceiver != null && oldFileReceiver != Thread.currentThread()) {
+            safeInterrupt(oldFileReceiver);
+        }
         safeClose(fileIn, fileConnection);
         mainPeerCertificateFingerprint = null;
-        expectedReconnectPeerFingerprint = null;
-        cancelling.set(false);
+        if (finalCleanup) {
+            expectedReconnectPeerFingerprint = null;
+            cancelling.set(false);
+        }
+    }
+
+    /**
+     * Interrupts the given thread unless we are running on it ourselves.
+     */
+    private static Thread closeThread(Thread thread, boolean finalCleanup) {
+        if (thread == null) {
+            return null;
+        }
+        if (thread == Thread.currentThread()) {
+            return finalCleanup ? null : thread;
+        }
+        return safeInterrupt(thread);
     }
 
     protected void createInputStream() throws IOException {
@@ -361,7 +395,7 @@ public abstract class NetworkEngine {
         return false;
     }
 
-    // creates unrestricted port forwarding rule and performs a port accessibility check
+    // Creates unrestricted port forwarding rule and performs a port accessibility check
     public boolean selfTest(String publicIp, int newPort) {
         return selfTest(publicIp, newPort, 0, null);
     }

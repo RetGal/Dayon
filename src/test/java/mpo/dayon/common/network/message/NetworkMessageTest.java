@@ -87,7 +87,21 @@ class NetworkMessageTest {
         ObjectInputStream in = asInput(bytes);
 
         // when, then
-        assertThrows(IllegalArgumentException.class, () -> NetworkMessage.unmarshallEnum(in, CompressionMethodForTest.class));
+        assertThrows(IOException.class, () -> NetworkMessage.unmarshallEnum(in, CompressionMethodForTest.class));
+    }
+
+    @Test
+    void unmarshallANegativeEnumOrdinal() throws IOException {
+        // given
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bytes);
+        out.writeByte(-1); // out of range
+        out.flush();
+
+        ObjectInputStream in = asInput(bytes);
+
+        // when, then
+        assertThrows(IOException.class, () -> NetworkMessage.unmarshallEnum(in, CompressionMethodForTest.class));
     }
 
     private enum CompressionMethodForTest {

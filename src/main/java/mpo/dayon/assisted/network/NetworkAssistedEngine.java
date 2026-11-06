@@ -213,7 +213,6 @@ public class NetworkAssistedEngine extends NetworkEngine
                 configuration.setServerName(token.getPeerAddress());
                 configuration.setServerPort(token.getPeerPort());
             }
-            Log.info(format("Connecting to [%s:%s]...", configuration.getServerName(), configuration.getServerPort()));
             connectToAssistant(connectionTimeout, 0);
         }
 
@@ -389,7 +388,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             Log.info(format("Dayon! server [port:%d]", port));
             server = (SSLServerSocket) sssf.createServerSocket(port);
             server.setNeedClientAuth(true);
-            Log.info("Accepting...");
+            Log.info("Waiting for the assistant to connect...");
             connection = (SSLSocket) server.accept();
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
@@ -458,7 +457,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             if (preDelay > 0) {
                 pause(preDelay);
             }
-            Log.info("Connecting to assistant " + configuration.getServerName() + ":" + configuration.getServerPort());
+            Log.info(format("Connecting to [%s:%s]", configuration.getServerName(), configuration.getServerPort()));
             connection = (SSLSocket) ssf.createSocket();
             connection.setNeedClientAuth(true);
             // grace period of twice the connection timeout (default 14 seconds) for the assistant to accept the connection
@@ -543,50 +542,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
+    @SuppressWarnings("squid:S2189")
     private void receivingLoop() {
-
         try {
-            //noinspection InfiniteLoopStatement
             while (true) {
-                NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
-                NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                Log.debug("Received %s", type::name);
-
-                switch (type) {
-                    case CAPTURE_CONFIGURATION:
-                        captureConfigurationHandler.handleConfiguration(NetworkCaptureConfigurationMessage.unmarshall(in));
-                        break;
-                    case COMPRESSOR_CONFIGURATION:
-                        compressorConfigurationHandler.handleConfiguration(NetworkCompressorConfigurationMessage.unmarshall(in));
-                        break;
-                    case MOUSE_CONTROL:
-                        controlHandler.handleMessage(NetworkMouseControlMessage.unmarshall(in));
-                        break;
-                    case KEY_CONTROL:
-                        controlHandler.handleMessage(NetworkKeyControlMessage.unmarshall(in));
-                        break;
-                    case CLIPBOARD_REQUEST:
-                        clipboardRequestHandler.handleClipboardRequest();
-                        break;
-                    case CLIPBOARD_TEXT:
-                        setClipboardContents(NetworkClipboardTextMessage.unmarshall(in).getText(), clipboardOwner);
-                        sender.ping();
-                        break;
-                    case CLIPBOARD_GRAPHIC:
-                        setClipboardContents(NetworkClipboardGraphicMessage.unmarshall(in).getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
-                        sender.ping();
-                        break;
-                    case SCREENSHOT_REQUEST:
-                        screenshotRequestHandler.handleScreenshotRequest();
-                        break;
-                    case GOODBYE:
-                        cancelling.set(true);
-                        break;
-                    case PING:
-                        break;
-                    default:
-                        throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
-                }
+                processNetworkMessages();
             }
         } catch (IOException ex) {
             if (!cancelling.get()) {
@@ -605,10 +565,53 @@ public class NetworkAssistedEngine extends NetworkEngine
                     cleanUpUpnp();
                 }
             }
-        } catch (ClassNotFoundException e) {
-            closeConnections();
-            fireOnDisconnecting();
-            throw new IllegalArgumentException(e);
+        }
+    }
+
+    private void processNetworkMessages() throws IOException {
+        try {
+            NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
+            NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
+            Log.debug("Received %s", type::name);
+
+            switch (type) {
+                case CAPTURE_CONFIGURATION:
+                    captureConfigurationHandler.handleConfiguration(NetworkCaptureConfigurationMessage.unmarshall(in));
+                    break;
+                case COMPRESSOR_CONFIGURATION:
+                    compressorConfigurationHandler.handleConfiguration(NetworkCompressorConfigurationMessage.unmarshall(in));
+                    break;
+                case MOUSE_CONTROL:
+                    controlHandler.handleMessage(NetworkMouseControlMessage.unmarshall(in));
+                    break;
+                case KEY_CONTROL:
+                    controlHandler.handleMessage(NetworkKeyControlMessage.unmarshall(in));
+                    break;
+                case CLIPBOARD_REQUEST:
+                    clipboardRequestHandler.handleClipboardRequest();
+                    break;
+                case CLIPBOARD_TEXT:
+                    setClipboardContents(NetworkClipboardTextMessage.unmarshall(in).getText(), clipboardOwner);
+                    sender.ping();
+                    break;
+                case CLIPBOARD_GRAPHIC:
+                    setClipboardContents(NetworkClipboardGraphicMessage.unmarshall(in).getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
+                    sender.ping();
+                    break;
+                case SCREENSHOT_REQUEST:
+                    screenshotRequestHandler.handleScreenshotRequest();
+                    break;
+                case GOODBYE:
+                    cancelling.set(true);
+                    break;
+                case PING:
+                    break;
+                default:
+                    throw new IOException(format(UNSUPPORTED_TYPE, type));
+            }
+        } catch (RuntimeException | ClassNotFoundException ex) {
+            // malformed input must end this session, not the process
+            throw new IOException("Malformed network message", ex);
         }
     }
 
@@ -616,7 +619,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         try {
             handleIncomingClipboardFiles(fileIn, clipboardOwner);
         } catch (IOException ex) {
-            closeConnections();
+            if (fileReceiver == Thread.currentThread()) {
+                closeConnections();
+            } else {
+                Log.debug("Ignoring I/O error of a stale file receiver");
+            }
         }
     }
 

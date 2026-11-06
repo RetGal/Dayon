@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +26,8 @@ import mpo.dayon.common.squeeze.RegularTileCache;
 import mpo.dayon.common.squeeze.TileCache;
 
 public class CompressorEngine implements ReConfigurable<CompressorEngineConfiguration>, CaptureEngineListener {
+	private static final long RESET_DRAIN_TIMEOUT_MS = 2_000L;
+
 	private final Listeners<CompressorEngineListener> listeners = new Listeners<>();
 
 	private ThreadPoolExecutor executor;
@@ -56,31 +59,63 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 		configure(configuration);
 	}
 
-	@SuppressWarnings("squid:S2142") // this is fine, as orphaned captures are drained anyway
 	public void reset() {
 		final CountDownLatch drained = new CountDownLatch(1);
+		final ThreadPoolExecutor currentExecutor;
 		synchronized (resetLock) {
 			resetPending = true;
 			acceptingResetCapture = false;
 			reconfigured.set(true);
+			currentExecutor = executor;
+			if (currentExecutor == null || currentExecutor.isShutdown()) {
+				// nothing can be in flight if the engine was never started or is stopped
+				return;
+			}
 			// discard queued captures from the old session, then wait behind any
 			// capture already being compressed before allowing reconnect to proceed.
-			executor.getQueue().clear();
-			executor.execute(drained::countDown);
-		}
-		boolean interrupted = false;
-		while (drained.getCount() > 0) {
+			currentExecutor.getQueue().clear();
 			try {
-				drained.await();
-			} catch (InterruptedException ex) {
-				// connection teardown may interrupt this thread; the barrier must
-				// still complete before the next session starts.
-				interrupted = true;
+				currentExecutor.execute(drained::countDown);
+			} catch (RejectedExecutionException ex) {
+				// shut down concurrently - nothing left to drain
+				return;
 			}
 		}
-		if (interrupted) {
-			// do not carry the teardown interrupt into the reconnect code.
-			Thread.interrupted();
+		awaitDrained(drained);
+	}
+
+	/**
+	 * Waits for the compressor to finish the capture that was in flight when the
+	 * session was interrupted. The wait is bounded so that a wedged compressor
+	 * (e.g., blocked while sending over a dead socket) cannot block the assisted
+	 * side's reconnect forever.
+	 */
+	@SuppressWarnings("squid:S2142") // the reconnect thread's teardown interrupt is intentionally swallowed
+	private static void awaitDrained(CountDownLatch drained) {
+		final long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(RESET_DRAIN_TIMEOUT_MS);
+		boolean interrupted = false;
+		try {
+			while (drained.getCount() > 0) {
+				final long remaining = deadline - System.nanoTime();
+				if (remaining <= 0) {
+					Log.warn("Compressor did not drain within " + RESET_DRAIN_TIMEOUT_MS + "ms - continuing");
+					return;
+				}
+				try {
+					if (drained.await(remaining, TimeUnit.NANOSECONDS)) {
+						return;
+					}
+				} catch (InterruptedException ex) {
+					// connection teardown may interrupt this thread; the barrier must
+					// still complete (or time out) before the next session starts.
+					interrupted = true;
+				}
+			}
+		} finally {
+			if (interrupted) {
+				// do not carry the teardown interrupt into the reconnect code.
+				Thread.interrupted();
+			}
 		}
 	}
 
@@ -186,26 +221,31 @@ public class CompressorEngine implements ReConfigurable<CompressorEngineConfigur
 
 		@Override
 		protected void execute() throws IOException {
-			CompressorEngineConfiguration xconfiguration = configuration.get();
-			boolean xreconfigured = reconfigured.getAndSet(false) || capture.isReset();
-			Compressor xcompressor = compressor.get();
-			if (xreconfigured) {
-				xconfiguration = configuration.get();
-				cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
-							: new NullTileCache();
-			}
-			final MemByteBuffer compressed = xcompressor.compress(cache, capture);
+			try {
+				CompressorEngineConfiguration xconfiguration = configuration.get();
+				boolean xreconfigured = reconfigured.getAndSet(false) || capture.isReset();
+				Compressor xcompressor = compressor.get();
+				if (xreconfigured) {
+					xconfiguration = configuration.get();
+					cache = xconfiguration.useCache() ? new RegularTileCache(xconfiguration.getCacheMaxSize(), xconfiguration.getCachePurgeSize())
+								: new NullTileCache();
+				}
+				final MemByteBuffer compressed = xcompressor.compress(cache, capture);
 
-			// Possibly blocking - no problem as we'll replace (and merge) in our queue
-			// the oldest capture (if any) until we can compress it and send it to the next
-			// stage of processing.
-			if (!xreconfigured) {
-				fireOnCompressed(capture.getId(), xcompressor.getMethod(), null, compressed);
-			} else {
-				// we have to send the whole configuration => de-compressor synchronization (!)
-				fireOnCompressed(capture.getId(), xcompressor.getMethod(), xconfiguration, compressed);
+				// Possibly blocking - no problem as we'll replace (and merge) in our queue
+				// the oldest capture (if any) until we can compress it and send it to the next
+				// stage of processing.
+				if (!xreconfigured) {
+					fireOnCompressed(capture.getId(), xcompressor.getMethod(), null, compressed);
+				} else {
+					// we have to send the whole configuration => de-compressor synchronization (!)
+					fireOnCompressed(capture.getId(), xcompressor.getMethod(), xconfiguration, compressed);
+				}
+				cache.onCaptureProcessed();
+			} catch (RuntimeException ex) {
+				// malformed capture or configuration must end the session, not the process
+				throw new IOException("Capture compression failed", ex);
 			}
-			cache.onCaptureProcessed();
 		}
 
 		private void fireOnCompressed(int captureId, CompressionMethod compressionMethod, CompressorEngineConfiguration compressionConfiguration,

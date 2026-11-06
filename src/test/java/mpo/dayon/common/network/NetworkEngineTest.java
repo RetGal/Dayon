@@ -1,6 +1,7 @@
 package mpo.dayon.common.network;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -70,7 +71,7 @@ class NetworkEngineTest {
         final TestNetworkEngine engine = new TestNetworkEngine();
 
         // when, then - must not throw
-        assertDoesNotThrow(engine::closeConnections);
+        assertDoesNotThrow((Executable) engine::closeConnections);
     }
 
     @Test
@@ -214,6 +215,41 @@ class NetworkEngineTest {
         // then
         assertFalse(engine.hasPeerIdentityForReconnect());
         assertFalse(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{1, 2, 3})));
+    }
+
+    @Test
+    void keepsTheReconnectIdentityAndCancellingFlagBetweenReconnectAttempts() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        engine.rememberMainPeerIdentity();
+        engine.rememberPeerIdentityForReconnect();
+        engine.cancelling.set(true);
+
+        // when
+        engine.closeConnections(false);
+
+        // then
+        assertTrue(engine.hasPeerIdentityForReconnect());
+        assertTrue(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{1, 2, 3})));
+        assertTrue(engine.cancelling.get(), "a reconnect attempt must not reset the cancelling flag");
+    }
+
+    @Test
+    void finalCleanupForgetsTheReconnectIdentityAndCancellingFlag() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        engine.rememberMainPeerIdentity();
+        engine.rememberPeerIdentityForReconnect();
+        engine.cancelling.set(true);
+
+        // when
+        engine.closeConnections(true);
+
+        // then
+        assertFalse(engine.hasPeerIdentityForReconnect());
+        assertFalse(engine.cancelling.get());
     }
 
     private static SSLSocket socketWithPeerCertificate(byte[] encodedCertificate) throws Exception {

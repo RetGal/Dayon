@@ -29,7 +29,7 @@ public abstract class NetworkMessage {
         int ordinal = in.readByte();
         T[] enumConstants = enumClass.getEnumConstants();
         if (ordinal < 0 || ordinal >= enumConstants.length) {
-            throw new IllegalArgumentException("Unknown " + enumClass.getSimpleName() + " enum!");
+            throw new IOException("Unknown " + enumClass.getSimpleName() + " enum!");
         }
         return enumConstants[ordinal];
     }
