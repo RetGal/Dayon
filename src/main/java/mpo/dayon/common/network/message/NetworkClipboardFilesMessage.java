@@ -51,10 +51,14 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
                 helper.setFileMetadatas((ArrayList<FileMetaData>) in.readObject());
                 if (helper.getFileMetadatas().isEmpty()) {
                     Log.error("Received empty file metadata");
-                    return helper;
+                    throw new IOException("Received empty file metadata");
                 }
                 helper.setFileBytesLeft(helper.getFileMetadatas().get(0).getFileSize());
                 helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToLong(FileMetaData::getFileSize).sum());
+                if (helper.getTotalFileBytesLeft() < 0 || helper.getTotalFileBytesLeft() > Integer.MAX_VALUE) {
+                    Log.error("Received invalid total file size " + helper.getTotalFileBytesLeft());
+                    throw new IOException("Received invalid total file size " + helper.getTotalFileBytesLeft());
+                }
             }
             int position = helper.getPosition();
             FileMetaData meta = helper.getFileMetadatas().get(position);
@@ -86,7 +90,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
                 }
             }
         } catch (ClassNotFoundException e) {
-            Log.error(e.getMessage());
+            throw new IOException("Could not read clipboard file metadata", e);
         }
         return helper;
     }

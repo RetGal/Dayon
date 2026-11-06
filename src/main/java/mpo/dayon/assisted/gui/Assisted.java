@@ -12,7 +12,7 @@ import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.compressor.CompressorEngine;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.error.FatalErrorHandler;
-import mpo.dayon.common.error.KeyboardErrorHandler;
+import mpo.dayon.common.error.ErrorHandler;
 import mpo.dayon.common.event.Subscriber;
 import mpo.dayon.common.gui.common.DialogFactory;
 import mpo.dayon.common.gui.common.ImageNames;
@@ -151,7 +151,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
                 networkEngine, tokenServerUrlsFromYaml, isWayland
         );
         FatalErrorHandler.attachFrame(frame);
-        KeyboardErrorHandler.attachFrame(frame);
+        ErrorHandler.attachFrame(frame);
         frame.setVisible(true);
         Log.info("Assisted start");
     }
@@ -449,7 +449,7 @@ public class Assisted implements Subscriber, ClipboardOwner {
 
     @Override
     public void digest(String message) {
-        KeyboardErrorHandler.warn(valueOf(message));
+        ErrorHandler.warn(valueOf(message));
     }
 
     @Override
@@ -510,6 +510,9 @@ public class Assisted implements Subscriber, ClipboardOwner {
     private class MyNetworkAssistedEngineListener implements NetworkAssistedEngineListener {
         @Override
         public void onConnecting(String serverName, int serverPort) {
+            if (compressorEngine != null) {
+                compressorEngine.reset();
+            }
             capsOff();
             frame.onConnecting(serverName, serverPort);
         }
@@ -545,11 +548,14 @@ public class Assisted implements Subscriber, ClipboardOwner {
         @Override
         public void onConnected(String fingerprints, boolean isRevertedConnection) {
             frame.onConnected(fingerprints, isRevertedConnection);
-            // reset the capture engine in order to transmit a full capture, important in case of reconnects
+            // reset capture state before allowing the compressor to accept captures again.
             if (captureEngine != null) {
                 captureEngine.reconfigure(captureEngineConfiguration);
             } else {
                 initNewCaptureEngine(shareAllScreens.get());
+            }
+            if (compressorEngine != null) {
+                compressorEngine.resumeAfterReset();
             }
             if (mouseEngine == null) {
                 mouseEngine = new MouseEngine(networkEngine);

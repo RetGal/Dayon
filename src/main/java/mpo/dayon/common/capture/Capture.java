@@ -24,7 +24,7 @@ public class Capture {
 
 	private final int id;
 
-	private final boolean reset;
+	private boolean reset;
 
 	/**
 	 * @see #mergeDirtyTiles(Capture[])
@@ -126,6 +126,7 @@ public class Capture {
 		int xskipped = 0;
 		int xmerged = 0;
 		for (Capture older : olders) {
+			reset |= older.isReset();
 			doMergeDirtyTiles(older);
 			xskipped += older.getSkipped();
 			xmerged += older.getMerged();
