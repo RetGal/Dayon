@@ -71,19 +71,18 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             int read = bis.read(buffer, 0, buffer.length);
             Log.debug("Bytes read: " + read);
             String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
-            fileName = sanitizeFileName(fileName);
             final boolean append = helper.getFileBytesLeft() != fileSize;
             if (!append) {
                 Log.info("Receiving " + fileName);
             }
             Path targetPath = Paths.get(tmpDir, helper.getTransferId(), fileName).toAbsolutePath().normalize();
-            if (targetPath.toFile().getPath().contains("..")) {
-                throw new IOException("Invalid file path: " + targetPath);
+            Path rootPath = Paths.get(tmpDir, helper.getTransferId()).toAbsolutePath().normalize();
+            if (!targetPath.startsWith(rootPath)) {
+                throw new IOException("Path escapes transfer directory");
             }
             writeToTempFile(buffer, read, targetPath, append);
 
             if (getRemainingTotalFilesSize(helper, read, position) == 0) {
-                Path rootPath = Paths.get(tmpDir, helper.getTransferId()).toAbsolutePath().normalize();
                 File[] filesArray = rootPath.toFile().listFiles();
                 if (filesArray != null) {
                     helper.setFiles(Arrays.asList(Objects.requireNonNull(filesArray)));
@@ -93,13 +92,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             throw new IOException("Could not read clipboard file metadata", e);
         }
         return helper;
-    }
-
-    private static String sanitizeFileName(String fileName) {
-        if (fileName == null) {
-            return null;
-        }
-        return fileName.replace("..", "").replace(File.separator + File.separator, File.separator);
     }
 
     private static long getRemainingTotalFilesSize(NetworkClipboardFilesHelper helper, int read, int position) {

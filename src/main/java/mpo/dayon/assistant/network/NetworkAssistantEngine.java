@@ -133,6 +133,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         boolean proceed = true;
         isInvertibleConnection = false;
 
+        if (!reconnecting) {
+            clearPeerIdentityForReconnect();
+        }
+
         try {
             awaitConnections(compatibilityMode);
             rememberMainPeerIdentity();
@@ -176,6 +180,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         } catch (IOException ex) {
             if (introduced && !cancelling.get()) {
                 Log.warn("Session was interrupted - allow reconnect");
+                rememberPeerIdentityForReconnect();
                 fireOnSessionInterrupted();
                 getReady(compatibilityMode, true);
             } else {
@@ -234,6 +239,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         server.setNeedClientAuth(true);
 
         Log.info("Accepting...");
+        boolean accepted;
         do {
             if (connection != null && connection.isBound()) {
                 safeClose(connection); // we might have refused the accepted connection (!)
@@ -244,8 +250,22 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnFingerprinted(null);
                 throw new IOException("Certificate error, try enabling compatibility mode!");
             }
-            Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-        } while (!fireOnAccepted(connection, (configuration.isAutoAccept() || isReconnecting)) && !cancelling.get());
+            if (isReconnecting && hasPeerIdentityForReconnect() && !isExpectedReconnectPeer(connection)) {
+                Log.warn(format("Rejecting reconnect from %s: peer certificate does not match the interrupted session",
+                        connection.getInetAddress().getHostAddress()));
+                safeClose(connection);
+                connection = null;
+                accepted = false;
+            } else {
+                Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
+                accepted = fireOnAccepted(connection,
+                        configuration.isAutoAccept() || (isReconnecting && hasPeerIdentityForReconnect()));
+            }
+        } while (!accepted && !cancelling.get());
+
+        if (connection == null) {
+            throw new IOException("Reconnect aborted: no matching peer");
+        }
         fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
 
         if (server.isBound()) {
@@ -263,7 +283,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
                 pause(2000L);
             }
-            hasRejected = !fireOnAccepted(connection, (configuration.isAutoAccept() || isReconnecting));
+            if (isReconnecting && hasPeerIdentityForReconnect() && !isExpectedReconnectPeer(connection)) {
+                throw new IOException("Reconnect aborted: peer certificate does not match the interrupted session");
+            }
+            hasRejected = !fireOnAccepted(connection,
+                    configuration.isAutoAccept() || (isReconnecting && hasPeerIdentityForReconnect()));
             Log.info("Connected to the assisted");
             return true;
         }

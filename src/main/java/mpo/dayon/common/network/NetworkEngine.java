@@ -100,6 +100,12 @@ public abstract class NetworkEngine {
     private byte[] mainPeerCertificateFingerprint;
 
     /**
+     * Peer certificate fingerprint of the session that was interrupted.
+     * A peer is only allowed to resume that session if its certificate matches this fingerprint exactly.
+     */
+    private byte[] expectedReconnectPeerFingerprint;
+
+    /**
      * Might be blocking if the sender queue is full (!)
      */
     public void sendClipboardText(String text) {
@@ -195,6 +201,37 @@ public abstract class NetworkEngine {
         return socket == null ? null : CustomTrustManager.calculatePeerCertificateFingerprint(socket.getSession());
     }
 
+    /**
+     * Remembers the identity of the current peer so that a reconnect can be
+     * bound to the very same peer.
+     */
+    protected void rememberPeerIdentityForReconnect() {
+        expectedReconnectPeerFingerprint = mainPeerCertificateFingerprint == null
+                ? null
+                : mainPeerCertificateFingerprint.clone();
+    }
+
+    protected void clearPeerIdentityForReconnect() {
+        expectedReconnectPeerFingerprint = null;
+    }
+
+    protected boolean hasPeerIdentityForReconnect() {
+        return expectedReconnectPeerFingerprint != null;
+    }
+
+    /**
+     * A reconnect is only accepted if the peer certificate matches the one of
+     * the interrupted session exactly.
+     */
+    protected boolean isExpectedReconnectPeer(SSLSocket candidate) {
+        if (expectedReconnectPeerFingerprint == null) {
+            return false;
+        }
+        final byte[] candidateFingerprint = calculatePeerCertificateFingerprint(candidate);
+        return candidateFingerprint != null
+                && MessageDigest.isEqual(expectedReconnectPeerFingerprint, candidateFingerprint);
+    }
+
     protected void handleIncomingClipboardFiles(ObjectInputStream fileIn, ClipboardOwner clipboardOwner) throws IOException {
         String tmpDir = getTempDir();
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
@@ -242,6 +279,7 @@ public abstract class NetworkEngine {
         fileReceiver = safeInterrupt(fileReceiver);
         safeClose(fileIn, fileConnection);
         mainPeerCertificateFingerprint = null;
+        expectedReconnectPeerFingerprint = null;
         cancelling.set(false);
     }
 

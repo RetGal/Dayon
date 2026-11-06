@@ -117,7 +117,7 @@ class NetworkClipboardFilesMessageTest {
     }
 
     @Test
-    void unmarshallSanitizesParentDirectorySegments() throws IOException {
+    void unmarshallRejectsParentDirectorySegments() throws IOException {
         // given
         final List<FileMetaData> metadata = new ArrayList<>(Collections.singletonList(
                 new FileMetaData(".." + File.separator + "escape.txt", 1, "")));
@@ -129,18 +129,15 @@ class NetworkClipboardFilesMessageTest {
         final Path target = Files.createDirectories(tempDir.resolve("target"));
         final NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
 
-        // when
+        // when, then
         try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
             NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
-            NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+            final IOException error = assertThrows(IOException.class,
+                    () -> NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString()));
+            assertEquals("Path escapes transfer directory", error.getMessage());
         }
-
-        // then
-        assertEquals(1, helper.getFiles().size());
-        final File received = helper.getFiles().get(0);
-        assertEquals("escape.txt", received.getName());
-        assertEquals(target.resolve(helper.getTransferId()).toFile(), received.getParentFile());
-        assertEquals(1, Files.size(received.toPath()));
+        assertFalse(Files.exists(target.resolve("escape.txt")), "the escaping file must not be written");
+        assertFalse(Files.exists(tempDir.resolve("escape.txt")), "the escaping file must not be written");
     }
 
     @Test
