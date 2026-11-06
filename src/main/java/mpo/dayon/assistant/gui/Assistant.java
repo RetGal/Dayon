@@ -487,20 +487,11 @@ public class Assistant implements ClipboardOwner {
                 purgeSizeTf.setEnabled(useCacheCb.isSelected());
 
                 final boolean ok = DialogFactory.showOkCancel(compressionFrame, translate("compression"), pane, true, () -> {
-                    final String max = maxSizeTf.getText();
-                    if (max.isEmpty()) {
-                        return translate("compression.cache.max.msg1");
+                    String errorMessage = validateCacheValue(maxSizeTf);
+                    if (errorMessage != null) {
+                        return errorMessage;
                     }
-                    final int maxValue;
-                    try {
-                        maxValue = Integer.parseInt(max);
-                    } catch (NumberFormatException ex) {
-                        return translate("compression.cache.max.msg2");
-                    }
-                    if (maxValue <= 0) {
-                        return translate("compression.cache.max.msg3");
-                    }
-                    return validatePurgeValue(purgeSizeTf, maxValue);
+                    return validatePurgeValue(purgeSizeTf, Integer.parseInt(maxSizeTf.getText()));
                 });
 
                 if (ok) {
@@ -536,6 +527,28 @@ public class Assistant implements ClipboardOwner {
         }
         if (purgeValue >= maxValue) {
             return translate("compression.cache.purge.msg4");
+        }
+        return null;
+    }
+
+    private static String validateCacheValue(JTextField maxSizeTf) {
+        String max = maxSizeTf.getText();
+        if (max.isEmpty()) {
+            return translate("compression.cache.max.msg1");
+        }
+        int maxValue;
+        try {
+            maxValue = Integer.parseInt(max);
+        } catch (NumberFormatException ex) {
+            return translate("compression.cache.max.msg2");
+        }
+        if (maxValue < 1) {
+            maxSizeTf.setText("1");
+            return translate("compression.cache.max.msg3");
+        }
+        if (maxValue > 129600) {
+            maxSizeTf.setText("129600");
+            return translate("compression.cache.max.msg4");
         }
         return null;
     }

@@ -5,6 +5,8 @@ import java.io.*;
 import mpo.dayon.common.capture.CaptureEngineConfiguration;
 import mpo.dayon.common.capture.Gray8Bits;
 
+import static mpo.dayon.common.utils.ValidationUtilities.requireRange;
+
 public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 	private final CaptureEngineConfiguration configuration;
 	private final boolean monochromePeer;
@@ -49,7 +51,7 @@ public class NetworkCaptureConfigurationMessage extends NetworkMessage {
 
 	public static NetworkCaptureConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final Gray8Bits quantization = unmarshallEnum(in, Gray8Bits.class);
-		final int tick = in.readInt();
+		final int tick = requireRange("capture tick", in.readInt(), 1, 2000);
 		final boolean colors = in.readShort() == 1;
 		return new NetworkCaptureConfigurationMessage(new CaptureEngineConfiguration(tick, quantization, colors), false);
 	}

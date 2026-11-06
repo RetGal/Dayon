@@ -8,6 +8,29 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NetworkResizeScreenMessageTest {
 
+    private static NetworkResizeScreenMessage unmarshall(int width, int height) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bytes);
+        out.writeInt(width);
+        out.writeInt(height);
+        out.flush();
+        return NetworkResizeScreenMessage.unmarshall(new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray())));
+    }
+
+    @Test
+    void acceptsTheGeometryBoundaries() throws IOException {
+        assertEquals(1, unmarshall(1, 1).getWidth());
+        assertEquals(15360, unmarshall(15360, 8640).getWidth());
+    }
+
+    @Test
+    void rejectsGeometryOutsideTheRange() {
+        assertThrows(IOException.class, () -> unmarshall(0, 1080));
+        assertThrows(IOException.class, () -> unmarshall(19200, 0));
+        assertThrows(IOException.class, () -> unmarshall(-1, 1080));
+        assertThrows(IOException.class, () -> unmarshall(1920, 100001));
+    }
+
     @Test
     void getters() {
         // given, when

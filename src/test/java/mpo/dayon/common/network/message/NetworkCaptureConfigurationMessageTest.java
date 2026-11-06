@@ -22,6 +22,30 @@ class NetworkCaptureConfigurationMessageTest {
         return NetworkCaptureConfigurationMessage.unmarshall(in);
     }
 
+    private static NetworkCaptureConfigurationMessage unmarshall(int tick) throws IOException {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bytes);
+        NetworkMessage.marshallEnum(out, Gray8Bits.X_128);
+        out.writeInt(tick);
+        out.writeShort(0);
+        out.flush();
+        return NetworkCaptureConfigurationMessage.unmarshall(
+                new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray())));
+    }
+
+    @Test
+    void acceptsTheTickBoundaries() throws IOException {
+        assertEquals(1, unmarshall(1).getConfiguration().getCaptureTick());
+        assertEquals(2000, unmarshall(2000).getConfiguration().getCaptureTick());
+    }
+
+    @Test
+    void rejectsATickOutsideTheRange() {
+        assertThrows(IOException.class, () -> unmarshall(0));
+        assertThrows(IOException.class, () -> unmarshall(-1));
+        assertThrows(IOException.class, () -> unmarshall(100001));
+    }
+
     @Test
     void getters() {
         // given

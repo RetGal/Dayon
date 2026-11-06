@@ -5,6 +5,8 @@ import java.io.*;
 import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.squeeze.CompressionMethod;
 
+import static mpo.dayon.common.utils.ValidationUtilities.requireRange;
+
 public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 	private final CompressorEngineConfiguration configuration;
 
@@ -43,8 +45,12 @@ public class NetworkCompressorConfigurationMessage extends NetworkMessage {
 	public static NetworkCompressorConfigurationMessage unmarshall(ObjectInputStream in) throws IOException {
 		final CompressionMethod method = unmarshallEnum(in, CompressionMethod.class);
 		final boolean useCache = in.readByte() == 1;
-		final int maxSize = in.readInt();
-		final int purgeSize = in.readInt();
+		final int maxSize = requireRange("compression cache max size", in.readInt());
+		final int purgeSize = requireRange("compression cache purge size", in.readInt());
+		if (purgeSize >= maxSize) {
+			throw new IOException("Invalid compression cache purge size [" + purgeSize
+					+ "] - must be less than the max size [" + maxSize + "]");
+		}
 		return new NetworkCompressorConfigurationMessage(new CompressorEngineConfiguration(method, useCache, maxSize, purgeSize));
 	}
 

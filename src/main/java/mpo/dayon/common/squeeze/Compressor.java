@@ -9,6 +9,8 @@ import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.capture.CaptureTile;
 import mpo.dayon.common.log.Log;
 
+import static mpo.dayon.common.utils.ValidationUtilities.*;
+
 public final class Compressor {
     /**
      * NONE. (testing only)
@@ -142,9 +144,15 @@ public final class Compressor {
         }
         final int cSkipped = in.readUnsignedByte();
         final int cMerged = in.readUnsignedByte();
-        final Dimension captureDimension = new Dimension(in.readShort(), in.readShort());
-        final Dimension tileDimension = new Dimension(in.readShort(), in.readShort());
-        final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(captureDimension.width, captureDimension.height, tileDimension.width, tileDimension.height);
+        final int captureWidth = requireRange("capture width", in.readShort(), MIN_VALUE, MAX_WIDTH);
+        final int captureHeight = requireRange("capture height", in.readShort(), MIN_VALUE, MAX_HEIGHT);
+        final int tileWidth = requireRange("tile width", in.readShort(), MIN_VALUE, MAX_WIDTH);
+        final int tileHeight = requireRange("tile height", in.readShort(), MIN_VALUE, MAX_HEIGHT);
+        final long tileCount = CaptureTile.getTileCount(captureWidth, captureHeight, tileWidth, tileHeight);
+        validateTileCount(tileCount);
+        final Dimension captureDimension = new Dimension(captureWidth, captureHeight);
+        final Dimension tileDimension = new Dimension(tileWidth, tileHeight);
+        final CaptureTile.XYWH[] xywh = CaptureTile.getXYWH(captureWidth, captureHeight, tileWidth, tileHeight);
         final CaptureTile[] dirty = new CaptureTile[xywh.length];
         int idx = 0;
         final int dirtyLen = dirty.length;
@@ -173,6 +181,12 @@ public final class Compressor {
             }
         }
         return new Capture(cId, cReset, cSkipped, cMerged, captureDimension, tileDimension, dirty);
+    }
+
+    private static void validateTileCount(long tileCount) throws IOException {
+        if (tileCount > CaptureTile.MAX_TILE_COUNT) {
+            throw new IOException("Capture geometry too large [" + tileCount + " tiles]");
+        }
     }
 
     private void processUncached(TileCache cache, DataInputStream in, CaptureTile.XYWH xywh, CaptureTile[] dirty, int tidx, int value) throws IOException {
