@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import static mpo.dayon.common.utils.ValidationUtilities.*;
+
 public class NetworkResizeScreenMessage extends NetworkMessage {
 	private final int width;
 	private final int height;
@@ -43,8 +45,8 @@ public class NetworkResizeScreenMessage extends NetworkMessage {
 	}
 
 	public static NetworkResizeScreenMessage unmarshall(ObjectInputStream in) throws IOException {
-		final int width = in.readInt();
-		final int height = in.readInt();
+		final int width = requireRange("screen width", in.readInt(), MIN_VALUE, MAX_WIDTH);
+		final int height = requireRange("screen height", in.readInt(), MIN_VALUE, MAX_HEIGHT);
 		return new NetworkResizeScreenMessage(width, height);
 	}
 

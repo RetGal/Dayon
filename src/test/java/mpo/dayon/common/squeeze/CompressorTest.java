@@ -238,4 +238,38 @@ class CompressorTest {
         assertEquals(CompressionMethod.XZ, Compressor.get(CompressionMethod.XZ).getMethod());
         assertEquals(CompressionMethod.NONE, Compressor.get(CompressionMethod.NONE).getMethod());
     }
+
+    private static MemByteBuffer captureWithGeometry(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+        final MemByteBuffer payload = new MemByteBuffer();
+        payload.writeInt(1); // capture id
+        payload.write(1); // reset
+        payload.write(0); // skipped
+        payload.write(0); // merged
+        payload.writeShorts(captureWidth, captureHeight, tileWidth, tileHeight);
+        return payload;
+    }
+
+    @ParameterizedTest
+    @EnumSource(CompressionMethod.class)
+    void rejectsNonPositiveCaptureGeometry(CompressionMethod method) {
+        // given
+        final Compressor compressor = Compressor.get(method);
+
+        // when, then
+        assertThrows(IOException.class, () -> compressor.decompress(new NullTileCache(), captureWithGeometry(0, 100, 32, 32)));
+        assertThrows(IOException.class, () -> compressor.decompress(new NullTileCache(), captureWithGeometry(100, -1, 32, 32)));
+        assertThrows(IOException.class, () -> compressor.decompress(new NullTileCache(), captureWithGeometry(100, 100, 0, 32)));
+        assertThrows(IOException.class, () -> compressor.decompress(new NullTileCache(), captureWithGeometry(100, 100, 32, -1)));
+    }
+
+    @ParameterizedTest
+    @EnumSource(CompressionMethod.class)
+    void rejectsACaptureThatWouldCreateTooManyTiles(CompressionMethod method) {
+        // given - a 1x1 tile size turns the maximum supported capture into ~132M tiles
+        final Compressor compressor = Compressor.get(method);
+        final MemByteBuffer payload = captureWithGeometry(15360, 8640, 1, 1);
+
+        // when, then
+        assertThrows(IOException.class, () -> compressor.decompress(new NullTileCache(), payload));
+    }
 }

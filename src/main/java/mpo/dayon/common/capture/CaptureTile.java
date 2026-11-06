@@ -231,6 +231,25 @@ public class CaptureTile {
 
 	private static XYWH_Cache cachedXYWH;
 
+	// maximum supported capture width/height (16K). Larger values are truncated
+	private static final int MAX_CAPTURE_WIDTH = 15360;
+	private static final int MAX_CAPTURE_HEIGHT = 8640;
+
+	// maximum number of tiles a capture may consist of
+	public static final long MAX_TILE_COUNT = 129_600L;
+
+	/**
+	 * Computes the number of tiles for the given geometry without allocating the
+	 * tile array. The same caps as {@link #getXYWH(int, int, int, int)} are used.
+	 */
+	public static long getTileCount(int captureWidth, int captureHeight, int tileWidth, int tileHeight) {
+		final int width = min(MAX_CAPTURE_WIDTH, captureWidth);
+		final int height = min(MAX_CAPTURE_HEIGHT, captureHeight);
+		final int tw = max(1, tileWidth);
+		final int th = max(1, tileHeight);
+		return (long) ((width + tw - 1) / tw) * ((height + th - 1) / th);
+	}
+
 	/**
 	 * The cache might change in case the assistant is re-configuring the
 	 * assisted capture configuration (capture width/height and/or tile
@@ -244,7 +263,7 @@ public class CaptureTile {
 		synchronized (CaptureTile.class) {
 			if (cachedXYWH == null || !cachedXYWH.configuration.equals(captureWidth, captureHeight, tileWidth, tileHeight)) {
 				// 16K limit should do
-				cachedXYWH = computeXYWH(min(15360, captureWidth), min(8640, captureHeight), max(1, tileWidth), max(1, tileHeight));
+				cachedXYWH = computeXYWH(min(MAX_CAPTURE_WIDTH, captureWidth), min(MAX_CAPTURE_HEIGHT, captureHeight), max(1, tileWidth), max(1, tileHeight));
 			}
 			return cachedXYWH.xywh.clone();
 		}
