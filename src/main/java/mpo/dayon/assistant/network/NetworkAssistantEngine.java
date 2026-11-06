@@ -166,10 +166,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                if (type != NetworkMessageType.MOUSE_LOCATION && type != NetworkMessageType.CAPTURE) {
-                    Log.debug("Received %s", type::name);
-                }
-                //Log.debug("Received %s", type::name);
+                Log.debug("Received %s", type::name);
                 if (introduced) {
                     proceed = processIntroduced(type, in);
                 } else {
@@ -427,7 +424,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnTerminating();
                 return false;
             case HELLO:
-                // not really expected here - but..
                 fireOnConnected(connection, introduce(in));
                 return true;
             default:

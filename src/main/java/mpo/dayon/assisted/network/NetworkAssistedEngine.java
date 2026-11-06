@@ -139,6 +139,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      * Connect to the assistant using the given token, which may be blank. The connectionTimeout is in ms
      */
     public void connect(Token token, int connectionTimeout) {
+        connection = null;
         this.token = token;
         this.connectionTimeout = connectionTimeout;
         try {
