@@ -156,6 +156,66 @@ class NetworkEngineTest {
         assertFalse(engine.isFileConnectionBound(fileConnection));
     }
 
+    @Test
+    void onlyAcceptsTheSamePeerAfterAnInterruption() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        engine.rememberMainPeerIdentity();
+
+        // when
+        engine.rememberPeerIdentityForReconnect();
+
+        // then
+        assertTrue(engine.hasPeerIdentityForReconnect());
+        assertTrue(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{1, 2, 3})));
+        assertFalse(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{4, 5, 6})));
+    }
+
+    @Test
+    void rejectsAnyPeerWhenNoInterruptedSessionWasRemembered() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+
+        // when, then
+        assertFalse(engine.hasPeerIdentityForReconnect());
+        assertFalse(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{1, 2, 3})));
+    }
+
+    @Test
+    void rejectsAReconnectWithoutAPeerCertificate() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        engine.rememberMainPeerIdentity();
+        engine.rememberPeerIdentityForReconnect();
+
+        final SSLSocket unverified = mock(SSLSocket.class);
+        final SSLSession session = mock(SSLSession.class);
+        when(session.getPeerCertificates()).thenThrow(new SSLPeerUnverifiedException("no peer"));
+        when(unverified.getSession()).thenReturn(session);
+
+        // when, then
+        assertFalse(engine.isExpectedReconnectPeer(unverified));
+        assertFalse(engine.isExpectedReconnectPeer(null));
+    }
+
+    @Test
+    void forgetsTheExpectedReconnectPeerWhenConnectionsAreClosed() throws Exception {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        engine.rememberMainPeerIdentity();
+        engine.rememberPeerIdentityForReconnect();
+
+        // when
+        engine.closeConnections();
+
+        // then
+        assertFalse(engine.hasPeerIdentityForReconnect());
+        assertFalse(engine.isExpectedReconnectPeer(socketWithPeerCertificate(new byte[]{1, 2, 3})));
+    }
+
     private static SSLSocket socketWithPeerCertificate(byte[] encodedCertificate) throws Exception {
         final X509Certificate certificate = mock(X509Certificate.class);
         when(certificate.getEncoded()).thenReturn(encodedCertificate);
