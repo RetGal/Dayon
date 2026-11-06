@@ -104,6 +104,8 @@ public class Assistant implements ClipboardOwner {
 
     private final AtomicBoolean compatibilityModeActive = new AtomicBoolean(false);
 
+    private volatile boolean sessionInterrupted;
+
     private String[] tokenServerUrlsFromYaml = {};
 
     public Assistant(String tokenServerUrl, String language) {
@@ -829,8 +831,12 @@ public class Assistant implements ClipboardOwner {
         @Override
         public void onConnected(Socket connection, char osId, String inputLocale, int peerMajorVersion) {
             assureCompatibility(peerMajorVersion);
-            sendCaptureConfiguration(captureEngineConfiguration);
-            sendCompressorConfiguration(compressorEngineConfiguration);
+            if (sessionInterrupted) {
+                sessionInterrupted = false;
+                sendCaptureConfiguration(captureEngineConfiguration);
+            } else {
+                sendEngineConfigurations();
+            }
             frame.resetCanvas();
             frame.onSessionStarted(osId, inputLocale, peerMajorVersion);
         }
@@ -841,6 +847,14 @@ public class Assistant implements ClipboardOwner {
                 captureEngineConfiguration = new CaptureEngineConfiguration(captureEngineConfiguration.getCaptureTick(), Gray8Bits.X_128, false);
                 captureEngineConfiguration.persist();
             }
+        }
+
+        private void sendEngineConfigurations() {
+            new Thread(() -> {
+                networkEngine.sendCompressorConfiguration(compressorEngineConfiguration);
+                // Apply the capture reset after resetting the assisted's compression cache.
+                networkEngine.sendCaptureConfiguration(captureEngineConfiguration);
+            }, "EngineSettingsSender").start();
         }
 
         @Override
@@ -885,7 +899,7 @@ public class Assistant implements ClipboardOwner {
 
         @Override
         public void onSessionInterrupted() {
-            frame.onSessionInterrupted();
+            sessionInterrupted = true;
         }
 
         /**
@@ -893,12 +907,14 @@ public class Assistant implements ClipboardOwner {
          */
         @Override
         public void onDisconnecting() {
+            sessionInterrupted = false;
             frame.onDisconnecting();
             networkConfiguration.setMonochromePeer(false);
         }
 
         @Override
         public void onTerminating() {
+            sessionInterrupted = false;
             Log.info("Session got terminated by peer");
             frame.onTerminating();
             networkConfiguration.setMonochromePeer(false);
@@ -906,6 +922,7 @@ public class Assistant implements ClipboardOwner {
 
         @Override
         public void onIOError(IOException error) {
+            sessionInterrupted = false;
             frame.onIOError(error);
             networkConfiguration.setMonochromePeer(false);
         }

@@ -137,7 +137,7 @@ public final class Compressor {
         final int cId = in.readInt();
         final boolean cReset = in.read() == 1;
         if (cReset) {
-            Log.debug("Clear de-compressor cache [tile:" + cId + "]");
+            Log.debug("Clear de-compressor cache [capture:" + cId + "]");
             cache.clear();
         }
         final int cSkipped = in.readUnsignedByte();

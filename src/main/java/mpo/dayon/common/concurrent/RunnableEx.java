@@ -1,5 +1,6 @@
 package mpo.dayon.common.concurrent;
 
+import mpo.dayon.common.error.ErrorHandler;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.log.Log;
 
@@ -22,6 +23,9 @@ public abstract class RunnableEx implements Runnable {
 		} catch (InterruptedException ex) {
 			Log.error("Interrupting [" + Thread.currentThread().getName() + "]");
 			Thread.currentThread().interrupt();
+		} catch (IOException ex) {
+			Log.error(ex.getMessage());
+            ErrorHandler.error("An I/O error occurred", ex);
 		} catch (Exception ex) {
 			FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is dead!", ex);
 		}

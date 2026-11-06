@@ -60,6 +60,8 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
     private boolean isInvertibleConnection;
 
+    private boolean isReconnecting;
+
     private volatile boolean hasRejected = false;
 
     private Token token;
@@ -98,7 +100,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
-                NetworkAssistantEngine.this.getReady(compatibilityMode);
+                NetworkAssistantEngine.this.getReady(compatibilityMode, false);
             }
         }, "NetworkReceiver");
         receiver.start();
@@ -124,9 +126,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     // right, keep streams open - forever!
-    private void getReady(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
+    private void getReady(boolean compatibilityMode, boolean reconnecting) throws NoSuchAlgorithmException, KeyManagementException {
         in = null;
-        boolean introduced = false;
+        isReconnecting = reconnecting;
+        boolean introduced = reconnecting;
         boolean proceed = true;
         isInvertibleConnection = false;
 
@@ -163,7 +166,10 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
                 NetworkMessageType type = NetworkMessage.unmarshallEnum(in, NetworkMessageType.class);
-                Log.debug("Received %s", type::name);
+                if (type != NetworkMessageType.MOUSE_LOCATION && type != NetworkMessageType.CAPTURE) {
+                    Log.debug("Received %s", type::name);
+                }
+                //Log.debug("Received %s", type::name);
                 if (introduced) {
                     proceed = processIntroduced(type, in);
                 } else {
@@ -172,9 +178,9 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             }
         } catch (IOException ex) {
             if (introduced && !cancelling.get()) {
-                Log.warn("Session was interrupted - reconnect");
+                Log.warn("Session was interrupted - allow reconnect");
                 fireOnSessionInterrupted();
-                getReady(compatibilityMode);
+                getReady(compatibilityMode, true);
             } else {
                 throw ex;
             }
@@ -242,7 +248,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 throw new IOException("Certificate error, try enabling compatibility mode!");
             }
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
-        } while (!fireOnAccepted(connection, configuration.isAutoAccept()) && !cancelling.get());
+        } while (!fireOnAccepted(connection, (configuration.isAutoAccept() || isReconnecting)) && !cancelling.get());
         fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
 
         if (server.isBound()) {
@@ -260,7 +266,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             while (!connectToAssisted(token.getPeerAddress(), peerPort) && !cancelling.get()) {
                 pause(2000L);
             }
-            hasRejected = !fireOnAccepted(connection, configuration.isAutoAccept());
+            hasRejected = !fireOnAccepted(connection, (configuration.isAutoAccept() || isReconnecting));
             Log.info("Connected to the assisted");
             return true;
         }
@@ -421,29 +427,27 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 fireOnTerminating();
                 return false;
             case HELLO:
-                throw new IllegalArgumentException("Unexpected message [HELLO]!");
+                // not really expected here - but..
+                fireOnConnected(connection, introduce(in));
+                return true;
             default:
                 throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }
     }
 
-    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
+    private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
         switch (type) {
             case HELLO:
                 fireOnConnected(connection, introduce(in));
                 return true;
             case PING:
-                return false;
             case CAPTURE:
             case MOUSE_LOCATION:
-                // reconnect case
-                processIntroduced(type, in);
-                return false;
             case CLIPBOARD_TEXT:
             case CLIPBOARD_GRAPHIC:
             case CLIPBOARD_FILES:
             case GOODBYE:
-                throw new IllegalArgumentException(format("Unexpected message [%s]!", type.name()));
+                return false;
             default:
                 throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
         }

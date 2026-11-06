@@ -12,7 +12,6 @@ import mpo.dayon.common.compressor.CompressorEngineConfiguration;
 import mpo.dayon.common.capture.Capture;
 import mpo.dayon.common.concurrent.DefaultThreadFactoryEx;
 import mpo.dayon.common.concurrent.Executable;
-import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.NetworkCaptureMessage;
@@ -72,12 +71,9 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 	 */
 	@Override
 	public void handleCapture(NetworkCaptureMessage capture) {
+		semaphore.acquireUninterruptibly();
 		try {
-			semaphore.acquire();
 			executor.execute(new MyExecutable(executor, semaphore, capture));
-		} catch (InterruptedException ex) {
-			FatalErrorHandler.bye("The [" + Thread.currentThread().getName() + "] thread is has been interrupted!", ex);
-			Thread.currentThread().interrupt();
 		} catch (RejectedExecutionException ex) {
 			semaphore.release(); // unlikely as we have an unbounded queue
 			// (!)

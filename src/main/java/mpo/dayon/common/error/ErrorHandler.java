@@ -14,14 +14,14 @@ import mpo.dayon.common.log.Log;
 import static java.lang.String.format;
 import static mpo.dayon.common.babylon.Babylon.translate;
 
-public final class KeyboardErrorHandler {
+public final class ErrorHandler {
     private static JFrame frame;
 
-    private KeyboardErrorHandler() {
+    private ErrorHandler() {
     }
 
     /**
-     * Displays a self closing translated warning message
+     * Displays a self-closing translated warning message
      */
     public static void warn(final String message) {
 
@@ -33,6 +33,26 @@ public final class KeyboardErrorHandler {
             label.setText(format("<html>%s<br/>%s<br/>%s</html>", translate("keyboard.error.msg1"),
                     translate("keyboard.error.msg2", message), translate("keyboard.error.msg3", message)));
             JOptionPane.showMessageDialog(frame, label, translate("keyboard.error"), JOptionPane.WARNING_MESSAGE);
+
+        } else {
+            Log.error("Unable to display error message " + message);
+        }
+
+    }
+
+    /**
+     * Displays a self-closing raw error message
+     */
+    public static void error(String message, Throwable error){
+
+        if (frame != null) {
+            final JLabel label = new JLabel();
+            final Timer timer = getTimer(label);
+            timer.start();
+
+            String errorMessage = error == null ? null : error.getMessage();
+            label.setText(errorMessage);
+            JOptionPane.showMessageDialog(frame, label, message, JOptionPane.ERROR_MESSAGE);
 
         } else {
             Log.error("Unable to display error message " + message);
@@ -63,6 +83,6 @@ public final class KeyboardErrorHandler {
     }
 
     public static void attachFrame(JFrame frame) {
-        KeyboardErrorHandler.frame = frame;
+        ErrorHandler.frame = frame;
     }
 }

@@ -99,6 +99,27 @@ class CaptureTest {
     }
 
     @Test
+    void preservesResetWhenMergingAnOlderCapture() {
+        // given
+        final Capture newer = new Capture(2, false, 0, 0, CAPTURE_DIMENSION, TILE_DIMENSION,
+                new CaptureTile[] { null, null, null, tile(3, (byte) 4, (byte) 4, (byte) 4, (byte) 4) });
+        final Capture olderReset = new Capture(1, true, 0, 0, CAPTURE_DIMENSION, TILE_DIMENSION,
+                new CaptureTile[] {
+                        tile(0, (byte) 1, (byte) 1, (byte) 1, (byte) 1),
+                        tile(1, (byte) 2, (byte) 2, (byte) 2, (byte) 2),
+                        tile(2, (byte) 3, (byte) 3, (byte) 3, (byte) 3),
+                        tile(3, (byte) 4, (byte) 4, (byte) 4, (byte) 4)
+                });
+
+        // when
+        newer.mergeDirtyTiles(new Capture[] { olderReset });
+
+        // then
+        assertTrue(newer.isReset());
+        assertEquals(4, newer.getDirtyTileCount());
+    }
+
+    @Test
     void keepsTheNewerTilesWhileMerging() {
         // given
         final Capture newer = new Capture(2, false, 0, 0, CAPTURE_DIMENSION, TILE_DIMENSION,

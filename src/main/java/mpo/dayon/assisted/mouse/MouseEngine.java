@@ -29,6 +29,10 @@ public class MouseEngine {
     }
 
     public void start() {
+        if (running.get()) {
+            Log.debug("MouseEngine already running");
+            return;
+        }
         Log.debug("MouseEngine start");
         running.set(true);
         thread.start();
