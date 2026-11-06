@@ -100,7 +100,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         receiver = new Thread(new RunnableEx() {
             @Override
             protected void doRun() throws NoSuchAlgorithmException, KeyManagementException {
-                NetworkAssistantEngine.this.getReady(compatibilityMode, false);
+                NetworkAssistantEngine.this.getReady(compatibilityMode);
             }
         }, "NetworkReceiver");
         receiver.start();
@@ -126,17 +126,31 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     // right, keep streams open - forever!
-    private void getReady(boolean compatibilityMode, boolean reconnecting) throws NoSuchAlgorithmException, KeyManagementException {
-        in = null;
-        isReconnecting = reconnecting;
-        boolean introduced = reconnecting;
-        boolean proceed = true;
-        isInvertibleConnection = false;
+    private void getReady(boolean compatibilityMode) throws NoSuchAlgorithmException, KeyManagementException {
+        clearPeerIdentityForReconnect();
 
-        if (!reconnecting) {
-            clearPeerIdentityForReconnect();
+        // Reconnect iteratively: a recursive call per interrupted session
+        // would grow the stack until it overflows after repeated drops.
+        try {
+            for (boolean reconnecting = false; ; reconnecting = true) {
+                in = null;
+                isReconnecting = reconnecting;
+                boolean introduced = reconnecting;
+                boolean proceed = true;
+                isInvertibleConnection = false;
+                if (!runSession(compatibilityMode, proceed, introduced)) {
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            handleIOException(new IOException("Malformed network message", e));
+        } finally {
+            closeConnections();
+            fireOnReady();
         }
+    }
 
+    private boolean runSession(boolean compatibilityMode, boolean proceed, boolean introduced) throws NoSuchAlgorithmException, KeyManagementException, ClassNotFoundException {
         try {
             awaitConnections(compatibilityMode);
             rememberMainPeerIdentity();
@@ -151,21 +165,30 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             } else if (isInvertibleConnection) {
                 fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
             }
-            receivingLoop(proceed, introduced, compatibilityMode);
+            if (!receivingLoop(proceed, introduced)) {
+                return false;
+            }
+            Log.warn("Session was interrupted - allow reconnect");
+            rememberPeerIdentityForReconnect();
+            fireOnSessionInterrupted();
+            closeConnections(false);
+            if (cancelling.get()) {
+                return false;
+            }
         } catch (IOException ex) {
             handleIOException(ex);
+            return false;
         } catch (CertificateEncodingException ex) {
             Log.error(ex.getMessage());
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException(e);
-        } finally {
-            closeConnections();
-            fireOnReady();
+            return false;
         }
+        return true;
     }
 
-    private void receivingLoop(boolean proceed, boolean introduced, boolean compatibilityMode) throws ClassNotFoundException, IOException, NoSuchAlgorithmException, KeyManagementException {
-        // receiving loop
+    /**
+     * @return true if the session was interrupted and a reconnect should be attempted
+     */
+    private boolean receivingLoop(boolean proceed, boolean introduced) throws ClassNotFoundException, IOException {
         try {
             while (proceed) {
                 NetworkMessage.unmarshallMagicNumber(in); // blocking read (!)
@@ -177,15 +200,12 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                     introduced = processUnIntroduced(type, in);
                 }
             }
+            return false;
         } catch (IOException ex) {
             if (introduced && !cancelling.get()) {
-                Log.warn("Session was interrupted - allow reconnect");
-                rememberPeerIdentityForReconnect();
-                fireOnSessionInterrupted();
-                getReady(compatibilityMode, true);
-            } else {
-                throw ex;
+                return true;
             }
+            throw ex;
         }
     }
 
@@ -238,7 +258,21 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         server = (SSLServerSocket) sssf.createServerSocket(configuration.getPort());
         server.setNeedClientAuth(true);
 
-        Log.info("Accepting...");
+        waitForAssistedConnection();
+
+        if (connection == null) {
+            throw new IOException("Reconnect aborted: no matching peer");
+        }
+        fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
+
+        if (server.isBound()) {
+            safeClose(server);
+        }
+        server = null;
+    }
+
+    private void waitForAssistedConnection() throws IOException {
+        Log.info("Waiting for the assisted to connect...");
         boolean accepted;
         do {
             if (connection != null && connection.isBound()) {
@@ -262,16 +296,6 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                         configuration.isAutoAccept() || (isReconnecting && hasPeerIdentityForReconnect()));
             }
         } while (!accepted && !cancelling.get());
-
-        if (connection == null) {
-            throw new IOException("Reconnect aborted: no matching peer");
-        }
-        fireOnFingerprinted(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()));
-
-        if (server.isBound()) {
-            safeClose(server);
-        }
-        server = null;
     }
 
     private boolean isReverseConnectionPossible() throws NoSuchAlgorithmException, IOException, KeyManagementException {
@@ -405,7 +429,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
 
                     handleIncomingClipboardFiles(fileIn, clipboardOwner);
                 } catch (IOException ex) {
-                    closeConnections();
+                    if (fileReceiver == Thread.currentThread()) {
+                        closeConnections();
+                    } else {
+                        Log.debug("Ignoring I/O error of a stale file receiver");
+                    }
                 }
             }
         }, "FileReceiver");
@@ -413,63 +441,73 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private boolean processIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException, ClassNotFoundException {
-        switch (type) {
-            case CAPTURE:
-                final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
-                fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
-                captureMessageHandler.handleCapture(capture);
-                return true;
-            case MOUSE_LOCATION:
-                final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
-                fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
-                mouseMessageHandler.handleLocation(mouse);
-                return true;
-            case CLIPBOARD_TEXT:
-                final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
-                fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
-                setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
-                fireOnClipboardReceived();
-                return true;
-            case CLIPBOARD_GRAPHIC:
-                final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
-                fireOnByteReceived(1 + clipboardGraphicMessage.getWireSize()); // +1 : magic number (byte)
-                setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
-                fireOnClipboardReceived();
-                return true;
-            case PING:
-                fireOnClipboardSent();
-                return true;
-            case RESIZE:
-                final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
-                fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
-                fireOnResizeScreen(resize.getWidth(), resize.getHeight());
-                return true;
-            case GOODBYE:
-                fireOnTerminating();
-                return false;
-            case HELLO:
-                fireOnConnected(connection, introduce(in));
-                return true;
-            default:
-                throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
+        try {
+            switch (type) {
+                case CAPTURE:
+                    final NetworkCaptureMessage capture = NetworkCaptureMessage.unmarshall(in);
+                    fireOnByteReceived(1 + capture.getWireSize()); // +1 : magic number (byte)
+                    captureMessageHandler.handleCapture(capture);
+                    return true;
+                case MOUSE_LOCATION:
+                    final NetworkMouseLocationMessage mouse = NetworkMouseLocationMessage.unmarshall(in);
+                    fireOnByteReceived(1 + mouse.getWireSize()); // +1 : magic number (byte)
+                    mouseMessageHandler.handleLocation(mouse);
+                    return true;
+                case CLIPBOARD_TEXT:
+                    final NetworkClipboardTextMessage clipboardTextMessage = NetworkClipboardTextMessage.unmarshall(in);
+                    fireOnByteReceived(1 + clipboardTextMessage.getWireSize()); // +1 : magic number (byte)
+                    setClipboardContents(clipboardTextMessage.getText(), clipboardOwner);
+                    fireOnClipboardReceived();
+                    return true;
+                case CLIPBOARD_GRAPHIC:
+                    final NetworkClipboardGraphicMessage clipboardGraphicMessage = NetworkClipboardGraphicMessage.unmarshall(in);
+                    fireOnByteReceived(1 + clipboardGraphicMessage.getWireSize()); // +1 : magic number (byte)
+                    setClipboardContents(clipboardGraphicMessage.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
+                    fireOnClipboardReceived();
+                    return true;
+                case PING:
+                    fireOnClipboardSent();
+                    return true;
+                case RESIZE:
+                    final NetworkResizeScreenMessage resize = NetworkResizeScreenMessage.unmarshall(in);
+                    fireOnByteReceived(1 + resize.getWireSize()); // +1 : magic number (byte)
+                    fireOnResizeScreen(resize.getWidth(), resize.getHeight());
+                    return true;
+                case GOODBYE:
+                    fireOnTerminating();
+                    return false;
+                case HELLO:
+                    fireOnConnected(connection, introduce(in));
+                    return true;
+                default:
+                    throw new IOException(format(UNSUPPORTED_TYPE, type));
+            }
+        } catch (RuntimeException ex) {
+            // malformed input must end this session, not the process
+            throw new IOException("Malformed network message", ex);
         }
     }
 
     private boolean processUnIntroduced(NetworkMessageType type, ObjectInputStream in) throws IOException {
-        switch (type) {
-            case HELLO:
-                fireOnConnected(connection, introduce(in));
-                return true;
-            case PING:
-            case CAPTURE:
-            case MOUSE_LOCATION:
-            case CLIPBOARD_TEXT:
-            case CLIPBOARD_GRAPHIC:
-            case CLIPBOARD_FILES:
-            case GOODBYE:
-                return false;
-            default:
-                throw new IllegalArgumentException(format(UNSUPPORTED_TYPE, type));
+        try {
+            switch (type) {
+                case HELLO:
+                    fireOnConnected(connection, introduce(in));
+                    return true;
+                case PING:
+                case CAPTURE:
+                case MOUSE_LOCATION:
+                case CLIPBOARD_TEXT:
+                case CLIPBOARD_GRAPHIC:
+                case CLIPBOARD_FILES:
+                case GOODBYE:
+                    return false;
+                default:
+                    throw new IOException(format(UNSUPPORTED_TYPE, type));
+            }
+        } catch (RuntimeException ex) {
+            // malformed input must end this session, not the process
+            throw new IOException("Malformed network message", ex);
         }
     }
 

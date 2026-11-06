@@ -109,6 +109,9 @@ public class DeCompressorEngine implements NetworkCaptureMessageHandler {
 						.computeCompressionRatio(1/* magic-number */ + message.getWireSize());
 
 				fireOnDeCompressed(capture, cache.getHits(), ratio);
+			} catch (RuntimeException ex) {
+				// malformed capture data must end the session, not the process
+				throw new IOException("Malformed capture payload", ex);
 			} finally {
 				if (cache != null) {
 					cache.onCaptureProcessed();

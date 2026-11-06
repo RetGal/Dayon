@@ -200,6 +200,45 @@ class CompressorEngineTest {
         assertNotNull(configurations.get(1), "the first capture after reset carries the configuration");
     }
 
+    @Test
+    void resetTimesOutWhenTheCompressorIsWedged() throws Exception {
+        // given
+        engine = new CompressorEngine();
+        final CountDownLatch firstCaptureStarted = new CountDownLatch(1);
+        final CountDownLatch releaseFirstCapture = new CountDownLatch(1);
+        engine.addListener((captureId, compressionMethod, compressionConfiguration, compressed) -> {
+            if (captureId == 1) {
+                firstCaptureStarted.countDown();
+                try {
+                    releaseFirstCapture.await();
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        });
+        engine.configure(new CompressorEngineConfiguration(CompressionMethod.ZIP, true, 1024, 512));
+        engine.start(10);
+        engine.onCaptured(capture(1));
+        assertTrue(firstCaptureStarted.await(5, TimeUnit.SECONDS));
+
+        // when
+        final CountDownLatch resetReturned = new CountDownLatch(1);
+        final Thread resetThread = new Thread(() -> {
+            engine.reset();
+            resetReturned.countDown();
+        });
+        resetThread.start();
+
+        // then
+        try {
+            assertTrue(resetReturned.await(5, TimeUnit.SECONDS),
+                    "reset must not block the reconnect forever when the compressor is wedged");
+        } finally {
+            releaseFirstCapture.countDown();
+            resetThread.join(5_000);
+        }
+    }
+
     private static Capture decompress(CompressionMethod method, MemByteBuffer compressed) {
         try {
             return Compressor.get(method).decompress(new NullTileCache(), compressed);

@@ -30,6 +30,8 @@ public class NetworkSender {
 
     private Semaphore semaphore;
 
+    private int queueSize;
+
     NetworkSender(ObjectOutputStream out) {
         this.out = out;
     }
@@ -44,13 +46,23 @@ public class NetworkSender {
         // THREAD = 1
         //
         // We're serializing access to the output stream (i.e., socket) (!)
+        this.queueSize = queueSize;
         executor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>());
         executor.setThreadFactory(new DefaultThreadFactoryEx("NetworkSender"));
         semaphore = new Semaphore(queueSize, true);
     }
 
     public void cancel() {
-        executor.shutdownNow();
+        if (executor != null) {
+            executor.shutdownNow();
+        }
+        if (semaphore != null) {
+            // Producers may be blocked in send(...) because the sender thread is
+            // stuck on a dead socket. Release the permits so they wake up and
+            // their messages are rejected by the shutdown executor instead of
+            // blocking the reconnect forever.
+            semaphore.release(queueSize);
+        }
     }
 
     /**
