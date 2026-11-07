@@ -1,6 +1,11 @@
 package mpo.dayon.common.network.message;
 
+import mpo.dayon.common.log.Log;
+
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +18,8 @@ public class NetworkClipboardFilesHelper {
     private volatile int position;
     private volatile long fileBytesLeft;
     private volatile long totalFileBytesLeft ;
+    private FileOutputStream fileOutputStream;
+    private Path rootPath;
 
     public NetworkClipboardFilesHelper() {
         this.files = new ArrayList<>();
@@ -72,5 +79,39 @@ public class NetworkClipboardFilesHelper {
 
     public boolean isDone() {
         return totalFileBytesLeft == 0;
+    }
+
+    FileOutputStream getFileOutputStream() {
+        return fileOutputStream;
+    }
+
+    void setFileOutputStream(FileOutputStream fileOutputStream) {
+        this.fileOutputStream = fileOutputStream;
+    }
+
+    Path getRootPath() {
+        return rootPath;
+    }
+
+    void setRootPath(Path rootPath) {
+        this.rootPath = rootPath;
+    }
+
+    void closeFileOutputStream() throws IOException {
+        if (fileOutputStream != null) {
+            try {
+                fileOutputStream.close();
+            } finally {
+                fileOutputStream = null;
+            }
+        }
+    }
+
+    public void close() {
+        try {
+            closeFileOutputStream();
+        } catch (IOException ex) {
+            Log.error("Could not close clipboard file stream", ex);
+        }
     }
 }

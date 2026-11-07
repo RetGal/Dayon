@@ -8,7 +8,6 @@ import java.awt.datatransfer.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.String.format;
@@ -28,15 +27,20 @@ public class ClipboardDispatcher {
         try {
             if (content.isDataFlavorSupported(DataFlavor.javaFileListFlavor)) {
                 // noinspection unchecked
-                List<File> files = validateFiles((List<File>) clipboard.getData(DataFlavor.javaFileListFlavor));
-                if (!files.isEmpty()) {
-                    final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
-                    Log.debug("Clipboard contains files with size: %s", () -> valueOf(totalFilesSize));
-                    // Ok as very few of that (!)
-                    new Thread(() -> networkEngine.sendClipboardFiles(files, totalFilesSize, files.get(0).getParent()), "sendClipboardFiles").start();
-                    frame.onClipboardSending();
+                List<File> clipboardFiles = (List<File>) clipboard.getData(DataFlavor.javaFileListFlavor);
+                final List<File> files = FileUtilities.getReadableFiles(clipboardFiles);
+                if (files.isEmpty()) {
+                    Log.debug("Clipboard contains no readable files");
+                    frame.onClipboardSent();
                     return;
                 }
+                final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
+                Log.debug("Clipboard contains files with size: %s", () -> valueOf(totalFilesSize));
+                final String basePath = clipboardFiles.get(0).getParent();
+                // Ok as very few of that (!)
+                new Thread(() -> networkEngine.sendClipboardFiles(files, totalFilesSize, basePath), "sendClipboardFiles").start();
+                frame.onClipboardSending();
+                return;
             } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
                 final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);
                 Log.debug("Clipboard contains graphics: %s", () -> format("%dx%d", image.getWidth(), image.getHeight()));
@@ -61,17 +65,5 @@ public class ClipboardDispatcher {
         String text = "\uD83E\uDD84";
         Log.debug("Sending a unicorn: " + text);
         networkEngine.sendClipboardText(text);
-    }
-
-    private static List<File> validateFiles(List<File> files) {
-        List<File> validFiles = new ArrayList<>();
-        for (File file : files) {
-            if (file.exists() && file.canRead()) {
-                validFiles.add(file);
-            } else {
-                Log.debug("Clipboard file is not accessible: " + file.getAbsolutePath());
-            }
-        }
-        return validFiles;
     }
 }
