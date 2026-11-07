@@ -1,19 +1,19 @@
 package mpo.dayon.assisted.network;
 
 import com.dosse.upnp.UPnP;
-import mpo.dayon.assisted.utils.ScreenUtilities;
-import mpo.dayon.common.network.SdpUtils;
-import mpo.dayon.common.compressor.CompressorEngineConfiguration;
-import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.assisted.control.NetworkControlMessageHandler;
 import mpo.dayon.assisted.mouse.MouseEngineListener;
+import mpo.dayon.assisted.utils.ScreenUtilities;
 import mpo.dayon.common.buffer.MemByteBuffer;
+import mpo.dayon.common.compressor.CompressorEngineConfiguration;
+import mpo.dayon.common.compressor.CompressorEngineListener;
 import mpo.dayon.common.concurrent.RunnableEx;
 import mpo.dayon.common.configuration.ReConfigurable;
 import mpo.dayon.common.error.FatalErrorHandler;
 import mpo.dayon.common.event.Listeners;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.NetworkEngine;
+import mpo.dayon.common.network.SdpUtils;
 import mpo.dayon.common.network.Token;
 import mpo.dayon.common.network.message.*;
 import mpo.dayon.common.security.CustomTrustManager;
@@ -40,50 +40,45 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.Base64;
 
 import static java.lang.String.format;
-
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public class NetworkAssistedEngine extends NetworkEngine
         implements ReConfigurable<NetworkAssistedEngineConfiguration>, CompressorEngineListener, MouseEngineListener {
+
+    private static final int SESSION_QUEUE_SIZE = 1;
+    private static final int RECEIVER_STARTUP_DELAY_MS = 100;
+    private static final long RECONNECT_DELAY_MS = 1500L;
+    private static final long ICE_TIMEOUT_MS = 6000L;
+    private static final int ICE_CONNECT_TIMEOUT_MS = 3000;
+    private static final int ICE_CONNECT_DELAY_MS = 250;
+    private static final int RANDOM_PORT_START = 1026;
+    private static final int RANDOM_PORT_RANGE = 8976;
+
     private NetworkAssistedEngineConfiguration configuration;
-
     private final NetworkCaptureConfigurationMessageHandler captureConfigurationHandler;
-
     private final NetworkCompressorConfigurationMessageHandler compressorConfigurationHandler;
-
     private final NetworkControlMessageHandler controlHandler;
-
     private final NetworkClipboardRequestMessageHandler clipboardRequestHandler;
-
     private final NetworkScreenshotRequestMessageHandler screenshotRequestHandler;
-
     private final ClipboardOwner clipboardOwner;
-
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
-
     private final char osId = System.getProperty("os.name").toLowerCase().charAt(0);
-
     private final SecureRandom random = new SecureRandom();
 
+    private SSLSocketFactory sslSocketFactory;
     private Token token;
-
-    private int connectionTimeout;
-
-    private SSLSocketFactory ssf;
-
-    private String publicIp;
-
     private IceMediaStream mediaStream;
 
+    private String publicIp;
+    private int connectionTimeout;
     private boolean iceConnected;
-
     private boolean isRevertedConnection;
 
     public NetworkAssistedEngine(NetworkCaptureConfigurationMessageHandler captureConfigurationHandler,
@@ -101,22 +96,6 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     public NetworkAssistedEngineConfiguration getConfiguration() {
         return configuration;
-    }
-
-    private void runReceivers() {
-        this.receiver = new Thread(new RunnableEx() {
-            @Override
-            protected void doRun() {
-                NetworkAssistedEngine.this.receivingLoop();
-            }
-        }, "CommandReceiver");
-
-        this.fileReceiver = new Thread(new RunnableEx() {
-            @Override
-            protected void doRun() {
-                NetworkAssistedEngine.this.fileReceivingLoop();
-            }
-        }, "FileReceiver");
     }
 
     @Override
@@ -143,7 +122,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         this.token = token;
         this.connectionTimeout = connectionTimeout;
         try {
-            start();
+            startSession();
         } catch (UnknownHostException e) {
             fireOnHostNotFound(configuration);
         } catch (SocketTimeoutException e) {
@@ -156,103 +135,116 @@ public class NetworkAssistedEngine extends NetworkEngine
         }
     }
 
-    @SuppressWarnings("java:S2095") // our sockets MUST NOT be closed
-    private void start() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
+    private void startSession() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
         Log.debug(token.toString());
-        ssf = CustomTrustManager.initSslContext(false).getSocketFactory();
-        int localPort = 0;
-        boolean isAssistantInSameNetwork = false;
+        sslSocketFactory = CustomTrustManager.initSslContext(false).getSocketFactory();
         isRevertedConnection = false;
 
-        if (token.getTokenString() != null && token.getPeerAddress() == null) {
-            Log.debug("Incomplete Token, resolving " + token);
-            checkAndUpdateRVS(localPort, true);
-            if (token.getPeerAddress() == null || token.getPeerPort() == 0) {
-                Log.warn("Token resolution failed");
-                return;
-            }
-            Log.debug("Updating configuration ServerName and ServerPort with Token values");
-            configuration.setServerName(token.getPeerAddress());
-            configuration.setServerPort(token.getPeerPort());
-            configuration.persist();
+        if (!resolveIncompleteToken()) {
+            return;
         }
         fireOnConnecting(configuration);
 
-        // the assistant is not accessible check if reverting the connection initialization is an option
-        if (token.getTokenString() != null && Boolean.FALSE.equals(token.isPeerAccessible())) {
-            fireOnPeerIsAccessible(false);
-            Log.info("Assistant is not accessible directly");
-            // got public ip and able to expose a port?
-            localPort = detectEnvironment();
-            // update the rvs
-            checkAndUpdateRVS(localPort, false);
-            Log.debug(String.valueOf(token));
-            Log.debug("Updating configuration ServerName and ServerPort with Token values");
-            configuration.setServerName(token.getPeerAddress());
-            configuration.setServerPort(token.getPeerPort());
-            // revert the connection and start server if necessary and possible
-            if (Boolean.TRUE.equals(isOwnPortAccessible.get()) && Boolean.FALSE.equals(token.isPeerAccessible())) {
-                Log.info("Reverting the connection initialization");
-                fireOnAccepting(localPort);
-                startServer(localPort);
-                Log.debug("Connected");
-                isRevertedConnection = true;
-            } else if (token.getIceInfo() == null) {
-                // last ressort for legacy, non-ice, non-token connections
-                isAssistantInSameNetwork = detectLocalAssistant();
-            }
+        boolean assistantInSameNetwork = false;
+        if (Boolean.FALSE.equals(token.isPeerAccessible())) {
+            assistantInSameNetwork = prepareFallbackConnection();
         }
-        establishConnection(isAssistantInSameNetwork, isRevertedConnection);
-    }
 
-    private void establishConnection(boolean isAssistantInSameNetwork, boolean isRevertedConnection) throws IOException, NoSuchAlgorithmException, CertificateEncodingException {
-        // preferred case, we initiate the connection
-        if (token.getTokenString() == null || token.isPeerAccessible() || (isAssistantInSameNetwork && token.getIceInfo() == null)) {
+        if (connection == null && isDirectConnectionPossible(assistantInSameNetwork)) {
             fireOnPeerIsAccessible(true);
-            if (token.getTokenString() != null && token.isPeerAccessible()) {
-                configuration.setServerName(token.getPeerAddress());
-                configuration.setServerPort(token.getPeerPort());
+            if (Boolean.TRUE.equals(token.isPeerAccessible())) {
+                applyTokenToConfiguration();
             }
             connectToAssistant(connectionTimeout, 0);
         }
 
-        // ICE connection
         if (connection == null && token.getIceInfo() != null) {
-            fireOnIceConnecting();
-            try {
-                Log.info("Starting ICE");
-                connectIce(token.getLocalPort());
-            } catch (IOException e) {
-                // try again with another port
-                iceAgent = null;
-                token.setLocalPort(detectEnvironment());
-                Log.info("Restarting ICE");
-                connectIce(token.getLocalPort());
-            }
+            connectViaIce();
         }
 
-        // common part
-        createInputStream();
-        runReceiversIfNecessary();
-        receiver.start();
-        pause(100L);
-        initSender(1);
-        // the first message being sent to the assistant (e.g. version identification, locale and OS).
-        sender.sendHello(osId);
+        completeConnection();
+    }
 
+    /**
+     * @return false if the token could not be resolved and the connection attempt must be aborted
+     */
+    private boolean resolveIncompleteToken() throws IOException {
+        if (token.getTokenString() == null || token.getPeerAddress() != null) {
+            return true;
+        }
+
+        Log.debug("Incomplete Token, resolving " + token);
+        checkAndUpdateRVS(0, true);
+        if (token.getPeerAddress() == null || token.getPeerPort() == 0) {
+            Log.warn("Token resolution failed");
+            return false;
+        }
+
+        applyTokenToConfiguration();
+        configuration.persist();
+        return true;
+    }
+
+    /**
+     * Handles the case where the assistant cannot be reached directly.
+     *
+     * @return true if the assistant was found in the same local network
+     */
+    private boolean prepareFallbackConnection() throws IOException, NoSuchAlgorithmException, KeyManagementException {
+        fireOnPeerIsAccessible(false);
+        Log.info("Assistant is not accessible directly");
+
+        int localPort = detectEnvironment();
+        checkAndUpdateRVS(localPort, false);
+        Log.debug(String.valueOf(token));
+        applyTokenToConfiguration();
+
+        if (Boolean.TRUE.equals(isOwnPortAccessible.get())) {
+            Log.info("Reverting the connection initialization");
+            fireOnAccepting(localPort);
+            startServer(localPort);
+            Log.debug("Connected");
+            isRevertedConnection = true;
+            return false;
+        }
+
+        if (token.getIceInfo() == null) {
+            // last resort for legacy, non-ICE, non-token connections
+            return detectLocalAssistant();
+        }
+        return false;
+    }
+
+    private boolean isDirectConnectionPossible(boolean assistantInSameNetwork) {
+        return token.getTokenString() == null
+                || Boolean.TRUE.equals(token.isPeerAccessible())
+                || assistantInSameNetwork;
+    }
+
+    private void applyTokenToConfiguration() {
+        Log.debug("Updating configuration ServerName and ServerPort with Token values");
+        configuration.setServerName(token.getPeerAddress());
+        configuration.setServerPort(token.getPeerPort());
+    }
+
+    private void completeConnection() throws IOException, NoSuchAlgorithmException, CertificateEncodingException {
+        createInputStream();
+        startReceiversIfNeeded();
+        receiver.start();
+        pause(RECEIVER_STARTUP_DELAY_MS);
+        initSender(SESSION_QUEUE_SIZE);
+        sender.sendHello(osId);
         rememberMainPeerIdentity();
 
         // only if we initiated the connection, we also need to establish a file connection
         if (!isRevertedConnection) {
-            fileConnection = (SSLSocket) ssf.createSocket(configuration.getServerName(), configuration.getServerPort());
+            fileConnection = (SSLSocket) sslSocketFactory.createSocket(configuration.getServerName(), configuration.getServerPort());
             Log.debug("File connection established");
         }
-
         if (!isFileConnectionBound(fileConnection)) {
             throw new IOException("File connection is not bound to the main session");
         }
 
-        // common part
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()), isRevertedConnection);
         Log.info("Connected with the assistant!");
         initFileSender();
@@ -260,20 +252,53 @@ public class NetworkAssistedEngine extends NetworkEngine
         fileReceiver.start();
     }
 
+    private void startReceiversIfNeeded() {
+        if (receiver != null) {
+            return;
+        }
+        Log.info("Getting the receivers ready");
+        receiver = new Thread(new RunnableEx() {
+            @Override
+            protected void doRun() {
+                NetworkAssistedEngine.this.receivingLoop();
+            }
+        }, "CommandReceiver");
+
+        fileReceiver = new Thread(new RunnableEx() {
+            @Override
+            protected void doRun() {
+                NetworkAssistedEngine.this.fileReceivingLoop();
+            }
+        }, "FileReceiver");
+    }
+
+    private void connectViaIce() throws IOException {
+        fireOnIceConnecting();
+        try {
+            Log.info("Starting ICE");
+            connectIce(token.getLocalPort());
+        } catch (IOException e) {
+            // try again with another port
+            iceAgent = null;
+            token.setLocalPort(detectEnvironment());
+            Log.info("Restarting ICE");
+            connectIce(token.getLocalPort());
+        }
+    }
+
     private void connectIce(int localPort) throws IOException {
         initIceAgent(localPort);
         getLocalSdpDesc();
         // process remote SDP and start connectivity establishment
         processRemoteSdp(new String(Base64.getDecoder().decode(token.getIceInfo())));
+
         // wait for ICE connection using an event-driven latch with a bounded timeout
         final CountDownLatch latch = new CountDownLatch(1);
-        // attach a combined state change listener that both updates state and signals the latch
         monitorIceProcessingState(latch);
 
         final long start = System.nanoTime();
-        final long timeoutMs = 6000L; // total wait for ICE
         try {
-            boolean signaled = latch.await(timeoutMs, TimeUnit.MILLISECONDS);
+            boolean signaled = latch.await(ICE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
             long elapsed = (System.nanoTime() - start) / 1_000_000;
             Log.debug("ICE wait elapsed: " + elapsed + "ms, signaled=" + signaled + ", iceConnected=" + iceConnected);
             if (connection == null || !iceConnected) {
@@ -294,18 +319,15 @@ public class NetworkAssistedEngine extends NetworkEngine
         iceAgent.addStateChangeListener(evt -> {
             IceProcessingState newState = (IceProcessingState) evt.getNewValue();
             Log.debug("ICE state changed: " + newState);
-            switch (newState) {
-                case TERMINATED:
-                    handleIceTerminated(evt);
-                    break;
-                case FAILED:
-                    iceConnected = false;
-                    Log.error("ICE processing failed");
-                    break;
-                default:
-                    break;
+
+            if (newState == IceProcessingState.TERMINATED) {
+                handleIceTerminated(evt);
+            } else if (newState == IceProcessingState.FAILED) {
+                iceConnected = false;
+                Log.error("ICE processing failed");
             }
-            if (latch != null && (newState == IceProcessingState.FAILED || newState == IceProcessingState.TERMINATED)) {
+
+            if (newState == IceProcessingState.FAILED || newState == IceProcessingState.TERMINATED) {
                 latch.countDown();
             }
         });
@@ -330,12 +352,12 @@ public class NetworkAssistedEngine extends NetworkEngine
             return;
         }
 
-        TransportAddress ta = rtpPair.getRemoteCandidate().getTransportAddress();
-        configuration.setServerName(ta.getHostName());
-        configuration.setServerPort(ta.getPort());
+        TransportAddress address = rtpPair.getRemoteCandidate().getTransportAddress();
+        configuration.setServerName(address.getHostName());
+        configuration.setServerPort(address.getPort());
         fireOnConnecting(configuration);
         try {
-            connectToAssistant(3000, 250);
+            connectToAssistant(ICE_CONNECT_TIMEOUT_MS, ICE_CONNECT_DELAY_MS);
             iceConnected = true;
         } catch (IOException e) {
             iceConnected = false;
@@ -362,7 +384,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             iceAgent.removeStream(mediaStream);
         }
         mediaStream = iceAgent.createMediaStream("dayon");
-        iceAgent.createComponent(mediaStream, port, port-1, port+1, KeepAliveStrategy.SELECTED_AND_TCP);
+        iceAgent.createComponent(mediaStream, port, port - 1, port + 1, KeepAliveStrategy.SELECTED_AND_TCP);
     }
 
     private boolean detectLocalAssistant() {
@@ -382,12 +404,12 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void startServer(int port) throws NoSuchAlgorithmException, KeyManagementException {
-        SSLServerSocketFactory sssf;
         try {
-            sssf = CustomTrustManager.initSslContext(false).getServerSocketFactory();
+            SSLServerSocketFactory serverSocketFactory = CustomTrustManager.initSslContext(false).getServerSocketFactory();
             Log.info(format("Dayon! server [port:%d]", port));
-            server = (SSLServerSocket) sssf.createServerSocket(port);
+            server = (SSLServerSocket) serverSocketFactory.createServerSocket(port);
             server.setNeedClientAuth(true);
+
             Log.info("Waiting for the assistant to connect...");
             connection = (SSLSocket) server.accept();
             Toolkit.getDefaultToolkit().beep();
@@ -410,36 +432,41 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void checkAndUpdateRVS(int localPort, boolean incomplete) throws IOException {
         try {
-            String queryParams = incomplete? token.getQueryParams() + "&inc" : token.getQueryParams();
-            final String customTokenServer = System.getProperty("dayon.custom.tokenServer");
-            String tokenServerUrl = customTokenServer == null ? DEFAULT_TOKEN_SERVER_URL : customTokenServer;
-            final String connectionParams = resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
-            String[] parts = connectionParams.split("\\*");
-            if (parts.length > 1) {
-                Log.debug("Length: " + parts.length);
-                String assistantAddress = parts[0];
-                String port = parts[1];
-                if (parts.length > 5) {
-                    Log.debug("Received ICE information");
-                    // legacy RVS - should actually never receive this
-                    //   0              1       2            3          4           5       6      7
-                    // 188.155.141.250*8090*192.168.1.40*1786374622*188.155.141.250*0*192.168.1.40*0
-                    // v.1.6 RVS
-                    //   0              1       2            3      4     5
-                    // 188.155.141.250*8090*192.168.1.40*1786374911*0*dj0wDQpvPWljZTRqLm9yZyAwIDAgSU4gSVA0IDE4OC4xNTU
-                    // part 3 (closed) is 0 or timestamp -> 0 means assistant is accessible
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, parts[5]);
-                } else {
-                    Log.debug("Received no ICE information");
-                    // legacy RVS
-                    //   0              1       2            3       4
-                    // 188.155.141.250*8056*192.168.1.135*1786705306*0*
-                    token.updateToken(assistantAddress, Integer.parseInt(port), parts[2], parts[3].equals("0"), localPort, null);
-                }
+            String response = queryTokenServer(localPort, incomplete);
+            String[] parts = response.split("\\*");
+            if (parts.length <= 1) {
+                return;
             }
+
+            Log.debug("Length: " + parts.length);
+            String iceInfo = parts.length > 5 ? parts[5] : null;
+            Log.debug(iceInfo == null ? "Received no ICE information" : "Received ICE information");
+            // part 3 (closed) is 0 or a timestamp -> 0 means the assistant is accessible
+            token.updateToken(parts[0], Integer.parseInt(parts[1]), parts[2], parts[3].equals("0"), localPort, iceInfo);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+
+    /**
+     * Queries the token server for the assistant address, optionally including ICE information.
+     * <p>
+     * Response format:
+     * <pre>
+     * 188.155.141.250*8090*192.168.1.40*1786374911*0*dj0wDQpvPWljZTRqLm9yZyAwIDAgSU4gSVA0IDE4OC4xNTU
+     * |               |        |          |        |        iceInfo (optional)
+     * |               |        |          |        localPort
+     * |               |        |          timestamp / closed status (0 = accessible)
+     * |               |        peer local address
+     * |               peer port
+     * peer address
+     * </pre>
+     */
+    private String queryTokenServer(int localPort, boolean incomplete) throws IOException, InterruptedException {
+        String queryParams = incomplete ? token.getQueryParams() + "&inc" : token.getQueryParams();
+        final String customTokenServer = System.getProperty("dayon.custom.tokenServer");
+        String tokenServerUrl = customTokenServer == null ? DEFAULT_TOKEN_SERVER_URL : customTokenServer;
+        return resolveToken(tokenServerUrl + queryParams, token.getTokenString(), localPort, isOwnPortAccessible.get(), getLocalAddress());
     }
 
     // returns a random port number for which an upnp port mapping was added (if possible)
@@ -447,21 +474,22 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (publicIp == null) {
             publicIp = resolvePublicIp();
         }
-        int newPort = random.nextInt(8976) + 1026;
+        int newPort = random.nextInt(RANDOM_PORT_RANGE) + RANDOM_PORT_START;
         selfTest(publicIp, newPort, token.getLocalPort());
         return newPort;
     }
 
+    @SuppressWarnings("java:S2095") // our sockets MUST NOT be closed
     private void connectToAssistant(int connectionTimeout, int preDelay) throws IOException {
         try {
             if (preDelay > 0) {
                 pause(preDelay);
             }
             Log.info(format("Connecting to [%s:%s]", configuration.getServerName(), configuration.getServerPort()));
-            connection = (SSLSocket) ssf.createSocket();
+            connection = (SSLSocket) sslSocketFactory.createSocket();
             connection.setNeedClientAuth(true);
             // grace period of twice the connection timeout (default 14 seconds) for the assistant to accept the connection
-            connection.setSoTimeout(2*connectionTimeout);
+            connection.setSoTimeout(2 * connectionTimeout);
             // abort the connection attempt after connection timeout (default 7 seconds) if the assistant cannot be reached
             connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), connectionTimeout);
             // once connected, remain connected until cancelled
@@ -483,18 +511,11 @@ public class NetworkAssistedEngine extends NetworkEngine
         NetworkClipboardFilesMessage.installFileObjectInputFilter(fileIn);
     }
 
-    private void runReceiversIfNecessary() {
-        if (receiver == null) {
-            Log.info("Getting the receivers ready");
-            runReceivers();
-        }
-    }
-
     public static String resolveToken(String tokenServerUrl, String token, int port, Boolean open, String localAddress) throws IOException, InterruptedException {
         if (open == null) {
             isOwnPortAccessible.set(null);
         }
-        // null = unknown = -1, true = open = 1, false = closed = 0
+        // null = unknown => -1, true = open => 1, false = closed => 0
         String query = format(tokenServerUrl, token, port, toInt(open), nullToZeroStr(localAddress));
         Log.debug("Resolving token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
@@ -549,22 +570,26 @@ public class NetworkAssistedEngine extends NetworkEngine
                 processNetworkMessages();
             }
         } catch (IOException ex) {
-            if (!cancelling.get()) {
-                closeConnections();
-                if (!isRevertedConnection) {
-                    cleanUpUpnp();
-                    pause(1500);
-                    Log.warn("Session was interrupted - reconnect");
-                    connect(token, connectionTimeout);
-                }
-            } else {
-                closeConnections();
+            closeConnections();
+            if (cancelling.get()) {
                 Log.info("Stopped network receiver (cancelled)");
                 fireOnDisconnecting();
-                if (!isRevertedConnection) {
-                    cleanUpUpnp();
-                }
+                cleanUpUpnpUnlessReverted();
+                return;
             }
+            if (isRevertedConnection) {
+                return;
+            }
+            cleanUpUpnp();
+            pause(RECONNECT_DELAY_MS);
+            Log.warn("Session was interrupted - reconnect");
+            connect(token, connectionTimeout);
+        }
+    }
+
+    private void cleanUpUpnpUnlessReverted() {
+        if (!isRevertedConnection) {
+            cleanUpUpnp();
         }
     }
 
@@ -591,12 +616,10 @@ public class NetworkAssistedEngine extends NetworkEngine
                     clipboardRequestHandler.handleClipboardRequest();
                     break;
                 case CLIPBOARD_TEXT:
-                    setClipboardContents(NetworkClipboardTextMessage.unmarshall(in).getText(), clipboardOwner);
-                    sender.ping();
+                    handleClipboardText(NetworkClipboardTextMessage.unmarshall(in));
                     break;
                 case CLIPBOARD_GRAPHIC:
-                    setClipboardContents(NetworkClipboardGraphicMessage.unmarshall(in).getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
-                    sender.ping();
+                    handleClipboardGraphic(NetworkClipboardGraphicMessage.unmarshall(in));
                     break;
                 case SCREENSHOT_REQUEST:
                     screenshotRequestHandler.handleScreenshotRequest();
@@ -613,6 +636,16 @@ public class NetworkAssistedEngine extends NetworkEngine
             // malformed input must end this session, not the process
             throw new IOException("Malformed network message", ex);
         }
+    }
+
+    private void handleClipboardText(NetworkClipboardTextMessage message) {
+        setClipboardContents(message.getText(), clipboardOwner);
+        sender.ping();
+    }
+
+    private void handleClipboardGraphic(NetworkClipboardGraphicMessage message) {
+        setClipboardContents(message.getGraphic().getTransferData(DataFlavor.imageFlavor), clipboardOwner);
+        sender.ping();
     }
 
     private void fileReceivingLoop() {
