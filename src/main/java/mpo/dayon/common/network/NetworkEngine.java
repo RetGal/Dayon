@@ -151,6 +151,7 @@ public abstract class NetworkEngine {
 
     private static NetworkClipboardFilesHelper handleNetworkClipboardFilesHelper(NetworkClipboardFilesHelper filesHelper, ClipboardOwner clipboardOwner) {
         if (filesHelper.isDone()) {
+            filesHelper.close();
             setClipboardContents(filesHelper.getFiles(), clipboardOwner);
             return new NetworkClipboardFilesHelper();
         }
@@ -236,31 +237,35 @@ public abstract class NetworkEngine {
         String tmpDir = getTempDir();
         NetworkClipboardFilesHelper filesHelper = new NetworkClipboardFilesHelper();
 
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            try {
-                NetworkMessageType type;
-                if (filesHelper.isDone()) {
-                    NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
-                    type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
-                    Log.debug("Received " + type.name());
-                    if (!type.equals(CLIPBOARD_FILES) && !type.equals(PING)) {
-                        throw new IOException(format(UNSUPPORTED_TYPE, type));
-                    }
-                } else {
-                    type = CLIPBOARD_FILES;
-                }
-
-                if (type.equals(CLIPBOARD_FILES)) {
-                    filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
-                            filesHelper, tmpDir), clipboardOwner);
+        try {
+            //noinspection InfiniteLoopStatement
+            while (true) {
+                try {
+                    NetworkMessageType type;
                     if (filesHelper.isDone()) {
-                        fireOnClipboardReceived();
+                        NetworkMessage.unmarshallMagicNumber(fileIn); // blocking read (!)
+                        type = NetworkMessage.unmarshallEnum(fileIn, NetworkMessageType.class);
+                        Log.debug("Received " + type.name());
+                        if (!type.equals(CLIPBOARD_FILES) && !type.equals(PING)) {
+                            throw new IOException(format(UNSUPPORTED_TYPE, type));
+                        }
+                    } else {
+                        type = CLIPBOARD_FILES;
                     }
+
+                    if (type.equals(CLIPBOARD_FILES)) {
+                        filesHelper = handleNetworkClipboardFilesHelper(NetworkClipboardFilesMessage.unmarshall(fileIn,
+                                filesHelper, tmpDir), clipboardOwner);
+                        if (filesHelper.isDone()) {
+                            fireOnClipboardReceived();
+                        }
+                    }
+                } catch (RuntimeException ex) {
+                    throw new IOException("Malformed clipboard file transfer", ex);
                 }
-            } catch (RuntimeException ex) {
-                throw new IOException("Malformed clipboard file transfer", ex);
             }
+        } finally {
+            filesHelper.close();
         }
     }
 
