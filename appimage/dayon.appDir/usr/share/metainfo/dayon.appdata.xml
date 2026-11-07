@@ -38,6 +38,15 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="19.0.0" date="2026-11-07">
+            <description>
+                <p>Changes in Humble Hustler</p>
+                <ul>
+                    <li>Seamless session recovery</li>
+                    <li>Enhanced stability and resilience, bugfixes</li>
+                </ul>
+            </description>
+        </release>
         <release version="18.0.4" date="2026-10-25">
             <description>
                 <p>Changes in Gusty Goblin IV</p>

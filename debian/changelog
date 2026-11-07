@@ -1,3 +1,10 @@
+dayon (19.0.0) stable; urgency=medium
+
+  * Seamless session recovery
+  * Enhanced stability and resilience, bugfixes
+
+ -- Reto Galante <reto@galante.ch> Sat, 7 Nov 2026 12:00:00 +0000
+
 dayon (18.0.4) stable; urgency=medium
 
   * UI improvements
