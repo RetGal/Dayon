@@ -34,7 +34,7 @@
 	</target>
 
 	<target name="compile" depends="init" description="Compile the sources">
-		<javac debug="true" includeantruntime="false" destdir="${dir.bin}" classpathref="project.classpath">
+		<javac debug="true" includeantruntime="false" release="${ant.build.javac.release}" destdir="${dir.bin}" classpathref="project.classpath">
 			<src>
 				<pathelement location="${dir.src}/mpo/dayon/"/>
 			</src>
