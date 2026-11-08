@@ -32,14 +32,23 @@ public class ClipboardDispatcher {
                 if (files.isEmpty()) {
                     Log.debug("Clipboard contains no readable files");
                     frame.onClipboardSent();
+                    // let the peer know that the transfer is over even though nothing was sent.
+                    networkEngine.sendClipboardTransferComplete();
                     return;
                 }
                 final long totalFilesSize = FileUtilities.calculateTotalFileSize(files);
                 Log.debug("Clipboard contains files with size: %s", () -> valueOf(totalFilesSize));
                 final String basePath = clipboardFiles.get(0).getParent();
-                // Ok as very few of that (!)
-                new Thread(() -> networkEngine.sendClipboardFiles(files, totalFilesSize, basePath), "sendClipboardFiles").start();
                 frame.onClipboardSending();
+                // Ok as very few of that (!)
+                new Thread(() -> {
+                    if (!networkEngine.sendClipboardFiles(files, totalFilesSize, basePath)) {
+                        Log.debug("Clipboard file transfer did not send any file");
+                        // the peer is waiting for an acknowledgement.
+                        networkEngine.sendClipboardTransferComplete();
+                        frame.onClipboardSent();
+                    }
+                }, "sendClipboardFiles").start();
                 return;
             } else if (content.isDataFlavorSupported(DataFlavor.imageFlavor) ){
                 final BufferedImage image = (BufferedImage) clipboard.getData(DataFlavor.imageFlavor);

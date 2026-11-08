@@ -6,6 +6,7 @@ import org.junit.jupiter.api.function.Executable;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
+import java.io.File;
 import java.io.IOException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
@@ -13,6 +14,7 @@ import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class NetworkEngineTest {
@@ -44,6 +46,29 @@ class NetworkEngineTest {
         // when, then - must not throw
         assertDoesNotThrow(() -> engine.sendClipboardText("unicorn"));
         assertDoesNotThrow(() -> engine.sendClipboardFiles(Collections.emptyList(), 0, ""));
+        assertDoesNotThrow(engine::sendClipboardTransferComplete);
+    }
+
+    @Test
+    void sendingFilesWithoutAFileConnectionReportsFailure() {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+
+        // when, then
+        assertFalse(engine.sendClipboardFiles(Collections.singletonList(new File("unicorn.txt")), 0, ""));
+    }
+
+    @Test
+    void notifiesThePeerWhenAClipboardTransferCannotSendAnyFile() {
+        // given
+        final TestNetworkEngine engine = new TestNetworkEngine();
+        engine.sender = mock(NetworkSender.class);
+
+        // when
+        engine.sendClipboardTransferComplete();
+
+        // then
+        verify(engine.sender).ping();
     }
 
     @Test
