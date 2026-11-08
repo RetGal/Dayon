@@ -60,7 +60,6 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             if (read < 0) {
                 throw new EOFException("Unexpected end of clipboard file transfer");
             }
-            Log.debug("Bytes read: " + read);
             String fileName = FileUtilities.separatorsToSystem(meta.getFileName());
             if (helper.getFileOutputStream() == null) {
                 Log.info("Receiving " + fileName);
