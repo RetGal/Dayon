@@ -181,13 +181,16 @@ public class NetworkSender {
      * Might block (!)
      * <p/>
      * Assistant 2 assisted or vice versa.
+     *
+     * @return true when a message was queued, false when no readable file was left
      */
-    void sendClipboardContentFiles(List<File> files, long size, String basePath) {
+    boolean sendClipboardContentFiles(List<File> files, long size, String basePath) {
         final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(files, size, basePath);
         if (message.isEmpty()) {
-            return;
+            return false;
         }
         send(true, message);
+        return true;
     }
 
     /**

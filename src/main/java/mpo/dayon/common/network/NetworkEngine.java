@@ -126,10 +126,23 @@ public abstract class NetworkEngine {
 
     /**
      * Might be blocking if the sender queue is full (!)
+     *
+     * @return true when the files could be sent, false when no readable file was left
      */
-    public void sendClipboardFiles(List<File> files, long size, String basePath) {
+    public boolean sendClipboardFiles(List<File> files, long size, String basePath) {
         if (fileSender != null) {
-            fileSender.sendClipboardContentFiles(files, size, basePath);
+            return fileSender.sendClipboardContentFiles(files, size, basePath);
+        }
+        return false;
+    }
+
+    /**
+     * Notifies the peer that a clipboard transfer is complete even though no payload
+     * could be sent (e.g. all files were filtered out).
+     */
+    public void sendClipboardTransferComplete() {
+        if (sender != null) {
+            sender.ping();
         }
     }
 

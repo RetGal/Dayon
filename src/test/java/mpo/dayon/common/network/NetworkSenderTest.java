@@ -17,8 +17,10 @@ import org.mockito.ArgumentCaptor;
 
 import java.awt.*;
 import java.awt.im.InputContext;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -225,6 +227,19 @@ class NetworkSenderTest {
         verify(outMock, timeout(250)).writeByte(MAGIC_NUMBER);
         verify(outMock, timeout(250)).writeByte(NetworkMessageType.CLIPBOARD_TEXT.ordinal());
         verify(outMock).writeUTF(payload);
+    }
+
+    @Test
+    void sendClipboardContentFilesWithoutReadableFilesSendsNothing() {
+        // given
+        final File missing = new File("does-not-exist.txt");
+
+        // when
+        final boolean sent = sender.sendClipboardContentFiles(Collections.singletonList(missing), 0, "");
+
+        // then
+        assertFalse(sent);
+        verifyNoInteractions(outMock);
     }
 
     @Test
