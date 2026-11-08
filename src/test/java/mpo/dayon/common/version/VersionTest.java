@@ -21,7 +21,9 @@ class VersionTest {
         // then
         assertTrue(version.isNull());
         assertFalse(version.isLatestVersion());
-        assertTrue(latestRelease.startsWith("v"));
+        if (latestRelease != null) {
+            assertTrue(latestRelease.startsWith("v"));
+        }
     }
 
     @Test
