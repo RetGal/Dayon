@@ -105,9 +105,9 @@ class NetworkEngineTest {
         final TestNetworkEngine engine = new TestNetworkEngine();
 
         // when
-        engine.initializeIceAgent();
+        engine.initializeIceAgent(true);
         final Object firstAgent = engine.iceAgent;
-        engine.initializeIceAgent();
+        engine.initializeIceAgent(true);
         final String sdp = engine.getLocalSdpDesc();
 
         // then
