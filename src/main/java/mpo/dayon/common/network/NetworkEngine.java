@@ -7,6 +7,7 @@ import mpo.dayon.common.security.CustomTrustManager;
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
 import org.ice4j.ice.Agent;
+import org.ice4j.ice.NominationStrategy;
 import org.ice4j.ice.harvest.StunCandidateHarvester;
 import org.ice4j.ice.harvest.TurnCandidateHarvester;
 import org.ice4j.security.LongTermCredential;
@@ -507,11 +508,15 @@ public abstract class NetworkEngine {
         }
     }
 
-    protected void initializeIceAgent() {
+    protected void initializeIceAgent(boolean controlling) {
         if (iceAgent == null) {
-            Log.debug("Initializing new ICE agent");
+            Log.debug("Initializing new ICE agent (controlling=" + controlling + ")");
             iceAgent = new Agent();
             iceAgent.setLoggingLevel(Level.FINEST);
+            iceAgent.setControlling(controlling);
+            // Prefer host/server-reflexive pairs. Relayed candidates are UDP based and can not
+            // carry TCP/TLS connection, only fall back to them if no better pair validates.
+            iceAgent.setNominationStrategy(NominationStrategy.NOMINATE_FIRST_HOST_OR_REFLEXIVE_VALID);
             for (String[] sts : STUN_SERVERS) {
                 try {
                     TransportAddress ta = new TransportAddress(new InetSocketAddress(sts[0], Integer.parseInt(sts[1])), Transport.UDP);

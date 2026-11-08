@@ -627,7 +627,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     public void initIceAgent() throws IOException {
-        super.initializeIceAgent();
+        super.initializeIceAgent(false);
         createMediaStream();
     }
 

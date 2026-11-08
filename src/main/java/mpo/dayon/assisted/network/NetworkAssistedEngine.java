@@ -288,13 +288,15 @@ public class NetworkAssistedEngine extends NetworkEngine
 
     private void connectIce(int localPort) throws IOException {
         initIceAgent(localPort);
+        // force candidate harvesting before the remote description is applied
         getLocalSdpDesc();
-        // process remote SDP and start connectivity establishment
-        processRemoteSdp(new String(Base64.getDecoder().decode(token.getIceInfo())));
 
         // wait for ICE connection using an event-driven latch with a bounded timeout
         final CountDownLatch latch = new CountDownLatch(1);
         monitorIceProcessingState(latch);
+
+        // process remote SDP and start connectivity establishment
+        processRemoteSdp(new String(Base64.getDecoder().decode(token.getIceInfo())));
 
         final long start = System.nanoTime();
         try {
@@ -320,21 +322,21 @@ public class NetworkAssistedEngine extends NetworkEngine
             IceProcessingState newState = (IceProcessingState) evt.getNewValue();
             Log.debug("ICE state changed: " + newState);
 
-            if (newState == IceProcessingState.TERMINATED) {
-                handleIceTerminated(evt);
+            if (newState == IceProcessingState.COMPLETED) {
+                handleIceCompleted(evt);
             } else if (newState == IceProcessingState.FAILED) {
                 iceConnected = false;
                 Log.error("ICE processing failed");
             }
 
-            if (newState == IceProcessingState.FAILED || newState == IceProcessingState.TERMINATED) {
+            if (newState == IceProcessingState.FAILED || newState == IceProcessingState.COMPLETED || newState == IceProcessingState.TERMINATED) {
                 latch.countDown();
             }
         });
     }
 
-    private void handleIceTerminated(PropertyChangeEvent evt) {
-        Log.info("ICE processing terminated");
+    private void handleIceCompleted(PropertyChangeEvent evt) {
+        Log.info("ICE processing completed");
         Agent agent = (Agent) evt.getSource();
         Log.debug("ICE stream names: " + agent.getStreamNames());
         IceMediaStream stream = agent.getStream("dayon");
@@ -375,7 +377,7 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void initIceAgent(int port) throws IOException {
-        super.initializeIceAgent();
+        super.initializeIceAgent(true);
         createMediaStream(port);
     }
 
@@ -570,7 +572,7 @@ public class NetworkAssistedEngine extends NetworkEngine
                 processNetworkMessages();
             }
         } catch (IOException ex) {
-            closeConnections();
+            closeConnections(!cancelling.get());
             if (cancelling.get()) {
                 Log.info("Stopped network receiver (cancelled)");
                 fireOnDisconnecting();
