@@ -44,6 +44,7 @@ import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
@@ -71,6 +72,11 @@ public class NetworkAssistedEngine extends NetworkEngine
     private final Listeners<NetworkAssistedEngineListener> listeners = new Listeners<>();
     private final char osId = System.getProperty("os.name").toLowerCase().charAt(0);
     private final SecureRandom random = new SecureRandom();
+    /**
+     * One-way stop flag set by {@link #cancel()}. Unlike {@code cancelling}, it is never
+     * reset by connection cleanup, so a reconnect will not be started after a cancel (i.e. stop button).
+     */
+    private final AtomicBoolean stopRequested = new AtomicBoolean(false);
 
     private SSLSocketFactory sslSocketFactory;
     private Token token;
@@ -118,21 +124,55 @@ public class NetworkAssistedEngine extends NetworkEngine
      * Connect to the assistant using the given token, which may be blank. The connectionTimeout is in ms
      */
     public void connect(Token token, int connectionTimeout) {
+        if (isCancelled()) {
+            Log.info("Connection attempt cancelled");
+            return;
+        }
         connection = null;
         this.token = token;
         this.connectionTimeout = connectionTimeout;
         try {
             startSession();
         } catch (UnknownHostException e) {
+            if (abortIfCancelled()) {
+                return;
+            }
             fireOnHostNotFound(configuration);
         } catch (SocketTimeoutException e) {
+            if (abortIfCancelled()) {
+                return;
+            }
             fireOnConnectionTimeout(configuration);
         } catch (IOException e) {
+            if (abortIfCancelled()) {
+                return;
+            }
             closeConnections();
             fireOnRefused(configuration);
         } catch (NoSuchAlgorithmException | KeyManagementException | CertificateEncodingException e) {
             FatalErrorHandler.bye(e.getMessage(), e);
         }
+    }
+
+    /**
+     * @return true when the user cancelled or the peer ended the session
+     */
+    private boolean isCancelled() {
+        return stopRequested.get() || cancelling.get();
+    }
+
+    /**
+     * Stops the connection attempt when the user has cancelled it.
+     *
+     * @return true when the attempt was cancelled
+     */
+    private boolean abortIfCancelled() {
+        if (!isCancelled()) {
+            return false;
+        }
+        Log.info("Connection attempt cancelled");
+        closeConnections();
+        return true;
     }
 
     private void startSession() throws IOException, NoSuchAlgorithmException, KeyManagementException, CertificateEncodingException {
@@ -144,10 +184,16 @@ public class NetworkAssistedEngine extends NetworkEngine
             return;
         }
         fireOnConnecting(configuration);
+        if (abortIfCancelled()) {
+            return;
+        }
 
         boolean assistantInSameNetwork = false;
         if (Boolean.FALSE.equals(token.isPeerAccessible())) {
             assistantInSameNetwork = prepareFallbackConnection();
+        }
+        if (abortIfCancelled()) {
+            return;
         }
 
         if (connection == null && isDirectConnectionPossible(assistantInSameNetwork)) {
@@ -160,6 +206,9 @@ public class NetworkAssistedEngine extends NetworkEngine
 
         if (connection == null && token.getIceInfo() != null) {
             connectViaIce();
+        }
+        if (abortIfCancelled()) {
+            return;
         }
 
         completeConnection();
@@ -244,6 +293,9 @@ public class NetworkAssistedEngine extends NetworkEngine
         if (!isFileConnectionBound(fileConnection)) {
             throw new IOException("File connection is not bound to the main session");
         }
+        if (abortIfCancelled()) {
+            return;
+        }
 
         fireOnConnected(CustomTrustManager.calculateFingerprints(connection.getSession(), this.getClass().getSimpleName()), isRevertedConnection);
         Log.info("Connected with the assistant!");
@@ -273,16 +325,27 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void connectViaIce() throws IOException {
+        if (isCancelled()) {
+            freeIceAgent();
+            return;
+        }
         fireOnIceConnecting();
         try {
             Log.info("Starting ICE");
             connectIce(token.getLocalPort());
         } catch (IOException e) {
-            // try again with another port
-            iceAgent = null;
-            token.setLocalPort(detectEnvironment());
-            Log.info("Restarting ICE");
-            connectIce(token.getLocalPort());
+            if (!isCancelled()) {
+                // try again with another port - the old agent must not keep harvesting or checking
+                freeIceAgent();
+                token.setLocalPort(detectEnvironment());
+                Log.info("Restarting ICE");
+                connectIce(token.getLocalPort());
+            }
+        } finally {
+            if (isCancelled()) {
+                Log.info("ICE connection cancelled");
+                freeIceAgent();
+            }
         }
     }
 
@@ -299,10 +362,17 @@ public class NetworkAssistedEngine extends NetworkEngine
         processRemoteSdp(new String(Base64.getDecoder().decode(token.getIceInfo())));
 
         final long start = System.nanoTime();
+        final long deadline = start + TimeUnit.MILLISECONDS.toNanos(ICE_TIMEOUT_MS);
         try {
-            boolean signaled = latch.await(ICE_TIMEOUT_MS, TimeUnit.MILLISECONDS);
+            boolean signaled = false;
+            while (!signaled && !isCancelled() && System.nanoTime() < deadline) {
+                signaled = latch.await(100L, TimeUnit.MILLISECONDS);
+            }
             long elapsed = (System.nanoTime() - start) / 1_000_000;
             Log.debug("ICE wait elapsed: " + elapsed + "ms, signaled=" + signaled + ", iceConnected=" + iceConnected);
+            if (isCancelled()) {
+                throw new IOException("Cancelled");
+            }
             if (connection == null || !iceConnected) {
                 Log.info("ICE connection failed");
                 cleanUpUpnp(localPort);
@@ -314,6 +384,19 @@ public class NetworkAssistedEngine extends NetworkEngine
             Thread.currentThread().interrupt();
             Log.warn("ICE wait interrupted");
             throw new IOException("ICE wait interrupted", e);
+        }
+    }
+
+    /**
+     * Stops the ICE agent so that it does not keep harvesting candidates or running connectivity checks.
+     */
+    private synchronized void freeIceAgent() {
+        if (iceAgent != null) {
+            Log.info("Stopping ICE agent");
+            iceAgent.free();
+            iceAgent = null;
+            mediaStream = null;
+            iceConnected = false;
         }
     }
 
@@ -336,6 +419,11 @@ public class NetworkAssistedEngine extends NetworkEngine
     }
 
     private void handleIceCompleted(PropertyChangeEvent evt) {
+        if (isCancelled()) {
+            iceConnected = false;
+            Log.info("ICE processing cancelled");
+            return;
+        }
         Log.info("ICE processing completed");
         Agent agent = (Agent) evt.getSource();
         Log.debug("ICE stream names: " + agent.getStreamNames());
@@ -360,6 +448,13 @@ public class NetworkAssistedEngine extends NetworkEngine
         fireOnConnecting(configuration);
         try {
             connectToAssistant(ICE_CONNECT_TIMEOUT_MS, ICE_CONNECT_DELAY_MS);
+            if (isCancelled()) {
+                Log.info("ICE processing cancelled");
+                safeClose(connection);
+                connection = null;
+                iceConnected = false;
+                return;
+            }
             iceConnected = true;
         } catch (IOException e) {
             iceConnected = false;
@@ -546,7 +641,7 @@ public class NetworkAssistedEngine extends NetworkEngine
      */
     public void cancel() {
         Log.info("Cancelling the network assisted engine...");
-        cancelling.set(true);
+        stopRequested.set(true);
         closeConnections();
         fireOnDisconnecting();
         cleanUpUpnp();
@@ -572,8 +667,9 @@ public class NetworkAssistedEngine extends NetworkEngine
                 processNetworkMessages();
             }
         } catch (IOException ex) {
-            closeConnections(!cancelling.get());
-            if (cancelling.get()) {
+            final boolean cancelled = isCancelled();
+            closeConnections();
+            if (cancelled) {
                 Log.info("Stopped network receiver (cancelled)");
                 fireOnDisconnecting();
                 cleanUpUpnpUnlessReverted();
@@ -584,6 +680,10 @@ public class NetworkAssistedEngine extends NetworkEngine
             }
             cleanUpUpnp();
             pause(RECONNECT_DELAY_MS);
+            if (isCancelled()) {
+                Log.info("Reconnect cancelled");
+                return;
+            }
             Log.warn("Session was interrupted - reconnect");
             connect(token, connectionTimeout);
         }

@@ -110,6 +110,10 @@ public class SdpUtils {
     private static void setDefaultCandidates(MediaDescription desc, String globalConnAddr, IceMediaStream stream) throws SdpParseException {
         Connection streamConn = desc.getConnection();
         String streamConnAddr = streamConn != null ? streamConn.getAddress() : globalConnAddr;
+        if (streamConnAddr == null) {
+            // without a connection address there is nothing we can use as a default candidate (the explicit a=candidate lines still work)
+            return;
+        }
 
         int port = desc.getMedia().getMediaPort();
         TransportAddress defaultRtpAddress = new TransportAddress(streamConnAddr, port, Transport.UDP);
@@ -120,8 +124,10 @@ public class SdpUtils {
         Component rtpComponent = stream.getComponent(Component.RTP);
         Component rtcpComponent = stream.getComponent(Component.RTCP);
 
-        Candidate<?> defaultRtpCandidate = rtpComponent.findRemoteCandidate(defaultRtpAddress);
-        rtpComponent.setDefaultRemoteCandidate(defaultRtpCandidate);
+        if (rtpComponent != null) {
+            Candidate<?> defaultRtpCandidate = rtpComponent.findRemoteCandidate(defaultRtpAddress);
+            rtpComponent.setDefaultRemoteCandidate(defaultRtpCandidate);
+        }
 
         if (rtcpComponent != null) {
             Candidate<?> defaultRtcpCandidate = rtcpComponent.findRemoteCandidate(defaultRtcpAddress);
@@ -140,65 +146,61 @@ public class SdpUtils {
      * candidate belonged to a component we don't have.
      */
     private static RemoteCandidate parseCandidate(Attribute attribute, IceMediaStream stream) {
-        String value = null;
+        final String value;
         try {
             value = attribute.getValue();
         } catch (SdpException e) {
-            // should never happen
+            return null; // should never happen
         }
-
-        StringTokenizer tokenizer = new StringTokenizer(value);
-
-        String foundation = tokenizer.nextToken();
-        int componentID = 0;
-        try {
-            componentID = Integer.parseInt(tokenizer.nextToken());
-        } catch (NumberFormatException nfe) {
-            // should never happen
-        }
-        Transport transport = Transport.parse(tokenizer.nextToken());
-        long priority = 0;
-        try {
-            priority = Long.parseLong(tokenizer.nextToken());
-        } catch (NumberFormatException nfe) {
-            // should never happen
-        }
-        String address = tokenizer.nextToken();
-        int port = 0;
-        try {
-            port = Integer.parseInt(tokenizer.nextToken());
-        } catch (NumberFormatException nfe) {
-            // should never happen
-        }
-
-        TransportAddress transAddr = new TransportAddress(address, port, transport);
-
-        tokenizer.nextToken(); //skip the "typ" String
-        CandidateType type = CandidateType.parse(tokenizer.nextToken());
-
-        Component component = stream.getComponent(componentID);
-        if (component == null)
+        if (value == null) {
             return null;
-
-        // check if there's a related address property
-        RemoteCandidate relatedCandidate = null;
-        if (tokenizer.countTokens() >= 4) {
-            tokenizer.nextToken(); // skip the raddr element
-            String relatedAddr = tokenizer.nextToken();
-            tokenizer.nextToken(); // skip the rport element
-            int relatedPort = 0;
-            try {
-                relatedPort = Integer.parseInt(tokenizer.nextToken());
-            } catch (NumberFormatException nfe) {
-                // should never happen
-            }
-            TransportAddress raddr = new TransportAddress(relatedAddr, relatedPort, Transport.UDP);
-            relatedCandidate = component.findRemoteCandidate(raddr);
         }
 
-        RemoteCandidate cand = new RemoteCandidate(transAddr, component, type, foundation, priority, relatedCandidate);
-        component.addRemoteCandidate(cand);
-        return cand;
+        final String[] tokens = value.trim().split("\\s+");
+        // foundation component transport priority address port typ type
+        if (tokens.length < 8 || !"typ".equals(tokens[6])) {
+            return null;
+        }
+
+        try {
+            String foundation = tokens[0];
+            int componentID = Integer.parseInt(tokens[1]);
+            Transport transport = Transport.parse(tokens[2].toLowerCase(Locale.ROOT));
+            long priority = Long.parseLong(tokens[3]);
+            String address = tokens[4];
+            int port = Integer.parseInt(tokens[5]);
+            CandidateType type = CandidateType.parse(tokens[7]);
+
+            Component component = stream.getComponent(componentID);
+            if (component == null)
+                return null;
+
+            // raddr/rport are optional and may be followed by extension
+            // attributes such as generation, network-id or ufrag.
+            String relatedAddr = null;
+            int relatedPort = 0;
+            for (int i = 8; i + 1 < tokens.length; i += 2) {
+                if ("raddr".equalsIgnoreCase(tokens[i])) {
+                    relatedAddr = tokens[i + 1];
+                } else if ("rport".equalsIgnoreCase(tokens[i])) {
+                    relatedPort = Integer.parseInt(tokens[i + 1]);
+                }
+            }
+
+            RemoteCandidate relatedCandidate = null;
+            if (relatedAddr != null && relatedPort > 0) {
+                TransportAddress raddr = new TransportAddress(relatedAddr, relatedPort, transport);
+                relatedCandidate = component.findRemoteCandidate(raddr);
+            }
+
+            TransportAddress transAddr = new TransportAddress(address, port, transport);
+            RemoteCandidate cand = new RemoteCandidate(transAddr, component, type, foundation, priority, relatedCandidate);
+            component.addRemoteCandidate(cand);
+            return cand;
+        } catch (RuntimeException e) {
+            // ignore a single malformed candidate instead of failing the complete connectivity establishment.
+            return null;
+        }
     }
 
     public static void releaseSdpFactory() {
