@@ -19,9 +19,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     private final List<File> readableFiles;
     private final List<FileMetaData> fileMetaDatas;
     private final Long remainingTotalFilesSize;
-    // Matches MAX_SEND_BUFFER_CAPACITY so that a sender chunk can be read in one go.
-    private static final int MAX_READ_BUFFER_CAPACITY = 1048576;
-    private static final int MAX_SEND_BUFFER_CAPACITY = 1048576;
+    private static final long FLUSH_THRESHOLD = NetworkClipboardFilesHelper.MAX_CHUNK_SIZE;
 
     private static final ObjectInputFilter FILE_METADATA_FILTER = info -> {
         Class<?> serialClass = info.serialClass();
@@ -55,8 +53,10 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             long fileSize = meta.getFileSize();
             Log.debug("%s", () -> format("FileSize: %d left: %d", fileSize, helper.getFileBytesLeft()));
 
-            byte[] buffer = new byte[max(0, min(toIntExact(helper.getFileBytesLeft()), MAX_READ_BUFFER_CAPACITY))];
-            int read = in.read(buffer, 0, buffer.length);
+            final byte[] buffer = helper.getReadBuffer();
+            final int length = (int) min(max(0, helper.getFileBytesLeft()), buffer.length);
+            // no byte to read for an empty file - still create it below
+            final int read = length == 0 ? 0 : in.read(buffer, 0, length);
             if (read < 0) {
                 throw new EOFException("Unexpected end of clipboard file transfer");
             }
@@ -87,11 +87,20 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
             throw new IOException("Received empty file metadata");
         }
         helper.setFileBytesLeft(helper.getFileMetadatas().get(0).getFileSize());
-        helper.setTotalFileBytesLeft(helper.getFileMetadatas().stream().mapToLong(FileMetaData::getFileSize).sum());
-        if (helper.getTotalFileBytesLeft() < 0 || helper.getTotalFileBytesLeft() > Integer.MAX_VALUE) {
-            Log.error("Received invalid total file size " + helper.getTotalFileBytesLeft());
-            throw new IOException("Received invalid total file size " + helper.getTotalFileBytesLeft());
+        long totalFileBytesLeft = 0;
+        for (FileMetaData metaData : helper.getFileMetadatas()) {
+            if (metaData.getFileSize() < 0) {
+                Log.error("Received invalid file size " + metaData.getFileSize());
+                throw new IOException("Received invalid file size " + metaData.getFileSize());
+            }
+            try {
+                totalFileBytesLeft = Math.addExact(totalFileBytesLeft, metaData.getFileSize());
+            } catch (ArithmeticException ex) {
+                Log.error("Received invalid total file size");
+                throw new IOException("Received invalid total file size", ex);
+            }
         }
+        helper.setTotalFileBytesLeft(totalFileBytesLeft);
     }
 
     private static long getRemainingTotalFilesSize(NetworkClipboardFilesHelper helper, int read, int position) throws IOException {
@@ -99,9 +108,13 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
         long remainingTotalFilesSize = helper.getTotalFileBytesLeft() - read;
         if (remainingFileSize <= 0) {
             helper.closeFileOutputStream();
-            if (remainingTotalFilesSize > 0) {
+            if (position + 1 < helper.getFileMetadatas().size()) {
                 helper.setPosition(++position);
                 remainingFileSize = helper.getFileMetadatas().get(position).getFileSize();
+            } else {
+                // past the last file - empty files contribute no byte to the total size
+                helper.setPosition(position + 1);
+                remainingFileSize = 0;
             }
         }
         helper.setFileBytesLeft(remainingFileSize);
@@ -110,7 +123,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
     }
 
     private static void writeToTempFile(NetworkClipboardFilesHelper helper, byte[] buffer, int length, String fileName, String tmpDir) throws IOException {
-        FileOutputStream stream = helper.getFileOutputStream();
+        OutputStream stream = helper.getFileOutputStream();
         if (stream == null) {
             final Path rootPath = getRootPath(helper, tmpDir);
             final Path targetPath = Paths.get(tmpDir, helper.getTransferId(), fileName).toAbsolutePath().normalize();
@@ -126,7 +139,7 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
                     // ignore, not a posix file system
                 }
             }
-            stream = new FileOutputStream(targetPath.toFile());
+            stream = new BufferedOutputStream(new FileOutputStream(targetPath.toFile()), NetworkClipboardFilesHelper.WRITE_BUFFER_SIZE);
             helper.setFileOutputStream(stream);
         }
         stream.write(buffer, 0, length);
@@ -165,34 +178,40 @@ public class NetworkClipboardFilesMessage extends NetworkMessage {
 
     @Override
     public int getWireSize() {
-        return 1 + remainingTotalFilesSize.intValue();  // type (byte) + files
+        return 1 + (int) min(remainingTotalFilesSize, Integer.MAX_VALUE - 1L);
     }
 
     @Override
     public void marshall(ObjectOutputStream out) throws IOException {
         marshallEnum(out, getType());
         out.writeObject(this.fileMetaDatas);
-        for (File file : this.readableFiles) {
-            sendFile(file, out);
+        final byte[] buffer = new byte[NetworkClipboardFilesHelper.MAX_CHUNK_SIZE];
+        long bytesSinceFlush = 0;
+        for (int i = 0; i < readableFiles.size(); i++) {
+            bytesSinceFlush += sendFile(readableFiles.get(i), fileMetaDatas.get(i).getFileSize(), buffer, out);
+            if (bytesSinceFlush >= FLUSH_THRESHOLD) {
+                out.flush();
+                bytesSinceFlush = 0;
+            }
         }
+        out.flush();
     }
 
-    private void sendFile(File file, ObjectOutputStream out) throws IOException {
-        long fileSize = file.length();
+    private static long sendFile(File file, long fileSize, byte[] buffer, ObjectOutputStream out) throws IOException {
         Log.info("Sending " + file.getName());
-        Log.debug("Bytes to be sent: " + fileSize);
-        byte[] buffer = new byte[MAX_SEND_BUFFER_CAPACITY];
-        try (BufferedInputStream bis = new BufferedInputStream(Files.newInputStream(file.toPath()))) {
-            int read;
-            long remainingSize = fileSize;
-            while ((read = bis.read(buffer)) != -1) {
+        Log.debug("%s", () -> format("Bytes to be sent: %d", fileSize));
+        long remainingSize = fileSize;
+        try (InputStream in = Files.newInputStream(file.toPath())) {
+            while (remainingSize > 0) {
+                final int read = in.read(buffer, 0, (int) min(buffer.length, remainingSize));
+                if (read < 0) {
+                    throw new EOFException(format("%s shrank during the transfer (%d bytes missing)", file.getName(), remainingSize));
+                }
                 out.write(buffer, 0, read);
                 remainingSize -= read;
-                Log.debug(format("FileSize: %d left: %d", fileSize, remainingSize));
             }
-        } finally {
-            out.flush();
         }
+        return fileSize;
     }
 
     @Override

@@ -288,6 +288,7 @@ public class NetworkAssistedEngine extends NetworkEngine
         // only if we initiated the connection, we also need to establish a file connection
         if (!isRevertedConnection) {
             fileConnection = (SSLSocket) sslSocketFactory.createSocket(configuration.getServerName(), configuration.getServerPort());
+            disableNagle(fileConnection);
             Log.debug("File connection established");
         }
         if (!isFileConnectionBound(fileConnection)) {
@@ -509,6 +510,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
             Log.info("Waiting for the assistant to connect...");
             connection = (SSLSocket) server.accept();
+            disableNagle(connection);
             Toolkit.getDefaultToolkit().beep();
             Log.info(format("Incoming connection from %s", connection.getInetAddress().getHostAddress()));
         } catch (IOException e) {
@@ -519,6 +521,7 @@ public class NetworkAssistedEngine extends NetworkEngine
 
         try {
             fileConnection = (SSLSocket) server.accept();
+            disableNagle(fileConnection);
             safeClose(server);
             Log.debug("File connection established");
         } catch (IOException e) {
@@ -591,6 +594,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             connection.connect(new InetSocketAddress(configuration.getServerName(), configuration.getServerPort()), connectionTimeout);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
+            disableNagle(connection);
         } catch (UnknownHostException e) {
             Log.warn("Unable to connect to the assistant - unknown host");
             throw e;

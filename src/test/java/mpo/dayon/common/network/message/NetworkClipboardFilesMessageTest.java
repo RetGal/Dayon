@@ -260,6 +260,111 @@ class NetworkClipboardFilesMessageTest {
         assertTrue(message.isEmpty());
     }
 
+    @Test
+    void marshallAndUnmarshallEmptyFilesAlongsideRegularOnes() throws IOException {
+        // given
+        final Path source = Files.createDirectories(tempDir.resolve("source"));
+        Files.createFile(source.resolve("empty.bin"));
+        Files.writeString(source.resolve("content.txt"), "abc");
+        Files.createFile(source.resolve("z-empty.bin"));
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(
+                Collections.singletonList(source.toFile()), 3, source.toString());
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            message.marshall(out);
+        }
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+
+        // when
+        NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
+            assertEquals(NetworkMessageType.CLIPBOARD_FILES, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
+            do {
+                helper = NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+            } while (!helper.isDone());
+        }
+
+        // then
+        final Path root = helper.getFiles().get(0).getParentFile().toPath();
+        assertEquals(0, Files.size(root.resolve("empty.bin")));
+        assertEquals(0, Files.size(root.resolve("z-empty.bin")));
+        assertEquals("abc", Files.readString(root.resolve("content.txt")));
+    }
+
+    @Test
+    void sendsExactlyTheSizeCapturedInTheMetadataWhenTheFileGrows() throws IOException, ClassNotFoundException {
+        // given
+        final Path source = Files.createDirectories(tempDir.resolve("source"));
+        final Path file = Files.writeString(source.resolve("growing.txt"), "12345");
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(
+                Collections.singletonList(file.toFile()), 5, source.toString());
+        // the file grows after the metadata has been captured
+        Files.writeString(file, "123456789");
+
+        // when
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            message.marshall(out);
+        }
+
+        // then
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            assertEquals(NetworkMessageType.CLIPBOARD_FILES, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
+            in.readObject();
+            assertEquals("12345", new String(in.readAllBytes(), UTF_8));
+        }
+    }
+
+    @Test
+    void marshallFailsWhenAFileShrinksDuringTheTransfer() throws IOException {
+        // given
+        final Path source = Files.createDirectories(tempDir.resolve("source"));
+        final Path file = Files.writeString(source.resolve("shrinking.txt"), "12345");
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(
+                Collections.singletonList(file.toFile()), 5, source.toString());
+        // the file shrinks after the metadata has been captured
+        Files.writeString(file, "12");
+
+        // when, then
+        try (ObjectOutputStream out = new ObjectOutputStream(new ByteArrayOutputStream())) {
+            final EOFException error = assertThrows(EOFException.class, () -> message.marshall(out));
+            assertTrue(error.getMessage().contains("shrank"));
+        }
+    }
+
+    @Test
+    void reusesTheReadBufferForEveryChunk() throws IOException {
+        // given
+        final byte[] content = new byte[3 * 1024 * 1024];
+        new Random(7).nextBytes(content);
+        final Path source = Files.createDirectories(tempDir.resolve("source"));
+        final Path file = Files.write(source.resolve("large.bin"), content);
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(
+                Collections.singletonList(file.toFile()), content.length, source.toString());
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            message.marshall(out);
+        }
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+
+        // when
+        NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            NetworkClipboardFilesMessage.installFileObjectInputFilter(in);
+            assertEquals(NetworkMessageType.CLIPBOARD_FILES, NetworkMessage.unmarshallEnum(in, NetworkMessageType.class));
+            helper = NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+            final byte[] buffer = helper.getReadBuffer();
+            while (!helper.isDone()) {
+                helper = NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+                assertSame(buffer, helper.getReadBuffer(), "the buffer must not be reallocated per chunk");
+            }
+        }
+
+        // then
+        assertArrayEquals(content, Files.readAllBytes(helper.getFiles().get(0).toPath()));
+    }
+
     private static final class UnreadableFile extends File {
         private UnreadableFile(Path path) {
             super(path.toString());
@@ -269,6 +374,59 @@ class NetworkClipboardFilesMessageTest {
         public boolean canRead() {
             return false;
         }
+    }
+
+    @Test
+    void unmarshallAcceptsTransfersLargerThanTwoGigabytes() throws IOException, ClassNotFoundException {
+        // given
+        final ObjectInputStream in = mock(ObjectInputStream.class);
+        final List<FileMetaData> metadata = new ArrayList<>();
+        metadata.add(new FileMetaData("first.bin", 1L << 31, ""));
+        metadata.add(new FileMetaData("second.bin", 1L << 31, ""));
+        when(in.readObject()).thenReturn(metadata);
+        // no payload is consumed: only the metadata validation is under test
+        when(in.read(any(byte[].class), anyInt(), anyInt())).thenReturn(0);
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+        final NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+
+        // when
+        try {
+            NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString());
+
+            // then
+            assertEquals(1L << 32, helper.getTotalFileBytesLeft());
+            assertEquals(1L << 31, helper.getFileBytesLeft());
+        } finally {
+            helper.close();
+        }
+    }
+
+    @Test
+    void unmarshallRejectsNegativeFileSizes() throws IOException, ClassNotFoundException {
+        // given
+        final ObjectInputStream in = mock(ObjectInputStream.class);
+        final List<FileMetaData> metadata = new ArrayList<>();
+        metadata.add(new FileMetaData("negative.bin", -1, ""));
+        metadata.add(new FileMetaData("positive.bin", 10, ""));
+        when(in.readObject()).thenReturn(metadata);
+        final Path target = Files.createDirectories(tempDir.resolve("target"));
+        final NetworkClipboardFilesHelper helper = new NetworkClipboardFilesHelper();
+
+        // when, then
+        final IOException error = assertThrows(IOException.class,
+                () -> NetworkClipboardFilesMessage.unmarshall(in, helper, target.toString()));
+        assertEquals("Received invalid file size -1", error.getMessage());
+        helper.close();
+    }
+
+    @Test
+    void getWireSizeSaturatesAboveTwoGigabytes() {
+        // given - the wire size is only used for local statistics
+        final NetworkClipboardFilesMessage message = new NetworkClipboardFilesMessage(
+                Collections.emptyList(), 3L << 30, tempDir.toString());
+
+        // when, then
+        assertEquals(Integer.MAX_VALUE, message.getWireSize());
     }
 
     @Test

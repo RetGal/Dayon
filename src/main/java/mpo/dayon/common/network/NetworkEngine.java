@@ -100,10 +100,6 @@ public abstract class NetworkEngine {
 
     private byte[] mainPeerCertificateFingerprint;
 
-    /**
-     * Peer certificate fingerprint of the session that was interrupted.
-     * A peer is only allowed to resume that session if its certificate matches this fingerprint exactly.
-     */
     private byte[] expectedReconnectPeerFingerprint;
 
     /**
@@ -137,10 +133,6 @@ public abstract class NetworkEngine {
         return false;
     }
 
-    /**
-     * Notifies the peer that a clipboard transfer is complete even though no payload
-     * could be sent (e.g. all files were filtered out).
-     */
     public void sendClipboardTransferComplete() {
         if (sender != null) {
             sender.ping();
@@ -182,6 +174,14 @@ public abstract class NetworkEngine {
         fileSender = new NetworkSender(new ObjectOutputStream(new BufferedOutputStream(fileConnection.getOutputStream())));
         fileSender.start(1);
         fileSender.ping();
+    }
+
+    protected static void disableNagle(SSLSocket socket) {
+        try {
+            socket.setTcpNoDelay(true);
+        } catch (IOException ex) {
+            Log.warn("Could not disable Nagle on the connection", ex);
+        }
     }
 
     /**
