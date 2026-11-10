@@ -3,34 +3,35 @@ package mpo.dayon.common.network.message;
 import mpo.dayon.common.log.Log;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class NetworkClipboardFilesHelper {
 
-    private List<File> files;
-    private List<FileMetaData> fileMetadatas;
+    static final int MAX_CHUNK_SIZE = 1 << 20;
+    static final int WRITE_BUFFER_SIZE = 64 * 1024;
+
+    private List<File> files = Collections.emptyList();
+    private List<FileMetaData> fileMetadatas = Collections.emptyList();
     private String transferId;
     private volatile int position;
     private volatile long fileBytesLeft;
-    private volatile long totalFileBytesLeft ;
-    private FileOutputStream fileOutputStream;
+    private volatile long totalFileBytesLeft;
+    private OutputStream fileOutputStream;
     private Path rootPath;
+    private byte[] readBuffer;
 
     public NetworkClipboardFilesHelper() {
-        this.files = new ArrayList<>();
-        this.fileMetadatas = new ArrayList<>();
         this.position = 0;
         this.fileBytesLeft = 0;
         this.totalFileBytesLeft = 0;
     }
 
     public List<File> getFiles() {
-        return Collections.unmodifiableList(files);
+        return files;
     }
 
     public void setFiles(List<File> files) {
@@ -38,11 +39,11 @@ public class NetworkClipboardFilesHelper {
     }
 
     List<FileMetaData> getFileMetadatas() {
-        return Collections.unmodifiableList(fileMetadatas);
+        return fileMetadatas;
     }
 
     void setFileMetadatas(List<FileMetaData> fileMetadatas) {
-       this.fileMetadatas = Collections.unmodifiableList(fileMetadatas);
+        this.fileMetadatas = Collections.unmodifiableList(fileMetadatas);
     }
 
     String getTransferId() {
@@ -78,14 +79,14 @@ public class NetworkClipboardFilesHelper {
     }
 
     public boolean isDone() {
-        return totalFileBytesLeft == 0;
+        return transferId == null || position >= fileMetadatas.size();
     }
 
-    FileOutputStream getFileOutputStream() {
+    OutputStream getFileOutputStream() {
         return fileOutputStream;
     }
 
-    void setFileOutputStream(FileOutputStream fileOutputStream) {
+    void setFileOutputStream(OutputStream fileOutputStream) {
         this.fileOutputStream = fileOutputStream;
     }
 
@@ -97,10 +98,18 @@ public class NetworkClipboardFilesHelper {
         this.rootPath = rootPath;
     }
 
+    byte[] getReadBuffer() {
+        if (readBuffer == null) {
+            readBuffer = new byte[MAX_CHUNK_SIZE];
+        }
+        return readBuffer;
+    }
+
     void closeFileOutputStream() throws IOException {
-        if (fileOutputStream != null) {
+        final OutputStream stream = fileOutputStream;
+        if (stream != null) {
             try {
-                fileOutputStream.close();
+                stream.close();
             } finally {
                 fileOutputStream = null;
             }

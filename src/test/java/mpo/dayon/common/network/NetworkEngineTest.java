@@ -8,12 +8,16 @@ import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -69,6 +73,30 @@ class NetworkEngineTest {
 
         // then
         verify(engine.sender).ping();
+    }
+
+    @Test
+    void disablesNagleWithoutTouchingTheSocketBuffers() throws IOException {
+        // given
+        final SSLSocket socket = mock(SSLSocket.class);
+
+        // when
+        NetworkEngine.disableNagle(socket);
+
+        // then - setting the buffers explicitly would disable TCP autotuning
+        verify(socket).setTcpNoDelay(true);
+        verify(socket, never()).setSendBufferSize(anyInt());
+        verify(socket, never()).setReceiveBufferSize(anyInt());
+    }
+
+    @Test
+    void disablingNagleFailsGracefully() throws IOException {
+        // given
+        final SSLSocket socket = mock(SSLSocket.class);
+        doThrow(new SocketException("not supported")).when(socket).setTcpNoDelay(true);
+
+        // when, then
+        assertDoesNotThrow(() -> NetworkEngine.disableNagle(socket));
     }
 
     @Test

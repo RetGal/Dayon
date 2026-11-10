@@ -311,6 +311,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             connection.connect(new InetSocketAddress(peerAddress, peerPort), CONNECT_TIMEOUT_MS);
             // once connected, remain connected until cancelled
             connection.setSoTimeout(0);
+            disableNagle(connection);
             return true;
         } catch (IOException e) {
             Log.warn("Unable to connect to the assisted");
@@ -327,6 +328,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             fileConnection.connect(new InetSocketAddress(peerAddress, peerPort), CONNECT_TIMEOUT_MS);
             // once connected, remain connected until cancelled
             fileConnection.setSoTimeout(0);
+            disableNagle(fileConnection);
             return true;
         } catch (IOException e) {
             Log.warn("Unable to connect to the assisted (file server)");
@@ -410,6 +412,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
         server = (SSLServerSocket) sslServerSocketFactory.createServerSocket(configuration.getPort());
         server.setNeedClientAuth(true);
         fileConnection = (SSLSocket) server.accept();
+        disableNagle(fileConnection);
         safeClose(server);
         server = null;
         return true;
@@ -600,6 +603,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 safeClose(connection); // we might have refused the accepted connection (!)
             }
             connection = (SSLSocket) server.accept();
+            disableNagle(connection);
             fireOnConnecting();
             if (!connection.getSession().isValid()) {
                 fireOnFingerprinted(null);
