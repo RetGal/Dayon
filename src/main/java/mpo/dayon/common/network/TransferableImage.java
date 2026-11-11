@@ -79,7 +79,8 @@ public class TransferableImage implements Transferable, Serializable {
         @Override
         public int read(byte[] b, int off, int len) throws IOException {
             int read = super.read(b, off, len);
-            if (read > 0 && (count += read) > MAX_IMAGE_SIZE) {
+            count += read;
+            if (read > 0 && count > MAX_IMAGE_SIZE) {
                 throw new IOException(IMAGE_TOO_LARGE);
             }
             return read;
