@@ -52,7 +52,7 @@ if (isset($_GET['port'])) {
 }
 
 function clean($val, $maxLen = "") {
-    $val = trim(strip_tags($val));
+    $val = trim(str_replace('*', '', strip_tags($val)));
     if (!empty($maxLen)) {
         $val = substr($val, 0, $maxLen);
     }
