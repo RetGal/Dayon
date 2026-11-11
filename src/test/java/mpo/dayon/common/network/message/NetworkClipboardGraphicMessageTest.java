@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -64,6 +65,28 @@ class NetworkClipboardGraphicMessageTest {
         try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
             NetworkClipboardGraphicMessage.installImageObjectInputFilter(in);
             assertThrows(InvalidClassException.class, () -> NetworkClipboardGraphicMessage.unmarshall(in));
+        }
+    }
+
+    @Test
+    void unmarshallRejectsImagePayloadLargerThanTwentyMegabytes() throws IOException {
+        // given
+        final BufferedImage largeImage = new BufferedImage(5000, 4000, BufferedImage.TYPE_INT_RGB);
+        final Random random = new Random(0);
+        for (int y = 0; y < largeImage.getHeight(); y++) {
+            for (int x = 0; x < largeImage.getWidth(); x++) {
+                largeImage.setRGB(x, y, random.nextInt());
+            }
+        }
+        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(bytes)) {
+            out.writeObject(new TransferableImage(largeImage));
+        }
+
+        // when, then
+        try (ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bytes.toByteArray()))) {
+            final IOException error = assertThrows(IOException.class, in::readObject);
+            assertEquals("Image data exceeds 50 MB", error.getMessage());
         }
     }
 
