@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
+import static java.nio.file.attribute.PosixFilePermission.*;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
 public interface Runner {
@@ -83,12 +84,17 @@ public interface Runner {
             Log.warn("Home directory [user.home] is null!");
             return null;
         }
-
         File appHomeDir = new File(isSnapped() ? homeDir + System.getProperty(JAVA_CLASS_PATH).substring(0, System.getProperty(JAVA_CLASS_PATH).indexOf("/jar/dayon.jar")) : homeDir, ".dayon");
-
-        if (!appHomeDir.exists() && !appHomeDir.mkdirs()) {
-            Log.warn(format("Could not create the application directory [%s]!", appHomeDir.getAbsolutePath()));
-            return new File(homeDir);
+        if (!appHomeDir.exists()) {
+            try {
+                Files.createDirectories(appHomeDir.toPath());
+                Files.setPosixFilePermissions(appHomeDir.toPath(), Set.of(OWNER_READ, OWNER_WRITE, OWNER_EXECUTE));
+            } catch (UnsupportedOperationException ex) {
+                // ignore, not a posix file system
+            } catch (IOException e) {
+                Log.warn(format("Could not create the application directory [%s]!", appHomeDir.getAbsolutePath()));
+                return new File(homeDir);
+            }
         }
         System.setProperty("dayon.home", appHomeDir.getAbsolutePath());
         return appHomeDir;
@@ -109,11 +115,14 @@ public interface Runner {
                 if (exitCode != 0) {
                     Log.error(format("Failed to create keystore [%s], keytool exited with code [%d]", keystore, exitCode));
                 }
+                Files.setPosixFilePermissions(keystore, Set.of(OWNER_READ));
             } catch (IOException e) {
                 Log.error(format("Failed to create keystore [%s]", keystore), e);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 Log.error(format("Interrupted while creating keystore [%s]", keystore), e);
+            } catch (UnsupportedOperationException ex) {
+                // ignore, not a posix file system
             }
         }
     }
