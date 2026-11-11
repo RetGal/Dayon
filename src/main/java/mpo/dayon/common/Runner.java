@@ -26,6 +26,7 @@ public interface Runner {
         final File appHomeDir = Runner.getOrCreateAppHomeDir();
         Map<String, String> programArgs = Runner.extractProgramArgs(args);
         String language = Runner.overrideLocale(programArgs.get("lang"));
+        Runner.prepareKeystore(appHomeDir);
         SwingUtilities.invokeLater(() -> {
             Runner.logAppInfo(hasAssistant(args) ? "dayon_assistant" : "dayon_assisted");
             try {
@@ -38,7 +39,6 @@ public interface Runner {
                 FatalErrorHandler.bye(hasAssistant(args) ? "The assistant is dead!" : "The assisted is dead!", ex);
             }
         });
-        new Thread(() -> prepareKeystore(appHomeDir)).start();
     }
 
     static void logAppInfo(String appName) {
@@ -105,9 +105,15 @@ public interface Runner {
             String keytool = Paths.get(format("%s%sbin%skeytool", System.getProperty("java.home"), File.separator, File.separator)).toString();
             ProcessBuilder builder = new ProcessBuilder(keytool, "-genkeypair", "-dname", "cn=Dayon!, ou=Dayon!, o=Dayon!, c=Dayon!, l=Dayon!", "-keyalg", "RSA", "-keysize", "4096", "-alias", "genkey",  "-validity", "3210", "-keystore", keystore.toString(), "-storepass", "spasspass");
             try {
-                builder.directory(appHomeDir).start();
+                int exitCode = builder.directory(appHomeDir).start().waitFor();
+                if (exitCode != 0) {
+                    Log.error(format("Failed to create keystore [%s], keytool exited with code [%d]", keystore, exitCode));
+                }
             } catch (IOException e) {
                 Log.error(format("Failed to create keystore [%s]", keystore), e);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                Log.error(format("Interrupted while creating keystore [%s]", keystore), e);
             }
         }
     }
