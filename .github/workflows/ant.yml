@@ -14,4 +14,4 @@ jobs:
         distribution: 'zulu'
         java-version: 25
     - name: Build with Ant
-      run: ant -noinput -buildfile build.xml clean compile build
+      run: ant -noinput -buildfile build.xml clean compile build verify

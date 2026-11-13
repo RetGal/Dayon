@@ -116,7 +116,7 @@
                                 <goal>shade</goal>
                             </goals>
                             <configuration>
-                                <minimizeJar>false</minimizeJar>
+                                <minimizeJar>true</minimizeJar>
                                 <transformers>
                                     <transformer
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -133,7 +133,7 @@
                                     <filter>
                                         <artifact>ice4j*:*</artifact>
                                         <excludes>
-                                            <exclude>reference.conf</exclude>
+                                            <exclude>reference.conf*</exclude>
                                         </excludes>
                                     </filter>
                                     <filter>
@@ -157,6 +157,44 @@
                                             <exclude>kotlin/streams/**</exclude>
                                             <exclude>kotlin/time/**</exclude>
                                         </excludes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>org.jetbrains.kotlin:kotlin-reflect*</artifact>
+                                        <excludeDefaults>false</excludeDefaults>
+                                        <includes>
+                                            <!-- kotlin-reflect loads most of its implementation by name -->
+                                            <include>**</include>
+                                        </includes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>org.jetbrains.kotlin:kotlin-stdlib*</artifact>
+                                        <excludeDefaults>false</excludeDefaults>
+                                        <includes>
+                                            <include>kotlin/io/CloseableKt*</include>
+                                            <include>kotlin/jvm/internal/LocalVariableReferencesKt*</include>
+                                            <include>kotlin/ExtensionFunctionType*</include>
+                                            <include>kotlin/ParameterName*</include>
+                                            <include>kotlin/internal/NoInfer*</include>
+                                        </includes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>org.jitsi:jain-sip-ri-ossonly</artifact>
+                                        <excludeDefaults>false</excludeDefaults>
+                                        <includes>
+                                            <!-- ParserFactory loads these by name -->
+                                            <include>gov/nist/javax/sdp/parser/*FieldParser*</include>
+                                            <include>gov/nist/core/HostNameParser*</include>
+                                            <include>gov/nist/core/HostPort*</include>
+                                            <include>gov/nist/core/Separators*</include>
+                                            <include>gov/nist/javax/sdp/fields/SDPKeywords*</include>
+                                        </includes>
+                                    </filter>
+                                    <filter>
+                                        <artifact>org.opentelecoms.sdp:sdp-api</artifact>
+                                        <excludeDefaults>false</excludeDefaults>
+                                        <includes>
+                                            <include>javax/sdp/SdpConstants*</include>
+                                        </includes>
                                     </filter>
                                 </filters>
                             </configuration>
@@ -422,6 +460,36 @@
                     </plugin>
                     <plugin>
                         <artifactId>maven-shade-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.6.4</version>
+                        <executions>
+                            <execution>
+                                <id>smoke-test-shaded-jar</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <!--
+                                        Run the smoke test in a fresh JVM with only the shaded jar on
+                                        the classpath, so a broken minimizeJar configuration fails the
+                                        build. The JDK's single-file source launcher (Java 11+)
+                                        compiles the test on the fly.
+                                    -->
+                                    <executable>${java.home}/bin/java</executable>
+                                    <workingDirectory>${project.build.directory}</workingDirectory>
+                                    <arguments>
+                                        <argument>-Djava.awt.headless=true</argument>
+                                        <argument>-classpath</argument>
+                                        <argument>${project.build.directory}/${project.build.finalName}.jar</argument>
+                                        <argument>${project.basedir}/src/smoke/java/mpo/dayon/smoke/ShadedJarSmokeTest.java</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
                     </plugin>
                     <plugin>
                         <artifactId>maven-jarsigner-plugin</artifactId>
