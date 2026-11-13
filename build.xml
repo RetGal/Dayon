@@ -53,14 +53,20 @@
 	<target name="build" depends="compile" description="Build the jar">
 		<jar destfile="${dir.build}/dayon.jar">
 			<zipfileset src="${dir.binfile}/lib/xz-1.12.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/ice4j-3.2-15-g6da2b08.jar" excludes="META-INF/**,reference.conf*"/>
-			<zipfileset src="${dir.binfile}/lib/jitsi-utils-1.0-127-g6c65524.jar" excludes="META-INF/**"/>
-			<zipfileset src="${dir.binfile}/lib/jitsi-metaconfig-1.0-9-g5e1b624.jar" excludes="META-INF/**,"/>
-			<zipfileset src="${dir.binfile}/lib/jicoco-config-1.1-127-gf49982f.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/ice4j-3.2-24-g172f341.jar" excludes="META-INF/**,reference.conf*"/>
+			<zipfileset src="${dir.binfile}/lib/jitsi-utils-1.0-153-gd5c0102.jar" excludes="META-INF/**"/>
+			<zipfileset src="${dir.binfile}/lib/jitsi-metaconfig-1.0-18-ge06bc45.jar" excludes="META-INF/**,"/>
+			<zipfileset src="${dir.binfile}/lib/jicoco-config-1.1-179-g52cf6ef.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/jain-sip-ri-ossonly-1.2.279-jitsi-oss1.jar" excludes="META-INF/**,gov/nist/core/net/**,gov/nist/javax/sip/**"/>
-			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-1.9.10.jar" excludes="META-INF/**,kotlin/**/*metadata,kotlin/coroutines/**,kotlin/comparisons/**,kotlin/io/encoding/**,kotlin/io/path/**,kotlin/math/**,kotlin/random/**,kotlin/streams/**,kotlin/time/**"/>
+			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-2.4.20.jar" excludes="META-INF/**,kotlin/**/*metadata,kotlin/coroutines/**,kotlin/comparisons/**,kotlin/io/encoding/**,kotlin/io/path/**,kotlin/math/**,kotlin/random/**,kotlin/streams/**,kotlin/time/**"/>
 			<zipfileset src="${dir.binfile}/lib/kotlin-stdlib-common-1.9.10.jar" excludes="META-INF/**,kotlin/**/*metadata"/>
-			<zipfileset src="${dir.binfile}/lib/kotlin-reflect-1.9.10.jar" excludes="META-INF/**,kotlin/reflect/jvm/internal/calls/**"/>
+			<!--
+				The service descriptors (META-INF/services) are loaded with ServiceLoader at runtime
+				(kotlin-reflect resolves its MetadataExtensions that way), so they must survive the
+				META-INF cleanup below.
+			-->
+			<zipfileset src="${dir.binfile}/lib/kotlin-reflect-2.4.20.jar" includes="META-INF/services/**"/>
+			<zipfileset src="${dir.binfile}/lib/kotlin-reflect-2.4.20.jar" excludes="META-INF/**,kotlin/reflect/jvm/internal/calls/**"/>
 			<zipfileset src="${dir.binfile}/lib/java-sdp-nist-bridge-1.2.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/sdp-api-1.0.jar" excludes="META-INF/**"/>
 			<zipfileset src="${dir.binfile}/lib/config-1.4.2.jar" excludes="META-INF/**"/>

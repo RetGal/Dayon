@@ -60,7 +60,7 @@
         <dependency>
             <groupId>org.jitsi</groupId>
             <artifactId>ice4j</artifactId>
-            <version>3.2-15-g6da2b08</version>
+            <version>3.2-24-g172f341</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -122,25 +122,60 @@
                                             implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                         <mainClass>mpo.dayon.common.Runner</mainClass>
                                     </transformer>
+                                    <!--
+                                        Thousands of META-INF entries are stripped below, but the service
+                                        descriptors have to survive and be merged: kotlin-reflect (pulled in by
+                                        ice4j) resolves its MetadataExtensions through ServiceLoader.
+                                    -->
+                                    <transformer
+                                            implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                                 </transformers>
                                 <artifactSet>
                                     <excludes>
                                         <exclude>net.java.dev.jna:*</exclude>
                                         <exclude>com.googlecode.json-simple:*</exclude>
+                                        <!--
+                                            Jackson is a transitive dependency of jitsi-utils, which only
+                                            uses it to render its queue/time-series statistics as JSON.
+                                            Dayon never touches those, but ice4j's Component reads a
+                                            static field of the (unused) push-API UDP harvester, so
+                                            minimizeJar considers Jackson reachable and keeps it.
+                                        -->
+                                        <exclude>com.fasterxml.jackson.core:*</exclude>
                                     </excludes>
                                 </artifactSet>
                                 <filters>
                                     <filter>
-                                        <artifact>ice4j*:*</artifact>
+                                        <artifact>org.jitsi*:ice4j*</artifact>
                                         <excludes>
-                                            <exclude>reference.conf*</exclude>
+                                            <exclude>reference.conf</exclude>
                                         </excludes>
                                     </filter>
                                     <filter>
                                         <artifact>*</artifact>
+                                        <excludeDefaults>false</excludeDefaults>
                                         <excludes>
-                                            <exclude>META-INF/**</exclude>
                                             <exclude>license.txt</exclude>
+                                            <!--
+                                                Keep META-INF/services/**, everything else below META-INF is
+                                                stripped. The ServiceLoader descriptors are required at runtime
+                                                (kotlin-reflect).
+                                            -->
+                                            <exclude>META-INF/MANIFEST.MF</exclude>
+                                            <exclude>META-INF/*.SF</exclude>
+                                            <exclude>META-INF/*.DSA</exclude>
+                                            <exclude>META-INF/*.RSA</exclude>
+                                            <exclude>META-INF/INDEX.LIST</exclude>
+                                            <exclude>META-INF/DEPENDENCIES*</exclude>
+                                            <exclude>META-INF/*LICENSE*</exclude>
+                                            <exclude>META-INF/NOTICE*</exclude>
+                                            <exclude>META-INF/AL2.0</exclude>
+                                            <exclude>META-INF/LGPL2.1</exclude>
+                                            <exclude>META-INF/maven/**</exclude>
+                                            <exclude>META-INF/versions/**</exclude>
+                                            <exclude>META-INF/*.kotlin_module</exclude>
+                                            <exclude>META-INF/proguard/**</exclude>
+                                            <exclude>META-INF/com.android.tools/**</exclude>
                                             <exclude>gov/nist/core/net/**</exclude>
                                             <exclude>gov/nist/javax/sip/**</exclude>
                                             <exclude>org/bitlet/**</exclude>

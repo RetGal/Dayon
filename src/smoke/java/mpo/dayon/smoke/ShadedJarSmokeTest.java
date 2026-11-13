@@ -72,6 +72,17 @@ public final class ShadedJarSmokeTest {
             Class.forName(required);
         }
 
+        // 1b. The mirror image: Jackson is deliberately kept out of the shaded jar (see the
+        //     artifactSet in pom.xml). It only arrives through jitsi-utils' JSON statistics,
+        //     which Dayon never uses. If a future dependency starts to need it on a code path
+        //     we do use, this fails here instead of at runtime.
+        try {
+            Class.forName("com.fasterxml.jackson.databind.ObjectMapper");
+            throw new IllegalStateException("jackson must not be packaged in the shaded jar");
+        } catch (ClassNotFoundException expected) {
+            // expected
+        }
+
         // 2. kotlin-reflect driven jitsi/ice4j configuration (AgentConfig, HarvestConfig, JitsiConfig)
         System.out.println("ice4j config: " + org.ice4j.ice.AgentConfig.config.getSoftware()
                 + " / harvest timeout " + org.ice4j.ice.harvest.HarvestConfig.config.timeout());
