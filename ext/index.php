@@ -1,8 +1,10 @@
 <?php
-define('VERSION', "v.1.6");
+define('VERSION', "v.1.7");
 // name of the database file (may also be a path)
 define('DB_NAME', "dayon.db");
-// minimal length of the tokens to be generated (33^N-1 variants)
+// chars to be used to generate the tokens (no lower case!)
+define('TOKEN_CHARS', "ABCDEFGHJKLMNPQRSTUVWXYZ123456789:+-!?");
+// minimal length of the tokens to be generated (38^N-1 variants)
 define('TOKEN_MIN_LENGTH', 4);
 // number of seconds after which the token will be purged
 define('TOKEN_LIFETIME', 604800);
@@ -65,7 +67,7 @@ function isValidPort($port) {
 
 function createToken($pdo, $address, $port, $localAddress, $closed, $assistantIce) {
     if (checkAvailable($pdo, $address) <= 0) {
-       return substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, rand(4, 12))."\n";
+       return substr(str_shuffle(TOKEN_CHARS), 0, rand(4, 12))."\n";
     }
     $token = computeToken(TOKEN_MIN_LENGTH);
     $attempt = 0;
@@ -88,7 +90,7 @@ function checkAvailable($pdo, $address) {
 }
 
 function computeToken($length) {
-    $token = substr(str_shuffle("ABCDEFGHJKLMNPQRSTUVWXYZ123456789"), 0, $length-1);
+    $token = substr(str_shuffle(TOKEN_CHARS), 0, $length-1);
     $token .= strtoupper(substr(sha1($token), -1));
     return $token;
 }
