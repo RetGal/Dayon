@@ -42,16 +42,21 @@ class ConnectionSettingsDialog {
         connectionSettingsDialog.add(assistantPortNumber);
         connectionSettingsDialog.add(assistantPortNumberTextField);
 
-        JPanel connectionTokenDialog = new JPanel(new GridLayout(1, 2, 10, 10));
+        JPanel connectionTokenDialog = new JPanel(new GridBagLayout());
         connectionTokenDialog.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 0));
 
         final JLabel assistantToken = new JLabel(getOrCreateIcon(ImageNames.KEY));
         assistantTokenTextField = new JTextField(token, 7);
-        assistantTokenTextField.setMargin(new Insets(2,2,2,2));
+        assistantTokenTextField.setMargin(new Insets(10,5,10,5));
         assistantTokenTextField.setFont(new Font("Sans Serif", Font.PLAIN, 26));
         assistantTokenTextField.addMouseListener(clearTextOnDoubleClick(assistantTokenTextField));
-        connectionTokenDialog.add(assistantToken);
-        connectionTokenDialog.add(assistantTokenTextField);
+        GridBagConstraints tokenConstraints = new GridBagConstraints();
+        tokenConstraints.gridy = 0;
+        tokenConstraints.insets = new Insets(0, 5, 0, 25);
+        connectionTokenDialog.add(assistantToken, tokenConstraints);
+        tokenConstraints.gridx = 1;
+        tokenConstraints.insets = new Insets(0, 5, 0, 0);
+        connectionTokenDialog.add(assistantTokenTextField, tokenConstraints);
 
         AbstractDocument doc = (AbstractDocument) assistantTokenTextField.getDocument();
         doc.setDocumentFilter(new UppercaseDocumentFilter());
