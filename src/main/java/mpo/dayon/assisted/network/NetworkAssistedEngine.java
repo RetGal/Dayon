@@ -29,12 +29,10 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.DataFlavor;
 import java.beans.PropertyChangeEvent;
 import java.io.*;
-import java.net.InetSocketAddress;
-import java.net.SocketTimeoutException;
-import java.net.URI;
-import java.net.UnknownHostException;
+import java.net.*;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -47,6 +45,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.*;
 
@@ -617,7 +616,7 @@ public class NetworkAssistedEngine extends NetworkEngine
             isOwnPortAccessible.set(null);
         }
         // null = unknown => -1, true = open => 1, false = closed => 0
-        String query = format(tokenServerUrl, token, port, toInt(open), nullToZeroStr(localAddress));
+        String query = format(tokenServerUrl, URLEncoder.encode(token, UTF_8), port, toInt(open), nullToZeroStr(localAddress));
         Log.debug("Resolving token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))

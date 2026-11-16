@@ -27,6 +27,7 @@ import java.io.ObjectInputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.security.KeyManagementException;
@@ -35,6 +36,7 @@ import java.security.cert.CertificateEncodingException;
 import java.time.Duration;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static mpo.dayon.common.configuration.Configuration.DEFAULT_TOKEN_SERVER_URL;
 import static mpo.dayon.common.utils.SystemUtilities.pause;
 import static mpo.dayon.common.utils.SystemUtilities.safeClose;
@@ -337,7 +339,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void obtainPeerAddressAndStatus(String tokenServerUrl, boolean closed) throws IOException, InterruptedException {
-        String query = format(tokenServerUrl, token.getTokenString(), closed ? 1 : 0, nullToZeroStr(getLocalAddress()));
+        String query = format(tokenServerUrl, URLEncoder.encode(token.getTokenString(), UTF_8), closed ? 1 : 0, nullToZeroStr(getLocalAddress()));
         Log.debug("Querying token server " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
