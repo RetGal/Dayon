@@ -7,53 +7,32 @@
     <meta name="keywords" content="fernwartung, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Fernwartung für Familie und Freunde</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="support.html" title="English">EN</a>
-          <a href="fr_support.html" title="Français">FR</a>
-          <a href="sv_support.html" title="Svenska">SV</a>
-          <a href="zh_support.html" title="简体中文">汉语</a>
-        </div>
-        <a href="de_index.html">Home</a><br/>
-        <a href="de_quickstart.html">Schnellstart</a><br/>
-        <a href="de_settings.html">Einstellungen</a><br/>
-        <a href="de_download.html">Download</a><br/>
-        <a href="de_support.html">Support</a><br/>
-        <a href="de_privacy.html">Datenschutz</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="de_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Hauptmenü">
+        <a href="de_index.html">Home</a>
+        <a href="de_quickstart.html">Schnellstart</a>
+        <a href="de_settings.html">Einstellungen</a>
+        <a href="de_download.html">Download</a>
+        <a href="de_support.html" class="active">Support</a>
+        <a href="de_privacy.html">Datenschutz</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_support.html" aria-current="page">DE</a>
+        <a href="fr_support.html">FR</a>
+        <a href="sv_support.html">SV</a>
+        <a href="zh_support.html" title="简体中文">汉语</a>
+        <a href="support.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="support.html" title="English">EN</a>
-      <a href="fr_support.html" title="Français">FR</a>
-      <a href="sv_support.html" title="Svenska">SV</a>
-      <a href="zh_support.html" title="简体中文">汉语</a>
-    </div>
-    <div id="menu">
-      <a href="de_index.html">Home</a>
-      <a href="de_quickstart.html">Schnellstart</a>
-      <a href="de_settings.html">Einstellungen</a>
-      <a href="de_download.html">Download</a>
-      <a href="de_support.html">Support</a>
-      <a href="de_privacy.html">Datenschutz</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Hilfe</h2>
+  </header>
+  <main id="content">
+    <h2>Hilfe</h2>
       <p>
         Für Rückmeldungen bin ich Ihnen sehr dankbar! Posten Sie eine Frage oder erfassen Sie ein Issue auf <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
@@ -67,7 +46,9 @@
 
       <p>Wenn auf der Seite des Assistierten Wayland im Einsatz ist, muss die Freigabe des Bildschirms und dessen Fernsteuerung explizit erlaubt werden.<br/>
         Der Dialog "Bildschirmfreigabe" erscheint automatisch, sobald der Assistent die Verbindung aufgebaut hat.
-        Der Assistierte muss die Freigabe bestätigen, sonst kann der Assistent den Bildschirm nicht sehen und auch nicht steuern:<br/>
+        Der Assistierte muss die Freigabe bestätigen, sonst kann der Assistent den Bildschirm nicht sehen und auch nicht steuern:
+      </p>
+      <p>
         <img src="wayland.allow.png" alt="Grant access"/>
       </p>
 
@@ -141,8 +122,13 @@
         Applikation des Assistierten neu gestartet, oder dessen Puffer zurückgesetzt werden.
         (<strong>Abfallkübelsymbol</strong>).
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="de_index.html">Dayon!</a> &middot; Remote-Support für Familie und Freunde.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="de_privacy.html">Datenschutz</a>
+    </p>
+  </footer>
+</body>
 </html>

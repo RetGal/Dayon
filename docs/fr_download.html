@@ -7,53 +7,32 @@
     <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_download.html" title="Deutsch">DE</a>
-          <a href="download.html" title="English">EN</a>
-          <a href="sv_download.html" title="Svenska">SV</a>
-          <a href="zh_download.html" title="简体中文">汉语</a>
-        </div>
-        <a href="fr_index.html">Accueil</a><br/>
-        <a href="fr_quickstart.html">Premiers Pas</a><br/>
-        <a href="fr_settings.html">Paramètres</a><br/>
-        <a href="fr_download.html">Télécharger</a><br/>
-        <a href="fr_support.html">Aide</a><br/>
-        <a href="fr_privacy.html">Confidentialité</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="fr_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Menu principal">
+        <a href="fr_index.html">Accueil</a>
+        <a href="fr_quickstart.html">Premiers Pas</a>
+        <a href="fr_settings.html">Paramètres</a>
+        <a href="fr_download.html" class="active">Télécharger</a>
+        <a href="fr_support.html">Aide</a>
+        <a href="fr_privacy.html">Confidentialité</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_download.html">DE</a>
+        <a href="fr_download.html" aria-current="page">FR</a>
+        <a href="sv_download.html">SV</a>
+        <a href="zh_download.html" title="简体中文">汉语</a>
+        <a href="download.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_download.html" title="Deutsch">DE</a>
-      <a href="download.html" title="English">EN</a>
-      <a href="sv_download.html" title="Svenska">SV</a>
-      <a href="zh_download.html" title="简体中文">汉语</a>
-    </div>
-    <div id="menu">
-      <a href="fr_index.html">Accueil</a>
-      <a href="fr_quickstart.html">Premiers Pas</a>
-      <a href="fr_settings.html">Paramètres</a>
-      <a href="fr_download.html">Télécharger</a>
-      <a href="fr_support.html">Aide</a>
-      <a href="fr_privacy.html">Confidentialité</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Télécharger</h2>
+  </header>
+  <main id="content">
+    <h2>Télécharger</h2>
       <p>
         Les utilisateurs de <strong>Windows</strong>
         peuvent charger l'application directement depuis le <a href="https://apps.microsoft.com/detail/9PBM5KW0C790">Microsoft Store</a>.
@@ -350,8 +329,13 @@
       <p>
         Les anciennes versions (v1.0 à v1.2) peuvent être téléchargées depuis <a href="http://sourceforge.net/project/showfiles.php?group_id=246651">ici</a>.
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="fr_index.html">Dayon!</a> &middot; assistance à distance pour votre famille et vos amis.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="fr_privacy.html">Confidentialité</a>
+    </p>
+  </footer>
+</body>
 </html>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -7,53 +7,40 @@
     <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Distanshjälp för din familj och dina vänner</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_index.html" title="Deutsch">DE</a>
-          <a href="fr_index.html" title="Français">FR</a>
-          <a href="index.html" title="English">EN</a>
-          <a href="zh_index.html" title="简体中文">汉语</a>
-        </div>
-        <a href="sv_index.html">Home</a><br/>
-        <a href="sv_quickstart.html">Quick Start</a><br/>
-        <a href="sv_settings.html">Settings</a><br/>
-        <a href="sv_download.html">Download</a><br/>
-        <a href="sv_support.html">Support</a><br/>
-        <a href="sv_privacy.html">Privacy</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="sv_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Huvudmeny">
+        <a href="sv_index.html" class="active">Hjem</a>
+        <a href="sv_quickstart.html">Komma igång</a>
+        <a href="sv_settings.html">Inställningar</a>
+        <a href="sv_download.html">Ladda ned</a>
+        <a href="sv_support.html">Support</a>
+        <a href="sv_privacy.html">Personlig integritet</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_index.html">DE</a>
+        <a href="fr_index.html">FR</a>
+        <a href="sv_index.html" aria-current="page">SV</a>
+        <a href="zh_index.html" title="简体中文">汉语</a>
+        <a href="index.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_index.html" title="Deutsch">DE</a>
-      <a href="fr_index.html" title="Français">FR</a>
-      <a href="index.html" title="English">EN</a>
-      <a href="zh_index.html" title="简体中文">汉语</a>
+  </header>
+  <main id="content">
+    <div class="hero">
+      <img class="hero_shot" src="dayon.screen.webp" alt="Dayon! request window">
+      <div class="hero_text">
+        <h1>Dayon!</h1>
+        <p class="hero__tagline">Distanshjälp, helt enkelt!</p>
+        <a class="sf-badge" href="https://sourceforge.net/projects/dayonactive/" title="Dayon! on SourceForge"><img src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" width="44" height="44" alt="Dayon! OSS Rising Star badge"><span>OSS Rising Star on SourceForge</span></a>
+      </div>
     </div>
-    <div id="menu">
-      <a href="sv_index.html">Home</a>
-      <a href="sv_quickstart.html">Quick Start</a>
-      <a href="sv_settings.html">Settings</a>
-      <a href="sv_download.html">Download</a>
-      <a href="sv_support.html">Support</a>
-      <a href="sv_privacy.html">Privacy</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Distanshjälpstjänst</h2>
+    <h2>Distanshjälpstjänst</h2>
       <div id="intro">
         <p>
           Dayon! är en plattformsoberoende (JAVA) öppen källkodslösning som kan övervaka och styra en dator på distans. I detta avseende är den lik många andra lösningar för fjärrskrivbord (remote desktop).
@@ -66,18 +53,22 @@
 
       <h2>Funktioner</h2>
       <div id="features">
-        <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Enkelt att komma igång</h3>
-        <p>
+        <div class="feature">
+          <h3>Enkelt att komma igång</h3>
+          <p>
           Dayon! är avsedd för personer som är helt nya i datorvärlden. Det finns inget behov av att konfigurera nätverket
           (dvs. brandvägg, routerkonfiguration, NAT) på hjälpmottagarens dator.
           Dayon! agerar där som en klient som ansluter till hjälpgivarens dator utan att användaren behöver förstå det tekniska.
         </p>
+        </div>
 
-        <h3><img src="check.png" alt="Check mark" width="16" height="16"/> Låga bandbreddskrav</h3>
-        <p>
-          Dayon! skickar komprimerade och cachade gråskaliga skärmbilder (upp till 256 gråskalor) för minimerad bandbredd och
+        <div class="feature">
+          <h3>Låga bandbreddskrav</h3>
+          <p>
+          Som standard, Dayon! skickar komprimerade och cachade gråskaliga skärmbilder (upp till 256 gråskalor) för minimerad bandbredd och
           för att i mesta möjliga mån erbjuda en realtidsupplevelse över Internet. Detta är fullt tillräckligt för att kunna se och
           arbeta med de olika menyerna och ikonerna liksom att hantera hjälptagarens datorinställningar, osv...</p>
+        </div>
       </div>
 
       <h2>Status (19)</h2>
@@ -121,12 +112,14 @@
       <h2>Licens</h2>
       <p>
         Detta program är en fri programvara licensierad under <a href="https://opensource.org/licenses/GPL-3.0">GPL licens</a>.
-        <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
-          <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy"  src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width: 100px; float: right; margin-top: -60px;"/>
-        </a>
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="sv_index.html">Dayon!</a> &middot; distanshjälp för familj och vänner.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="sv_privacy.html">Personlig integritet</a>
+    </p>
+  </footer>
+</body>
 </html>
