@@ -7,53 +7,32 @@
     <meta name="keywords" content="远程协助, 远程桌面, 屏幕共享, 远程支持, Java 远程桌面, Java 屏幕捕获"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - 为您的家人和朋友提供远程协助</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_quickstart.html" title="Deutsch">DE</a>
-          <a href="fr_quickstart.html" title="Français">FR</a>
-          <a href="sv_quickstart.html" title="Svenska">SV</a>
-          <a href="quickstart.html" title="English">EN</a>
-        </div>
-        <a href="zh_index.html">首页</a><br/>
-        <a href="zh_quickstart.html">快速入门</a><br/>
-        <a href="zh_settings.html">设置</a><br/>
-        <a href="zh_download.html">下载</a><br/>
-        <a href="zh_support.html">支持</a><br/>
-        <a href="zh_privacy.html">隐私</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="zh_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="主菜单">
+        <a href="zh_index.html">首页</a>
+        <a href="zh_quickstart.html" class="active">快速入门</a>
+        <a href="zh_settings.html">设置</a>
+        <a href="zh_download.html">下载</a>
+        <a href="zh_support.html">支持</a>
+        <a href="zh_privacy.html">隐私</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_quickstart.html">DE</a>
+        <a href="fr_quickstart.html">FR</a>
+        <a href="sv_quickstart.html">SV</a>
+        <a href="zh_quickstart.html" aria-current="page">汉语</a>
+        <a href="quickstart.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_quickstart.html" title="Deutsch">DE</a>
-      <a href="fr_quickstart.html" title="Français">FR</a>
-      <a href="sv_quickstart.html" title="Svenska">SV</a>
-      <a href="quickstart.html" title="English">EN</a>
-    </div>
-    <div id="menu">
-      <a href="zh_index.html">首页</a>
-      <a href="zh_quickstart.html">快速入门</a>
-      <a href="zh_settings.html">设置</a>
-      <a href="zh_download.html">下载</a>
-      <a href="zh_support.html">支持</a>
-      <a href="zh_privacy.html">隐私</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>快速入门</h2>
+  </header>
+  <main id="content">
+    <h2>快速入门</h2>
       <p>
         &nbsp; &nbsp; 协助端（Assistant）供帮助者使用，受助端（Assisted）供被帮助者使用。通常，帮助者会通过微信、QQ、电话、Jitsi、其他即时通讯工具或其他方便的方式与被帮助者联系。然后打开 Dayon!，就能实时看到受助端（Assisted）的电脑屏幕。
       </p>
@@ -362,8 +341,13 @@
       <p>
         &nbsp; &nbsp; 就这些！更多信息见<a href="zh_settings.html">设置</a>页。
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="zh_index.html">Dayon!</a> &middot; 为家人和朋友提供远程协助.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="zh_privacy.html">隐私</a>
+    </p>
+  </footer>
+</body>
 </html>

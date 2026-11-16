@@ -7,53 +7,32 @@
     <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Remote assistance for your family and friends</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_settings.html" title="Deutsch">DE</a>
-          <a href="fr_settings.html" title="Français">FR</a>
-          <a href="sv_settings.html" title="Svenska">SV</a>
-          <a href="zh_settings.html" title="简体中文">汉语</a>
-        </div>
-        <a href="index.html">Home</a><br/>
-        <a href="quickstart.html">Quick Start</a><br/>
-        <a href="settings.html">Settings</a><br/>
-        <a href="download.html">Download</a><br/>
-        <a href="support.html">Support</a><br/>
-        <a href="privacy.html">Privacy</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+        <a href="quickstart.html">Quick Start</a>
+        <a href="settings.html" class="active">Settings</a>
+        <a href="download.html">Download</a>
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_settings.html">DE</a>
+        <a href="fr_settings.html">FR</a>
+        <a href="sv_settings.html">SV</a>
+        <a href="zh_settings.html" title="简体中文">汉语</a>
+        <a href="settings.html" aria-current="page">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_settings.html" title="Deutsch">DE</a>
-      <a href="fr_settings.html" title="Français">FR</a>
-      <a href="sv_settings.html" title="Svenska">SV</a>
-      <a href="zh_settings.html" title="简体中文">汉语</a>
-    </div>
-    <div id="menu">
-      <a href="index.html">Home</a>
-      <a href="quickstart.html">Quick Start</a>
-      <a href="settings.html">Settings</a>
-      <a href="download.html">Download</a>
-      <a href="support.html">Support</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Settings</h2>
+  </header>
+  <main id="content">
+    <h2>Settings</h2>
 
       <h3><img src="assistant.png" alt="Assistant"/> &nbsp; <a id="assistant" class="no">Assistant computer</a></h3>
 
@@ -212,9 +191,13 @@ port: 8080
         </ul>
         You can find instructions on how to operate your own token server <a href="https://github.com/RetGal/Dayon/tree/master/ext">here</a>.
       </p>
-
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="index.html">Dayon!</a> &middot; remote assistance for family and friends.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="privacy.html">Privacy</a>
+    </p>
+  </footer>
+</body>
 </html>

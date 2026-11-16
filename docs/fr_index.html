@@ -7,53 +7,40 @@
     <meta name="keywords" content="assistance à distance, téléassistance, télé-assistance, partage de bureau, bureau à distance, support à distance, visualisation du bureau à distance, bureau à distance java, capture écran java" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Assistance à distance pour votre famille et vos amis</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_index.html" title="Deutsch">DE</a>
-          <a href="index.html" title="English">EN</a>
-          <a href="sv_index.html" title="Svenska">SV</a>
-          <a href="zh_index.html" title="简体中文">汉语</a>
-        </div>
-        <a href="fr_index.html">Accueil</a><br/>
-        <a href="fr_quickstart.html">Premiers Pas</a><br/>
-        <a href="fr_settings.html">Paramètres</a><br/>
-        <a href="fr_download.html">Télécharger</a><br/>
-        <a href="fr_support.html">Aide</a><br/>
-        <a href="fr_privacy.html">Confidentialité</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="fr_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Menu principal">
+        <a href="fr_index.html" class="active">Accueil</a>
+        <a href="fr_quickstart.html">Premiers Pas</a>
+        <a href="fr_settings.html">Paramètres</a>
+        <a href="fr_download.html">Télécharger</a>
+        <a href="fr_support.html">Aide</a>
+        <a href="fr_privacy.html">Confidentialité</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_index.html">DE</a>
+        <a href="fr_index.html" aria-current="page">FR</a>
+        <a href="sv_index.html">SV</a>
+        <a href="zh_index.html" title="简体中文">汉语</a>
+        <a href="index.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_index.html" title="Deutsch">DE</a>
-      <a href="index.html" title="English">EN</a>
-      <a href="sv_index.html" title="Svenska">SV</a>
-      <a href="zh_index.html" title="简体中文">汉语</a>
+  </header>
+  <main id="content">
+    <div class="hero">
+      <img class="hero_shot" src="dayon.screen.webp" alt="Dayon! request window">
+      <div class="hero_text">
+        <h1>Dayon!</h1>
+        <p class="hero__tagline">Assistance à distance pour votre famille et vos amis.</p>
+        <a class="sf-badge" href="https://sourceforge.net/projects/dayonactive/" title="Dayon! on SourceForge"><img src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" width="44" height="44" alt="Dayon! OSS Rising Star badge"><span>OSS Rising Star on SourceForge</span></a>
+      </div>
     </div>
-    <div id="menu">
-      <a href="fr_index.html">Accueil</a>
-      <a href="fr_quickstart.html">Premiers Pas</a>
-      <a href="fr_settings.html">Paramètres</a>
-      <a href="fr_download.html">Télécharger</a>
-      <a href="fr_support.html">Aide</a>
-      <a href="fr_privacy.html">Confidentialité</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Service d'Assistance à Distance</h2>
+    <h2>Service d'Assistance à Distance</h2>
       <div id="intro">
         <p>
           Dayon! est un logiciel libre et multi-plateforme (JAVA) qui permet
@@ -70,23 +57,27 @@
 
       <h2>Caractéristiques</h2>
       <div id="features">
-        <h3><img src="check.png" alt="" width="16" height="16"/> Installation Facile</h3>
-        <p>
+        <div class="feature">
+          <h3>Installation Facile</h3>
+          <p>
           Dayon! est avant tout dédié aux personnes novices dans le monde des
           ordinateurs. Sur la machine dont on veut visualiser l'écran à
           distance, il n'y pas de configuration réseau à faire (c'est-à-dire, pare-feu,
           routeur, NAT, etc..). Dayon! se comporte alors comme un client qui
           se connecte vers l'extérieur.
         </p>
+        </div>
 
-        <h3><img src="check.png" alt="" width="16" height="16"/> Réseau à Faible Débit</h3>
-        <p>
-          Dayon! transmet des images compressées de 256 niveaux de grix pour
+        <div class="feature">
+          <h3>Réseau à Faible Débit</h3>
+          <p>
+          Par défaut, Dayon! transmet des images compressées de 256 niveaux de grix pour
           minimiser au maximum l'utilisation du réseau. La qualité de ces
           images est largement suffisante pour visualiser l'écran à distance
           et expliquer les différents menus, icônes et découvrir les
           différentes configurations de l'ordinateur distant.
         </p>
+        </div>
       </div>
 
       <h2>Status (18)</h2>
@@ -138,12 +129,14 @@
       <p>
         Dayon! est un programme libre utilisant une license
         <a href="https://opensource.org/licenses/GPL-3.0">GPL</a>.
-        <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
-          <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy"  src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width: 100px; float: right; margin-top: -60px;"/>
-        </a>
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="fr_index.html">Dayon!</a> &middot; assistance à distance pour votre famille et vos amis.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="fr_privacy.html">Confidentialité</a>
+    </p>
+  </footer>
+</body>
 </html>

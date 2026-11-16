@@ -7,53 +7,40 @@
     <meta name="keywords" content="远程协助, 远程桌面, 屏幕共享, 远程支持, Java 远程桌面, Java 屏幕捕获"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - 为您的家人和朋友提供远程协助</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_index.html" title="Deutsch">DE</a>
-          <a href="fr_index.html" title="Français">FR</a>
-          <a href="sv_index.html" title="Svenska">SV</a>
-          <a href="index.html" title="English">EN</a>
-        </div>
-        <a href="zh_index.html">首页</a><br/>
-        <a href="zh_quickstart.html">快速入门</a><br/>
-        <a href="zh_settings.html">设置</a><br/>
-        <a href="zh_download.html">下载</a><br/>
-        <a href="zh_support.html">支持</a><br/>
-        <a href="zh_privacy.html">隐私</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="zh_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="主菜单">
+        <a href="zh_index.html" class="active">首页</a>
+        <a href="zh_quickstart.html">快速入门</a>
+        <a href="zh_settings.html">设置</a>
+        <a href="zh_download.html">下载</a>
+        <a href="zh_support.html">支持</a>
+        <a href="zh_privacy.html">隐私</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_index.html">DE</a>
+        <a href="fr_index.html">FR</a>
+        <a href="sv_index.html">SV</a>
+        <a href="zh_index.html" aria-current="page">汉语</a>
+        <a href="index.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_index.html" title="Deutsch">DE</a>
-      <a href="fr_index.html" title="Français">FR</a>
-      <a href="sv_index.html" title="Svenska">SV</a>
-      <a href="index.html" title="English">EN</a>
+  </header>
+  <main id="content">
+    <div class="hero">
+      <img class="hero_shot" src="dayon.screen.webp" alt="Dayon! request window">
+      <div class="hero_text">
+        <h1>Dayon!</h1>
+        <p class="hero__tagline">轻松实现远程协助！</p>
+        <a class="sf-badge" href="https://sourceforge.net/projects/dayonactive/" title="Dayon! on SourceForge"><img src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" width="44" height="44" alt="Dayon! OSS Rising Star badge"><span>OSS Rising Star on SourceForge</span></a>
+      </div>
     </div>
-    <div id="menu">
-      <a href="zh_index.html">首页</a>
-      <a href="zh_quickstart.html">快速入门</a>
-      <a href="zh_settings.html">设置</a>
-      <a href="zh_download.html">下载</a>
-      <a href="zh_support.html">支持</a>
-      <a href="zh_privacy.html">隐私</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>远程协助服务</h2>
+    <h2>远程协助服务</h2>
       <div id="intro">
         <p>
           &nbsp; &nbsp; Dayon! 是一款开源、跨平台（JAVA）的解决方案，可以查看并控制远程电脑。
@@ -66,16 +53,20 @@
 
       <h2>功能</h2>
       <div id="features">
-        <h3><img src="check.png" alt="勾选" width="16" height="16"/> 轻松配置</h3>
-        <p>
+        <div class="feature">
+          <h3>轻松配置</h3>
+          <p>
           &nbsp; &nbsp; Dayon! 专为零计算机基础的用户而设计。终端用户无需配置网络（无需配置防火墙、路由器或 NAT），只需打开 Dayon! 客户端，输入指定地址，即可连接到远程计算机（客户端主动连接服务端）。
         </p>
+        </div>
 
-        <h3><img src="check.png" alt="勾选" width="16" height="16"/> 低带宽占用</h3>
-        <p>
-          &nbsp; &nbsp; Dayon! 发送经过压缩和缓存的灰度画面（最多 256 级），尽量少占带宽，在互联网上也能尽量做到接近实时。
+        <div class="feature">
+          <h3>低带宽占用</h3>
+          <p>
+          &nbsp; &nbsp; 默认情况下 Dayon! 发送经过压缩和缓存的灰度画面（最多 256 级），尽量少占带宽，在互联网上也能尽量做到接近实时。
           这样的画面足以用来看菜单、图标，并了解对方电脑的设置等。
         </p>
+        </div>
       </div>
 
       <h2>近况（19）</h2>
@@ -120,12 +111,14 @@
         &nbsp; &nbsp; 本程序是按
         <a href="https://opensource.org/licenses/GPL-3.0">GPL 许可证</a>
         授权的自由软件。
-        <a href="https://sourceforge.net/projects/dayonactive/?pk_campaign=badge&amp;pk_source=vendor" target="_blank" rel="noopener">
-          <img alt="Dayon! (active) Reviews" width="100" height="100" loading="lazy" src="https://sourceforge.net/cdn/syndication/badge_img/2963652/oss-rising-star-white?achievement=oss-rising-star&amp;r=https://sourceforge.net/p/dayonactive/admin/files/badges/" style="width:100px; float:right; margin-top:-60px">
-        </a>
       </p>
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="zh_index.html">Dayon!</a> &middot; 为家人和朋友提供远程协助.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="zh_privacy.html">隐私</a>
+    </p>
+  </footer>
+</body>
 </html>

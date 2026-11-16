@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
@@ -7,53 +7,32 @@
     <meta name="keywords" content="remote assistance, remote desktop, desktop sharing, remote support, remote desktop view, remote desktop java, screen capture java"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Dayon! - Distanshjälp för din familj och dina vänner</title>
-    <link rel="stylesheet" type="text/css" href="style.css?q=1651946700150"/>
+    <link rel="stylesheet" type="text/css" href="style.css"/>
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
   </head>
   <body>
-  <input id="toggle" type="checkbox"/>
-  <label for="toggle" class="hamburger">
-    <div class="top-bun"></div>
-    <div class="meat"></div>
-    <div class="bottom-bun"></div>
-  </label>
-  <div class="nav">
-    <div class="nav-wrapper">
-      <nav>
-        <div class="ls">
-          <a href="de_support.html" title="Deutsch">DE</a>
-          <a href="fr_support.html" title="Français">FR</a>
-          <a href="support.html" title="English">EN</a>
-          <a href="zh_support.html" title="简体中文">汉语</a>
-        </div>
-        <a href="sv_index.html">Home</a><br/>
-        <a href="sv_quickstart.html">Quick Start</a><br/>
-        <a href="sv_settings.html">Settings</a><br/>
-        <a href="sv_download.html">Download</a><br/>
-        <a href="sv_support.html">Support</a><br/>
-        <a href="sv_privacy.html">Privacy</a><br/>
-        <a href="https://github.com/retgal/dayon">GitHub</a>
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="sv_index.html"><img src="dayon.png" alt="Dayon!"></a>
+      <nav class="site-nav" aria-label="Huvudmeny">
+        <a href="sv_index.html">Hjem</a>
+        <a href="sv_quickstart.html">Komma igång</a>
+        <a href="sv_settings.html">Inställningar</a>
+        <a href="sv_download.html">Ladda ned</a>
+        <a href="sv_support.html" class="active">Support</a>
+        <a href="sv_privacy.html">Personlig integritet</a>
+      </nav>
+      <nav class="lang-switch" aria-label="Language">
+        <a href="de_support.html">DE</a>
+        <a href="fr_support.html">FR</a>
+        <a href="sv_support.html" aria-current="page">SV</a>
+        <a href="zh_support.html" title="简体中文">汉语</a>
+        <a href="support.html">EN</a>
       </nav>
     </div>
-  </div>
-  <div id="container">
-    <div id="top">
-      <a href="de_support.html" title="Deutsch">DE</a>
-      <a href="fr_support.html" title="Français">FR</a>
-      <a href="support.html" title="English">EN</a>
-      <a href="zh_support.html" title="简体中文">汉语</a>
-    </div>
-    <div id="menu">
-      <a href="sv_index.html">Home</a>
-      <a href="sv_quickstart.html">Quick Start</a>
-      <a href="sv_settings.html">Settings</a>
-      <a href="sv_download.html">Download</a>
-      <a href="sv_support.html">Support</a>
-      <a href="sv_privacy.html">Privacy</a>
-      <a href="https://github.com/retgal/dayon">GitHub</a>
-    </div>
-    <div id="content">
-      <h2>Support</h2>
+  </header>
+  <main id="content">
+    <h2>Support</h2>
       <p>
         Din feedback är mer än välkommen - posta dina frågor eller öppna ett nytt ärende på <a href="https://github.com/retgal/dayon/issues">GitHub</a>.
       </p>
@@ -67,7 +46,9 @@
 
       <p>Om Wayland används på hjälptagarens dator, så måste skärmdelning och fjärrstyrning uttryckligen tillåtas av den användaren.<br/>
         Dialogrutan ”Skärmdelning” visas automatiskt så snart assistenten har upprättat anslutningen.
-        Den assisterade användaren måste bekräfta delningen; annars kan assistenten inte se eller styra skärmen:<br/>
+        Den assisterade användaren måste bekräfta delningen; annars kan assistenten inte se eller styra skärmen:
+      </p>
+      <p>
         <img src="wayland.allow.png" alt="Bevilja åtkomst"/>
       </p>
 
@@ -128,9 +109,13 @@
              alt="compatibility"/> vara aktiverat.<br/>
         Detta är endast en tillfällig lösning, uppdatera dina klientinstallationer så snart som möjligt.
       </p>
-
-    </div>
-    <div id="footer"></div>
-  </div>
-  </body>
+  </main>
+  <footer>
+    <p><a href="sv_index.html">Dayon!</a> &middot; distanshjälp för familj och vänner.
+      <a href="https://www.gnu.org/licenses/gpl-3.0.en.html">GPL-3.0</a>
+      <a href="https://github.com/retgal/dayon">GitHub</a>
+      <a href="sv_privacy.html">Personlig integritet</a>
+    </p>
+  </footer>
+</body>
 </html>
