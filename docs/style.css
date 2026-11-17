@@ -171,7 +171,7 @@ body {
 main {
   max-width: 900px;
   margin: 26px auto 40px;
-  padding: 0 32px;
+  padding: 0 32px 20px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
