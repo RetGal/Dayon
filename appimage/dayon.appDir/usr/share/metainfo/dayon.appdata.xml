@@ -38,6 +38,16 @@
         </screenshot>
     </screenshots>
     <releases>
+        <release version="19.0.1" date="2026-11-18">
+            <description>
+                <p>Changes in Humble Hustler I</p>
+                <ul>
+                    <li>Updated JRE and libs</li>
+                    <li>Improved file transfer</li>
+                    <li>Various enhancements and fixes</li>
+                </ul>
+            </description>
+        </release>
         <release version="19.0.0" date="2026-11-07">
             <description>
                 <p>Changes in Humble Hustler</p>

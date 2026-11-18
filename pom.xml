@@ -8,7 +8,7 @@
     <url>https://github.com/retgal/dayon</url>
     <groupId>mpo.dayon</groupId>
     <artifactId>dayon</artifactId>
-    <version>19.0.0</version>
+    <version>19.0.1</version>
     <description>cross platform remote desktop solution</description>
     <developers>
         <developer>
@@ -33,6 +33,7 @@
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <xz.version>1.12</xz.version>
         <waifpunp.version>1.3.3</waifpunp.version>
+        <ice4j.version>3.2-24-g172f341</ice4j.version>
         <makeself.version>1.12.0</makeself.version>
         <junit.jupiter.version>6.1.3</junit.jupiter.version>
         <mockito.core.version>5.24.0</mockito.core.version>
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>org.jitsi</groupId>
             <artifactId>ice4j</artifactId>
-            <version>3.2-24-g172f341</version>
+            <version>${ice4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
