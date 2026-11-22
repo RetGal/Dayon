@@ -825,5 +825,44 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>jre11</id>
+            <properties>
+                <ice4j.version>3.2-15-g6da2b08</ice4j.version>
+            </properties>
+            <build>
+                <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>3.7.0</version>
+                    <executions>
+                        <execution>
+                            <id>check-bytecode-level</id>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <!--
+                                    maven.compiler.release only constrains Dayon's own sources.
+                                    A transitive dependency compiled for a newer JVM would only
+                                    fail on the user's machine with UnsupportedClassVersionError.
+                                    Scan the shaded jar's class file headers so the build fails
+                                    here instead.
+                                -->
+                                <executable>${java.home}/bin/java</executable>
+                                <workingDirectory>${project.build.directory}</workingDirectory>
+                                <arguments>
+                                    <argument>${project.basedir}/src/smoke/java/mpo/dayon/smoke/BytecodeLevelCheck.java</argument>
+                                    <argument>${project.build.directory}/${project.build.finalName}.jar</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>
