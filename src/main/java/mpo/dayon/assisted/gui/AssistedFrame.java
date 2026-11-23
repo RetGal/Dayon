@@ -224,7 +224,7 @@ class AssistedFrame extends BaseFrame {
         @Override
         public void actionPerformed(ActionEvent ev) {
             try {
-                Desktop.getDesktop().open(new File(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe"));
+                new ProcessBuilder(System.getenv("WINDIR") + "\\system32\\useraccountcontrolsettings.exe").start();
             } catch (IOException e) {
                 Log.error(e.getMessage());
             }
