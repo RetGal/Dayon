@@ -190,7 +190,16 @@ public final class ReliableDatagramMultiplexer implements Closeable {
             stream.rtoMs = MIN_RTO_MS;
             growWindow(stream, progress);
         }
+        handleRecovery(stream, ack, now, out, highestSacked, cumulativeProgress, progress, cwndBefore);
+        if (progress > 0 || windowGrew) {
+            sendSpace.signalAll();
+        }
+        if (closing && stream.unacked.isEmpty()) {
+            scheduleHardClose();
+        }
+    }
 
+    private void handleRecovery(Stream stream, int ack, long now, List<byte[]> out, int highestSacked, boolean cumulativeProgress, int progress, int cwndBefore) {
         // RFC 6675 approximation: far enough below the highest SACKed segment means lost, not reordered
         int lossBound = highestSacked - DUP_THRESH + 1;
         if (stream.inRecovery && cumulativeProgress) {
@@ -214,13 +223,6 @@ public final class ReliableDatagramMultiplexer implements Closeable {
                 recover(stream, now, entered ? stream.cwnd : progress + stream.cwnd - cwndBefore, out);
             }
         }
-
-        if (progress > 0 || windowGrew) {
-            sendSpace.signalAll();
-        }
-        if (closing && stream.unacked.isEmpty()) {
-            scheduleHardClose();
-        }
     }
 
     /**
@@ -231,7 +233,7 @@ public final class ReliableDatagramMultiplexer implements Closeable {
     private static int applySack(Stream stream, int ack, byte[] datagram, int length) {
         int highest = ack;
         for (int bit = 0; bit < length * 8; bit++) {
-            if ((datagram[HEADER_SIZE + bit / 8] & (1 << (bit % 8))) != 0) {
+            if ((datagram[HEADER_SIZE + bit / 8] & 0xff & (1 << (bit % 8))) != 0) {
                 final int seq = ack + 1 + bit;
                 stream.unacked.remove(seq);
                 highest = seq;
@@ -447,48 +449,6 @@ public final class ReliableDatagramMultiplexer implements Closeable {
         enterRecovery(stream, now, stream.nextSeq, true);
         stream.rtoMs = Math.min(stream.rtoMs * 2, MAX_RTO_MS);
         recover(stream, now, stream.cwnd, out);
-    }
-
-    private void write(Stream stream, byte[] data, int offset, int length) throws IOException {
-        int position = offset;
-        final int end = offset + length;
-        final List<byte[]> out = new ArrayList<>();
-        while (position < end) {
-            lock.lock();
-            try {
-                awaitSendSpace(stream);
-                final long now = System.nanoTime();
-                while (position < end && canSend(stream)) {
-                    final int chunk = Math.min(MAX_PAYLOAD, end - position);
-                    final int seq = stream.nextSeq++;
-                    final byte[] frame = newFrame(TYPE_DATA, stream, seq, chunk, now);
-                    System.arraycopy(data, position, frame, HEADER_SIZE, chunk);
-                    stream.unacked.put(seq, new Segment(frame, now));
-                    out.add(frame);
-                    position += chunk;
-                }
-            } finally {
-                lock.unlock();
-            }
-            flush(out);
-        }
-    }
-
-    private void awaitSendSpace(Stream stream) throws IOException {
-        while (true) {
-            if (closing || closed) {
-                throw new IOException("Datagram stream closed");
-            }
-            if (canSend(stream)) {
-                return;
-            }
-            try {
-                sendSpace.await(100L, TimeUnit.MILLISECONDS);
-            } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                throw new IOException("Interrupted while writing", ex);
-            }
-        }
     }
 
     private static boolean canSend(Stream stream) {
@@ -754,7 +714,47 @@ public final class ReliableDatagramMultiplexer implements Closeable {
 
         @Override
         public void write(byte[] b, int off, int len) throws IOException {
-            ReliableDatagramMultiplexer.this.write(stream, b, off, len);
+            int position = off;
+            final int end = off + len;
+            while (position < end) {
+                final List<byte[]> out = new ArrayList<>();
+                lock.lock();
+                try {
+                    awaitSendSpace(stream);
+                    final long now = System.nanoTime();
+                    while (position < end && canSend(stream)) {
+                        final int chunk = Math.min(MAX_PAYLOAD, end - position);
+                        final int seq = stream.nextSeq++;
+                        final byte[] frame = newFrame(TYPE_DATA, stream, seq, chunk, now);
+                        System.arraycopy(b, position, frame, HEADER_SIZE, chunk);
+                        stream.unacked.put(seq, new Segment(frame, now));
+                        out.add(frame);
+                        position += chunk;
+                    }
+                } finally {
+                    lock.unlock();
+                }
+                ReliableDatagramMultiplexer.this.flush(out);
+            }
         }
+
+        @SuppressWarnings("squid:S899") // ignored because useless
+        private void awaitSendSpace(Stream stream) throws IOException {
+            while (true) {
+                if (closing || closed) {
+                    throw new IOException("Datagram stream closed");
+                }
+                if (canSend(stream)) {
+                    return;
+                }
+                try {
+                    sendSpace.await(100L, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException ex) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted while writing", ex);
+                }
+            }
+        }
+
     }
 }

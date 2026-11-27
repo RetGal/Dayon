@@ -368,7 +368,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
      * @return false if the TCP server has to be started instead
      */
     private boolean tryIceSession(boolean compatibilityMode)
-            throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
+            throws NoSuchAlgorithmException, IOException, CertificateEncodingException {
         try {
             startIceSession(compatibilityMode);
             return true;
@@ -385,7 +385,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
     }
 
     private void startIceSession(boolean compatibilityMode)
-            throws NoSuchAlgorithmException, IOException, KeyManagementException, CertificateEncodingException {
+            throws NoSuchAlgorithmException, IOException, CertificateEncodingException {
         Log.info("Starting ICE session");
         consumedPeerIceInfo = token.getIceInfo();
         final String remoteSdp = decodeSdp(consumedPeerIceInfo);
@@ -427,10 +427,7 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
             long portDeadline = 0L;
             while (!cancelling.get()) {
                 obtainPeerAddressAndStatus(tokenServerUrl, !Boolean.TRUE.equals(isOwnPortAccessible.get()));
-                if (token.getPeerAddress() == null) {
-                    if (token.isPeerAccessible() == null) {
-                        pause(TOKEN_POLL_INTERVAL_MS);
-                    }
+                if (isPeerAddressUnknown()) {
                     continue;
                 }
                 if (token.getPeerPort() == 0) {
@@ -444,18 +441,11 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                     }
                     return;
                 }
-                final String iceInfo = token.getIceInfo();
-                if (iceAgent == null || Boolean.TRUE.equals(token.isPeerAccessible())) {
-                    return;
-                }
+                final String iceInfo = getIceInfo();
                 if (iceInfo == null) {
-                    // legacy assisted: expects our TCP server
                     return;
                 }
-                // the previous description belongs to a dead agent; bounded so an unchanged valid one is still used
-                if (previousIceInfo != null && iceInfo.equals(previousIceInfo)
-                        && System.nanoTime() < iceDeadline) {
-                    pause(ICE_INFO_POLL_INTERVAL_MS);
+                if (isReusable(previousIceInfo, iceInfo, iceDeadline)) {
                     continue;
                 }
                 return;
@@ -467,6 +457,34 @@ public class NetworkAssistantEngine extends NetworkEngine implements ReConfigura
                 Thread.currentThread().interrupt();
             }
         }
+    }
+
+    private String getIceInfo() {
+        if (iceAgent == null || Boolean.TRUE.equals(token.isPeerAccessible())) {
+            return null;
+        }
+        // if token has no iceInfo the peer is a legacy assisted, which expects our TCP server
+        return token.getIceInfo();
+    }
+
+    private static boolean isReusable(String previousIceInfo, String iceInfo, long iceDeadline) {
+        // the previous description belongs to a dead agent; bounded so an unchanged valid one is still used
+        if (previousIceInfo != null && iceInfo.equals(previousIceInfo)
+                && System.nanoTime() < iceDeadline) {
+            pause(ICE_INFO_POLL_INTERVAL_MS);
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isPeerAddressUnknown() {
+        if (token.getPeerAddress() == null) {
+            if (token.isPeerAccessible() == null) {
+                pause(TOKEN_POLL_INTERVAL_MS);
+            }
+            return true;
+        }
+        return false;
     }
 
     private static String tokenServerUrl() {

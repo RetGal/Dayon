@@ -535,13 +535,13 @@ public abstract class NetworkEngine {
             return;
         }
         Log.info("Configuring TURN servers from preferences");
-        for (TurnServer server : servers) {
+        for (TurnServer turnServer : servers) {
             try {
-                final TransportAddress ta = new TransportAddress(new InetSocketAddress(server.host, server.port), Transport.UDP);
-                iceAgent.addCandidateHarvester(new TurnCandidateHarvester(ta, new LongTermCredential(server.username, server.password)));
+                final TransportAddress ta = new TransportAddress(new InetSocketAddress(turnServer.host, turnServer.port), Transport.UDP);
+                iceAgent.addCandidateHarvester(new TurnCandidateHarvester(ta, new LongTermCredential(turnServer.username, turnServer.password)));
                 Log.info("Added TURN harvester: " + ta);
             } catch (Exception ex) {
-                Log.warn("Failed to add TURN server: " + server, ex);
+                Log.warn("Failed to add TURN server: " + turnServer, ex);
             }
         }
     }
@@ -553,17 +553,16 @@ public abstract class NetworkEngine {
         }
         for (String rawEntry : turns.split(",")) {
             final String entry = rawEntry.trim();
-            if (entry.isEmpty()) {
-                continue;
+            if (!entry.isEmpty()) {
+                final Matcher m = TURN_ENTRY.matcher(entry);
+                final int port = m.matches() ? Integer.parseInt(m.group(3)) : -1;
+                if (port < 1 || port > 65535) {
+                    Log.warn("Invalid TURN entry (expected host:port[:user[:pass]] or [ipv6]:port[:user[:pass]]): " + entry);
+                    continue;
+                }
+                String host =  m.group(m.group(1) == null ? 2 : 1);
+                servers.add(new TurnServer(host, port, m.group(4), m.group(5)));
             }
-            final Matcher m = TURN_ENTRY.matcher(entry);
-            final int port = m.matches() ? Integer.parseInt(m.group(3)) : -1;
-            if (port < 1 || port > 65535) {
-                Log.warn("Invalid TURN entry (expected host:port[:user[:pass]] or [ipv6]:port[:user[:pass]]): " + entry);
-                continue;
-            }
-            final String host = m.group(1) != null ? m.group(1) : m.group(2);
-            servers.add(new TurnServer(host, port, m.group(4), m.group(5)));
         }
         return servers;
     }

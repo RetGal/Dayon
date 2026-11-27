@@ -41,14 +41,17 @@ public final class TcpSessionTransport implements SessionTransport {
     // connects as a TLS client and returns once the socket is ready to be used
     public static TcpSessionTransport connect(SSLSocketFactory socketFactory, String host, int port,
                                               int connectTimeoutMs, int soTimeoutMs) throws IOException {
-        try {
-            final SSLSocket socket = (SSLSocket) socketFactory.createSocket();
+        try (SocketCloseGuard guard = new SocketCloseGuard((SSLSocket) socketFactory.createSocket())) {
+            final SSLSocket socket = guard.getSocket();
             socket.setNeedClientAuth(true);
             socket.setSoTimeout(soTimeoutMs);
             socket.connect(new InetSocketAddress(host, port), connectTimeoutMs);
             // once connected, remain connected until cancelled
             socket.setSoTimeout(0);
-            return new TcpSessionTransport(socket, socketFactory, host, port, connectTimeoutMs, soTimeoutMs);
+            final TcpSessionTransport transport =
+                    new TcpSessionTransport(socket, socketFactory, host, port, connectTimeoutMs, soTimeoutMs);
+            guard.release();
+            return transport;
         } catch (UnknownHostException e) {
             Log.warn("Unable to connect - unknown host");
             throw e;
@@ -58,6 +61,30 @@ public final class TcpSessionTransport implements SessionTransport {
         } catch (IOException e) {
             Log.warn("Unable to connect");
             throw e;
+        }
+    }
+
+    private static final class SocketCloseGuard implements AutoCloseable {
+        private final SSLSocket socket;
+        private boolean released;
+
+        private SocketCloseGuard(SSLSocket socket) {
+            this.socket = socket;
+        }
+
+        private SSLSocket getSocket() {
+            return socket;
+        }
+
+        private void release() {
+            released = true;
+        }
+
+        @Override
+        public void close() {
+            if (!released) {
+                safeClose(socket);
+            }
         }
     }
 
