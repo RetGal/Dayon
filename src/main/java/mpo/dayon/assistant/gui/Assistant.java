@@ -18,6 +18,7 @@ import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.*;
 import mpo.dayon.common.network.ClipboardDispatcher;
 import mpo.dayon.common.network.Token;
+import mpo.dayon.common.network.transport.SessionTransport;
 import mpo.dayon.common.squeeze.CompressionMethod;
 import mpo.dayon.common.utils.Language;
 import mpo.dayon.common.version.Version;
@@ -31,7 +32,6 @@ import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImagingOpException;
 import java.io.IOException;
-import java.net.Socket;
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -627,9 +627,7 @@ public class Assistant implements ClipboardOwner {
         if (activeAddress != null && !activeAddress.equals(publicIp)) {
             query += "&addr=" + activeAddress;
         }
-        if (iceInfo != null) {
-            query += "&ice=" + iceInfo;
-        }
+        query = appendIceParam(query, iceInfo);
         Log.debug("Requesting token using: " + query);
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(query))
@@ -834,7 +832,7 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public boolean onAccepted(Socket connection, boolean autoAccept) {
+        public boolean onAccepted(SessionTransport connection, boolean autoAccept) {
             return frame.onAccepted(connection, autoAccept);
         }
 
@@ -842,7 +840,7 @@ public class Assistant implements ClipboardOwner {
          * Should not block as called from the network receiving thread (!)
          */
         @Override
-        public void onConnected(Socket connection, char osId, String inputLocale, int peerMajorVersion) {
+        public void onConnected(SessionTransport connection, char osId, String inputLocale, int peerMajorVersion) {
             assureCompatibility(peerMajorVersion);
             if (sessionInterrupted) {
                 sessionInterrupted = false;

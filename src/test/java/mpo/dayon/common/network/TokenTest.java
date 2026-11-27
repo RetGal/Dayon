@@ -52,4 +52,24 @@ class TokenTest {
         assertEquals("?token=%s", token.getQueryParams());
         assertEquals("1234A", token.getTokenString());
     }
+
+    @Test
+    void updateTokenShouldClearThePeerDataButKeepTheTokenString() {
+        // given
+        Token token = new Token("?token=%s");
+        token.setTokenString("12345B");
+        token.updateToken("85.85.85.85", 1234, "192.168.10.10", false, 8080, "TWFkIFdvcmxkIQo=");
+
+        // when a new ICE agent is created for the next session
+        token.updateToken(null, 0, null, null, 0, null);
+
+        // then the token can still be used to reach the token server again
+        assertEquals("12345B", token.getTokenString());
+        assertNull(token.getPeerAddress());
+        assertEquals(0, token.getPeerPort());
+        assertNull(token.getPeerLocalAddress());
+        assertNull(token.isPeerAccessible());
+        assertEquals(0, token.getLocalPort());
+        assertNull(token.getIceInfo());
+    }
 }

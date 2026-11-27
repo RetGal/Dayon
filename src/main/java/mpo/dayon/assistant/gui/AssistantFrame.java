@@ -9,6 +9,7 @@ import mpo.dayon.common.gui.statusbar.StatusBar;
 import mpo.dayon.common.gui.toolbar.ToolBar;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.monitoring.counter.Counter;
+import mpo.dayon.common.network.transport.SessionTransport;
 import mpo.dayon.common.utils.Language;
 import mpo.dayon.common.version.Version;
 
@@ -18,7 +19,6 @@ import java.awt.event.*;
 import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.Socket;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -521,18 +521,18 @@ class AssistantFrame extends BaseFrame {
         add(center, BorderLayout.CENTER);
     }
 
-    boolean onAccepted(Socket connection, boolean autoAccept) {
+    boolean onAccepted(SessionTransport connection, boolean autoAccept) {
         if (connection == null || !connection.isConnected()) {
             Log.warn("Connection was already terminated");
             return false;
         }
         if (!autoAccept && JOptionPane.showOptionDialog(this, translate("connection.incoming.msg1"),
-                translate("connection.incoming", connection.getInetAddress().getHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
+                translate("connection.incoming", connection.getRemoteHostAddress()), JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                 getOrCreateIcon(ImageNames.USERS), okCancelOptions, okCancelOptions[1]) == 0) {
             return false;
         }
         hideSpinner();
-        getStatusBar().setMessage(translate("connection.incoming.msg2", connection.getInetAddress().getHostAddress()));
+        getStatusBar().setMessage(translate("connection.incoming.msg2", connection.getRemoteHostAddress()));
         center = assistantPanelWrapper;
         add(center, BorderLayout.CENTER);
         screenshotButton.setEnabled(true);

@@ -1,9 +1,9 @@
 package mpo.dayon.assistant.network;
 
 import java.io.IOException;
-import java.net.Socket;
 
 import mpo.dayon.common.event.Listener;
+import mpo.dayon.common.network.transport.SessionTransport;
 
 public interface NetworkAssistantEngineListener extends Listener {
 	void onReady();
@@ -21,12 +21,12 @@ public interface NetworkAssistantEngineListener extends Listener {
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	boolean onAccepted(Socket connection, boolean autoAccept);
+	boolean onAccepted(SessionTransport connection, boolean autoAccept);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)
 	 */
-	void onConnected(Socket connection, char osId, String inputLocale, int peerMajorVersion);
+	void onConnected(SessionTransport connection, char osId, String inputLocale, int peerMajorVersion);
 
 	/**
 	 * Should not block as called from the network receiving thread (!)

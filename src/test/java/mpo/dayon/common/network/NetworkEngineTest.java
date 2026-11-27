@@ -2,6 +2,12 @@ package mpo.dayon.common.network;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import mpo.dayon.common.network.transport.SessionTransport;
+import mpo.dayon.common.network.transport.TcpSessionTransport;
 
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -12,6 +18,7 @@ import java.net.SocketException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -81,7 +88,7 @@ class NetworkEngineTest {
         final SSLSocket socket = mock(SSLSocket.class);
 
         // when
-        NetworkEngine.disableNagle(socket);
+        TcpSessionTransport.of(socket);
 
         // then - setting the buffers explicitly would disable TCP autotuning
         verify(socket).setTcpNoDelay(true);
@@ -96,7 +103,7 @@ class NetworkEngineTest {
         doThrow(new SocketException("not supported")).when(socket).setTcpNoDelay(true);
 
         // when, then
-        assertDoesNotThrow(() -> NetworkEngine.disableNagle(socket));
+        assertDoesNotThrow(() -> TcpSessionTransport.of(socket));
     }
 
     @Test
@@ -176,10 +183,11 @@ class NetworkEngineTest {
         engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
         engine.rememberMainPeerIdentity();
 
-        final SSLSocket unverified = mock(SSLSocket.class);
         final SSLSession session = mock(SSLSession.class);
         when(session.getPeerCertificates()).thenThrow(new SSLPeerUnverifiedException("no peer"));
-        when(unverified.getSession()).thenReturn(session);
+        final SSLSocket unverifiedSocket = mock(SSLSocket.class);
+        when(unverifiedSocket.getSession()).thenReturn(session);
+        final SessionTransport unverified = TcpSessionTransport.of(unverifiedSocket);
 
         // when, then
         assertFalse(engine.isFileConnectionBound(unverified));
@@ -201,7 +209,7 @@ class NetworkEngineTest {
         final TestNetworkEngine engine = new TestNetworkEngine();
         engine.connection = socketWithPeerCertificate(new byte[]{1, 2, 3});
         engine.rememberMainPeerIdentity();
-        final SSLSocket fileConnection = socketWithPeerCertificate(new byte[]{1, 2, 3});
+        final SessionTransport fileConnection = socketWithPeerCertificate(new byte[]{1, 2, 3});
 
         // when
         engine.closeConnections();
@@ -244,10 +252,11 @@ class NetworkEngineTest {
         engine.rememberMainPeerIdentity();
         engine.rememberPeerIdentityForReconnect();
 
-        final SSLSocket unverified = mock(SSLSocket.class);
         final SSLSession session = mock(SSLSession.class);
         when(session.getPeerCertificates()).thenThrow(new SSLPeerUnverifiedException("no peer"));
-        when(unverified.getSession()).thenReturn(session);
+        final SSLSocket unverifiedSocket = mock(SSLSocket.class);
+        when(unverifiedSocket.getSession()).thenReturn(session);
+        final SessionTransport unverified = TcpSessionTransport.of(unverifiedSocket);
 
         // when, then
         assertFalse(engine.isExpectedReconnectPeer(unverified));
@@ -305,7 +314,21 @@ class NetworkEngineTest {
         assertFalse(engine.cancelling.get());
     }
 
-    private static SSLSocket socketWithPeerCertificate(byte[] encodedCertificate) throws Exception {
+    @Test
+    void decodesIceDescriptionsOfOlderAssistants() throws IOException {
+        // older assistants did not URL encode the description, so the RVS turned '+' into ' '
+        assertEquals(">>>?", NetworkEngine.decodeSdp("Pj4 Pw=="));
+        assertEquals(">>>?", NetworkEngine.decodeSdp("Pj4+Pw==\n"));
+        assertThrows(IOException.class, () -> NetworkEngine.decodeSdp("not*base64"));
+    }
+
+    @Test
+    void appendsTheUrlEncodedIceDescription() {
+        assertEquals("q?a=1&ice=Pj4%2BPw%3D%3D", NetworkEngine.appendIceParam("q?a=1", "Pj4+Pw=="));
+        assertEquals("q?a=1", NetworkEngine.appendIceParam("q?a=1", null));
+    }
+
+    private static SessionTransport socketWithPeerCertificate(byte[] encodedCertificate) throws Exception {
         final X509Certificate certificate = mock(X509Certificate.class);
         when(certificate.getEncoded()).thenReturn(encodedCertificate);
 
@@ -314,6 +337,85 @@ class NetworkEngineTest {
 
         final SSLSocket socket = mock(SSLSocket.class);
         when(socket.getSession()).thenReturn(session);
-        return socket;
+        return TcpSessionTransport.of(socket);
+    }
+
+    @Test
+    void parsesTurnServerWithHostnameAndPortOnly() {
+        // when
+        final List<NetworkEngine.TurnServer> servers = NetworkEngine.parseTurnServers("turn.example.com:3478");
+
+        // then
+        assertEquals(1, servers.size());
+        assertTurnServer(servers.get(0), "turn.example.com", 3478, null, null);
+    }
+
+    @Test
+    void parsesTurnServerWithIpv4AndCredentials() {
+        // when
+        final List<NetworkEngine.TurnServer> servers = NetworkEngine.parseTurnServers("203.0.113.5:3478:user:secret");
+
+        // then
+        assertEquals(1, servers.size());
+        assertTurnServer(servers.get(0), "203.0.113.5", 3478, "user", "secret");
+    }
+
+    @Test
+    void parsesTurnServerWithBracketedIpv6() {
+        // when
+        final List<NetworkEngine.TurnServer> servers = NetworkEngine.parseTurnServers("[2001:db8::1]:5349:user:secret");
+
+        // then
+        assertEquals(1, servers.size());
+        assertTurnServer(servers.get(0), "2001:db8::1", 5349, "user", "secret");
+        assertEquals("[2001:db8::1]:5349", servers.get(0).toString());
+    }
+
+    @Test
+    void keepsColonsInTheTurnPassword() {
+        // when
+        final List<NetworkEngine.TurnServer> servers = NetworkEngine.parseTurnServers("[::1]:3478:user:pa:ss:word");
+
+        // then
+        assertTurnServer(servers.get(0), "::1", 3478, "user", "pa:ss:word");
+    }
+
+    @Test
+    void parsesMultipleTurnServersAndSkipsInvalidOnes() {
+        // when
+        final List<NetworkEngine.TurnServer> servers = NetworkEngine.parseTurnServers(
+                " turn.example.com:3478 , 2001:db8::1:3478, ,[2001:db8::2]:3478:u:p,nope");
+
+        // then
+        assertEquals(2, servers.size());
+        assertTurnServer(servers.get(0), "turn.example.com", 3478, null, null);
+        assertTurnServer(servers.get(1), "2001:db8::2", 3478, "u", "p");
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    @ValueSource(strings = {
+            " ",
+            "turn.example.com",
+            "turn.example.com:",
+            "turn.example.com:abc",
+            "turn.example.com:0",
+            "turn.example.com:65536",
+            "2001:db8::1:3478",
+            "[2001:db8::1]",
+            "[2001:db8::1]3478",
+            "[]:3478",
+            ":3478"
+    })
+    void rejectsInvalidTurnServerEntries(String turns) {
+        // when, then
+        assertTrue(NetworkEngine.parseTurnServers(turns).isEmpty());
+    }
+
+    private static void assertTurnServer(NetworkEngine.TurnServer server, String host, int port, String username, String password) {
+        assertEquals(host, server.host);
+        assertEquals(port, server.port);
+        assertEquals(username, server.username);
+        assertEquals(password, server.password);
     }
 }
