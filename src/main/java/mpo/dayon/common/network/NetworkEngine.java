@@ -3,17 +3,21 @@ package mpo.dayon.common.network;
 import com.dosse.upnp.UPnP;
 import mpo.dayon.common.log.Log;
 import mpo.dayon.common.network.message.*;
+import mpo.dayon.common.network.transport.SessionTransport;
+import mpo.dayon.common.network.transport.ice.IceSessionTransport;
 import mpo.dayon.common.security.CustomTrustManager;
 import org.ice4j.Transport;
 import org.ice4j.TransportAddress;
 import org.ice4j.ice.Agent;
+import org.ice4j.ice.Component;
+import org.ice4j.ice.IceMediaStream;
+import org.ice4j.ice.IceProcessingState;
 import org.ice4j.ice.NominationStrategy;
 import org.ice4j.ice.harvest.StunCandidateHarvester;
 import org.ice4j.ice.harvest.TurnCandidateHarvester;
 import org.ice4j.security.LongTermCredential;
 
 import javax.net.ssl.SSLServerSocket;
-import javax.net.ssl.SSLSocket;
 import javax.sdp.SdpException;
 import java.awt.*;
 import java.awt.datatransfer.ClipboardOwner;
@@ -28,15 +32,24 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.BooleanSupplier;
 import java.util.logging.Level;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -57,9 +70,18 @@ public abstract class NetworkEngine {
 
     protected static final String UNSUPPORTED_TYPE = "Unsupported message type [%s]!";
 
+    protected static final long ICE_TIMEOUT_MS = 10_000L;
+
+    protected static final long ICE_INFO_WAIT_MS = 20_000L;
+
+    protected static final long ICE_INFO_POLL_INTERVAL_MS = 2_000L;
+
     private static final String CLIPBOARD_DEBUG = "setClipboardContents %s";
 
     private static final String WHATSMYIP_SERVER_URL = "https://fensterkitt.ch/dayon/whatismyip.php";
+
+    // TURN server entry: host:port[:user[:pass]] or [ipv6]:port[:user[:pass]]
+    private static final Pattern TURN_ENTRY = Pattern.compile("^(?:\\[([^\\]]+)]|([^:\\[\\]]+)):(\\d{1,5})(?::([^:]*)(?::(.*))?)?$");
 
     private static final String[][] STUN_SERVERS = {
         {"stun.nextcloud.com", "443"},
@@ -82,11 +104,15 @@ public abstract class NetworkEngine {
 
     protected SSLServerSocket server;
 
-    protected SSLSocket connection;
+    protected SessionTransport connection;
 
-    protected SSLSocket fileConnection;
+    protected SessionTransport fileConnection;
 
     protected Agent iceAgent;
+
+    protected IceMediaStream mediaStream;
+
+    protected String consumedPeerIceInfo;
 
     protected final AtomicBoolean cancelling = new AtomicBoolean(false);
 
@@ -176,35 +202,21 @@ public abstract class NetworkEngine {
         fileSender.ping();
     }
 
-    protected static void disableNagle(SSLSocket socket) {
-        try {
-            socket.setTcpNoDelay(true);
-        } catch (IOException ex) {
-            Log.warn("Could not disable Nagle on the connection", ex);
-        }
-    }
-
-    /**
-     * Remembers the peer certificate of the authenticated main connection so that
-     * the file transfer connection can be bound to the very same peer.
-     */
+    // remembers the peer certificate of the authenticated main connection so that the file transfer connection can be bound to the very same peer
     protected void rememberMainPeerIdentity() {
-        mainPeerCertificateFingerprint = calculatePeerCertificateFingerprint(connection);
+        mainPeerCertificateFingerprint = connection == null ? null : connection.getPeerCertificateFingerprint();
         if (mainPeerCertificateFingerprint == null) {
             Log.warn("Could not determine the identity of the main connection");
         }
     }
 
-    /**
-     * A file connection is only accepted if its peer certificate matches the one
-     * of the main connection.
-     */
-    protected boolean isFileConnectionBound(SSLSocket candidate) {
+    // a file connection is only accepted if its peer certificate matches the one of the main connection.
+    protected boolean isFileConnectionBound(SessionTransport candidate) {
         if (mainPeerCertificateFingerprint == null) {
             Log.warn("Rejecting file connection: the identity of the main connection is unknown");
             return false;
         }
-        byte[] filePeerCertificateFingerprint = calculatePeerCertificateFingerprint(candidate);
+        final byte[] filePeerCertificateFingerprint = candidate == null ? null : candidate.getPeerCertificateFingerprint();
         if (filePeerCertificateFingerprint == null) {
             Log.warn("Rejecting file connection: no peer certificate available");
             return false;
@@ -212,14 +224,7 @@ public abstract class NetworkEngine {
         return MessageDigest.isEqual(mainPeerCertificateFingerprint, filePeerCertificateFingerprint);
     }
 
-    private static byte[] calculatePeerCertificateFingerprint(SSLSocket socket) {
-        return socket == null ? null : CustomTrustManager.calculatePeerCertificateFingerprint(socket.getSession());
-    }
-
-    /**
-     * Remembers the identity of the current peer so that a reconnect can be
-     * bound to the very same peer.
-     */
+    // remembers the identity of the current peer so that a reconnect can be bound to the very same peer
     protected void rememberPeerIdentityForReconnect() {
         expectedReconnectPeerFingerprint = mainPeerCertificateFingerprint == null
                 ? null
@@ -234,15 +239,12 @@ public abstract class NetworkEngine {
         return expectedReconnectPeerFingerprint != null;
     }
 
-    /**
-     * A reconnect is only accepted if the peer certificate matches the one of
-     * the interrupted session exactly.
-     */
-    protected boolean isExpectedReconnectPeer(SSLSocket candidate) {
-        if (expectedReconnectPeerFingerprint == null) {
+    // a reconnect is only accepted if the peer certificate matches the one of the interrupted session exactly
+    protected boolean isExpectedReconnectPeer(SessionTransport candidate) {
+        if (expectedReconnectPeerFingerprint == null || candidate == null) {
             return false;
         }
-        final byte[] candidateFingerprint = calculatePeerCertificateFingerprint(candidate);
+        final byte[] candidateFingerprint = candidate.getPeerCertificateFingerprint();
         return candidateFingerprint != null
                 && MessageDigest.isEqual(expectedReconnectPeerFingerprint, candidateFingerprint);
     }
@@ -286,9 +288,7 @@ public abstract class NetworkEngine {
     protected void fireOnClipboardReceived() {
     }
 
-    /**
-     * Closes all connections AND resets the cancelling flag
-     */
+    // closes all connections AND resets the cancelling flag
     protected void closeConnections() {
         closeConnections(true);
     }
@@ -323,9 +323,7 @@ public abstract class NetworkEngine {
         }
     }
 
-    /**
-     * Interrupts the given thread unless we are running on it ourselves.
-     */
+    // interrupts the given thread unless we are running on it ourselves
     private static Thread closeThread(Thread thread, boolean finalCleanup) {
         if (thread == null) {
             return null;
@@ -414,7 +412,7 @@ public abstract class NetworkEngine {
         return false;
     }
 
-    // Creates unrestricted port forwarding rule and performs a port accessibility check
+    // creates unrestricted port forwarding rule and performs a port accessibility check
     public boolean selfTest(String publicIp, int newPort) {
         return selfTest(publicIp, newPort, 0, null);
     }
@@ -514,8 +512,8 @@ public abstract class NetworkEngine {
             iceAgent = new Agent();
             iceAgent.setLoggingLevel(Level.FINEST);
             iceAgent.setControlling(controlling);
-            // Prefer host/server-reflexive pairs. Relayed candidates are UDP based and can not
-            // carry TCP/TLS connection, only fall back to them if no better pair validates.
+            // prefer host/server-reflexive pairs because they have the lowest latency
+            // use relayed pairs as fallback when no direct pair works
             iceAgent.setNominationStrategy(NominationStrategy.NOMINATE_FIRST_HOST_OR_REFLEXIVE_VALID);
             for (String[] sts : STUN_SERVERS) {
                 try {
@@ -531,29 +529,111 @@ public abstract class NetworkEngine {
     }
 
     private void addTurnServers() {
-        // optional: read TURN servers from preferences (format: host:port[:username:password],comma-separated)
         final String turns = mpo.dayon.common.preference.Preferences.getPreferences().getStringPreference("ice.turn.servers", "");
-        if (turns.isEmpty()) {
+        final List<TurnServer> servers = parseTurnServers(turns);
+        if (servers.isEmpty()) {
             return;
         }
         Log.info("Configuring TURN servers from preferences");
-        String[] entries = turns.split(",");
-        for (String entry : entries) {
+        for (TurnServer turnServer : servers) {
             try {
-                String[] parts = entry.split(":");
-                if (parts.length >= 2) {
-                    String host = parts[0];
-                    int port = Integer.parseInt(parts[1]);
-                    String user = parts.length > 2 ? parts[2] : null;
-                    String pass = parts.length > 3 ? parts[3] : null;
-                    TransportAddress ta = new TransportAddress(new InetSocketAddress(host, port), Transport.UDP);
-                    LongTermCredential credential = new LongTermCredential(user, pass);
-                    iceAgent.addCandidateHarvester(new TurnCandidateHarvester(ta, credential));
-                    Log.info("Added TURN harvester: " + host + ":" + port);
-                }
+                final TransportAddress ta = new TransportAddress(new InetSocketAddress(turnServer.host, turnServer.port), Transport.UDP);
+                iceAgent.addCandidateHarvester(new TurnCandidateHarvester(ta, new LongTermCredential(turnServer.username, turnServer.password)));
+                Log.info("Added TURN harvester: " + ta);
             } catch (Exception ex) {
-                Log.warn("Failed to parse/add TURN entry: " + entry, ex);
+                Log.warn("Failed to add TURN server: " + turnServer, ex);
             }
+        }
+    }
+
+    static List<TurnServer> parseTurnServers(String turns) {
+        final List<TurnServer> servers = new ArrayList<>();
+        if (turns == null) {
+            return servers;
+        }
+        for (String rawEntry : turns.split(",")) {
+            final String entry = rawEntry.trim();
+            if (!entry.isEmpty()) {
+                final Matcher m = TURN_ENTRY.matcher(entry);
+                final int port = m.matches() ? Integer.parseInt(m.group(3)) : -1;
+                if (port < 1 || port > 65535) {
+                    Log.warn("Invalid TURN entry (expected host:port[:user[:pass]] or [ipv6]:port[:user[:pass]]): " + entry);
+                    continue;
+                }
+                String host =  m.group(m.group(1) == null ? 2 : 1);
+                servers.add(new TurnServer(host, port, m.group(4), m.group(5)));
+            }
+        }
+        return servers;
+    }
+
+    static final class TurnServer {
+        final String host;
+        final int port;
+        final String username;
+        final String password;
+
+        TurnServer(String host, int port, String username, String password) {
+            this.host = host;
+            this.port = port;
+            this.username = username;
+            this.password = password;
+        }
+
+        @Override
+        public String toString() {
+            return (host.indexOf(':') >= 0 ? "[" + host + "]" : host) + ":" + port;
+        }
+    }
+
+    // an agent can only run connectivity establishment once: after a session its checklist is completed and the component socket has been closed
+    protected boolean isIceAgentReusable() {
+        return iceAgent != null && mediaStream != null && !isIceAgentOver();
+    }
+
+    protected boolean isIceAgentOver() {
+        final IceProcessingState state = iceAgent == null ? null : iceAgent.getState();
+        return state != null && state.isOver();
+    }
+
+    // stops the ICE agent so that it does not keep harvesting candidates or running connectivity checks
+    protected synchronized void freeIceAgent() {
+        if (iceAgent != null) {
+            Log.info("Stopping ICE agent");
+            iceAgent.free();
+            iceAgent = null;
+            mediaStream = null;
+        }
+    }
+
+    /** @return true if the latch was released before the timeout or cancellation */
+    protected static boolean awaitIceProcessing(CountDownLatch latch, long timeoutMs, BooleanSupplier cancelled) throws IOException {
+        final long deadline = System.nanoTime() + TimeUnit.MILLISECONDS.toNanos(timeoutMs);
+        try {
+            while (!cancelled.getAsBoolean() && System.nanoTime() < deadline) {
+                if (latch.await(100L, TimeUnit.MILLISECONDS)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("ICE wait interrupted", e);
+        }
+    }
+
+    protected SessionTransport openIceSession(boolean compatibilityMode, boolean clientMode) throws IOException {
+        if (mediaStream == null) {
+            throw new IOException("ICE media stream is not available");
+        }
+        final Component rtp = mediaStream.getComponent(Component.RTP);
+        if (rtp == null || rtp.getSelectedPair() == null) {
+            throw new IOException("ICE has no selected RTP pair");
+        }
+        try {
+            return IceSessionTransport.open(rtp, CustomTrustManager.initSslContext(compatibilityMode), clientMode);
+        } catch (NoSuchAlgorithmException | KeyManagementException e) {
+            throw new IOException("Could not initialize the ICE session encryption", e);
         }
     }
 
@@ -564,5 +644,21 @@ public abstract class NetworkEngine {
             Log.error("Failed to create local SDP", e);
             return null;
         }
+    }
+
+    // older assistants did not URL-encode the description, so the RVS turned '+' into spaces
+    protected static String decodeSdp(String b64) throws IOException {
+        try {
+            return new String(Base64.getDecoder().decode(b64.replace(' ', '+').trim()), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            throw new IOException("Malformed ICE description", e);
+        }
+    }
+
+    public static String appendIceParam(String query, String iceInfo) {
+        if (iceInfo == null || iceInfo.isEmpty()) {
+            return query;
+        }
+        return query + "&ice=" + URLEncoder.encode(iceInfo, StandardCharsets.UTF_8);
     }
 }

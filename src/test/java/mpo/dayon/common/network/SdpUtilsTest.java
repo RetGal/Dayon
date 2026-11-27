@@ -36,6 +36,17 @@ class SdpUtilsTest {
         assertTrue(sdp.contains("audio"));
         assertTrue(sdp.contains("ice-ufrag"));
         assertTrue(sdp.contains("ice-pwd"));
+        assertTrue(SdpUtils.supportsDatagramTransport(sdp));
+    }
+
+    @Test
+    void recognizesPeersWithTheDatagramTransport() {
+        final String header = "v=0\r\no=- 0 0 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=ice-ufrag:abcd\r\n";
+
+        assertTrue(SdpUtils.supportsDatagramTransport(header + "a=x-dayon-transport:datagram\r\n"));
+        // descriptions of older peers have no transport attribute
+        assertFalse(SdpUtils.supportsDatagramTransport(header));
+        assertFalse(SdpUtils.supportsDatagramTransport("garbage"));
     }
 
     @Test

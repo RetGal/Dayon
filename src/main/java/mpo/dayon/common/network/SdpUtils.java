@@ -36,11 +36,15 @@ import org.opentelecoms.javax.sdp.*;
  *
  * @author Emil Ivov
  * <p>
- * Reformatted, refactored and improved by Reto Galante
+ * Refactored and extended by Reto Galante
  */
 public class SdpUtils {
 
     private static final ThreadLocal<SdpFactory> SDP_FACTORY = ThreadLocal.withInitial(NistSdpFactory::new);
+
+    // announces the session over the ICE datagram path; peers without it connect over TCP after ICE
+    private static final String TRANSPORT_ATTRIBUTE = "x-dayon-transport";
+    private static final String DATAGRAM_TRANSPORT = "datagram";
 
     private SdpUtils() {
         // This utility class should not be instantiated
@@ -58,6 +62,7 @@ public class SdpUtils {
      * streams.
      * @throws SdpException on rainy days
      */
+    @SuppressWarnings("unchecked") // jain-sdp legacy code.
     public static String createSDPDescription(Agent agent) throws SdpException {
         SdpFactory factory = SDP_FACTORY.get();
         SessionDescription sDesc= factory.createSessionDescription();
@@ -66,7 +71,17 @@ public class SdpUtils {
             throw new SdpException("Cannot create an SDP description for an agent with no streams");
         }
         IceSdpUtils.initSessionDescription(sDesc, agent);
+        sDesc.getAttributes(true).add(factory.createAttribute(TRANSPORT_ATTRIBUTE, DATAGRAM_TRANSPORT));
         return sDesc.toString();
+    }
+
+    /** @return true if the peer runs the session over the ICE datagram path */
+    public static boolean supportsDatagramTransport(String sdp) {
+        try {
+            return DATAGRAM_TRANSPORT.equals(SDP_FACTORY.get().createSessionDescription(sdp).getAttribute(TRANSPORT_ATTRIBUTE));
+        } catch (SdpException e) {
+            return false;
+        }
     }
 
     /**
